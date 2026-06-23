@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 64" width="800" height="64">
+  <rect width="800" height="64" fill="#0f172a"/>
+  <rect x="0" y="0" width="3" height="64" fill="#22d3ee"/>
+  <rect x="3" y="63" width="797" height="1" fill="#22d3ee" opacity="0.2"/>
+  <rect x="3" y="-2" width="797" height="1.5" fill="#22d3ee" opacity="0.18">
+    <animate attributeName="y" values="-2;66" dur="6s" begin="2s" repeatCount="indefinite"/>
+  </rect>
+  <text x="20" y="43"
+    font-family="'Courier New', Courier, monospace"
+    font-size="22"
+    font-weight="700"
+    fill="#22d3ee">//</text>
+  <text x="62" y="43"
+    font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+    font-size="26"
+    font-weight="900"
+    fill="#f8fafc"
+    letter-spacing="6">THE STACK</text>
+</svg>

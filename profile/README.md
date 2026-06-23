@@ -11,9 +11,11 @@
 > **We design and ship.** Brands, products, and the systems that run them —
 > clean, optimized, and impossible to ignore. No filler, no fluff.
 
----
+<p align="center">
+  <img src="./assets/shift9_background.png" alt="" width="100%">
+</p>
 
-### `// what we build`
+<img src="./assets/header-what-we-build.svg" alt="// what we build" width="100%">
 
 We run one design system across every surface — **one theme, three faces.** Edit a
 token once, and the studio site, the product, and this very page all move together.
@@ -21,7 +23,7 @@ token once, and the studio site, the product, and this very page all move togeth
 <table>
   <tr>
     <td width="120" align="center">
-      <img src="./assets/shift9_pinch_icon.png" width="96" height="96" alt="Just a Pinch"><br>
+      <img src="./assets/shift9_pinch_icon.png" alt="Just a Pinch" width="96" height="96"><br>
     </td>
     <td>
       <strong><a href="https://shift9.dev">Just a Pinch</a></strong><br>
@@ -30,7 +32,7 @@ token once, and the studio site, the product, and this very page all move togeth
   </tr>
   <tr>
     <td width="120" align="center">
-      <img src="./assets/shift9_9dev_icon.png" width="96" height="96" alt="shift9.dev"><br>
+      <img src="./assets/shift9_9dev_icon.png" alt="shift9.dev" width="96" height="96"><br>
     </td>
     <td>
       <strong><a href="https://shift9.dev">shift9.dev</a></strong><br>
@@ -39,16 +41,16 @@ token once, and the studio site, the product, and this very page all move togeth
   </tr>
   <tr>
     <td width="120" align="center">
-      <img src="./assets/shift9_instrument_icon.png" width="96" height="96" alt="The INSTRUMENT system"><br>
+      <img src="./assets/shift9_instrument_icon.png" alt="The INSTRUMENT system" width="96" height="96"><br>
     </td>
     <td>
-      <strong><a href="https://github.com/shift9-studio">The INSTRUMENT system</a></strong><br>
+      <strong><a href="https://github.com/shift9-studio/instrument">The INSTRUMENT system</a></strong><br>
       The shared design language: tokens, motion springs, and a WebGL signature that every Shift-9 product inherits.
     </td>
   </tr>
 </table>
 
-### `// the stack`
+<img src="./assets/header-the-stack.svg" alt="// the stack" width="100%">
 
 ```jsonc
 {
@@ -60,7 +62,7 @@ token once, and the studio site, the product, and this very page all move togeth
 }
 ```
 
-### `// currently shipping`
+<img src="./assets/header-currently-shipping.svg" alt="// currently shipping" width="100%">
 
 - **`just-a-pinch`** — turning "what's in the fridge?" into dinner.
 - **`shift9.dev`** — the studio site, live and kinetic.
