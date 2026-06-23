@@ -150,8 +150,8 @@ export default function Home() {
             <span className="text-signal">something sharp.</span>
           </ProximityText>
           <div className="mt-12 flex flex-wrap items-center gap-4">
-            <MagneticButton href="mailto:hello@shift9.dev">
-              hello@shift9.dev
+            <MagneticButton href="mailto:shift9.dev@gmail.com">
+              shift9.dev@gmail.com
             </MagneticButton>
             <MagneticButton
               href="https://github.com/shift9-studio"

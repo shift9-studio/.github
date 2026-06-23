@@ -6,7 +6,7 @@
 This is the unified codebase from the [System Architecture Blueprint](../docs/BLUEPRINT.md).
 Phase 2 shipped the **foundation packages + the `shift9.dev` flagship**; Phase 3 adds
 the **`just-a-pinch` product** and the **generated GitHub org profile** (`../profile/`),
-with the product's Daily Board wired to **live Supabase content** and a Vercel deploy
+with the product's recipe collection wired to **live Supabase content** and a Vercel deploy
 runbook ([`DEPLOY.md`](./DEPLOY.md)).
 
 ```
@@ -54,7 +54,7 @@ single shared React across the workspace.
 
 - ✅ `@shift9/theme`, `@shift9/ui`, `@shift9/motion`, `@shift9/data`
 - ✅ `apps/shift9-dev` — builds clean, type-checks, prerenders static
-- ✅ `apps/just-a-pinch` — warm-accent landing; **live Daily Board from Supabase** (`featured_recipes`, 141 rows), static fallback, ISR hourly
+- ✅ `apps/just-a-pinch` — warm-accent landing for the recipe organizer + cooking app; **featured recipes from Supabase** (`featured_recipes`, 141 rows), static fallback, ISR hourly
 - ✅ `../profile/README.md` — generated GitHub org page (branded animated SVG, themed)
 - ✅ Supabase wired — existing `Just-a-Pinch` project, public read-only key, RLS-protected
 - ✅ [`DEPLOY.md`](./DEPLOY.md) — turnkey Vercel runbook for both apps

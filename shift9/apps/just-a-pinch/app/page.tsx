@@ -11,8 +11,8 @@ import { getFeaturedBoard } from "@shift9/data";
 import { Reveal } from "./_components/Reveal";
 import { board as fallbackBoard } from "@/lib/menu-data";
 
-/* ISR — re-fetch the live featured board hourly (blueprint §5.3). The page
-   stays static + instant; content refreshes without a redeploy. */
+/* ISR — refresh the featured recipes hourly. The page stays static + instant;
+   the showcase updates without a redeploy. */
 export const revalidate = 3600;
 
 /* Warm re-skin of the shared dither hero — saffron resolving to paprika.
@@ -26,26 +26,26 @@ const warm: DitherPalette = {
 const steps = [
   {
     id: "01",
-    title: "Stock",
-    body: "Tell us what's in the pantry — or just snap a photo. Just a Pinch remembers, so you never buy the cumin you already own again.",
+    title: "Save",
+    body: "Clip a recipe from a link, snap a photo, or type your own. It all lands in one tidy place — no more lost screenshots and seventeen open tabs.",
   },
   {
     id: "02",
-    title: "Suggest",
-    body: "The engine matches real recipes to your ingredients, your time, and tonight's craving — then swaps anything you're missing.",
+    title: "Organize",
+    body: "Tag, sort, and search by ingredient, cuisine, or craving. The recipe you're after is two taps away, not buried in your camera roll.",
   },
   {
     id: "03",
     title: "Cook",
-    body: "Step-by-step, scaled to your servings, timed to your night. No ten-paragraph life story. Just dinner, handled.",
+    body: "Step-by-step cook mode, scaled to your servings and timed to your night. No ten-paragraph life story. Just dinner, handled.",
   },
 ];
 
 const features = [
   {
-    k: "pantry-aware",
-    t: "Pantry-aware",
-    b: "Recipes built from what you already have. Less waste, fewer midnight grocery runs.",
+    k: "one-place",
+    t: "All in one place",
+    b: "Every recipe — links, photos, screenshots, your own — in a single searchable home you'll actually keep using.",
   },
   {
     k: "smart-swaps",
@@ -58,14 +58,14 @@ const features = [
     b: "One quiet dinner or a full table — quantities and timings recalculate themselves.",
   },
   {
-    k: "fresh-daily",
-    t: "Fresh daily",
-    b: "A new board every morning, seeded from Supabase. There's always something to cook.",
+    k: "cook-mode",
+    t: "Cook mode",
+    b: "Hands-free, step-by-step guidance that holds your place and times each stage. Just you and the stove.",
   },
 ];
 
 export default async function Home() {
-  // Real featured recipes from Supabase; static seed if it's not configured.
+  // A sample of featured recipes from Supabase; static seed if not configured.
   const board = (await getFeaturedBoard(6)) ?? fallbackBoard;
 
   return (
@@ -80,22 +80,24 @@ export default async function Home() {
         </div>
 
         <div className="mx-auto w-full max-w-[84rem]">
-          <MonoLabel className="mb-8">JUST A PINCH // SMART RECIPES</MonoLabel>
+          <MonoLabel className="mb-8">
+            JUST A PINCH // RECIPE ORGANIZER + COOKING
+          </MonoLabel>
 
           <ProximityText
             as="h1"
             className="text-display uppercase tracking-[-0.02em] text-ink"
           >
-            Cook anything.
+            Every recipe.
             <br />
-            <span className="text-signal">Waste nothing.</span>
+            <span className="text-signal">Finally cooked.</span>
           </ProximityText>
 
           <p className="mt-8 max-w-xl text-body leading-relaxed text-muted">
-            Just a Pinch reads your pantry, your taste, and your clock — then
-            hands you the recipe you&apos;ll{" "}
-            <span className="text-ink">actually</span> make tonight. Smart
-            substitutions, scaled to taste, zero guesswork.
+            Just a Pinch keeps every recipe you love in one place — then walks
+            you through cooking it. Scaled to your servings, with smart swaps
+            when you&apos;re missing something. The recipes you save are the
+            ones you&apos;ll <span className="text-ink">actually</span> make.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -109,7 +111,7 @@ export default async function Home() {
         <div className="absolute bottom-10 left-6 hidden sm:left-10 sm:block">
           <MonoLabel marker={false}>
             <span className="text-signal">↓</span>&nbsp;&nbsp;scroll //{" "}
-            {board.length} dishes on today&apos;s board
+            {board.length} recipes in the collection
           </MonoLabel>
         </div>
       </section>
@@ -123,8 +125,8 @@ export default async function Home() {
               className="font-display text-h2 leading-[1.05] text-ink"
               style={{ fontVariationSettings: '"wght" 580' }}
             >
-              Most recipe apps bury you in ingredients you don&apos;t have. We
-              start with what&apos;s already in your kitchen —{" "}
+              Your recipes shouldn&apos;t live in screenshots, bookmarks, and
+              tabs you&apos;ll never find again. Keep them in one place —{" "}
               <span className="text-pulse">and a pinch of taste.</span>
             </p>
           </Reveal>
@@ -158,18 +160,18 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ───────────────────────── DAILY BOARD ────────────────────── */}
+      {/* ─────────────────────── RECIPE COLLECTION ────────────────── */}
       <section id="board" className="scroll-mt-16 px-6 py-24 sm:px-10">
         <div className="mx-auto max-w-[84rem]">
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <div>
-              <MonoLabel className="mb-4">// today&apos;s board</MonoLabel>
+              <MonoLabel className="mb-4">// the collection</MonoLabel>
               <ProximityText as="h2" className="text-h2 text-ink">
-                Seeded fresh this morning
+                A taste of what&apos;s inside
               </ProximityText>
             </div>
             <MonoLabel marker={false} className="text-signal">
-              [ {board.length} dishes ]
+              [ {board.length} recipes ]
             </MonoLabel>
           </div>
           <WorkWall projects={board} />
@@ -223,7 +225,7 @@ export default async function Home() {
             Pinch lands — no spam, just a heads-up worth opening.
           </p>
           <div className="mt-12 flex flex-wrap items-center gap-4">
-            <MagneticButton href="mailto:hello@shift9.dev?subject=Just%20a%20Pinch%20waitlist">
+            <MagneticButton href="mailto:shift9.dev@gmail.com?subject=Just%20a%20Pinch%20waitlist">
               Join the waitlist
             </MagneticButton>
             <MagneticButton href="https://shift9.dev" variant="ghost">

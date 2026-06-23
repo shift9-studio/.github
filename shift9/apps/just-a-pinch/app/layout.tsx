@@ -20,14 +20,14 @@ const mono = Martian_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Just a Pinch — Smart Recipes & Cooking",
+  title: "Just a Pinch — Smart Recipe Organizer & Cooking App",
   description:
-    "Just a Pinch reads your pantry, your taste, and your clock, then hands you the recipe you'll actually make. Smart substitutions, scaled to taste.",
+    "Just a Pinch keeps every recipe you love in one place, then walks you through cooking it — scaled to your servings, with smart swaps when you're missing something.",
   metadataBase: new URL("https://shift9.dev"),
   openGraph: {
-    title: "Just a Pinch — Smart Recipes & Cooking",
+    title: "Just a Pinch — Smart Recipe Organizer & Cooking App",
     description:
-      "Cook anything. Waste nothing. Smart recipes that adapt to your pantry, your taste, and your time.",
+      "Every recipe in one place. Guided, step-by-step cooking, scaled to taste, with smart swaps when you're missing an ingredient.",
     type: "website",
   },
 };

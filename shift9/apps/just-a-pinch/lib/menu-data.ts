@@ -1,10 +1,10 @@
 import type { Project } from "@shift9/ui";
 
 /**
- * "The Daily Board" reuses the studio's WorkWall — recipes mapped onto the
+ * The recipe collection reuses the studio's WorkWall — recipes mapped onto the
  * shared `Project` shape (title → dish, role → cuisine, year → time,
- * tags → key ingredients). In production these stream from the same Supabase
- * content source that seeds the app each morning; here they're static seed.
+ * tags → key ingredients). In production these come from the same Supabase
+ * content source as the app's featured recipes; here they're a static seed.
  */
 export const board: Project[] = [
   {
