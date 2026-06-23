@@ -228,7 +228,7 @@ export default async function Home() {
             <MagneticButton href="mailto:shift9.dev@gmail.com?subject=Just%20a%20Pinch%20waitlist">
               Join the waitlist
             </MagneticButton>
-            <MagneticButton href="https://shift9.dev" variant="ghost">
+            <MagneticButton href="https://github.com/shift9-studio" variant="ghost">
               By Shift-9 ↗
             </MagneticButton>
           </div>
