@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/s9-banner.svg" alt="SHIFT-9 — Design + Engineering Studio" width="100%">
+  <img src="https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260623_162846_a3113284-c6d2-42f2-87df-6dcde2b3adc5.png" alt="SHIFT-9 — Design + Engineering Studio" width="100%">
 </p>
 
 <p align="center">
