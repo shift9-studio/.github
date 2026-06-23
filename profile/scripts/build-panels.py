@@ -80,8 +80,8 @@ def chip(x, y, w, label, color):
 svg("intro.svg", 1200, 300, "X:001 · Y:STUDIO", "\n".join([
     t(60, 70, "// SHIFT-9 — DESIGN + ENGINEERING STUDIO", 17, SIGNAL, "700", MONO, "4"),
     t(58, 150, "WE DESIGN " + '<tspan fill="' + SIGNAL + '">&amp; SHIP.</tspan>', 64, INK, "900", SANS, "1"),
-    t(60, 196, "Brands, products, and the systems that run them — clean, optimized,", 21, MUTED, "400", SANS),
-    t(60, 224, "and impossible to ignore. No filler, no fluff.", 21, MUTED, "400", SANS),
+    t(60, 196, "A design and engineering studio. We build brands, websites, and apps —", 21, MUTED, "400", SANS),
+    t(60, 224, "and the systems that keep them running.", 21, MUTED, "400", SANS),
     chip(60, 250, 168, "shift9.dev  ↗", SIGNAL),
     chip(244, 250, 260, "DESIGN + ENGINEERING", PULSE),
     chip(520, 250, 132, "SHIPPING", SIGNAL),
@@ -89,8 +89,8 @@ svg("intro.svg", 1200, 300, "X:001 · Y:STUDIO", "\n".join([
 
 # ── LEAD line ───────────────────────────────────────────────────────────────
 svg("lead.svg", 1200, 130, "X:002 · Y:SYSTEM", "\n".join([
-    t(60, 58, "One design system across every surface — " + f'<tspan fill="{SIGNAL}">one theme, three faces.</tspan>', 24, INK, "700", SANS),
-    t(60, 92, "Edit a token once, and the studio site, the product, and this page all move together.", 19, MUTED, "400", SANS),
+    t(60, 58, "One design system runs through everything we make — " + f'<tspan fill="{SIGNAL}">site, apps, this page.</tspan>', 24, INK, "700", SANS),
+    t(60, 92, "The same colors, type, and motion everywhere, so all our work feels like one studio.", 19, MUTED, "400", SANS),
 ]))
 
 
@@ -104,14 +104,14 @@ def row(name, coord, title, tcolor, l1, l2):
 
 
 row("row-pinch.svg", "Y:JUST-A-PINCH", "Just a Pinch", SIGNAL,
-    "A smart recipe organizer &amp; cooking app. Keep every recipe you love in one place,",
-    "then cook it — guided steps, scaled to your servings, smart swaps when you're short.")
+    "A recipe organizer and cooking app. Save every recipe in one place, then cook it",
+    "with guided steps, adjustable serving sizes, and swaps when you're missing something.")
 row("row-9dev.svg", "Y:SHIFT9.DEV", "shift9.dev", SIGNAL,
-    "The flagship studio site. Cyber-brutalist, kinetic, and engineered down to the",
-    "dither — a live, working demo of how we build.")
+    "Our studio website — the work we've done, what we do, and how to start a project.",
+    "It's also a live example of the kind of sites we build.")
 row("row-instrument.svg", "Y:INSTRUMENT", "The INSTRUMENT design system", PULSE,
-    "Our in-house design system — the tokens, motion springs, and signature components",
-    "every Shift-9 surface inherits. One theme, three faces.")
+    "Our design system: the shared colors, type, motion, and UI components we reuse",
+    "across every project so everything we ship feels like one studio.")
 
 # ── STACK (terminal-style) ──────────────────────────────────────────────────
 stack_lines = [
@@ -139,9 +139,9 @@ svg("stack.svg", 1200, y + 6, "X:003 · Y:STACK", "\n".join(body))
 
 # ── CURRENTLY SHIPPING ──────────────────────────────────────────────────────
 ship = [
-    ("just-a-pinch", "— a recipe organizer + cooking app: save what you love, then cook it."),
-    ("shift9.dev", "— the studio site, live and kinetic."),
-    ("the design system", "— tokens, springs, and the dither field, packaged and reused."),
+    ("just-a-pinch", "— the recipe organizer and cooking app."),
+    ("shift9.dev", "— the studio website."),
+    ("INSTRUMENT", "— the design system we reuse across every project."),
 ]
 body, y = [], 62
 for code, rest in ship:

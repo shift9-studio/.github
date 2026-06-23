@@ -30,6 +30,6 @@
     </g>
     <text x="22" y="26" fill="#9aa7b8" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="12" letter-spacing="3">X:002 · Y:SYSTEM</text>
   </g>
-    <text x="60" y="58" fill="#e6edf3" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="24" font-weight="700" letter-spacing="0" text-anchor="start">One design system across every surface — <tspan fill="#22d3ee">one theme, three faces.</tspan></text>
-    <text x="60" y="92" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">Edit a token once, and the studio site, the product, and this page all move together.</text>
+    <text x="60" y="58" fill="#e6edf3" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="24" font-weight="700" letter-spacing="0" text-anchor="start">One design system runs through everything we make — <tspan fill="#22d3ee">site, apps, this page.</tspan></text>
+    <text x="60" y="92" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">The same colors, type, and motion everywhere, so all our work feels like one studio.</text>
 </svg>

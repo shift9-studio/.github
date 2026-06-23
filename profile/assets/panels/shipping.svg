@@ -32,11 +32,11 @@
   </g>
     <text x="60" y="62" fill="#22d3ee" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">▸</text>
     <text x="92" y="62" fill="#e6edf3" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">just-a-pinch</text>
-    <text x="250" y="62" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— a recipe organizer + cooking app: save what you love, then cook it.</text>
+    <text x="250" y="62" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— the recipe organizer and cooking app.</text>
     <text x="60" y="114" fill="#22d3ee" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">▸</text>
     <text x="92" y="114" fill="#e6edf3" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">shift9.dev</text>
-    <text x="226" y="114" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— the studio site, live and kinetic.</text>
+    <text x="226" y="114" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— the studio website.</text>
     <text x="60" y="166" fill="#22d3ee" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">▸</text>
-    <text x="92" y="166" fill="#e6edf3" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">the design system</text>
-    <text x="310" y="166" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— tokens, springs, and the dither field, packaged and reused.</text>
+    <text x="92" y="166" fill="#e6edf3" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">INSTRUMENT</text>
+    <text x="226" y="166" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— the design system we reuse across every project.</text>
 </svg>

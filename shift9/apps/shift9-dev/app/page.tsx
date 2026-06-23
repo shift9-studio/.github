@@ -13,12 +13,12 @@ const capabilities = [
   {
     id: "01",
     title: "Design",
-    body: "Brand systems, identity, and interface design with a hard structural edge. Tokens first — vibes always.",
+    body: "Brand systems, identity, and interface design — built on a real design system, so the look stays consistent everywhere.",
   },
   {
     id: "02",
     title: "Engineering",
-    body: "Production apps and games — Next.js, Python, Supabase. Clean, optimized, and shipped to the store.",
+    body: "Production web apps and games — Next.js, Python, Supabase — built to ship and to maintain.",
   },
   {
     id: "03",
@@ -53,8 +53,8 @@ export default function Home() {
 
           <p className="mt-8 max-w-xl text-body leading-relaxed text-muted">
             Shift-9 is a design <span className="text-ink">+</span> engineering
-            studio. We build brands, products, and the systems that run them —
-            clean, optimized, and impossible to ignore.
+            studio. We build brands, websites, and apps — and the systems that
+            keep them running.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -82,10 +82,10 @@ export default function Home() {
               className="font-display text-h2 uppercase leading-[1.05] text-ink"
               style={{ fontVariationSettings: '"wght" 600, "wdth" 100' }}
             >
-              Code execution in motion. We make software that looks engineered
-              and feels effortless —{" "}
-              <span className="text-pulse">no filler, no fluff,</span> just sharp
-              work that ships.
+              We design and build the whole thing — brand, product, and the
+              code that runs it —{" "}
+              <span className="text-pulse">then ship it</span> and keep it
+              running.
             </p>
           </Reveal>
         </div>
