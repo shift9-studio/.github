@@ -18,11 +18,35 @@
 We run one design system across every surface — **one theme, three faces.** Edit a
 token once, and the studio site, the product, and this very page all move together.
 
-| | Surface | What it is |
-|---|---|---|
-| 🌶️ | **[Just a Pinch](https://shift9.dev)** | Smart recipes & cooking. Adapts to your pantry, your taste, your clock — built on Python + Supabase with daily content seeding. |
-| ⚡ | **[shift9.dev](https://shift9.dev)** | The flagship studio site. Cyber-brutalist, kinetic, and engineered down to the dither — a working demo of how we build. |
-| ◳ | **[The INSTRUMENT system](https://github.com/shift9-studio)** | The shared design language: tokens, motion springs, and a WebGL signature that every Shift-9 product inherits. |
+<table>
+  <tr>
+    <td width="120" align="center">
+      <img src="./assets/shift9_pinch_icon.png" width="96" height="96" alt="Just a Pinch"><br>
+    </td>
+    <td>
+      <strong><a href="https://shift9.dev">Just a Pinch</a></strong><br>
+      Smart recipes &amp; cooking. Adapts to your pantry, your taste, your clock — built on Python + Supabase with daily content seeding.
+    </td>
+  </tr>
+  <tr>
+    <td width="120" align="center">
+      <img src="./assets/shift9_9dev_icon.png" width="96" height="96" alt="shift9.dev"><br>
+    </td>
+    <td>
+      <strong><a href="https://shift9.dev">shift9.dev</a></strong><br>
+      The flagship studio site. Cyber-brutalist, kinetic, and engineered down to the dither — a working demo of how we build.
+    </td>
+  </tr>
+  <tr>
+    <td width="120" align="center">
+      <img src="./assets/shift9_instrument_icon.png" width="96" height="96" alt="The INSTRUMENT system"><br>
+    </td>
+    <td>
+      <strong><a href="https://github.com/shift9-studio">The INSTRUMENT system</a></strong><br>
+      The shared design language: tokens, motion springs, and a WebGL signature that every Shift-9 product inherits.
+    </td>
+  </tr>
+</table>
 
 ### `// the stack`
 
