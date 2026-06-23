@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/s9-banner.png" alt="SHIFT-9 — Design + Engineering Studio" width="100%">
+  <img src="./assets/s9-banner.gif" alt="SHIFT-9 — Design + Engineering Studio" width="100%">
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@ token once, and the studio site, the product, and this very page all move togeth
 <table>
   <tr>
     <td width="120" align="center">
-      <img src="./assets/icon-pinch.svg" alt="Just a Pinch" width="96" height="96"><br>
+      <img src="./assets/shift9_pinch_icon.gif" alt="Just a Pinch" width="96" height="96"><br>
     </td>
     <td>
       <strong><a href="https://shift9.dev">Just a Pinch</a></strong><br>
@@ -32,7 +32,7 @@ token once, and the studio site, the product, and this very page all move togeth
   </tr>
   <tr>
     <td width="120" align="center">
-      <img src="./assets/icon-9dev.svg" alt="shift9.dev" width="96" height="96"><br>
+      <img src="./assets/shift9_9dev_icon.gif" alt="shift9.dev" width="96" height="96"><br>
     </td>
     <td>
       <strong><a href="https://shift9.dev">shift9.dev</a></strong><br>
@@ -41,7 +41,7 @@ token once, and the studio site, the product, and this very page all move togeth
   </tr>
   <tr>
     <td width="120" align="center">
-      <img src="./assets/icon-instrument.svg" alt="The INSTRUMENT design system" width="96" height="96"><br>
+      <img src="./assets/shift9_instrument_icon.gif" alt="The INSTRUMENT design system" width="96" height="96"><br>
     </td>
     <td>
       <strong><a href="https://github.com/shift9-studio/.github/tree/main/shift9/packages">The INSTRUMENT design system</a></strong><br>
