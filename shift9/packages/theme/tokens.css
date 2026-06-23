@@ -1,0 +1,46 @@
+/* =====================================================================
+   @shift9/theme — TOKENS  ·  single source of truth
+   Primitives → semantic aliases. Consumed by every surface
+   (shift9.dev, just-a-pinch, and the GitHub SVG generator).
+   ===================================================================== */
+:root {
+  /* ── Primitives · palette ─────────────────────────────────────── */
+  --s9-void:        #0f172a;   /* base background — "the void"        */
+  --s9-void-2:      #0b1120;   /* deeper well                         */
+  --s9-surface:     #131c31;   /* raised panel                        */
+  --s9-signal:      #22d3ee;   /* cyan accent — "signal"              */
+  --s9-pulse:       #8b5cf6;   /* violet accent — "pulse"             */
+  --s9-ink:         #e2e8f0;   /* primary text (AA+ on void)          */
+  --s9-ink-dim:     #64748b;   /* secondary / mono data labels        */
+
+  /* derived hairlines & glows (oklab mixes keep hue honest) */
+  --s9-line:        color-mix(in oklab, var(--s9-signal) 16%, transparent);
+  --s9-line-2:      color-mix(in oklab, var(--s9-pulse) 13%, transparent);
+  --s9-signal-soft: color-mix(in oklab, var(--s9-signal) 22%, transparent);
+  --s9-pulse-soft:  color-mix(in oklab, var(--s9-pulse) 22%, transparent);
+
+  /* ── Typography ───────────────────────────────────────────────── */
+  /* next/font injects the source families into *-src vars; we wrap
+     them with resilient fallbacks so the cascade never collapses.   */
+  --s9-font-display: var(--font-display-src, "Anybody"), "Arial Narrow", system-ui, sans-serif;
+  --s9-font-mono:    var(--font-mono-src, "Martian Mono"), ui-monospace, "SFMono-Regular", monospace;
+
+  /* fluid scale — clamp() everywhere, no fixed px headings */
+  --s9-text-mono:    clamp(0.72rem, 0.68rem + 0.18vw, 0.82rem);
+  --s9-text-body:    clamp(1rem, 0.95rem + 0.25vw, 1.13rem);
+  --s9-text-lead:    clamp(1.2rem, 1.05rem + 0.6vw, 1.6rem);
+  --s9-text-h2:      clamp(1.9rem, 1.3rem + 2.6vw, 3.4rem);
+  --s9-text-display: clamp(3rem, 1.1rem + 8.2vw, 9.5rem);
+
+  /* ── Motion ───────────────────────────────────────────────────── */
+  --s9-dur-premium:  300ms;                          /* per spec        */
+  --s9-ease-premium: cubic-bezier(0.22, 1, 0.36, 1); /* house settle    */
+
+  /* ── Structure ────────────────────────────────────────────────── */
+  --s9-grid-unit: 8px;
+  --s9-gutter:    clamp(1rem, 0.5rem + 2vw, 2.5rem);
+  --s9-maxw:      84rem;
+
+  /* ── Focus ─ high-contrast, never removed ─────────────────────── */
+  --s9-ring: 0 0 0 2px var(--s9-void), 0 0 0 4px var(--s9-signal);
+}

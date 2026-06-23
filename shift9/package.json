@@ -1,0 +1,19 @@
+{
+  "name": "shift9",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Shift-9 — unified digital ecosystem monorepo (theme · ui · motion · apps).",
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "dev:web": "pnpm -C apps/shift9-dev dev",
+    "build:web": "pnpm -C apps/shift9-dev build"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,65 @@
+/* =====================================================================
+   @shift9/theme — TAILWIND v4 MAPPING
+   Import AFTER `@import "tailwindcss";` in each app's globals.css:
+       @import "tailwindcss";
+       @import "@shift9/theme/theme.css";
+   ===================================================================== */
+@import "./tokens.css";
+
+/* `inline` → utilities reference the --s9-* vars directly (no re-decl). */
+@theme inline {
+  --color-void:    var(--s9-void);
+  --color-well:    var(--s9-void-2);
+  --color-surface: var(--s9-surface);
+  --color-ink:     var(--s9-ink);
+  --color-muted:   var(--s9-ink-dim);
+  --color-signal:  var(--s9-signal);
+  --color-pulse:   var(--s9-pulse);
+  --color-line:    var(--s9-line);
+  --color-line-2:  var(--s9-line-2);
+
+  --font-display: var(--s9-font-display);
+  --font-mono:    var(--s9-font-mono);
+
+  --text-mono:    var(--s9-text-mono);
+  --text-body:    var(--s9-text-body);
+  --text-lead:    var(--s9-text-lead);
+  --text-h2:      var(--s9-text-h2);
+  --text-display: var(--s9-text-display);
+
+  --ease-premium: var(--s9-ease-premium);
+}
+
+/* The house transition — one utility, used on every hover/focus state. */
+@utility transition-premium {
+  transition-property: color, background-color, border-color, box-shadow,
+                       transform, opacity, font-variation-settings, filter;
+  transition-duration: var(--s9-dur-premium);
+  transition-timing-function: var(--s9-ease-premium);
+}
+
+/* Brutalist hairline helpers. */
+@utility grid-line {
+  background-image: linear-gradient(var(--s9-line) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--s9-line) 1px, transparent 1px);
+  background-size: calc(var(--s9-grid-unit) * 5) calc(var(--s9-grid-unit) * 5);
+}
+
+@layer base {
+  /* High-contrast focus — restyle the outline, never remove it. */
+  :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+    outline: none;
+    box-shadow: var(--s9-ring);
+    border-radius: 1px;
+  }
+
+  /* Global reduced-motion contract — one switch, whole system. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@import "@shift9/theme/theme.css";
+
+/* Tailwind v4 auto-detects sources in this app; also scan the shared UI
+   package so its utility classes are generated. */
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--s9-void);
+    color: var(--s9-ink);
+    font-family: var(--s9-font-mono);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--s9-signal);
+    color: var(--s9-void);
+  }
+}
