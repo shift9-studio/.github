@@ -4,12 +4,16 @@ import * as React from "react";
 import { useReducedMotionSafe } from "@shift9/motion";
 
 /* Fragment shader: fbm field + interleaved-gradient ordered dithering,
-   cyan→violet, warped toward the cursor. WebGL1-safe (no dynamic array
-   indexing), so it compiles broadly. */
+   base→signal→pulse, warped toward the cursor. Palette arrives as uniforms
+   so any surface can re-skin the field without touching the shader.
+   WebGL1-safe (no dynamic array indexing), so it compiles broadly. */
 const FRAG = `precision highp float;
 uniform vec2 u_res;
 uniform float u_time;
 uniform vec2 u_mouse;
+uniform vec3 u_base;
+uniform vec3 u_signal;
+uniform vec3 u_pulse;
 float hash(vec2 p){ p = fract(p * vec2(123.34, 456.21)); p += dot(p, p + 45.32); return fract(p.x * p.y); }
 float noise(vec2 p){
   vec2 i = floor(p), f = fract(p);
@@ -33,26 +37,62 @@ void main(){
   float intensity = smoothstep(0.36, 0.96, field);
   float th = ign(gl_FragCoord.xy);
   float dots = step(th, intensity);
-  vec3 base = vec3(0.059, 0.090, 0.165);
-  vec3 signal = vec3(0.133, 0.827, 0.933);
-  vec3 pulse = vec3(0.545, 0.361, 0.965);
-  vec3 col = mix(signal, pulse, clamp(length(p - m) * 0.9, 0.0, 1.0));
-  vec3 outc = mix(base, col, dots * (0.32 + 0.68 * intensity));
+  vec3 col = mix(u_signal, u_pulse, clamp(length(p - m) * 0.9, 0.0, 1.0));
+  vec3 outc = mix(u_base, col, dots * (0.32 + 0.68 * intensity));
   outc *= 1.0 - 0.22 * length(uv - 0.5);
   gl_FragColor = vec4(outc, 1.0);
 }`;
 
 const VERT = `attribute vec2 a; void main(){ gl_Position = vec4(a, 0.0, 1.0); }`;
 
+export interface DitherPalette {
+  /** base background colour (hex) */
+  base: string;
+  /** primary accent the dither resolves to away from the cursor (hex) */
+  signal: string;
+  /** secondary accent it warps toward at the cursor (hex) */
+  pulse: string;
+}
+
+/** The default cool palette — keeps `shift9.dev` cyan/violet with no props. */
+const DEFAULT_PALETTE: DitherPalette = {
+  base: "#0f172a",
+  signal: "#22d3ee",
+  pulse: "#8b5cf6",
+};
+
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.replace("#", "");
+  const full =
+    h.length === 3
+      ? h
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : h;
+  const n = parseInt(full, 16);
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+}
+
 /**
  * The Dither Field — a real-time monochrome-dither shader reacting to the
  * cursor. Pauses offscreen, renders a single static frame under reduced
  * motion, and falls back to a branded CSS gradient if WebGL is absent.
+ *
+ * Pass a `palette` to re-skin it per surface (e.g. the warm Just-a-Pinch
+ * variant); omit it and you get the cool studio palette.
  */
-export function DitherField({ className }: { className?: string }) {
+export function DitherField({
+  className,
+  palette = DEFAULT_PALETTE,
+}: {
+  className?: string;
+  palette?: DitherPalette;
+}) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const reduced = useReducedMotionSafe();
   const [failed, setFailed] = React.useState(false);
+  const { base, signal, pulse } = palette;
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -114,6 +154,11 @@ export function DitherField({ className }: { className?: string }) {
     const uTime = gl.getUniformLocation(prog, "u_time");
     const uMouse = gl.getUniformLocation(prog, "u_mouse");
 
+    // Palette is constant per mount — set the colour uniforms once.
+    gl.uniform3fv(gl.getUniformLocation(prog, "u_base"), hexToRgb(base));
+    gl.uniform3fv(gl.getUniformLocation(prog, "u_signal"), hexToRgb(signal));
+    gl.uniform3fv(gl.getUniformLocation(prog, "u_pulse"), hexToRgb(pulse));
+
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const mouse = { x: 0, y: 0 };
     let raf = 0;
@@ -171,7 +216,7 @@ export function DitherField({ className }: { className?: string }) {
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
     };
-  }, [reduced]);
+  }, [reduced, base, signal, pulse]);
 
   if (failed) {
     return (

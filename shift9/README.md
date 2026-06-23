@@ -4,24 +4,26 @@
 > `shift9.dev` (flagship) · `just-a-pinch` (product) · GitHub profile (generated).
 
 This is the unified codebase from the [System Architecture Blueprint](../docs/BLUEPRINT.md).
-Phase 2 ships the **foundation packages + the `shift9.dev` flagship**.
+Phase 2 shipped the **foundation packages + the `shift9.dev` flagship**; Phase 3 adds
+the **`just-a-pinch` product** and the **generated GitHub org profile** (`../profile/`).
 
 ```
 shift9/
 ├── apps/
-│   └── shift9-dev/        # ✅ flagship studio site (Next.js 16 · App Router · Tailwind v4)
+│   ├── shift9-dev/        # ✅ flagship studio site (Next.js 16 · App Router · Tailwind v4)
+│   └── just-a-pinch/      # ✅ product landing — warm-accent surface of the same system
 ├── packages/
 │   ├── theme/             # @shift9/theme  — design tokens (CSS vars + Tailwind v4 @theme)
 │   ├── ui/                # @shift9/ui     — DitherField, WorkWall, GridFrame, MagneticButton…
 │   └── motion/            # @shift9/motion — springs, useMagnetic, useProximityWeight, a11y gate
-└── (just-a-pinch + github-profile land in Phase 3)
+└── (../profile = generated GitHub org page · Supabase wiring + deploy next)
 ```
 
 ## The INSTRUMENT system
 
 | Piece | Where | What |
 |---|---|---|
-| **Dither Field** | `ui/DitherField.tsx` | WebGL Bayer-dither shader reacting to the cursor; static CSS fallback + reduced-motion single-frame. |
+| **Dither Field** | `ui/DitherField.tsx` | WebGL Bayer-dither shader reacting to the cursor; **palette-driven** (re-skins per surface via a `palette` prop), static CSS fallback + reduced-motion single-frame. |
 | **Proximity Weight** | `motion/useProximityWeight.ts` | Variable-font `wght`/`wdth` flex toward the cursor (rAF-smoothed). |
 | **Living Work Wall** | `ui/WorkWall.tsx` | Skewed, magnetic brutalist tiles. `motion-safe` only — flat for reduced motion. |
 | **Magnetic UI** | `motion/useMagnetic.ts` | Spring-physics pull on primary CTAs. |
@@ -37,8 +39,9 @@ and a global `prefers-reduced-motion` contract. Edit a token once → every surf
 
 ```bash
 pnpm install
-pnpm --filter shift9-dev dev     # http://localhost:3000
-pnpm --filter shift9-dev build   # production build
+pnpm --filter shift9-dev dev      # studio site   → http://localhost:3000
+pnpm --filter just-a-pinch dev    # product site  → http://localhost:3000
+pnpm --filter shift9-dev build    # production build (either app)
 ```
 
 Requires Node ≥ 20 and pnpm ≥ 10. The flat `node-linker=hoisted` (`.npmrc`) keeps a
@@ -48,4 +51,6 @@ single shared React across the workspace.
 
 - ✅ `@shift9/theme`, `@shift9/ui`, `@shift9/motion`
 - ✅ `apps/shift9-dev` — builds clean, type-checks, prerenders static
-- ⏳ Phase 3 — `just-a-pinch`, generated GitHub profile, Supabase wiring, deploy
+- ✅ `apps/just-a-pinch` — warm-accent product landing, builds clean, prerenders static
+- ✅ `../profile/README.md` — generated GitHub org page (branded animated SVG, themed)
+- ⏳ Supabase wiring + Vercel deploy

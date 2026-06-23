@@ -1,0 +1,55 @@
+@import "tailwindcss";
+@import "@shift9/theme/theme.css";
+
+/* Tailwind v4 auto-detects sources in this app; also scan the shared UI
+   package so its utility classes are generated. */
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+
+/* =====================================================================
+   WARM-ACCENT OVERRIDE — the "Just a Pinch" surface of one INSTRUMENT system.
+   Re-point the semantic --s9-* tokens and every shared component (DitherField
+   fallback, MagneticButton, WorkWall, focus ring, selection…) re-skins for
+   free. Kept UNLAYERED so it wins over @shift9/theme's token defaults by
+   source order (unlayered + later = highest priority).
+   ===================================================================== */
+:root {
+  --s9-void:    #1b1410; /* warm espresso base                */
+  --s9-void-2:  #130d0a; /* deeper well                       */
+  --s9-surface: #241a13; /* raised panel                      */
+  --s9-signal:  #f5a524; /* saffron — primary accent          */
+  --s9-pulse:   #e8633a; /* paprika — secondary accent        */
+  --s9-ink:     #f6ead8; /* warm cream text                   */
+  --s9-ink-dim: #a99780; /* taupe — mono data labels          */
+
+  /* re-derive hairlines & glows from the warm accents */
+  --s9-line:        color-mix(in oklab, var(--s9-signal) 18%, transparent);
+  --s9-line-2:      color-mix(in oklab, var(--s9-pulse) 15%, transparent);
+  --s9-signal-soft: color-mix(in oklab, var(--s9-signal) 24%, transparent);
+  --s9-pulse-soft:  color-mix(in oklab, var(--s9-pulse) 24%, transparent);
+
+  /* warm display face for this surface; mono stays system-wide */
+  --s9-font-display: var(--font-display-src, "Fraunces"), "Georgia", serif;
+
+  /* a hair more focus contrast on the warm field */
+  --s9-ring: 0 0 0 2px var(--s9-void), 0 0 0 4px var(--s9-signal);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--s9-void);
+    color: var(--s9-ink);
+    font-family: var(--s9-font-mono);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--s9-signal);
+    color: var(--s9-void);
+  }
+}
