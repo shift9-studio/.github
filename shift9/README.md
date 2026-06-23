@@ -5,7 +5,9 @@
 
 This is the unified codebase from the [System Architecture Blueprint](../docs/BLUEPRINT.md).
 Phase 2 shipped the **foundation packages + the `shift9.dev` flagship**; Phase 3 adds
-the **`just-a-pinch` product** and the **generated GitHub org profile** (`../profile/`).
+the **`just-a-pinch` product** and the **generated GitHub org profile** (`../profile/`),
+with the product's Daily Board wired to **live Supabase content** and a Vercel deploy
+runbook ([`DEPLOY.md`](./DEPLOY.md)).
 
 ```
 shift9/
@@ -15,8 +17,9 @@ shift9/
 ├── packages/
 │   ├── theme/             # @shift9/theme  — design tokens (CSS vars + Tailwind v4 @theme)
 │   ├── ui/                # @shift9/ui     — DitherField, WorkWall, GridFrame, MagneticButton…
-│   └── motion/            # @shift9/motion — springs, useMagnetic, useProximityWeight, a11y gate
-└── (../profile = generated GitHub org page · Supabase wiring + deploy next)
+│   ├── motion/            # @shift9/motion — springs, useMagnetic, useProximityWeight, a11y gate
+│   └── data/              # @shift9/data   — typed Supabase client + queries (single content source)
+└── (../profile = generated GitHub org page · see ./DEPLOY.md for Vercel + Supabase)
 ```
 
 ## The INSTRUMENT system
@@ -49,8 +52,10 @@ single shared React across the workspace.
 
 ## Status
 
-- ✅ `@shift9/theme`, `@shift9/ui`, `@shift9/motion`
+- ✅ `@shift9/theme`, `@shift9/ui`, `@shift9/motion`, `@shift9/data`
 - ✅ `apps/shift9-dev` — builds clean, type-checks, prerenders static
-- ✅ `apps/just-a-pinch` — warm-accent product landing, builds clean, prerenders static
+- ✅ `apps/just-a-pinch` — warm-accent landing; **live Daily Board from Supabase** (`featured_recipes`, 141 rows), static fallback, ISR hourly
 - ✅ `../profile/README.md` — generated GitHub org page (branded animated SVG, themed)
-- ⏳ Supabase wiring + Vercel deploy
+- ✅ Supabase wired — existing `Just-a-Pinch` project, public read-only key, RLS-protected
+- ✅ [`DEPLOY.md`](./DEPLOY.md) — turnkey Vercel runbook for both apps
+- ⏳ Click-to-deploy on Vercel · merge → `main` · rename repo → `.github`

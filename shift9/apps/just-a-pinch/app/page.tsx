@@ -7,8 +7,13 @@ import {
   WorkWall,
   type DitherPalette,
 } from "@shift9/ui";
+import { getFeaturedBoard } from "@shift9/data";
 import { Reveal } from "./_components/Reveal";
-import { board } from "@/lib/menu-data";
+import { board as fallbackBoard } from "@/lib/menu-data";
+
+/* ISR — re-fetch the live featured board hourly (blueprint §5.3). The page
+   stays static + instant; content refreshes without a redeploy. */
+export const revalidate = 3600;
 
 /* Warm re-skin of the shared dither hero — saffron resolving to paprika.
    Same shader, different surface. */
@@ -59,7 +64,10 @@ const features = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  // Real featured recipes from Supabase; static seed if it's not configured.
+  const board = (await getFeaturedBoard(6)) ?? fallbackBoard;
+
   return (
     <main className="relative">
       <GridFrame label="JUST A PINCH // INSTRUMENT" coord="X:001 · Y:KITCHEN" />

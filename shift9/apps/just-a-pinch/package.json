@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@shift9/data": "workspace:*",
     "@shift9/motion": "workspace:*",
     "@shift9/theme": "workspace:*",
     "@shift9/ui": "workspace:*",
