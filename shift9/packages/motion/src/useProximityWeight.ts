@@ -25,10 +25,10 @@ export function useProximityWeight<T extends HTMLElement = HTMLHeadingElement>(
   const {
     minWeight = 260,
     maxWeight = 900,
-    minWidth = 78,
-    maxWidth = 124,
+    minWidth = 88,
+    maxWidth = 106,
     radius = 320,
-    ease = 0.12,
+    ease = 0.1,
   } = opts;
   const ref = React.useRef<T>(null);
   const reduced = useReducedMotionSafe();
@@ -62,7 +62,7 @@ export function useProximityWeight<T extends HTMLElement = HTMLHeadingElement>(
     const tick = () => {
       curW += (targetW - curW) * ease;
       curWd += (targetWd - curWd) * ease;
-      el.style.fontVariationSettings = `"wght" ${curW.toFixed(0)}, "wdth" ${curWd.toFixed(0)}`;
+      el.style.fontVariationSettings = `"wght" ${curW.toFixed(1)}, "wdth" ${curWd.toFixed(2)}`;
       raf = requestAnimationFrame(tick);
     };
 

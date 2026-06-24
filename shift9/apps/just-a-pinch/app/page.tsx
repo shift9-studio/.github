@@ -207,7 +207,10 @@ export default async function Home() {
       </section>
 
       {/* ─────────────────────────── CTA ──────────────────────────── */}
-      <section id="get" className="scroll-mt-16 px-6 py-28 sm:px-10">
+      <section
+        id="get"
+        className="scroll-mt-16 overflow-hidden px-6 py-28 sm:px-10"
+      >
         <div className="mx-auto max-w-[84rem]">
           <MonoLabel className="mb-8">// pull up a chair</MonoLabel>
           <ProximityText

@@ -24,7 +24,12 @@ export function ProximityText({
   const ref = useProximityWeight<HTMLElement>(opts);
   return React.createElement(
     as,
-    { ref, className: cn("font-display leading-[0.9]", className) },
+    {
+      ref,
+      // sm:whitespace-nowrap keeps each <br>-separated line on one line so the
+      // width-axis animation can't re-wrap the headline and shove siblings.
+      className: cn("font-display leading-[0.9] sm:whitespace-nowrap", className),
+    },
     children,
   );
 }
