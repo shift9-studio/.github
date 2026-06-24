@@ -82,7 +82,7 @@ svg("intro.svg", 1200, 300, "X:001 · Y:STUDIO", "\n".join([
     t(58, 150, "WE DESIGN " + '<tspan fill="' + SIGNAL + '">&amp; SHIP.</tspan>', 64, INK, "900", SANS, "1"),
     t(60, 196, "A design and engineering studio. We build brands, websites, and apps —", 21, MUTED, "400", SANS),
     t(60, 224, "and the systems that keep them running.", 21, MUTED, "400", SANS),
-    chip(60, 250, 168, "GitHub  ↗", SIGNAL),
+    chip(60, 250, 168, "shift9.dev  ↗", SIGNAL),
     chip(244, 250, 260, "DESIGN + ENGINEERING", PULSE),
     chip(520, 250, 132, "SHIPPING", SIGNAL),
 ]))
@@ -107,8 +107,8 @@ row("row-pinch.svg", "Y:JUST-A-PINCH", "Just a Pinch", SIGNAL,
     "A recipe organizer and cooking app. Save every recipe in one place, then cook it",
     "with guided steps, adjustable serving sizes, and swaps when you're missing something.")
 row("row-9dev.svg", "Y:SHIFT9.DEV", "shift9.dev", SIGNAL,
-    "Our studio site — in progress. It'll be the home for the work we've done,",
-    "what we do, and how to start a project.")
+    "Our studio site — the work we've done, what we do, and how to start a project.",
+    "It's also a live example of the kind of sites we build.")
 row("row-instrument.svg", "Y:INSTRUMENT", "The INSTRUMENT design system", PULSE,
     "Our design system: the shared colors, type, motion, and UI components we reuse",
     "across every project so everything we ship feels like one studio.")
@@ -140,7 +140,7 @@ svg("stack.svg", 1200, y + 6, "X:003 · Y:STACK", "\n".join(body))
 # ── CURRENTLY SHIPPING ──────────────────────────────────────────────────────
 ship = [
     ("just-a-pinch", "— the recipe organizer and cooking app."),
-    ("shift9.dev", "— the studio site (in progress)."),
+    ("shift9.dev", "— the studio site."),
     ("INSTRUMENT", "— the design system we reuse across every project."),
 ]
 body, y = [], 62

@@ -35,7 +35,7 @@
     <text x="272" y="62" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— the recipe organizer and cooking app.</text>
     <text x="60" y="114" fill="#22d3ee" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">▸</text>
     <text x="92" y="114" fill="#e6edf3" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">shift9.dev</text>
-    <text x="246" y="114" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— the studio site (in progress).</text>
+    <text x="246" y="114" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— the studio site.</text>
     <text x="60" y="166" fill="#22d3ee" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">▸</text>
     <text x="92" y="166" fill="#e6edf3" font-family="'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" font-size="20" font-weight="700" letter-spacing="0" text-anchor="start">INSTRUMENT</text>
     <text x="246" y="166" fill="#9aa7b8" font-family="'Arial Black','Helvetica Neue',Arial,sans-serif" font-size="19" font-weight="400" letter-spacing="0" text-anchor="start">— the design system we reuse across every project.</text>
