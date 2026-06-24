@@ -108,7 +108,7 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="absolute bottom-10 left-6 hidden sm:left-10 sm:block">
+        <div className="pointer-events-none absolute bottom-10 right-6 hidden sm:right-10 sm:block">
           <MonoLabel marker={false}>
             <span className="text-signal">↓</span>&nbsp;&nbsp;scroll //{" "}
             {board.length} recipes in the collection
