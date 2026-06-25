@@ -34,8 +34,8 @@ export function WorkWall({
   className?: string;
 }) {
   return (
-    <div className={cn("[perspective:1600px]", className)}>
-      <div className="grid grid-cols-1 gap-4 [transform-style:preserve-3d] motion-safe:[transform:rotateX(13deg)_rotateZ(-7deg)] sm:grid-cols-2 lg:grid-cols-3">
+    <div className={cn("lg:[perspective:1600px]", className)}>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:[transform-style:preserve-3d] lg:motion-safe:[transform:rotateX(13deg)_rotateZ(-7deg)]">
         {projects.map((project, i) => (
           <WorkTile key={project.title} project={project} index={i} />
         ))}
