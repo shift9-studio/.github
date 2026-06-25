@@ -1,6 +1,5 @@
 import {
   DitherField,
-  GridFrame,
   MagneticButton,
   MonoLabel,
   ProximityText,
@@ -43,22 +42,22 @@ const steps = [
 
 const features = [
   {
-    k: "one-place",
+    k: "your pantry",
     t: "All in one place",
     b: "Every recipe — links, photos, screenshots, your own — in a single searchable home you'll actually keep using.",
   },
   {
-    k: "smart-swaps",
+    k: "no panic",
     t: "Smart swaps",
     b: "Out of buttermilk? We hand you the fix before you panic-Google it mid-recipe.",
   },
   {
-    k: "scaled",
+    k: "for the crowd",
     t: "Scaled to taste",
     b: "One quiet dinner or a full table — quantities and timings recalculate themselves.",
   },
   {
-    k: "cook-mode",
+    k: "just cook",
     t: "Cook mode",
     b: "Hands-free, step-by-step guidance that holds your place and times each stage. Just you and the stove.",
   },
@@ -70,18 +69,24 @@ export default async function Home() {
 
   return (
     <main className="relative">
-      <GridFrame label="JUST A PINCH // INSTRUMENT" coord="X:001 · Y:KITCHEN" />
 
       {/* ─────────────────────────── HERO ─────────────────────────── */}
       <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 sm:px-10">
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <DitherField palette={warm} className="h-full w-full opacity-80" />
-          <div className="absolute inset-0 bg-gradient-to-b from-void/30 via-transparent to-void" />
+          {/* Higgsfield food photo — editorial overhead dinner spread */}
+          <img
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_183545_924e9d14-3d06-4ec7-aa67-d4f670a6e500.png"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <DitherField palette={warm} className="absolute inset-0 h-full w-full opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-void/60 via-void/40 to-void" />
         </div>
 
         <div className="mx-auto w-full max-w-[84rem]">
           <MonoLabel className="mb-8">
-            JUST A PINCH // RECIPE ORGANIZER + COOKING
+            JUST A PINCH — RECIPE ORGANIZER + COOKING
           </MonoLabel>
 
           <ProximityText
@@ -110,8 +115,8 @@ export default async function Home() {
 
         <div className="pointer-events-none absolute bottom-10 right-6 hidden sm:right-10 sm:block">
           <MonoLabel marker={false}>
-            <span className="text-signal">↓</span>&nbsp;&nbsp;scroll //{" "}
-            {board.length} recipes in the collection
+            <span className="text-signal">↓</span>&nbsp;&nbsp;scroll —{" "}
+            {board.length} recipes inside
           </MonoLabel>
         </div>
       </section>
@@ -119,7 +124,7 @@ export default async function Home() {
       {/* ────────────────────────── MANIFESTO ─────────────────────── */}
       <section className="border-y border-line px-6 py-24 sm:px-10">
         <div className="mx-auto grid max-w-[84rem] gap-10 lg:grid-cols-[1fr_2fr]">
-          <MonoLabel className="lg:pt-3">// the idea — 001</MonoLabel>
+          <MonoLabel className="lg:pt-3">THE STORY</MonoLabel>
           <Reveal>
             <p
               className="font-display text-h2 leading-[1.05] text-ink"
@@ -136,7 +141,7 @@ export default async function Home() {
       {/* ───────────────────────── HOW IT WORKS ───────────────────── */}
       <section id="how" className="scroll-mt-16 px-6 py-24 sm:px-10">
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-14">// three steps to dinner</MonoLabel>
+          <MonoLabel className="mb-14">FROM SAVED TO SERVED</MonoLabel>
           <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
             {steps.map((s, i) => (
               <Reveal key={s.id} delay={i * 0.08} className="bg-void">
@@ -165,7 +170,7 @@ export default async function Home() {
         <div className="mx-auto max-w-[84rem]">
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <div>
-              <MonoLabel className="mb-4">// the collection</MonoLabel>
+              <MonoLabel className="mb-4">FEATURED RECIPES</MonoLabel>
               <ProximityText as="h2" className="text-h2 text-ink">
                 A taste of what&apos;s inside
               </ProximityText>
@@ -184,7 +189,7 @@ export default async function Home() {
         className="scroll-mt-16 border-t border-line px-6 py-24 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-14">// why it works</MonoLabel>
+          <MonoLabel className="mb-14">WHAT MAKES IT WORK</MonoLabel>
           <div className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
             {features.map((f, i) => (
               <Reveal key={f.k} delay={i * 0.06} className="bg-void">

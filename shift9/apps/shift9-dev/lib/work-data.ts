@@ -14,13 +14,13 @@ export const projects: Project[] = [
     accent: "signal",
     status: "live",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142728_c7ae2157-9dee-4358-8ba7-a5539932e5d1.mp4",
-    href: "https://pinch.shift9.dev",
+    href: "https://just-a-pinch-git-claude-admiring-mccarthy-oh0awc-shift-9.vercel.app",
     linkLabel: "Live ↗",
   },
   {
     title: "Voxel Arcade Basketball",
     role: "Game · Engineering",
-    year: "2025",
+    year: "2026",
     tags: ["Steam", "Python", "Voxel"],
     accent: "pulse",
     status: "in dev",
@@ -29,7 +29,7 @@ export const projects: Project[] = [
   {
     title: "Recipe Engine",
     role: "Platform · Automation",
-    year: "2025",
+    year: "2026",
     tags: ["Supabase", "API", "Seeding"],
     accent: "signal",
     status: "shipped",
@@ -67,7 +67,7 @@ export const projects: Project[] = [
   {
     title: "Midnight Return",
     role: "Game · Engineering",
-    year: "2025",
+    year: "2026",
     tags: ["C#", "Metroidvania", "Platformer"],
     accent: "pulse",
     status: "in dev",
@@ -78,7 +78,7 @@ export const projects: Project[] = [
   {
     title: "Omni-3D",
     role: "Toolkit · Engineering",
-    year: "2025",
+    year: "2026",
     tags: ["TypeScript", "3D", "Game Dev"],
     accent: "signal",
     status: "in dev",
@@ -89,7 +89,7 @@ export const projects: Project[] = [
   {
     title: "Sub Scraper",
     role: "Tool · Automation",
-    year: "2025",
+    year: "2026",
     tags: ["Python", "Spotify", "SoundCloud"],
     accent: "signal",
     status: "shipped",
@@ -100,7 +100,7 @@ export const projects: Project[] = [
   {
     title: "whome Diagnostic",
     role: "Utility · Engineering",
-    year: "2025",
+    year: "2026",
     tags: ["Python", "Windows", "Diagnostic"],
     accent: "pulse",
     status: "shipped",
