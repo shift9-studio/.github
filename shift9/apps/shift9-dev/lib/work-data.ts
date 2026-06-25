@@ -72,8 +72,8 @@ export const projects: Project[] = [
     accent: "pulse",
     status: "in dev",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142758_5e9ad301-4e07-450d-a037-cf03da9e0834.mp4",
-    href: "https://github.com/Kariimc/Midnight-return-",
-    linkLabel: "Repo ↗",
+    href: "https://github.com/shift9-studio",
+    linkLabel: "GitHub ↗",
   },
   {
     title: "Omni-3D",
@@ -83,8 +83,8 @@ export const projects: Project[] = [
     accent: "signal",
     status: "in dev",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142807_02f9acf0-ce7a-4456-be46-40934a5229f6.mp4",
-    href: "https://github.com/Kariimc/Omni-3d",
-    linkLabel: "Repo ↗",
+    href: "https://github.com/shift9-studio",
+    linkLabel: "GitHub ↗",
   },
   {
     title: "Sub Scraper",
@@ -94,8 +94,8 @@ export const projects: Project[] = [
     accent: "signal",
     status: "shipped",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142817_a30d1cca-9f2f-4aaf-a6a9-2809f1f27152.mp4",
-    href: "https://github.com/Kariimc/Sub-Scraper",
-    linkLabel: "Repo ↗",
+    href: "https://github.com/shift9-studio",
+    linkLabel: "GitHub ↗",
   },
   {
     title: "whome Diagnostic",
@@ -105,7 +105,7 @@ export const projects: Project[] = [
     accent: "pulse",
     status: "shipped",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142831_fbb84def-fcf6-4f5b-ab76-532a4d2ae87a.mp4",
-    href: "https://github.com/Kariimc/whome-diagnostic-tool",
-    linkLabel: "Repo ↗",
+    href: "https://github.com/shift9-studio",
+    linkLabel: "GitHub ↗",
   },
 ];
