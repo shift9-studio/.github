@@ -1,8 +1,21 @@
 <!-- ░░░░░░░░░░░░░░░░░░░░  HERO  ░░░░░░░░░░░░░░░░░░░░ -->
 <a href="https://shift9.dev"><img src="./assets/s9-banner.svg" width="100%" alt="SHIFT-9 — Design + Engineering Studio. Code execution in motion."></a>
 
+<!-- ░░░░░░░░░░░░░░░░░░░░  NAV  ░░░░░░░░░░░░░░░░░░░░ -->
+<div align="center">
+
+[![What We Build](https://img.shields.io/badge/What_We_Build-0a0e1a?style=flat-square&logoColor=22d3ee)](#what-we-build)
+&nbsp;[![Open Source](https://img.shields.io/badge/Open_Source-0a0e1a?style=flat-square&logo=github&logoColor=22d3ee)](#open-source)
+&nbsp;[![The Stack](https://img.shields.io/badge/The_Stack-0a0e1a?style=flat-square&logoColor=22d3ee)](#the-stack)
+&nbsp;[![Work With Us](https://img.shields.io/badge/Work_With_Us-0a0e1a?style=flat-square&logoColor=22d3ee)](#work-with-us)
+&nbsp;[![Contact](https://img.shields.io/badge/Contact-0a0e1a?style=flat-square&logo=gmail&logoColor=22d3ee)](#contact)
+
+</div>
+
 <!-- ░░░░░░░░░░░░░░░░░░░░  INTRO  ░░░░░░░░░░░░░░░░░░░░ -->
 <a href="https://shift9.dev"><img src="./assets/panels/intro.svg" width="100%" alt="We design & ship. A design and engineering studio. We build brands, websites, and apps — and the systems that keep them running."></a>
+
+> **Shift-9 is a design + engineering studio.** We build brands, websites, and apps — and the systems that keep them running. One design system (**INSTRUMENT**) runs through everything we ship, so the studio site, our products, and even this page all feel like one studio.
 
 <div align="center">
 
@@ -14,7 +27,7 @@
 
 </div>
 
-## // What We Build
+## What We Build
 
 One design system runs through everything — the studio site, the apps, and this page.
 
@@ -24,9 +37,9 @@ One design system runs through everything — the studio site, the apps, and thi
 <a href="https://shift9.dev"><img src="./assets/panels/flag-9dev.svg" width="100%" alt="shift9.dev — our studio site: the work we've done, what we do, and how to start a project. Also a live example of the kind of sites we build."></a>
 <a href="https://github.com/shift9-studio/.github/tree/main/shift9/packages"><img src="./assets/panels/flag-instrument.svg" width="100%" alt="INSTRUMENT — our design system: the shared colors, type, motion, and UI components we reuse across every project, so everything we ship feels like one studio."></a>
 
-### // Also in the lab
+### Open Source
 
-Open-source projects and studio R&D — live on GitHub.
+Live on GitHub — games, tooling, and studio R&D.
 
 <div align="center">
 
@@ -35,20 +48,22 @@ Open-source projects and studio R&D — live on GitHub.
 <a href="https://github.com/Kariimc/Sub-Scraper"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Kariimc&repo=Sub-Scraper&bg_color=0a0e1a&title_color=22d3ee&text_color=9aa7b8&icon_color=8b5cf6&border_color=1e293b" alt="Sub Scraper — download your entire Spotify and SoundCloud libraries in one command." height="115"></a>
 <a href="https://github.com/Kariimc/whome-diagnostic-tool"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Kariimc&repo=whome-diagnostic-tool&bg_color=0a0e1a&title_color=22d3ee&text_color=9aa7b8&icon_color=8b5cf6&border_color=1e293b" alt="whome Diagnostic — a Python tool to fix the Windows 10 Home upgrade bug." height="115"></a>
 
-</div>
-
-<div align="center">
-
-<sub>Internal · shipping soon</sub>
-
-![Voxel Arcade Basketball — Python](https://img.shields.io/badge/Voxel%20Arcade%20Basketball%20%E2%80%94%20Python-0a0e1a?style=for-the-badge&logo=python&logoColor=8b5cf6)
-![Recipe Engine — Data Pipeline](https://img.shields.io/badge/Recipe%20Engine%20%E2%80%94%20Data%20Pipeline-0a0e1a?style=for-the-badge&logo=supabase&logoColor=22d3ee)
-![Signal Grid — Brand System](https://img.shields.io/badge/Signal%20Grid%20%E2%80%94%20Brand%20System-0a0e1a?style=for-the-badge&logoColor=8b5cf6)
-![Dither Lab — WebGL](https://img.shields.io/badge/Dither%20Lab%20%E2%80%94%20WebGL-0a0e1a?style=for-the-badge&logo=webgl&logoColor=22d3ee)
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Kariimc&layout=compact&langs_count=8&hide_border=false&bg_color=0a0e1a&title_color=22d3ee&text_color=9aa7b8&icon_color=8b5cf6&border_color=1e293b" alt="Most-used languages across Shift-9's work" height="165">
 
 </div>
 
-## // The Stack
+### In the Workshop
+
+Internal projects in progress.
+
+| Project | What it is | Stack |
+| :-- | :-- | :-- |
+| **Voxel Arcade Basketball** | A 3D voxel basketball arcade game, targeting a Steam release | `Python` |
+| **Recipe Engine** | The data pipeline that seeds structured recipes into Supabase at scale, powering Just a Pinch | `Python` · `Supabase` |
+| **Signal Grid** | Shift-9's brand identity and design-token system, unified across every surface | `Tokens` · `CSS` |
+| **Dither Lab** | WebGL R&D for dithering techniques and GLSL shaders — origin of the animated backgrounds | `WebGL` · `GLSL` |
+
+## The Stack
 
 <div align="center">
 
@@ -64,11 +79,23 @@ Open-source projects and studio R&D — live on GitHub.
 
 <img src="./assets/panels/stack.svg" width="100%" alt="Stack — studio: Shift-9; build: Next.js 16, Tailwind v4, Turborepo, Python; data: Supabase (auth, data, and content behind every surface); discipline: brand systems, production apps, the glue between them; environment: Linux, dark mode everything, motion that respects you.">
 
-## // Currently Shipping
+## Work With Us
+
+Have a project? We take on **brand systems, production web apps, and the infrastructure behind them** — from a single landing page to a full design system shared across products. We design *and* ship, so one team carries it from first pixel to deploy.
+
+<div align="center">
+
+[![Start a project](https://img.shields.io/badge/Start%20a%20project-22d3ee?style=for-the-badge&logo=vercel&logoColor=0a0e1a)](https://shift9.dev)
+&nbsp;
+[![Email the studio](https://img.shields.io/badge/shift9.dev@gmail.com-0b1120?style=for-the-badge&logo=gmail&logoColor=22d3ee)](mailto:shift9.dev@gmail.com)
+
+</div>
+
+## Currently Shipping
 
 <img src="./assets/panels/shipping.svg" width="100%" alt="Currently shipping — just-a-pinch: the recipe organizer and cooking app; shift9.dev: the studio site; INSTRUMENT: the design system we reuse across every project.">
 
-## // Contact
+## Contact
 
 <a href="mailto:shift9.dev@gmail.com"><img src="./assets/panels/contact.svg" width="100%" alt="Transmission open — shift9.dev@gmail.com"></a>
 
