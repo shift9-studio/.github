@@ -23,4 +23,26 @@
     background: var(--s9-signal);
     color: var(--s9-void);
   }
+
+  /* ── Uniform scaling on desktop ──────────────────────────────────────
+     The whole design is sized in rem. On desktop displays the root font
+     scales with viewport width, so the layout keeps its exact proportions
+     across monitor sizes — "one look, any screen" — instead of hitting
+     clamp caps and reflowing. Below 80rem (1280px) the standard fluid /
+     responsive design applies, so laptops, tablets, and phones stay
+     readable. Anchored to a 1440px reference: 100vw / 90 = 16px at 1440px,
+     clamped so it never balloons on ultrawide or shrinks on a small laptop. */
+  @media (min-width: 80rem) {
+    :root {
+      font-size: clamp(0.85rem, calc(100vw / 90), 1.9rem);
+
+      /* Pure-rem type scale → sizing comes solely from the root above (no
+         double viewport scaling). Values = the intended look at 1440px. */
+      --s9-text-mono: 0.82rem;
+      --s9-text-body: 1.13rem;
+      --s9-text-lead: 1.6rem;
+      --s9-text-h2: 3.4rem;
+      --s9-text-display: 8.5rem;
+    }
+  }
 }
