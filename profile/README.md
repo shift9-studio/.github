@@ -39,18 +39,14 @@ One design system runs through everything — the studio site, the apps, and thi
 
 ### Open Source
 
-Live on GitHub — games, tooling, and studio R&D.
+Public projects — games, tooling, and studio R&D.
 
-<div align="center">
-
-<a href="https://github.com/Kariimc/Midnight-return-"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Kariimc&repo=Midnight-return-&bg_color=0a0e1a&title_color=22d3ee&text_color=9aa7b8&icon_color=8b5cf6&border_color=1e293b" alt="Midnight Return — a Metroidvania platformer built in C#." height="115"></a>
-<a href="https://github.com/Kariimc/Omni-3d"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Kariimc&repo=Omni-3d&bg_color=0a0e1a&title_color=22d3ee&text_color=9aa7b8&icon_color=8b5cf6&border_color=1e293b" alt="Omni-3D — a modular game development toolkit in TypeScript." height="115"></a>
-<a href="https://github.com/Kariimc/Sub-Scraper"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Kariimc&repo=Sub-Scraper&bg_color=0a0e1a&title_color=22d3ee&text_color=9aa7b8&icon_color=8b5cf6&border_color=1e293b" alt="Sub Scraper — download your entire Spotify and SoundCloud libraries in one command." height="115"></a>
-<a href="https://github.com/Kariimc/whome-diagnostic-tool"><img src="https://github-readme-stats.vercel.app/api/pin/?username=Kariimc&repo=whome-diagnostic-tool&bg_color=0a0e1a&title_color=22d3ee&text_color=9aa7b8&icon_color=8b5cf6&border_color=1e293b" alt="whome Diagnostic — a Python tool to fix the Windows 10 Home upgrade bug." height="115"></a>
-
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Kariimc&layout=compact&langs_count=8&hide_border=false&bg_color=0a0e1a&title_color=22d3ee&text_color=9aa7b8&icon_color=8b5cf6&border_color=1e293b" alt="Most-used languages across Shift-9's work" height="165">
-
-</div>
+| Project | What it is | Stack |
+| :-- | :-- | :-- |
+| **Midnight Return** | A Metroidvania platformer with hand-built movement and combat | `C#` |
+| **Omni-3D** | A modular toolkit for building 3D games | `TypeScript` |
+| **Sub Scraper** | Download your entire Spotify & SoundCloud library in one command | `Python` |
+| **whome Diagnostic** | A utility that fixes the Windows 10 Home upgrade bug | `Python` |
 
 ### In the Workshop
 
