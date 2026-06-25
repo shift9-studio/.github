@@ -52,4 +52,23 @@
     background: var(--s9-signal);
     color: var(--s9-void);
   }
+
+  /* ── Uniform scaling on desktop ──────────────────────────────────────
+     Matches the studio site: on desktop (>=1280px) the root font scales
+     with viewport width so the layout keeps its exact proportions across
+     monitor sizes instead of hitting clamp caps and reflowing. Below 80rem
+     (1280px) the standard fluid/responsive design applies. Anchored to a
+     1440px reference: 100vw / 90 = 16px at 1440px. */
+  @media (min-width: 80rem) {
+    :root {
+      font-size: clamp(0.85rem, calc(100vw / 90), 1.9rem);
+
+      /* Pure-rem type scale → sizing comes solely from the root above. */
+      --s9-text-mono: 0.82rem;
+      --s9-text-body: 1.13rem;
+      --s9-text-lead: 1.6rem;
+      --s9-text-h2: 3.4rem;
+      --s9-text-display: 8.5rem;
+    }
+  }
 }
