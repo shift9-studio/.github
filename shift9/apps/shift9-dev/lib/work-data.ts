@@ -14,7 +14,7 @@ export const projects: Project[] = [
     accent: "signal",
     status: "live",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142728_c7ae2157-9dee-4358-8ba7-a5539932e5d1.mp4",
-    href: "https://just-a-pinch-git-claude-admiring-mccarthy-oh0awc-shift-9.vercel.app",
+    href: "https://pinch.shift9.dev",
     linkLabel: "Live ↗",
   },
   {
