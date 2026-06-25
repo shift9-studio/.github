@@ -10,10 +10,12 @@ export const projects: Project[] = [
     title: "Just a Pinch",
     role: "Product · Design + Build",
     year: "2026",
-    tags: ["iOS", "Recipes", "Supabase"],
+    tags: ["Recipes", "Web", "Android", "iOS soon"],
     accent: "signal",
     status: "live",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142728_c7ae2157-9dee-4358-8ba7-a5539932e5d1.mp4",
+    href: "https://pinch.shift9.dev",
+    linkLabel: "Live ↗",
   },
   {
     title: "Voxel Arcade Basketball",
@@ -43,13 +45,15 @@ export const projects: Project[] = [
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142741_daebb17f-77ce-443e-ac79-22fe6844d8f9.mp4",
   },
   {
-    title: "Instrument UI",
+    title: "INSTRUMENT",
     role: "Design System",
     year: "2026",
     tags: ["Tailwind v4", "Motion", "A11y"],
     accent: "signal",
     status: "live",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142748_bbc5b5f0-1055-412c-871e-e72bdf4020ea.mp4",
+    href: "https://github.com/shift9-studio/.github/tree/main/shift9#the-instrument-system",
+    linkLabel: "Code ↗",
   },
   {
     title: "Dither Lab",
@@ -68,6 +72,8 @@ export const projects: Project[] = [
     accent: "pulse",
     status: "in dev",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142758_5e9ad301-4e07-450d-a037-cf03da9e0834.mp4",
+    href: "https://github.com/shift9-studio",
+    linkLabel: "GitHub ↗",
   },
   {
     title: "Omni-3D",
@@ -77,6 +83,8 @@ export const projects: Project[] = [
     accent: "signal",
     status: "in dev",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142807_02f9acf0-ce7a-4456-be46-40934a5229f6.mp4",
+    href: "https://github.com/shift9-studio",
+    linkLabel: "GitHub ↗",
   },
   {
     title: "Sub Scraper",
@@ -86,6 +94,8 @@ export const projects: Project[] = [
     accent: "signal",
     status: "shipped",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142817_a30d1cca-9f2f-4aaf-a6a9-2809f1f27152.mp4",
+    href: "https://github.com/shift9-studio",
+    linkLabel: "GitHub ↗",
   },
   {
     title: "whome Diagnostic",
@@ -95,5 +105,7 @@ export const projects: Project[] = [
     accent: "pulse",
     status: "shipped",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142831_fbb84def-fcf6-4f5b-ab76-532a4d2ae87a.mp4",
+    href: "https://github.com/shift9-studio",
+    linkLabel: "GitHub ↗",
   },
 ];
