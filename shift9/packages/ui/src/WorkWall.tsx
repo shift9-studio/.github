@@ -73,8 +73,7 @@ function WorkTile({ project, index }: { project: Project; index: number }) {
       {project.href && (
         <a
           href={project.href}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...(project.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           aria-label={`${project.title} — open ${(project.linkLabel ?? "link").replace("↗", "").trim().toLowerCase()}`}
           className="absolute inset-0 z-20"
         />
@@ -101,7 +100,7 @@ function WorkTile({ project, index }: { project: Project; index: number }) {
           {project.href && (
             <span
               aria-hidden
-              className="pointer-events-none text-base leading-none text-signal opacity-0 transition-premium group-hover:opacity-100"
+              className="pointer-events-none text-base leading-none text-signal opacity-60 transition-premium group-hover:opacity-100 group-hover:[filter:drop-shadow(0_0_6px_#22d3ee)]"
             >
               ↗
             </span>

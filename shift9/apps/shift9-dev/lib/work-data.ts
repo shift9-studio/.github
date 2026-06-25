@@ -52,8 +52,8 @@ export const projects: Project[] = [
     accent: "signal",
     status: "live",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142748_bbc5b5f0-1055-412c-871e-e72bdf4020ea.mp4",
-    href: "https://github.com/shift9-studio/.github/tree/main/shift9#the-instrument-system",
-    linkLabel: "Code ↗",
+    href: "/instrument",
+    linkLabel: "Explore ↗",
   },
   {
     title: "Dither Lab",
