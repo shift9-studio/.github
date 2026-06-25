@@ -13,7 +13,7 @@
 </div>
 
 <!-- ░░░░░░░░░░░░░░░░░░░░  INTRO  ░░░░░░░░░░░░░░░░░░░░ -->
-<a href="https://shift9.dev"><img src="./assets/panels/intro.svg" width="100%" alt="We design & ship. A design and engineering studio. We build brands, websites, and apps — and the systems that keep them running."></a>
+<a href="https://shift9.dev"><img src="./assets/panels/intro.png" width="100%" alt="We design & ship. A design and engineering studio. We build brands, websites, and apps — and the systems that keep them running."></a>
 
 > **Shift-9 is a design + engineering studio.** We build brands, websites, and apps — and the systems that keep them running. One design system (**INSTRUMENT**) runs through everything we ship, so the studio site, our products, and even this page all feel like one studio.
 
@@ -31,11 +31,11 @@
 
 One design system runs through everything — the studio site, the apps, and this page.
 
-<img src="./assets/panels/lead.svg" width="100%" alt="One design system runs through everything we make — site, apps, and this page. The same colors, type, and motion everywhere, so all our work feels like one studio.">
+<img src="./assets/panels/lead.png" width="100%" alt="One design system runs through everything we make — site, apps, and this page. The same colors, type, and motion everywhere, so all our work feels like one studio.">
 
-<a href="https://pinch.shift9.dev"><img src="./assets/panels/flag-pinch.svg" width="100%" alt="Just a Pinch — a recipe organizer and cooking app. Save every recipe in one place, then cook it with guided steps, adjustable serving sizes, and swaps when you're missing something. Live at pinch.shift9.dev."></a>
-<a href="https://shift9.dev"><img src="./assets/panels/flag-9dev.svg" width="100%" alt="shift9.dev — our studio site: the work we've done, what we do, and how to start a project. Also a live example of the kind of sites we build."></a>
-<a href="https://github.com/shift9-studio/.github/tree/main/shift9#the-instrument-system"><img src="./assets/panels/flag-instrument.svg" width="100%" alt="INSTRUMENT — our design system: the shared colors, type, motion, and UI components we reuse across every project, so everything we ship feels like one studio."></a>
+<a href="https://pinch.shift9.dev"><img src="./assets/panels/flag-pinch.png" width="100%" alt="Just a Pinch — a recipe organizer and cooking app. Save every recipe in one place, then cook it with guided steps, adjustable serving sizes, and swaps when you're missing something. Live at pinch.shift9.dev."></a>
+<a href="https://shift9.dev"><img src="./assets/panels/flag-9dev.png" width="100%" alt="shift9.dev — our studio site: the work we've done, what we do, and how to start a project. Also a live example of the kind of sites we build."></a>
+<a href="https://github.com/shift9-studio/.github/tree/main/shift9#the-instrument-system"><img src="./assets/panels/flag-instrument.png" width="100%" alt="INSTRUMENT — our design system: the shared colors, type, motion, and UI components we reuse across every project, so everything we ship feels like one studio."></a>
 
 ### Open Source
 
@@ -73,7 +73,7 @@ Internal projects in progress.
 
 </div>
 
-<img src="./assets/panels/stack.svg" width="100%" alt="Stack — studio: Shift-9; build: Next.js 16, Tailwind v4, Turborepo, Python; data: Supabase (auth, data, and content behind every surface); discipline: brand systems, production apps, the glue between them; environment: Linux, dark mode everything, motion that respects you.">
+<img src="./assets/panels/stack.png" width="100%" alt="Stack — studio: Shift-9; build: Next.js 16, Tailwind v4, Turborepo, Python; data: Supabase (auth, data, and content behind every surface); discipline: brand systems, production apps, the glue between them; environment: Linux, dark mode everything, motion that respects you.">
 
 ## Work With Us
 
@@ -89,10 +89,10 @@ Have a project? We take on **brand systems, production web apps, and the infrast
 
 ## Currently Shipping
 
-<img src="./assets/panels/shipping.svg" width="100%" alt="Currently shipping — just-a-pinch: the recipe organizer and cooking app; shift9.dev: the studio site; INSTRUMENT: the design system we reuse across every project.">
+<img src="./assets/panels/shipping.png" width="100%" alt="Currently shipping — just-a-pinch: the recipe organizer and cooking app; shift9.dev: the studio site; INSTRUMENT: the design system we reuse across every project.">
 
 ## Contact
 
-<a href="mailto:shift9.dev@gmail.com"><img src="./assets/panels/contact.svg" width="100%" alt="Transmission open — shift9.dev@gmail.com"></a>
+<a href="mailto:shift9.dev@gmail.com"><img src="./assets/panels/contact.png" width="100%" alt="Transmission open — shift9.dev@gmail.com"></a>
 
-<img src="./assets/panels/footer.svg" width="100%" alt="build: stable — © 2026 SHIFT-9, made in motion">
+<img src="./assets/panels/footer.png" width="100%" alt="build: stable — © 2026 SHIFT-9, made in motion">
