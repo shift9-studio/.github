@@ -13,6 +13,7 @@ export const projects: Project[] = [
     tags: ["iOS", "Recipes", "Supabase"],
     accent: "signal",
     status: "live",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142728_c7ae2157-9dee-4358-8ba7-a5539932e5d1.mp4",
   },
   {
     title: "Voxel Arcade Basketball",
@@ -21,6 +22,7 @@ export const projects: Project[] = [
     tags: ["Steam", "Python", "Voxel"],
     accent: "pulse",
     status: "in dev",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142723_62c2aa78-7c15-48fe-8f91-5a5063044dd5.mp4",
   },
   {
     title: "Recipe Engine",
@@ -29,6 +31,7 @@ export const projects: Project[] = [
     tags: ["Supabase", "API", "Seeding"],
     accent: "signal",
     status: "shipped",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142737_b9ce846f-7572-4a44-bdb0-7bd04d13b5f8.mp4",
   },
   {
     title: "Signal Grid",
@@ -37,6 +40,7 @@ export const projects: Project[] = [
     tags: ["Identity", "Tokens", "Web"],
     accent: "pulse",
     status: "shipped",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142741_daebb17f-77ce-443e-ac79-22fe6844d8f9.mp4",
   },
   {
     title: "Instrument UI",
@@ -45,6 +49,7 @@ export const projects: Project[] = [
     tags: ["Tailwind v4", "Motion", "A11y"],
     accent: "signal",
     status: "live",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142748_bbc5b5f0-1055-412c-871e-e72bdf4020ea.mp4",
   },
   {
     title: "Dither Lab",
@@ -62,6 +67,7 @@ export const projects: Project[] = [
     tags: ["C#", "Metroidvania", "Platformer"],
     accent: "pulse",
     status: "in dev",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142758_5e9ad301-4e07-450d-a037-cf03da9e0834.mp4",
   },
   {
     title: "Omni-3D",
@@ -70,6 +76,7 @@ export const projects: Project[] = [
     tags: ["TypeScript", "3D", "Game Dev"],
     accent: "signal",
     status: "in dev",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142807_02f9acf0-ce7a-4456-be46-40934a5229f6.mp4",
   },
   {
     title: "Sub Scraper",
@@ -78,6 +85,7 @@ export const projects: Project[] = [
     tags: ["Python", "Spotify", "SoundCloud"],
     accent: "signal",
     status: "shipped",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142817_a30d1cca-9f2f-4aaf-a6a9-2809f1f27152.mp4",
   },
   {
     title: "whome Diagnostic",
@@ -86,5 +94,6 @@ export const projects: Project[] = [
     tags: ["Python", "Windows", "Diagnostic"],
     accent: "pulse",
     status: "shipped",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142831_fbb84def-fcf6-4f5b-ab76-532a4d2ae87a.mp4",
   },
 ];
