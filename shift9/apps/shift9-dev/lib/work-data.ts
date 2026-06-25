@@ -10,7 +10,7 @@ export const projects: Project[] = [
     title: "Just a Pinch",
     role: "Product · Design + Build",
     year: "2026",
-    tags: ["Recipes", "Web", "Google Play", "iOS soon"],
+    tags: ["Recipes", "Web", "Android", "iOS soon"],
     accent: "signal",
     status: "live",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142728_c7ae2157-9dee-4358-8ba7-a5539932e5d1.mp4",

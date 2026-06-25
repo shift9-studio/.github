@@ -75,7 +75,7 @@ function WorkTile({ project, index }: { project: Project; index: number }) {
           href={project.href}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Open ${project.title}`}
+          aria-label={`${project.title} — open ${(project.linkLabel ?? "link").replace("↗", "").trim().toLowerCase()}`}
           className="absolute inset-0 z-20"
         />
       )}
@@ -99,8 +99,11 @@ function WorkTile({ project, index }: { project: Project; index: number }) {
             {project.role} · {project.year}
           </p>
           {project.href && (
-            <span className="pointer-events-none whitespace-nowrap font-mono text-mono uppercase tracking-[0.18em] text-muted transition-premium group-hover:text-signal">
-              {project.linkLabel ?? "↗"}
+            <span
+              aria-hidden
+              className="pointer-events-none text-base leading-none text-signal opacity-0 transition-premium group-hover:opacity-100"
+            >
+              ↗
             </span>
           )}
         </div>
