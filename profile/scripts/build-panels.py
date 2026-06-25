@@ -128,25 +128,50 @@ def icon_svg(name, line1, line2, color):
 icon_svg("icon-voxel.svg",  "VXL", "ARCADE",  PULSE)
 icon_svg("icon-recipe.svg", "RCP", "ENGINE",  SIGNAL)
 icon_svg("icon-signal.svg", "SIG", "GRID",    PULSE)
-icon_svg("icon-dither.svg", "DTH", "LAB",     SIGNAL)
+icon_svg("icon-dither.svg",   "DTH", "LAB",      SIGNAL)
+icon_svg("icon-midnight.svg", "MR",  "RETURN",   PULSE)
+icon_svg("icon-omni.svg",     "O3D", "TOOLKIT",  SIGNAL)
+icon_svg("icon-scraper.svg",  "SUB", "SCRAPER",  SIGNAL)
+icon_svg("icon-whome.svg",    "WH",  "DIAG",     PULSE)
+icon_svg("icon-bball.svg",    "BBL", "COURT",    PULSE)
 
 
 # ── ADDITIONAL PRODUCT ROWS ──────────────────────────────────────────────────
-row("row-voxel.svg",  "Y:VOXEL-ARCADE",  "Voxel Arcade Basketball", PULSE,
+row("row-voxel.svg",    "Y:VOXEL-ARCADE",   "Voxel Arcade Basketball", PULSE,
     "A 3D voxel basketball arcade game built in Python. Compete in arcade-style",
     "matches in a fully voxel world — targeting Steam release.")
 
-row("row-recipe.svg", "Y:RECIPE-ENGINE", "Recipe Engine",           SIGNAL,
+row("row-recipe.svg",   "Y:RECIPE-ENGINE",  "Recipe Engine",           SIGNAL,
     "The data pipeline powering Just a Pinch. Scrapes, parses, and normalizes",
     "recipes then seeds them into Supabase at scale via structured API layers.")
 
-row("row-signal.svg", "Y:SIGNAL-GRID",   "Signal Grid",             PULSE,
+row("row-signal.svg",   "Y:SIGNAL-GRID",    "Signal Grid",             PULSE,
     "Shift-9's brand identity system — color tokens, type scale, motion rules,",
     "and grid guidelines unified across every surface we ship.")
 
-row("row-dither.svg", "Y:DITHER-LAB",    "Dither Lab",              SIGNAL,
+row("row-dither.svg",   "Y:DITHER-LAB",     "Dither Lab",              SIGNAL,
     "A WebGL R&D lab exploring dithering techniques and GLSL shader effects —",
     "the origin of the animated backgrounds across all Shift-9 products.")
+
+row("row-midnight.svg", "Y:MIDNIGHT-RETURN", "Midnight Return",         PULSE,
+    "A Metroidvania platformer built in C#. Explore interconnected worlds,",
+    "unlock abilities, and battle through a dark, atmospheric side-scroller.")
+
+row("row-omni.svg",     "Y:OMNI-3D",         "Omni-3D",                 SIGNAL,
+    "A modular game development toolkit in TypeScript — shared 3D utilities,",
+    "scene management, and rendering helpers reused across game projects.")
+
+row("row-scraper.svg",  "Y:SUB-SCRAPER",     "Sub Scraper",             SIGNAL,
+    "Download your entire Spotify and SoundCloud libraries in one command.",
+    "Scrapes metadata, finds sources, and organizes downloads automatically.")
+
+row("row-whome.svg",    "Y:WHOME-DIAG",      "whome Diagnostic",        PULSE,
+    "A Python tool to identify and fix the Windows 10 Home upgrade bug.",
+    "One command to diagnose, patch, and confirm the repair is complete.")
+
+row("row-bball.svg",    "Y:BBALL",           "Bball",                   PULSE,
+    "A basketball game built in C# — smooth physics, clean mechanics,",
+    "and the gameplay loop that seeded the Voxel Arcade Basketball engine.")
 
 
 # ── STACK (terminal-style) ──────────────────────────────────────────────────

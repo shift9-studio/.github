@@ -1,4 +1,5 @@
 import {
+  CustomCursor,
   DitherField,
   GridFrame,
   MagneticButton,
@@ -29,6 +30,8 @@ const capabilities = [
 
 export default function Home() {
   return (
+    <>
+    <CustomCursor />
     <main className="relative">
       <GridFrame coord="X:001 · Y:HOME" />
 
@@ -174,5 +177,6 @@ export default function Home() {
         </div>
       </footer>
     </main>
+    </>
   );
 }
