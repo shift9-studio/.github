@@ -12,6 +12,8 @@ export interface Project {
   tags: string[];
   accent?: "signal" | "pulse";
   status?: string;
+  /** Higgsfield-generated cinematic teaser — plays muted on hover */
+  videoUrl?: string;
 }
 
 /**
@@ -53,6 +55,17 @@ function WorkTile({ project, index }: { project: Project; index: number }) {
       transition={{ duration: 0.5, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
       className="group relative flex min-h-[15rem] flex-col justify-between border border-line bg-well/60 p-5 transition-premium hover:border-signal hover:bg-surface/70 motion-safe:hover:[transform:translateZ(42px)]"
     >
+      {project.videoUrl && (
+        <video
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700 motion-reduce:hidden group-hover:opacity-[0.18]"
+          src={project.videoUrl}
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden
+        />
+      )}
       <div className="flex items-center justify-between font-mono text-mono uppercase tracking-[0.22em] text-muted">
         <span>{String(index + 1).padStart(2, "0")}</span>
         <span className={isPulse ? "text-pulse" : "text-signal"}>
