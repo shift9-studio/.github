@@ -35,7 +35,7 @@ One design system runs through everything — the studio site, the apps, and thi
 
 <a href="https://pinch.shift9.dev"><img src="./assets/panels/flag-pinch.svg" width="100%" alt="Just a Pinch — a recipe organizer and cooking app. Save every recipe in one place, then cook it with guided steps, adjustable serving sizes, and swaps when you're missing something. Live at pinch.shift9.dev."></a>
 <a href="https://shift9.dev"><img src="./assets/panels/flag-9dev.svg" width="100%" alt="shift9.dev — our studio site: the work we've done, what we do, and how to start a project. Also a live example of the kind of sites we build."></a>
-<a href="https://github.com/shift9-studio/.github/tree/main/shift9/packages"><img src="./assets/panels/flag-instrument.svg" width="100%" alt="INSTRUMENT — our design system: the shared colors, type, motion, and UI components we reuse across every project, so everything we ship feels like one studio."></a>
+<a href="https://github.com/shift9-studio/.github/tree/main/shift9#the-instrument-system"><img src="./assets/panels/flag-instrument.svg" width="100%" alt="INSTRUMENT — our design system: the shared colors, type, motion, and UI components we reuse across every project, so everything we ship feels like one studio."></a>
 
 ### Open Source
 
