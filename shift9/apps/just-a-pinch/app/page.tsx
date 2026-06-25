@@ -217,7 +217,7 @@ export default async function Home() {
         className="scroll-mt-16 overflow-hidden px-6 py-28 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-8">// pull up a chair</MonoLabel>
+          <MonoLabel className="mb-8">PULL UP A CHAIR</MonoLabel>
           <ProximityText
             as="h2"
             className="text-display uppercase text-ink"
