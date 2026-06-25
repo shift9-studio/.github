@@ -53,6 +53,7 @@ export const projects: Project[] = [
     tags: ["Shaders", "GLSL", "Canvas"],
     accent: "pulse",
     status: "research",
+    videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_141632_9d995ffb-e1cc-4e61-b3ca-18364a501448.mp4",
   },
   {
     title: "Midnight Return",
