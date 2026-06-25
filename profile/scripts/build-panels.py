@@ -113,6 +113,42 @@ row("row-instrument.svg", "Y:INSTRUMENT", "The INSTRUMENT design system", PULSE,
     "Our design system: the shared colors, type, motion, and UI components we reuse",
     "across every project so everything we ship feels like one studio.")
 
+
+# ── PRODUCT ICON SQUARES (163×163, animated bg, sits left of new row panels) ─
+def icon_svg(name, line1, line2, color):
+    """163×163 square icon — same animated bg as panels, drop-in for GIF icons."""
+    w, h = 163, 163
+    body = "\n".join([
+        t(w // 2, h // 2 + 4,  line1, 44, color, "900", SANS, "2",  "middle"),
+        t(w // 2, h // 2 + 28, line2, 12, MUTED, "700", MONO, "4",  "middle"),
+    ])
+    svg(name, w, h, "", body)
+
+
+icon_svg("icon-voxel.svg",  "VXL", "ARCADE",  PULSE)
+icon_svg("icon-recipe.svg", "RCP", "ENGINE",  SIGNAL)
+icon_svg("icon-signal.svg", "SIG", "GRID",    PULSE)
+icon_svg("icon-dither.svg", "DTH", "LAB",     SIGNAL)
+
+
+# ── ADDITIONAL PRODUCT ROWS ──────────────────────────────────────────────────
+row("row-voxel.svg",  "Y:VOXEL-ARCADE",  "Voxel Arcade Basketball", PULSE,
+    "A 3D voxel basketball arcade game built in Python. Compete in arcade-style",
+    "matches in a fully voxel world — targeting Steam release.")
+
+row("row-recipe.svg", "Y:RECIPE-ENGINE", "Recipe Engine",           SIGNAL,
+    "The data pipeline powering Just a Pinch. Scrapes, parses, and normalizes",
+    "recipes then seeds them into Supabase at scale via structured API layers.")
+
+row("row-signal.svg", "Y:SIGNAL-GRID",   "Signal Grid",             PULSE,
+    "Shift-9's brand identity system — color tokens, type scale, motion rules,",
+    "and grid guidelines unified across every surface we ship.")
+
+row("row-dither.svg", "Y:DITHER-LAB",    "Dither Lab",              SIGNAL,
+    "A WebGL R&D lab exploring dithering techniques and GLSL shader effects —",
+    "the origin of the animated backgrounds across all Shift-9 products.")
+
+
 # ── STACK (terminal-style) ──────────────────────────────────────────────────
 stack_lines = [
     ('{', MUTED), (None, None),
