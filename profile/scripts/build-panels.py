@@ -133,8 +133,6 @@ icon_svg("icon-midnight.svg", "MR",  "RETURN",   PULSE)
 icon_svg("icon-omni.svg",     "O3D", "TOOLKIT",  SIGNAL)
 icon_svg("icon-scraper.svg",  "SUB", "SCRAPER",  SIGNAL)
 icon_svg("icon-whome.svg",    "WH",  "DIAG",     PULSE)
-icon_svg("icon-bball.svg",    "BBL", "COURT",    PULSE)
-
 
 # ── ADDITIONAL PRODUCT ROWS ──────────────────────────────────────────────────
 row("row-voxel.svg",    "Y:VOXEL-ARCADE",   "Voxel Arcade Basketball", PULSE,
@@ -169,9 +167,6 @@ row("row-whome.svg",    "Y:WHOME-DIAG",      "whome Diagnostic",        PULSE,
     "A Python tool to identify and fix the Windows 10 Home upgrade bug.",
     "One command to diagnose, patch, and confirm the repair is complete.")
 
-row("row-bball.svg",    "Y:BBALL",           "Bball",                   PULSE,
-    "A basketball game built in C# — smooth physics, clean mechanics,",
-    "and the gameplay loop that seeded the Voxel Arcade Basketball engine.")
 
 
 # ── STACK (terminal-style) ──────────────────────────────────────────────────

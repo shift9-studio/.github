@@ -86,12 +86,4 @@ export const projects: Project[] = [
     accent: "pulse",
     status: "shipped",
   },
-  {
-    title: "Bball",
-    role: "Game · Engineering",
-    year: "2025",
-    tags: ["C#", "Basketball", "Physics"],
-    accent: "pulse",
-    status: "shipped",
-  },
 ];

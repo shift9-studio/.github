@@ -13,7 +13,6 @@
 <a href="https://github.com/Kariimc/Omni-3d"><img src="./assets/panels/icon-omni.svg" width="14%" alt="Omni-3D"><img src="./assets/panels/row-omni.svg" width="84%" alt="Omni-3D — A modular game development toolkit in TypeScript."></a>
 <a href="https://github.com/Kariimc/Sub-Scraper"><img src="./assets/panels/icon-scraper.svg" width="14%" alt="Sub Scraper"><img src="./assets/panels/row-scraper.svg" width="84%" alt="Sub Scraper — Download your entire Spotify and SoundCloud libraries in one command."></a>
 <a href="https://github.com/Kariimc/whome-diagnostic-tool"><img src="./assets/panels/icon-whome.svg" width="14%" alt="whome Diagnostic"><img src="./assets/panels/row-whome.svg" width="84%" alt="whome Diagnostic — A Python tool to fix the Windows 10 Home upgrade bug."></a>
-<a href="https://github.com/Kariimc/Bball"><img src="./assets/panels/icon-bball.svg" width="14%" alt="Bball"><img src="./assets/panels/row-bball.svg" width="84%" alt="Bball — A basketball game in C# with smooth physics and tight gameplay."></a>
 <img src="./assets/header-the-stack.svg" width="100%" alt="// the stack">
 <img src="./assets/panels/stack.svg" width="100%" alt="Stack — studio: Shift-9; build: Next.js 16, Tailwind v4, Turborepo, Python; data: Supabase (auth, data, and content behind every surface); discipline: brand systems, production apps, the glue between them; environment: Linux, dark mode everything, motion that respects you.">
 <img src="./assets/header-currently-shipping.svg" width="100%" alt="// currently shipping">
