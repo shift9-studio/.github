@@ -32,9 +32,31 @@
   --s9-text-h2:      clamp(1.9rem, 1.3rem + 2.6vw, 3.4rem);
   --s9-text-display: clamp(3rem, 1.1rem + 8.2vw, 9.5rem);
 
-  /* ── Motion ───────────────────────────────────────────────────── */
-  --s9-dur-premium:  300ms;                          /* per spec        */
-  --s9-ease-premium: cubic-bezier(0.22, 1, 0.36, 1); /* house settle    */
+  /* ── Motion ───────────────────────────────────────────────────────
+     A tempo HIERARCHY, not a single speed. Pick the duration by the size
+     of the move: micro hovers run fast, entrances run slow, the console
+     boot runs slowest. --s9-dur-premium / --s9-ease-premium are kept as
+     the back-compatible aliases the transition-premium utility uses. */
+  --s9-dur-fast:     140ms;   /* micro: hovers, taps, icon nudges        */
+  --s9-dur-base:     240ms;   /* default: color/border/opacity settles   */
+  --s9-dur-slow:     480ms;   /* entrances, reveals, larger displacements */
+  --s9-dur-boot:     720ms;   /* power-on / page-transition choreography  */
+  --s9-dur-premium:  300ms;   /* legacy alias (transition-premium)        */
+
+  /* Easing set — one curve per intent, so motion reads as a system.
+     out  : decelerate, for things ARRIVING (the workhorse for entrances)
+     in   : accelerate, for things LEAVING
+     inout: symmetric, for moves that travel and stop on screen
+     snap : a controlled overshoot, for magnetic locks and toggles
+     premium: the original house settle, retained for every hover state. */
+  --s9-ease-out:     cubic-bezier(0.16, 1, 0.3, 1);    /* expo-ish out    */
+  --s9-ease-in:      cubic-bezier(0.7, 0, 0.84, 0);    /* expo-ish in     */
+  --s9-ease-inout:   cubic-bezier(0.65, 0, 0.35, 1);   /* symmetric       */
+  --s9-ease-snap:    cubic-bezier(0.34, 1.4, 0.5, 1);  /* overshoot lock  */
+  --s9-ease-premium: cubic-bezier(0.22, 1, 0.36, 1);   /* house settle    */
+
+  /* Orchestration — the base gap between staggered children. */
+  --s9-stagger:      62ms;
 
   /* ── Structure ────────────────────────────────────────────────── */
   --s9-grid-unit: 8px;

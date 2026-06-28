@@ -8,7 +8,7 @@ import {
   type DitherPalette,
 } from "@shift9/ui";
 import { getFeaturedBoard } from "@shift9/data";
-import { Reveal } from "./_components/Reveal";
+import { Reveal, RevealGroup, RevealItem } from "./_components/Reveal";
 import { SeasonHeadline } from "./_components/SeasonHeadline";
 import { board as fallbackBoard } from "@/lib/menu-data";
 
@@ -149,9 +149,9 @@ export default async function Home() {
       <section id="how" className="scroll-mt-16 px-6 py-24 sm:px-10">
         <div className="mx-auto max-w-[84rem]">
           <MonoLabel className="mb-14">FROM SAVED TO SERVED</MonoLabel>
-          <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
-            {steps.map((s, i) => (
-              <Reveal key={s.id} delay={i * 0.08} className="bg-void">
+          <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
+            {steps.map((s) => (
+              <RevealItem key={s.id} variant="scan" className="bg-void">
                 <article className="flex h-full flex-col gap-5 p-8 transition-premium hover:bg-well">
                   <span className="font-mono text-mono text-signal">
                     {s.id}
@@ -166,9 +166,9 @@ export default async function Home() {
                     {s.body}
                   </p>
                 </article>
-              </Reveal>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -199,9 +199,9 @@ export default async function Home() {
       >
         <div className="mx-auto max-w-[84rem]">
           <MonoLabel className="mb-14">WHAT MAKES IT WORK</MonoLabel>
-          <div className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-            {features.map((f, i) => (
-              <Reveal key={f.k} delay={i * 0.06} className="bg-void">
+          <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+            {features.map((f) => (
+              <RevealItem key={f.k} variant="scan" className="bg-void">
                 <article className="flex h-full flex-col gap-4 p-7 transition-premium hover:bg-well">
                   <MonoLabel marker={false} className="text-signal">
                     {f.k}
@@ -214,9 +214,9 @@ export default async function Home() {
                   </h3>
                   <p className="text-body leading-relaxed text-muted">{f.b}</p>
                 </article>
-              </Reveal>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 

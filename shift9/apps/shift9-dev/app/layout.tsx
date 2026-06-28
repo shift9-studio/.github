@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anybody, Martian_Mono } from "next/font/google";
 import "./globals.css";
+import { SmoothScroll } from "./_components/SmoothScroll";
 
 /* Free variable stack (no licence needed): Anybody carries the condensed,
    width-flexing display voice; Martian Mono is the terminal data face.
@@ -38,7 +39,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${display.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <SmoothScroll />
+        {children}
+      </body>
     </html>
   );
 }

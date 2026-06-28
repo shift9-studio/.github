@@ -6,3 +6,12 @@ export {
   useInstrumentTelemetry,
   type TelemetrySnapshot,
 } from "./useInstrumentTelemetry";
+export {
+  subscribeScroll,
+  getScroll,
+  type ScrollState,
+} from "./scrollSignal";
+export {
+  useScrollVelocity,
+  type ScrollVelocity,
+} from "./useScrollVelocity";

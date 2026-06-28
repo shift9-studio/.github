@@ -8,7 +8,7 @@ import {
   ProximityText,
   WorkWall,
 } from "@shift9/ui";
-import { Reveal } from "./_components/Reveal";
+import { Reveal, RevealGroup, RevealItem } from "./_components/Reveal";
 import { projects } from "@/lib/work-data";
 
 const capabilities = [
@@ -132,9 +132,9 @@ export default function Home() {
       >
         <div className="mx-auto max-w-[84rem]">
           <MonoLabel className="mb-14">// capability index</MonoLabel>
-          <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
-            {capabilities.map((c, i) => (
-              <Reveal key={c.id} delay={i * 0.08} className="bg-void">
+          <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
+            {capabilities.map((c) => (
+              <RevealItem key={c.id} variant="scan" className="bg-void">
                 <article className="flex h-full flex-col gap-5 p-8 transition-premium hover:bg-well">
                   <span className="font-mono text-mono text-signal">{c.id}</span>
                   <h3
@@ -145,9 +145,9 @@ export default function Home() {
                   </h3>
                   <p className="text-body leading-relaxed text-muted">{c.body}</p>
                 </article>
-              </Reveal>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 

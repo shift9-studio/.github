@@ -2,12 +2,14 @@ import * as React from "react";
 import { cn } from "./cn";
 
 /**
- * Semantic skeleton screens. The shimmer is a CSS animation, so the
- * global `prefers-reduced-motion` rule in @shift9/theme automatically
- * freezes it to a static block.
+ * Semantic skeleton screens. The shimmer is a single signal-tinted highlight
+ * that sweeps across the block (the `.s9-shimmer` utility in @shift9/theme),
+ * not a whole-block opacity pulse — it reads like the instrument scanning the
+ * slot it's about to fill. The global `prefers-reduced-motion` rule freezes
+ * the sweep off-canvas, leaving a flat resting panel.
  */
 export function SkeletonBlock({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse bg-surface/50", className)} />;
+  return <div className={cn("s9-shimmer", className)} />;
 }
 
 export function SkeletonWorkTile() {

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { subscribeScroll } from "@shift9/motion";
 import { cn } from "@shift9/ui";
 
 export interface HeadlineLine {
@@ -37,6 +38,20 @@ export function SeasonHeadline({
 }: SeasonHeadlineProps) {
   const reduced = useReducedMotion();
   const Heading = as === "h1" ? motion.h1 : motion.h2;
+  const headingRef = React.useRef<HTMLHeadingElement>(null);
+
+  // Once plated, the whole headline gains weight with scroll velocity and
+  // relaxes as you stop — Fraunces' wght axis inherits down to every word.
+  // Disabled under reduced motion (no subscription, default weight stays).
+  React.useEffect(() => {
+    if (reduced) return;
+    const el = headingRef.current;
+    if (!el) return;
+    return subscribeScroll((s) => {
+      const w = 360 + 320 * s.velocity;
+      el.style.fontVariationSettings = `"wght" ${w.toFixed(0)}`;
+    });
+  }, [reduced]);
 
   const container: Variants = {
     hidden: {},
@@ -60,6 +75,7 @@ export function SeasonHeadline({
 
   return (
     <Heading
+      ref={headingRef}
       className={cn("font-display leading-[0.95]", className)}
       variants={container}
       initial="hidden"

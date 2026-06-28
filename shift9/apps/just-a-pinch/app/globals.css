@@ -34,6 +34,21 @@
   --s9-ring: 0 0 0 2px var(--s9-void), 0 0 0 4px var(--s9-signal);
 }
 
+/* Lenis smooth scroll — runtime-added <html> classes (see studio globals). */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 @layer base {
   html {
     color-scheme: dark;

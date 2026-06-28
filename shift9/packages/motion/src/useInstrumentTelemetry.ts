@@ -16,6 +16,10 @@ export interface TelemetrySnapshot {
   gy: number;
   /** scroll depth, 0 → 1 */
   scroll: number;
+  /** normalized, smoothed scroll velocity, 0 (still) → 1 (hard flick) */
+  vy: number;
+  /** scroll direction: -1 up, 0 idle, +1 down */
+  dir: -1 | 0 | 1;
   /** smoothed frames-per-second (EMA) */
   fps: number;
   /** viewport size in px */
@@ -49,6 +53,8 @@ export function useInstrumentTelemetry() {
     gx: 0,
     gy: 0,
     scroll: 0,
+    vy: 0,
+    dir: 0,
     fps: 0,
     vw: 0,
     vh: 0,
@@ -137,12 +143,21 @@ export function useInstrumentTelemetry() {
     let last = performance.now();
     let fpsEMA = 60;
     let running = !reduced;
+    let lastSY = window.scrollY;
+    let velEMA = 0; // smoothed px/frame
+    const VMAX = 52; // px/frame → velocity 1.0 (matches scrollSignal)
 
     const tick = (now: number) => {
       const dt = now - last;
       last = now;
       if (dt > 0) fpsEMA += (1000 / dt - fpsEMA) * 0.1;
       s.fps = Math.max(1, Math.min(120, Math.round(fpsEMA)));
+      const y = window.scrollY;
+      const dy = y - lastSY;
+      lastSY = y;
+      velEMA += (Math.abs(dy) - velEMA) * 0.16;
+      s.vy = Math.min(1, velEMA / VMAX);
+      s.dir = dy > 0.5 ? 1 : dy < -0.5 ? -1 : 0;
       readScroll();
       emit();
       raf = running ? requestAnimationFrame(tick) : 0;
