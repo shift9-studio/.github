@@ -3,13 +3,13 @@ import {
   GrainField,
   MagneticButton,
   MonoLabel,
-  ProximityText,
   SpiceMote,
   WorkWall,
   type DitherPalette,
 } from "@shift9/ui";
 import { getFeaturedBoard } from "@shift9/data";
 import { Reveal } from "./_components/Reveal";
+import { SeasonHeadline } from "./_components/SeasonHeadline";
 import { board as fallbackBoard } from "@/lib/menu-data";
 
 /* ISR — refresh the featured recipes hourly. The page stays static + instant;
@@ -96,14 +96,14 @@ export default async function Home() {
             JUST A PINCH — RECIPE ORGANIZER + COOKING
           </MonoLabel>
 
-          <ProximityText
+          <SeasonHeadline
             as="h1"
             className="text-display uppercase tracking-[-0.02em] text-ink"
-          >
-            Every recipe.
-            <br />
-            <span className="text-signal">Finally cooked.</span>
-          </ProximityText>
+            lines={[
+              { text: "Every recipe." },
+              { text: "Finally cooked.", accent: true },
+            ]}
+          />
 
           <p className="mt-8 max-w-xl text-body leading-relaxed text-muted">
             Just a Pinch keeps every recipe you love in one place — then walks
@@ -178,9 +178,11 @@ export default async function Home() {
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <div>
               <MonoLabel className="mb-4">FEATURED RECIPES</MonoLabel>
-              <ProximityText as="h2" className="text-h2 text-ink">
-                A taste of what&apos;s inside
-              </ProximityText>
+              <SeasonHeadline
+                as="h2"
+                className="text-h2 text-ink"
+                lines={[{ text: "A taste of what's inside" }]}
+              />
             </div>
             <MonoLabel marker={false} className="text-signal">
               [ {board.length} recipes ]
@@ -225,16 +227,14 @@ export default async function Home() {
       >
         <div className="mx-auto max-w-[84rem]">
           <MonoLabel className="mb-8">PULL UP A CHAIR</MonoLabel>
-          <ProximityText
+          <SeasonHeadline
             as="h2"
             className="text-display uppercase text-ink"
-            minWeight={300}
-            maxWeight={900}
-          >
-            Dinner&apos;s
-            <br />
-            <span className="text-signal">figured out.</span>
-          </ProximityText>
+            lines={[
+              { text: "Dinner's" },
+              { text: "figured out.", accent: true },
+            ]}
+          />
           <p className="mt-8 max-w-xl text-body leading-relaxed text-muted">
             Join the first batch of cooks. We&apos;ll ping you the moment Just a
             Pinch lands — no spam, just a heads-up worth opening.
