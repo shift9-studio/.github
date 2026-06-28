@@ -12,6 +12,8 @@ import { cn } from "./cn";
 
 export interface Project {
   title: string;
+  /** Stable slug for the project's detail page (/work/<slug>). */
+  slug?: string;
   role: string;
   year: string;
   tags: string[];
