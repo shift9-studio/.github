@@ -74,6 +74,18 @@
 .s9-boot-rail   { animation: s9-boot-fade 600ms 560ms var(--s9-ease-premium) both; }
 .s9-sync        { animation: s9-sync-blink 1.8s steps(1, end) infinite; }
 
+/* Living film grain (GrainField) — a stepped jitter of the noise tile; the
+   reduced-motion contract above freezes it to a still texture. */
+@keyframes s9-grain-shift {
+  0%   { background-position: 0 0; }
+  20%  { background-position: -12px 9px; }
+  40%  { background-position: 10px -8px; }
+  60%  { background-position: -7px -11px; }
+  80%  { background-position: 13px 6px; }
+  100% { background-position: 0 0; }
+}
+.s9-grain { animation: s9-grain-shift 1.1s steps(5, end) infinite; }
+
 @layer base {
   /* High-contrast focus — restyle the outline, never remove it. */
   :where(a, button, input, textarea, select, [tabindex]):focus-visible {

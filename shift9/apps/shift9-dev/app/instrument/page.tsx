@@ -1,21 +1,29 @@
-import { GridFrame, MonoLabel, ProximityText } from "@shift9/ui";
+import {
+  CustomCursor,
+  EdgeReticle,
+  GridFrame,
+  MonoLabel,
+  ProximityText,
+} from "@shift9/ui";
 import { Reveal } from "../_components/Reveal";
 
 export const metadata = {
   title: "INSTRUMENT — Shift-9 Design System",
   description:
-    "The shared colors, type, motion, and components that run through every Shift-9 surface.",
+    "The shared colors, type, motion, components, and live instrumentation that run through every Shift-9 surface.",
 };
 
+/* Swatches render from the live CSS variables, so this page can never drift
+   from the real tokens — the value strings mirror @shift9/theme/tokens.css. */
 const tokens = [
-  { name: "void",    hex: "#0a0e1a", label: "Background" },
-  { name: "well",    hex: "#111827", label: "Surface" },
-  { name: "surface", hex: "#1e2333", label: "Elevated" },
-  { name: "line",    hex: "#1f2d3d", label: "Border" },
-  { name: "muted",   hex: "#9aa7b8", label: "Secondary text" },
-  { name: "ink",     hex: "#e6edf3", label: "Primary text" },
-  { name: "signal",  hex: "#22d3ee", label: "Accent — signal" },
-  { name: "pulse",   hex: "#f59e0b", label: "Accent — pulse" },
+  { name: "void", css: "var(--s9-void)", value: "#0f172a", label: "Background — the void" },
+  { name: "well", css: "var(--s9-void-2)", value: "#0b1120", label: "Deeper well" },
+  { name: "surface", css: "var(--s9-surface)", value: "#131c31", label: "Raised panel" },
+  { name: "ink", css: "var(--s9-ink)", value: "#e2e8f0", label: "Primary text" },
+  { name: "muted", css: "var(--s9-ink-dim)", value: "#64748b", label: "Mono / secondary" },
+  { name: "signal", css: "var(--s9-signal)", value: "#22d3ee", label: "Accent — signal" },
+  { name: "pulse", css: "var(--s9-pulse)", value: "#8b5cf6", label: "Accent — pulse" },
+  { name: "line", css: "var(--s9-line)", value: "signal · 16%", label: "Hairline border" },
 ];
 
 const type = [
@@ -35,13 +43,13 @@ const type = [
     label: "Body",
     sample: "One system. Every surface. No drift.",
     cls: "text-body leading-relaxed",
-    meta: "System sans · 16px / 1.6",
+    meta: "Martian Mono · fluid 1rem → 1.13rem",
   },
   {
     label: "Mono",
     sample: "SYS // ONLINE — BUILD: STABLE",
     cls: "font-mono text-mono uppercase tracking-[0.22em]",
-    meta: "Martian Mono · 11px / tracking 0.22em",
+    meta: "Martian Mono · 0.82rem / tracking 0.22em",
   },
 ];
 
@@ -49,174 +57,276 @@ const motion = [
   {
     id: "01",
     name: "transition-premium",
-    value: "all 260ms cubic-bezier(0.22, 1, 0.36, 1)",
+    value: "all 300ms cubic-bezier(0.22, 1, 0.36, 1)",
     use: "Hover states, color transitions, opacity fades — the default touch for anything interactive.",
   },
   {
     id: "02",
     name: "Reveal",
-    value: "opacity + translateY(22px) → 0 · 600ms ease-out",
+    value: "opacity + translateY(22px) → 0 · 600ms house ease",
     use: "Scroll-driven entry animation for sections and cards. Once-only, with a −80px margin.",
   },
   {
     id: "03",
     name: "Magnetic",
-    value: "spring · stiffness 200 · damping 18",
-    use: "Cursor-follow pull on buttons and work wall tiles. Strength 0.22, radius 170px.",
+    value: "spring · stiffness 260 · damping 18",
+    use: "Cursor-follow pull on buttons and work-wall tiles. Tiles: strength 0.22, radius 170px.",
   },
   {
     id: "04",
     name: "Proximity",
-    value: "fontVariationSettings wght interpolation · 240px radius",
+    value: "fontVariationSettings wght/wdth · 320px radius",
     use: "Variable-font weight responds to cursor proximity — words thicken as the cursor approaches.",
   },
 ];
 
+/* The live instrumentation layer — the "INSTRUMENT // LIVE" suite. */
+const live = [
+  {
+    id: "01",
+    name: "GridFrame · LIVE",
+    value: "telemetry HUD · 1 shared rAF / pointer / IO",
+    use: "The frame's labels become real: live cursor grid-coords, scroll depth, active section, viewport, a smoothed FPS gauge, a 1 Hz SYNC blink, and an edge scroll-trace. Writes straight to the DOM — zero React re-renders.",
+  },
+  {
+    id: "02",
+    name: "Phosphor Sweep",
+    value: "WebGL render-to-texture feedback · ~3px ring",
+    use: "A decaying CRT beam orbits the frame's inner hairline like an oscilloscope refreshing its bezel — true GPU feedback, hard-masked to the gutter so it never touches content.",
+  },
+  {
+    id: "03",
+    name: "POWER-ON",
+    value: "one-time boot · ~0.9s · pure CSS",
+    use: "On load the instrument powers on: corner ticks strike in sequence, the frame settles, the rail spins up — content fully interactive underneath the whole time.",
+  },
+  {
+    id: "04",
+    name: "EdgeReticle",
+    value: "spring viewfinder · augments :focus-visible",
+    use: "Camera-style corner brackets lock onto the focused (or hovered) control and fly between targets. Adds to the focus ring — never replaces it.",
+  },
+  {
+    id: "05",
+    name: "CursorLumen",
+    value: "screen-blended bloom · three-body lag",
+    use: "A soft volumetric light trails the cursor a beat behind the ring — depth without 3D. Screen blend lifts luminance only, so it can't hurt text contrast.",
+  },
+  {
+    id: "06",
+    name: "SpiceMote · GrainField",
+    value: "Just a Pinch · warm signatures",
+    use: "The product surface gets its own voice — a 'pinch of spice' cursor sprinkle and an editorial cookbook grain — instead of the studio's console chrome. Same engine, different flavor.",
+  },
+];
+
 const components = [
-  { name: "WorkWall",      desc: "Magnetic 3D tile grid — the primary project/recipe showcase." },
-  { name: "DitherField",   desc: "WebGL dithered noise field — animated background for hero sections." },
-  { name: "ProximityText", desc: "Variable-font weight driven by cursor distance." },
-  { name: "MagneticButton",desc: "Spring-physics cursor-pull CTA button." },
-  { name: "GridFrame",     desc: "Studio grid overlay with coordinate label — the 'system is live' affordance." },
-  { name: "MonoLabel",     desc: "Mono uppercase section marker with optional rail marker." },
-  { name: "CustomCursor",  desc: "Branded crosshair cursor that replaces the OS default." },
-  { name: "Reveal",        desc: "Scroll-triggered fade + lift entry animation wrapper." },
+  { name: "WorkWall", desc: "Magnetic 3D tile grid — the primary project/recipe showcase." },
+  { name: "DitherField", desc: "WebGL dithered noise field — palette-driven animated hero background." },
+  { name: "ProximityText", desc: "Variable-font weight/width driven by cursor distance." },
+  { name: "MagneticButton", desc: "Spring-physics cursor-pull CTA button." },
+  { name: "GridFrame", desc: "Coordinate scaffold + corner ticks. `live` wakes its telemetry; `boot` plays the power-on." },
+  { name: "TelemetryRail", desc: "The live readout that turns GridFrame into a working instrument — coords, scroll, section, FPS, SYNC." },
+  { name: "GridSweep", desc: "WebGL feedback shader — the phosphor beam tracing the frame's hairline." },
+  { name: "EdgeReticle", desc: "Spring-loaded viewfinder brackets that lock onto the focused or hovered control." },
+  { name: "CustomCursor", desc: "Console cursor — fast dot, trailing ring, and a volumetric light bloom; replaces the OS default." },
+  { name: "SpiceMote", desc: "Just a Pinch's warm cursor — a sprinkle of saffron/paprika motes that settle under gravity." },
+  { name: "GrainField", desc: "Editorial film-grain texture for the warm product surface." },
+  { name: "MonoLabel", desc: "Mono uppercase section marker with optional rail marker." },
+  { name: "Reveal", desc: "Scroll-triggered fade + lift entry animation wrapper." },
+  { name: "useInstrumentTelemetry", desc: "The shared hook behind LIVE — one rAF, one pointer listener, one IntersectionObserver." },
 ];
 
 export default function InstrumentPage() {
   return (
-    <main className="relative">
-      <GridFrame coord="X:005 · Y:INSTRUMENT" />
+    <>
+      <CustomCursor />
+      <EdgeReticle />
+      <main className="relative">
+        <GridFrame coord="X:005 · Y:INSTRUMENT" live boot />
 
-      {/* ─────────────────────────── HERO ─────────────────────────── */}
-      <section className="border-b border-line px-6 py-28 sm:px-10">
-        <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-8">// design system — instrument</MonoLabel>
-          <ProximityText
-            as="h1"
-            className="text-display uppercase tracking-[-0.02em] text-ink"
-          >
-            One system.
-            <br />
-            <span className="text-signal">Every surface.</span>
-          </ProximityText>
-          <p className="mt-8 max-w-2xl text-body leading-relaxed text-muted">
-            INSTRUMENT is the shared design foundation that runs through every
-            Shift-9 surface — the studio site, Just a Pinch, and this page.
-            Same colors, same type scale, same motion, same components. Nothing
-            drifts.
-          </p>
-        </div>
-      </section>
+        {/* ─────────────────────────── HERO ─────────────────────────── */}
+        <section
+          data-tele-section="INSTRUMENT"
+          className="border-b border-line px-6 py-28 sm:px-10"
+        >
+          <div className="mx-auto max-w-[84rem]">
+            <MonoLabel className="mb-8">// design system — instrument</MonoLabel>
+            <ProximityText
+              as="h1"
+              className="text-display uppercase tracking-[-0.02em] text-ink"
+            >
+              One system.
+              <br />
+              <span className="text-signal">Every surface.</span>
+            </ProximityText>
+            <p className="mt-8 max-w-2xl text-body leading-relaxed text-muted">
+              INSTRUMENT is the shared design foundation that runs through every
+              Shift-9 surface — the studio site, Just a Pinch, and this page.
+              Same colors, same type scale, same motion, same components, plus a
+              live instrumentation layer that makes the chrome read the machine.
+              Nothing drifts.
+            </p>
+          </div>
+        </section>
 
-      {/* ──────────────────────── COLOR TOKENS ────────────────────── */}
-      <section className="border-b border-line px-6 py-24 sm:px-10">
-        <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-14">// tokens — color</MonoLabel>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-            {tokens.map((t, i) => (
-              <Reveal key={t.name} delay={i * 0.04}>
-                <div className="flex flex-col gap-3">
-                  <div
-                    className="h-20 w-full border border-line"
-                    style={{ background: t.hex }}
-                  />
-                  <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink">
-                      {t.name}
-                    </p>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                      {t.hex}
-                    </p>
-                    <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted opacity-70">
-                      {t.label}
-                    </p>
+        {/* ──────────────────────── COLOR TOKENS ────────────────────── */}
+        <section
+          data-tele-section="COLOR"
+          className="border-b border-line px-6 py-24 sm:px-10"
+        >
+          <div className="mx-auto max-w-[84rem]">
+            <MonoLabel className="mb-14">// tokens — color</MonoLabel>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+              {tokens.map((t, i) => (
+                <Reveal key={t.name} delay={i * 0.04}>
+                  <div className="flex flex-col gap-3">
+                    <div
+                      className="h-20 w-full border border-line"
+                      style={{ background: t.css }}
+                    />
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink">
+                        {t.name}
+                      </p>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                        {t.value}
+                      </p>
+                      <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted opacity-70">
+                        {t.label}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ───────────────────────── TYPOGRAPHY ─────────────────────── */}
-      <section className="border-b border-line px-6 py-24 sm:px-10">
-        <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-14">// tokens — type</MonoLabel>
-          <div className="divide-y divide-line border border-line">
-            {type.map((t, i) => (
-              <Reveal key={t.label} delay={i * 0.06}>
-                <div className="flex flex-col gap-4 p-8 lg:flex-row lg:items-center lg:gap-12">
-                  <div className="w-28 shrink-0">
-                    <p className="font-mono text-mono uppercase tracking-[0.18em] text-signal">
-                      {t.label}
-                    </p>
-                    <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.1em] text-muted opacity-60">
-                      {t.meta}
-                    </p>
+        {/* ───────────────────────── TYPOGRAPHY ─────────────────────── */}
+        <section
+          data-tele-section="TYPE"
+          className="border-b border-line px-6 py-24 sm:px-10"
+        >
+          <div className="mx-auto max-w-[84rem]">
+            <MonoLabel className="mb-14">// tokens — type</MonoLabel>
+            <div className="divide-y divide-line border border-line">
+              {type.map((t, i) => (
+                <Reveal key={t.label} delay={i * 0.06}>
+                  <div className="flex flex-col gap-4 p-8 lg:flex-row lg:items-center lg:gap-12">
+                    <div className="w-28 shrink-0">
+                      <p className="font-mono text-mono uppercase tracking-[0.18em] text-signal">
+                        {t.label}
+                      </p>
+                      <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.1em] text-muted opacity-60">
+                        {t.meta}
+                      </p>
+                    </div>
+                    <p className={`text-ink ${t.cls}`}>{t.sample}</p>
                   </div>
-                  <p className={`text-ink ${t.cls}`}>{t.sample}</p>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ────────────────────────── MOTION ────────────────────────── */}
-      <section className="border-b border-line px-6 py-24 sm:px-10">
-        <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-14">// tokens — motion</MonoLabel>
-          <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
-            {motion.map((m, i) => (
-              <Reveal key={m.id} delay={i * 0.06} className="bg-void">
-                <article className="flex h-full flex-col gap-4 p-8 transition-premium hover:bg-well">
-                  <span className="font-mono text-mono text-signal">{m.id}</span>
-                  <h3 className="font-mono text-sm uppercase tracking-[0.16em] text-ink">
-                    {m.name}
-                  </h3>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-pulse">
-                    {m.value}
-                  </p>
-                  <p className="text-body leading-relaxed text-muted">{m.use}</p>
-                </article>
-              </Reveal>
-            ))}
+        {/* ────────────────────────── MOTION ────────────────────────── */}
+        <section
+          data-tele-section="MOTION"
+          className="border-b border-line px-6 py-24 sm:px-10"
+        >
+          <div className="mx-auto max-w-[84rem]">
+            <MonoLabel className="mb-14">// tokens — motion</MonoLabel>
+            <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
+              {motion.map((m, i) => (
+                <Reveal key={m.id} delay={i * 0.06} className="bg-void">
+                  <article className="flex h-full flex-col gap-4 p-8 transition-premium hover:bg-well">
+                    <span className="font-mono text-mono text-signal">{m.id}</span>
+                    <h3 className="font-mono text-sm uppercase tracking-[0.16em] text-ink">
+                      {m.name}
+                    </h3>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-pulse">
+                      {m.value}
+                    </p>
+                    <p className="text-body leading-relaxed text-muted">{m.use}</p>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ────────────────────────── COMPONENTS ────────────────────── */}
-      <section className="border-b border-line px-6 py-24 sm:px-10">
-        <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-14">// component index</MonoLabel>
-          <div className="divide-y divide-line border border-line">
-            {components.map((c, i) => (
-              <Reveal key={c.name} delay={i * 0.04}>
-                <div className="flex flex-col gap-2 p-6 transition-premium hover:bg-well sm:flex-row sm:items-center sm:gap-10">
-                  <p className="w-48 shrink-0 font-mono text-sm uppercase tracking-[0.16em] text-signal">
-                    {c.name}
-                  </p>
-                  <p className="text-body leading-relaxed text-muted">{c.desc}</p>
-                </div>
-              </Reveal>
-            ))}
+        {/* ───────────────────── LIVE INSTRUMENTATION ───────────────── */}
+        <section
+          data-tele-section="LIVE"
+          className="border-b border-line px-6 py-24 sm:px-10"
+        >
+          <div className="mx-auto max-w-[84rem]">
+            <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <MonoLabel className="mb-4">// instrument — live</MonoLabel>
+                <ProximityText as="h2" className="text-h2 uppercase text-ink">
+                  The console, alive
+                </ProximityText>
+              </div>
+              <MonoLabel marker={false} className="text-signal">
+                [ the frame you&apos;re reading is running it ]
+              </MonoLabel>
+            </div>
+            <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
+              {live.map((m, i) => (
+                <Reveal key={m.id} delay={i * 0.05} className="bg-void">
+                  <article className="flex h-full flex-col gap-4 p-8 transition-premium hover:bg-well">
+                    <span className="font-mono text-mono text-signal">{m.id}</span>
+                    <h3 className="font-mono text-sm uppercase tracking-[0.16em] text-ink">
+                      {m.name}
+                    </h3>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-pulse">
+                      {m.value}
+                    </p>
+                    <p className="text-body leading-relaxed text-muted">{m.use}</p>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ─────────────────────────── FOOTER ───────────────────────── */}
-      <footer className="border-t border-line px-6 py-10 sm:px-10">
-        <div className="mx-auto flex max-w-[84rem] flex-wrap items-center justify-between gap-4">
-          <MonoLabel marker={false}>INSTRUMENT — Shift-9 Design System</MonoLabel>
-          <a
-            href="/"
-            className="font-mono text-mono uppercase tracking-[0.18em] text-signal opacity-60 transition-premium hover:opacity-100 hover:[filter:drop-shadow(0_0_6px_#22d3ee)]"
-          >
-            ← back to studio
-          </a>
-        </div>
-      </footer>
-    </main>
+        {/* ────────────────────────── COMPONENTS ────────────────────── */}
+        <section
+          data-tele-section="INDEX"
+          className="border-b border-line px-6 py-24 sm:px-10"
+        >
+          <div className="mx-auto max-w-[84rem]">
+            <MonoLabel className="mb-14">// component index</MonoLabel>
+            <div className="divide-y divide-line border border-line">
+              {components.map((c, i) => (
+                <Reveal key={c.name} delay={i * 0.04}>
+                  <div className="flex flex-col gap-2 p-6 transition-premium hover:bg-well sm:flex-row sm:items-center sm:gap-10">
+                    <p className="w-48 shrink-0 font-mono text-sm uppercase tracking-[0.16em] text-signal">
+                      {c.name}
+                    </p>
+                    <p className="text-body leading-relaxed text-muted">{c.desc}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─────────────────────────── FOOTER ───────────────────────── */}
+        <footer className="border-t border-line px-6 py-10 sm:px-10">
+          <div className="mx-auto flex max-w-[84rem] flex-wrap items-center justify-between gap-4">
+            <MonoLabel marker={false}>INSTRUMENT — Shift-9 Design System</MonoLabel>
+            <a
+              href="/"
+              className="font-mono text-mono uppercase tracking-[0.18em] text-signal opacity-60 transition-premium hover:opacity-100 hover:[filter:drop-shadow(0_0_6px_#22d3ee)]"
+            >
+              ← back to studio
+            </a>
+          </div>
+        </footer>
+      </main>
+    </>
   );
 }
