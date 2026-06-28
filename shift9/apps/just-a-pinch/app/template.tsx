@@ -6,11 +6,14 @@ import { motion, useReducedMotion } from "framer-motion";
 /**
  * Route transition for Just a Pinch — the same "power-on" boot as the studio
  * site, tinted by this surface's warm --s9-signal (saffron). A scan hairline
- * sweeps the viewport while the new content settles. No transform/filter on
- * the content wrapper (it would break the warm GrainField / fixed overlays);
- * opacity + a fixed scan line only. Gated by reduced motion.
+ * sweeps the viewport while the new content settles. First load skips the
+ * content fade (protects LCP) and only runs the scan; client navigations get
+ * the full boot. No transform/filter on the content wrapper (it would break
+ * the warm GrainField / fixed overlays); opacity + a fixed scan line only.
+ * Gated by reduced motion.
  */
 const EASE = [0.16, 1, 0.3, 1] as const;
+let booted = false; // false only for the very first mount of the session
 
 export default function Template({
   children,
@@ -18,6 +21,11 @@ export default function Template({
   children: React.ReactNode;
 }) {
   const reduced = useReducedMotion() ?? false;
+  const firstLoad = React.useRef(!booted);
+  React.useEffect(() => {
+    booted = true;
+  }, []);
+
   if (reduced) return <>{children}</>;
 
   return (
@@ -30,13 +38,17 @@ export default function Template({
         animate={{ y: "102vh", opacity: [0, 1, 1, 0] }}
         transition={{ duration: 0.72, ease: EASE, times: [0, 0.12, 0.85, 1] }}
       />
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.45, ease: EASE, delay: 0.06 }}
-      >
-        {children}
-      </motion.div>
+      {firstLoad.current ? (
+        children
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.45, ease: EASE, delay: 0.06 }}
+        >
+          {children}
+        </motion.div>
+      )}
     </>
   );
 }

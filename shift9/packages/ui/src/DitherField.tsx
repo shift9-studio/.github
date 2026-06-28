@@ -42,28 +42,30 @@ void main(){
   vec2 vdir = sp > 0.001 ? u_mvel / sp : vec2(0.0);
   vec2 rel = p - m;
   float along = dot(rel, vdir);
-  vec2 stretched = rel - vdir * along * (sp * 0.55);
+  vec2 stretched = rel - vdir * along * (sp * 0.4);
   float warp = 0.22 / (0.16 + length(stretched));
 
   // Scroll velocity speeds the drift and lifts the whole field a touch.
-  float tx = u_time * 0.045 + u_scroll * 0.5;
+  float tx = u_time * 0.045 + u_scroll * 0.3;
   float field = fbm(p * 2.1 + vec2(tx, u_time * 0.03) + warp * 0.12);
   field += 0.14 * warp;
-  field += 0.10 * u_scroll;
+  field += 0.07 * u_scroll;
 
-  // Click ripple: an expanding ring of intensity from the click point.
+  // Click ripple: a tight expanding ring from the click point, tinted pulse.
+  float rip = 0.0;
   if (u_clickt >= 0.0) {
     vec2 mc = (u_clickpos - 0.5 * u_res) / u_res.y;
-    float radius = u_clickt * 1.7;
-    float ring = exp(-pow((length(p - mc) - radius) * 5.5, 2.0));
-    float fade = max(0.0, 1.0 - u_clickt / 0.9);
-    field += ring * 0.55 * fade;
+    float radius = u_clickt * 1.5;
+    float ring = exp(-pow((length(p - mc) - radius) * 6.5, 2.0));
+    float fade = max(0.0, 1.0 - u_clickt / 0.8);
+    rip = ring * fade;
+    field += rip * 0.5;
   }
 
   float intensity = smoothstep(0.36, 0.96, field);
   float th = ign(gl_FragCoord.xy);
   float dots = step(th, intensity);
-  vec3 col = mix(u_signal, u_pulse, clamp(length(p - m) * 0.9, 0.0, 1.0));
+  vec3 col = mix(u_signal, u_pulse, clamp(length(p - m) * 0.9 + rip * 0.7, 0.0, 1.0));
   vec3 outc = mix(u_base, col, dots * (0.32 + 0.68 * intensity));
   outc *= 1.0 - 0.22 * length(uv - 0.5);
   gl_FragColor = vec4(outc, 1.0);
@@ -235,7 +237,7 @@ export function DitherField({
         prev.y = mouse.y;
         primed = true;
       }
-      const gain = 8.0;
+      const gain = 6.5;
       const instX = ((mouse.x - prev.x) / canvas.height) * gain;
       const instY = ((mouse.y - prev.y) / canvas.height) * gain;
       prev.x = mouse.x;
@@ -243,11 +245,11 @@ export function DitherField({
       vel.x += (instX - vel.x) * 0.2;
       vel.y += (instY - vel.y) * 0.2;
 
-      // Click ripple age, expires after 0.9s.
+      // Click ripple age, expires after 0.8s (matches the shader fade).
       let clickAge = -1;
       if (click.t >= 0) {
         clickAge = (t - click.t) / 1000;
-        if (clickAge > 0.9) {
+        if (clickAge > 0.8) {
           clickAge = -1;
           click.t = -1;
         }

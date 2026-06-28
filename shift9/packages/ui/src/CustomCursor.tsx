@@ -70,12 +70,12 @@ export function CustomCursor() {
   const ringSX = useTransform([ringScale, stretch], (v: number[]) => {
     const s = v[0] ?? 1;
     const st = v[1] ?? 0;
-    return s * (1 + st * 0.7);
+    return s * (1 + st * 0.55);
   });
   const ringSY = useTransform([ringScale, stretch], (v: number[]) => {
     const s = v[0] ?? 1;
     const st = v[1] ?? 0;
-    return s * (1 - st * 0.4);
+    return s * (1 - st * 0.3);
   });
   // Dot pulses inward on press.
   const dotScaleRaw = useMotionValue(1);
@@ -103,9 +103,21 @@ export function CustomCursor() {
       'a, button, [role="button"], input, textarea, select, label, summary, [data-cursor-target]';
     let interactive = false;
     let pressed = false;
+    let accent = "#22d3ee";
 
     const applyRingScale = () => {
-      ringScaleRaw.set((interactive ? 2.4 : 1) * (pressed ? 0.78 : 1));
+      // Dock to a measured 1.95× on targets; a gentle inward press at 0.84×.
+      ringScaleRaw.set((interactive ? 1.95 : 1) * (pressed ? 0.84 : 1));
+    };
+
+    // Paint the ring as a "lock-on" reticle: full accent + a faint fill when
+    // docked to a target, a calm 60% hairline otherwise.
+    const paintRing = () => {
+      const el = ringRef.current;
+      if (!el) return;
+      el.style.borderColor = accent;
+      el.style.opacity = interactive ? "1" : "0.6";
+      el.style.backgroundColor = interactive ? `${accent}14` : "transparent";
     };
 
     const onMove = (e: MouseEvent) => {
@@ -117,7 +129,7 @@ export function CustomCursor() {
       // Velocity squash-and-stretch (skipped under reduced motion).
       if (!reduced) {
         const speed = Math.hypot(e.movementX, e.movementY);
-        stretchRaw.set(Math.min(1, speed / 42));
+        stretchRaw.set(Math.min(1, speed / 48));
         if (speed > 0.5)
           ringAngle.set((Math.atan2(e.movementY, e.movementX) * 180) / Math.PI);
 
@@ -125,6 +137,7 @@ export function CustomCursor() {
         if (overInteractive !== interactive) {
           interactive = overInteractive;
           applyRingScale();
+          paintRing();
         }
       }
 
@@ -133,11 +146,11 @@ export function CustomCursor() {
       const next = closest?.getAttribute("data-cursor") === "pulse";
       if (next !== isPulse.current) {
         isPulse.current = next;
-        const color = next ? "#8b5cf6" : "#22d3ee";
-        if (dotRef.current) dotRef.current.style.backgroundColor = color;
-        if (ringRef.current) ringRef.current.style.borderColor = color;
+        accent = next ? "#8b5cf6" : "#22d3ee";
+        if (dotRef.current) dotRef.current.style.backgroundColor = accent;
         if (bloomRef.current)
           bloomRef.current.style.background = next ? PULSE_BLOOM : SIGNAL_BLOOM;
+        paintRing();
       }
     };
 
