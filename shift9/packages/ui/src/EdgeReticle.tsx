@@ -103,8 +103,15 @@ export function EdgeReticle() {
         hide();
       }
     };
+    // Re-lock onto the active target as it moves — coalesced to one rect read
+    // per frame so a scroll while focused never thrashes layout per-event.
+    let reposRaf = 0;
     const onReposition = () => {
-      if (activeRef.current) place(activeRef.current);
+      if (!activeRef.current || reposRaf) return;
+      reposRaf = requestAnimationFrame(() => {
+        reposRaf = 0;
+        if (activeRef.current) place(activeRef.current);
+      });
     };
 
     document.addEventListener("focusin", onFocusIn);
@@ -119,6 +126,7 @@ export function EdgeReticle() {
       document.removeEventListener("pointerover", onOver);
       window.removeEventListener("scroll", onReposition);
       window.removeEventListener("resize", onReposition);
+      if (reposRaf) cancelAnimationFrame(reposRaf);
     };
   }, [x, y, w, h, o]);
 

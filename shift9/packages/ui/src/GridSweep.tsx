@@ -213,7 +213,12 @@ export function GridSweep({
       if (!a || !b) setFailed(true);
     };
     allocate();
-    if (failed) return;
+    if (!a || !b) {
+      gl.deleteBuffer(buf);
+      gl.deleteProgram(updateProg);
+      gl.deleteProgram(copyProg);
+      return; // allocate() already flagged failed → re-render unmounts the canvas
+    }
 
     gl.disable(gl.BLEND);
 
@@ -299,6 +304,11 @@ export function GridSweep({
         gl.deleteTexture(b.tex);
         gl.deleteFramebuffer(b.fb);
       }
+      // The effect re-runs whenever the palette prop changes; free the GPU
+      // objects so a re-skin (e.g. Just-a-Pinch) can't leak buffers/programs.
+      gl.deleteBuffer(buf);
+      gl.deleteProgram(updateProg);
+      gl.deleteProgram(copyProg);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduced, signal, pulse]);
