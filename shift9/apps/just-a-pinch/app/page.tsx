@@ -1,8 +1,10 @@
 import {
   DitherField,
+  GrainField,
   MagneticButton,
   MonoLabel,
   ProximityText,
+  SpiceMote,
   WorkWall,
   type DitherPalette,
 } from "@shift9/ui";
@@ -68,6 +70,11 @@ export default async function Home() {
   const board = (await getFeaturedBoard(6)) ?? fallbackBoard;
 
   return (
+    <>
+    {/* Warm, food-forward signatures — distinct from the studio's cyber
+        console: a "pinch of spice" cursor and an editorial cookbook grain. */}
+    <GrainField />
+    <SpiceMote />
     <main className="relative">
 
       {/* ─────────────────────────── HERO ─────────────────────────── */}
@@ -253,5 +260,6 @@ export default async function Home() {
         </div>
       </footer>
     </main>
+    </>
   );
 }
