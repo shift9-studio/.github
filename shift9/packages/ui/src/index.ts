@@ -1,6 +1,9 @@
 export { cn } from "./cn";
 export { CustomCursor } from "./CustomCursor";
 export { GridFrame, type GridFrameProps } from "./GridFrame";
+export { TelemetryRail, type TelemetryRailProps } from "./TelemetryRail";
+export { GridSweep, type SweepPalette } from "./GridSweep";
+export { EdgeReticle } from "./EdgeReticle";
 export { MonoLabel, type MonoLabelProps } from "./MonoLabel";
 export { MagneticButton, type MagneticButtonProps } from "./MagneticButton";
 export { ProximityText, type ProximityTextProps } from "./ProximityText";

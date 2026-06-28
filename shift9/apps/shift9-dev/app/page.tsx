@@ -1,6 +1,7 @@
 import {
   CustomCursor,
   DitherField,
+  EdgeReticle,
   GridFrame,
   MagneticButton,
   MonoLabel,
@@ -32,11 +33,15 @@ export default function Home() {
   return (
     <>
     <CustomCursor />
+    <EdgeReticle />
     <main className="relative">
-      <GridFrame coord="X:001 · Y:HOME" />
+      <GridFrame coord="X:001 · Y:HOME" live boot />
 
       {/* ─────────────────────────── HERO ─────────────────────────── */}
-      <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 sm:px-10">
+      <section
+        data-tele-section="HERO"
+        className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 sm:px-10"
+      >
         <div className="pointer-events-none absolute inset-0 -z-10">
           <DitherField className="h-full w-full opacity-80" />
           <div className="absolute inset-0 bg-gradient-to-b from-void/30 via-transparent to-void" />
@@ -77,7 +82,10 @@ export default function Home() {
       </section>
 
       {/* ────────────────────────── MANIFESTO ─────────────────────── */}
-      <section className="border-y border-line px-6 py-24 sm:px-10">
+      <section
+        data-tele-section="MANIFESTO"
+        className="border-y border-line px-6 py-24 sm:px-10"
+      >
         <div className="mx-auto grid max-w-[84rem] gap-10 lg:grid-cols-[1fr_2fr]">
           <MonoLabel className="lg:pt-3">// manifesto — 001</MonoLabel>
           <Reveal>
@@ -95,7 +103,11 @@ export default function Home() {
       </section>
 
       {/* ────────────────────────── WORK WALL ─────────────────────── */}
-      <section id="work" className="scroll-mt-16 px-6 py-24 sm:px-10">
+      <section
+        id="work"
+        data-tele-section="WORK"
+        className="scroll-mt-16 px-6 py-24 sm:px-10"
+      >
         <div className="mx-auto max-w-[84rem]">
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -115,6 +127,7 @@ export default function Home() {
       {/* ───────────────────────── CAPABILITIES ───────────────────── */}
       <section
         id="capabilities"
+        data-tele-section="CAPABILITIES"
         className="scroll-mt-16 border-t border-line px-6 py-24 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
@@ -141,6 +154,7 @@ export default function Home() {
       {/* ─────────────────────────── CONTACT ──────────────────────── */}
       <section
         id="contact"
+        data-tele-section="CONTACT"
         className="scroll-mt-16 overflow-hidden px-6 py-28 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
