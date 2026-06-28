@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Martian_Mono } from "next/font/google";
 import "./globals.css";
+import { SmoothScroll } from "./_components/SmoothScroll";
 
 /* Just a Pinch keeps the system's mono (Martian Mono) but swaps the display
    face for Fraunces — a variable, high-contrast antiqua with warmth and
@@ -39,7 +40,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${display.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <SmoothScroll />
+        {children}
+      </body>
     </html>
   );
 }

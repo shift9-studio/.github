@@ -1,8 +1,15 @@
 import * as React from "react";
 import { cn } from "./cn";
+import { DecodeText } from "./DecodeText";
 
 export interface MonoLabelProps extends React.HTMLAttributes<HTMLSpanElement> {
   marker?: boolean;
+  /**
+   * Resolve the (string) label out of cycling glyphs on first scroll into
+   * view — the instrument "decrypting" its readout. Reduced-motion safe and
+   * a11y-safe (see DecodeText). No-op when children isn't a plain string.
+   */
+  decode?: boolean;
   children?: React.ReactNode;
 }
 
@@ -14,8 +21,15 @@ export function MonoLabel({
   children,
   className,
   marker = true,
+  decode = false,
   ...rest
 }: MonoLabelProps) {
+  const content =
+    decode && typeof children === "string" ? (
+      <DecodeText text={children} />
+    ) : (
+      children
+    );
   return (
     <span
       className={cn(
@@ -29,7 +43,7 @@ export function MonoLabel({
           //
         </span>
       ) : null}
-      {children}
+      {content}
     </span>
   );
 }

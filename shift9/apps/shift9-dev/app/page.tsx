@@ -8,7 +8,7 @@ import {
   ProximityText,
   WorkWall,
 } from "@shift9/ui";
-import { Reveal } from "./_components/Reveal";
+import { Reveal, RevealGroup, RevealItem } from "./_components/Reveal";
 import { projects } from "@/lib/work-data";
 
 const capabilities = [
@@ -48,7 +48,7 @@ export default function Home() {
         </div>
 
         <div className="mx-auto w-full max-w-[84rem]">
-          <MonoLabel className="mb-8">SYS // ONLINE — SHIFT-9 STUDIO</MonoLabel>
+          <MonoLabel decode className="mb-8">SYS // ONLINE — SHIFT-9 STUDIO</MonoLabel>
 
           <ProximityText
             as="h1"
@@ -87,7 +87,7 @@ export default function Home() {
         className="border-y border-line px-6 py-24 sm:px-10"
       >
         <div className="mx-auto grid max-w-[84rem] gap-10 lg:grid-cols-[1fr_2fr]">
-          <MonoLabel className="lg:pt-3">// manifesto — 001</MonoLabel>
+          <MonoLabel decode className="lg:pt-3">// manifesto — 001</MonoLabel>
           <Reveal>
             <p
               className="font-display text-h2 uppercase leading-[1.05] text-ink"
@@ -111,7 +111,7 @@ export default function Home() {
         <div className="mx-auto max-w-[84rem]">
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <div>
-              <MonoLabel className="mb-4">// selected output</MonoLabel>
+              <MonoLabel decode className="mb-4">// selected output</MonoLabel>
               <ProximityText as="h2" className="text-h2 uppercase text-ink">
                 The Work Wall
               </ProximityText>
@@ -131,10 +131,10 @@ export default function Home() {
         className="scroll-mt-16 border-t border-line px-6 py-24 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-14">// capability index</MonoLabel>
-          <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
-            {capabilities.map((c, i) => (
-              <Reveal key={c.id} delay={i * 0.08} className="bg-void">
+          <MonoLabel decode className="mb-14">// capability index</MonoLabel>
+          <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
+            {capabilities.map((c) => (
+              <RevealItem key={c.id} variant="scan" className="bg-void">
                 <article className="flex h-full flex-col gap-5 p-8 transition-premium hover:bg-well">
                   <span className="font-mono text-mono text-signal">{c.id}</span>
                   <h3
@@ -145,9 +145,9 @@ export default function Home() {
                   </h3>
                   <p className="text-body leading-relaxed text-muted">{c.body}</p>
                 </article>
-              </Reveal>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -158,7 +158,7 @@ export default function Home() {
         className="scroll-mt-16 overflow-hidden px-6 py-28 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-8">// transmission open</MonoLabel>
+          <MonoLabel decode className="mb-8">// transmission open</MonoLabel>
           <ProximityText
             as="h2"
             className="text-display uppercase text-ink"

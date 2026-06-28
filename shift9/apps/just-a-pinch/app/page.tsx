@@ -8,8 +8,9 @@ import {
   type DitherPalette,
 } from "@shift9/ui";
 import { getFeaturedBoard } from "@shift9/data";
-import { Reveal } from "./_components/Reveal";
+import { Reveal, RevealGroup, RevealItem } from "./_components/Reveal";
 import { SeasonHeadline } from "./_components/SeasonHeadline";
+import { ParallaxImage } from "./_components/ParallaxImage";
 import { board as fallbackBoard } from "@/lib/menu-data";
 
 /* ISR — refresh the featured recipes hourly. The page stays static + instant;
@@ -80,19 +81,18 @@ export default async function Home() {
       {/* ─────────────────────────── HERO ─────────────────────────── */}
       <section className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden px-6 sm:px-10">
         <div className="pointer-events-none absolute inset-0 -z-10">
-          {/* Higgsfield food photo — editorial overhead dinner spread */}
-          <img
+          {/* Higgsfield food photo — editorial overhead dinner spread, with a
+              slow scroll parallax for depth behind the warm Dither. */}
+          <ParallaxImage
             src="https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_183545_924e9d14-3d06-4ec7-aa67-d4f670a6e500.png"
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="h-full w-full object-cover"
           />
           <DitherField palette={warm} className="absolute inset-0 h-full w-full opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-void/60 via-void/40 to-void" />
         </div>
 
         <div className="mx-auto w-full max-w-[84rem]">
-          <MonoLabel className="mb-8">
+          <MonoLabel decode className="mb-8">
             JUST A PINCH — RECIPE ORGANIZER + COOKING
           </MonoLabel>
 
@@ -131,7 +131,7 @@ export default async function Home() {
       {/* ────────────────────────── MANIFESTO ─────────────────────── */}
       <section className="border-y border-line px-6 py-24 sm:px-10">
         <div className="mx-auto grid max-w-[84rem] gap-10 lg:grid-cols-[1fr_2fr]">
-          <MonoLabel className="lg:pt-3">THE STORY</MonoLabel>
+          <MonoLabel decode className="lg:pt-3">THE STORY</MonoLabel>
           <Reveal>
             <p
               className="font-display text-h2 leading-[1.05] text-ink"
@@ -148,10 +148,10 @@ export default async function Home() {
       {/* ───────────────────────── HOW IT WORKS ───────────────────── */}
       <section id="how" className="scroll-mt-16 px-6 py-24 sm:px-10">
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-14">FROM SAVED TO SERVED</MonoLabel>
-          <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
-            {steps.map((s, i) => (
-              <Reveal key={s.id} delay={i * 0.08} className="bg-void">
+          <MonoLabel decode className="mb-14">FROM SAVED TO SERVED</MonoLabel>
+          <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
+            {steps.map((s) => (
+              <RevealItem key={s.id} variant="scan" className="bg-void">
                 <article className="flex h-full flex-col gap-5 p-8 transition-premium hover:bg-well">
                   <span className="font-mono text-mono text-signal">
                     {s.id}
@@ -166,9 +166,9 @@ export default async function Home() {
                     {s.body}
                   </p>
                 </article>
-              </Reveal>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -177,7 +177,7 @@ export default async function Home() {
         <div className="mx-auto max-w-[84rem]">
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <div>
-              <MonoLabel className="mb-4">FEATURED RECIPES</MonoLabel>
+              <MonoLabel decode className="mb-4">FEATURED RECIPES</MonoLabel>
               <SeasonHeadline
                 as="h2"
                 className="text-h2 text-ink"
@@ -198,10 +198,10 @@ export default async function Home() {
         className="scroll-mt-16 border-t border-line px-6 py-24 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-14">WHAT MAKES IT WORK</MonoLabel>
-          <div className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-            {features.map((f, i) => (
-              <Reveal key={f.k} delay={i * 0.06} className="bg-void">
+          <MonoLabel decode className="mb-14">WHAT MAKES IT WORK</MonoLabel>
+          <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
+            {features.map((f) => (
+              <RevealItem key={f.k} variant="scan" className="bg-void">
                 <article className="flex h-full flex-col gap-4 p-7 transition-premium hover:bg-well">
                   <MonoLabel marker={false} className="text-signal">
                     {f.k}
@@ -214,9 +214,9 @@ export default async function Home() {
                   </h3>
                   <p className="text-body leading-relaxed text-muted">{f.b}</p>
                 </article>
-              </Reveal>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
@@ -226,7 +226,7 @@ export default async function Home() {
         className="scroll-mt-16 overflow-hidden px-6 py-28 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel className="mb-8">PULL UP A CHAIR</MonoLabel>
+          <MonoLabel decode className="mb-8">PULL UP A CHAIR</MonoLabel>
           <SeasonHeadline
             as="h2"
             className="text-display uppercase text-ink"

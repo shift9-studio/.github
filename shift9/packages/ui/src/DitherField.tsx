@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useReducedMotionSafe } from "@shift9/motion";
+import { useReducedMotionSafe, subscribeScroll, getScroll } from "@shift9/motion";
 
 /* Fragment shader: fbm field + interleaved-gradient ordered dithering,
    base→signal→pulse, warped toward the cursor. Palette arrives as uniforms
@@ -11,6 +11,10 @@ const FRAG = `precision highp float;
 uniform vec2 u_res;
 uniform float u_time;
 uniform vec2 u_mouse;
+uniform vec2 u_mvel;     // smoothed pointer velocity, p-space units
+uniform float u_scroll;  // normalized scroll velocity 0..1
+uniform vec2 u_clickpos; // last click position, px (Y flipped to GL space)
+uniform float u_clickt;  // seconds since last click, <0 = none
 uniform vec3 u_base;
 uniform vec3 u_signal;
 uniform vec3 u_pulse;
@@ -31,13 +35,37 @@ void main(){
   vec2 uv = gl_FragCoord.xy / u_res;
   vec2 p = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y;
   vec2 m = (u_mouse - 0.5 * u_res) / u_res.y;
-  float warp = 0.22 / (0.16 + length(p - m));
-  float field = fbm(p * 2.1 + vec2(u_time * 0.045, u_time * 0.03) + warp * 0.12);
+
+  // Anisotropic warp: elongate the cursor's pull into a comet WAKE along the
+  // direction of travel, so a fast flick smears the field with momentum.
+  float sp = min(length(u_mvel), 1.4);
+  vec2 vdir = sp > 0.001 ? u_mvel / sp : vec2(0.0);
+  vec2 rel = p - m;
+  float along = dot(rel, vdir);
+  vec2 stretched = rel - vdir * along * (sp * 0.4);
+  float warp = 0.22 / (0.16 + length(stretched));
+
+  // Scroll velocity speeds the drift and lifts the whole field a touch.
+  float tx = u_time * 0.045 + u_scroll * 0.3;
+  float field = fbm(p * 2.1 + vec2(tx, u_time * 0.03) + warp * 0.12);
   field += 0.14 * warp;
+  field += 0.07 * u_scroll;
+
+  // Click ripple: a tight expanding ring from the click point, tinted pulse.
+  float rip = 0.0;
+  if (u_clickt >= 0.0) {
+    vec2 mc = (u_clickpos - 0.5 * u_res) / u_res.y;
+    float radius = u_clickt * 1.5;
+    float ring = exp(-pow((length(p - mc) - radius) * 6.5, 2.0));
+    float fade = max(0.0, 1.0 - u_clickt / 0.8);
+    rip = ring * fade;
+    field += rip * 0.5;
+  }
+
   float intensity = smoothstep(0.36, 0.96, field);
   float th = ign(gl_FragCoord.xy);
   float dots = step(th, intensity);
-  vec3 col = mix(u_signal, u_pulse, clamp(length(p - m) * 0.9, 0.0, 1.0));
+  vec3 col = mix(u_signal, u_pulse, clamp(length(p - m) * 0.9 + rip * 0.7, 0.0, 1.0));
   vec3 outc = mix(u_base, col, dots * (0.32 + 0.68 * intensity));
   outc *= 1.0 - 0.22 * length(uv - 0.5);
   gl_FragColor = vec4(outc, 1.0);
@@ -153,6 +181,10 @@ export function DitherField({
     const uRes = gl.getUniformLocation(prog, "u_res");
     const uTime = gl.getUniformLocation(prog, "u_time");
     const uMouse = gl.getUniformLocation(prog, "u_mouse");
+    const uMvel = gl.getUniformLocation(prog, "u_mvel");
+    const uScroll = gl.getUniformLocation(prog, "u_scroll");
+    const uClickPos = gl.getUniformLocation(prog, "u_clickpos");
+    const uClickt = gl.getUniformLocation(prog, "u_clickt");
 
     // Palette is constant per mount — set the colour uniforms once.
     gl.uniform3fv(gl.getUniformLocation(prog, "u_base"), hexToRgb(base));
@@ -161,6 +193,10 @@ export function DitherField({
 
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const mouse = { x: 0, y: 0 };
+    const prev = { x: 0, y: 0 };
+    const vel = { x: 0, y: 0 };
+    const click = { x: 0, y: 0, t: -1 }; // t = performance.now() of last click
+    let primed = false;
     let raf = 0;
     let visible = true;
 
@@ -182,10 +218,49 @@ export function DitherField({
       mouse.y = (r.height - (e.clientY - r.top)) * dpr; // flip Y for GL space
     };
 
+    const onDown = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect();
+      click.x = (e.clientX - r.left) * dpr;
+      click.y = (r.height - (e.clientY - r.top)) * dpr;
+      click.t = performance.now();
+    };
+
+    // Keep the shared scroll signal alive while the field is mounted.
+    const unsubscribe = reduced ? null : subscribeScroll(() => {});
+
     const render = (t: number) => {
       resize();
+
+      // Pointer velocity in p-space units (delta / height), gained + smoothed.
+      if (!primed) {
+        prev.x = mouse.x;
+        prev.y = mouse.y;
+        primed = true;
+      }
+      const gain = 6.5;
+      const instX = ((mouse.x - prev.x) / canvas.height) * gain;
+      const instY = ((mouse.y - prev.y) / canvas.height) * gain;
+      prev.x = mouse.x;
+      prev.y = mouse.y;
+      vel.x += (instX - vel.x) * 0.2;
+      vel.y += (instY - vel.y) * 0.2;
+
+      // Click ripple age, expires after 0.8s (matches the shader fade).
+      let clickAge = -1;
+      if (click.t >= 0) {
+        clickAge = (t - click.t) / 1000;
+        if (clickAge > 0.8) {
+          clickAge = -1;
+          click.t = -1;
+        }
+      }
+
       gl.uniform2f(uRes, canvas.width, canvas.height);
       gl.uniform2f(uMouse, mouse.x, mouse.y);
+      gl.uniform2f(uMvel, reduced ? 0 : vel.x, reduced ? 0 : vel.y);
+      gl.uniform1f(uScroll, reduced ? 0 : getScroll().velocity);
+      gl.uniform2f(uClickPos, click.x, click.y);
+      gl.uniform1f(uClickt, reduced ? -1 : clickAge);
       gl.uniform1f(uTime, reduced ? 8.0 : t / 1000);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       raf = !reduced && visible ? requestAnimationFrame(render) : 0;
@@ -202,6 +277,7 @@ export function DitherField({
 
     window.addEventListener("resize", resize);
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerdown", onDown, { passive: true });
 
     resize();
     if (reduced) {
@@ -213,8 +289,10 @@ export function DitherField({
     return () => {
       if (raf) cancelAnimationFrame(raf);
       io.disconnect();
+      unsubscribe?.();
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onDown);
     };
   }, [reduced, base, signal, pulse]);
 

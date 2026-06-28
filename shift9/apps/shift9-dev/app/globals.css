@@ -5,6 +5,24 @@
    package so its utility classes are generated. */
 @source "../../../packages/ui/src/**/*.{ts,tsx}";
 
+/* Lenis smooth scroll — the runtime adds these classes to <html>. When Lenis
+   is driving (non-reduced sessions) it owns scroll-behavior; otherwise the
+   base `scroll-behavior: smooth` below handles no-JS anchor jumps, and the
+   reduced-motion contract in @shift9/theme forces it to auto. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 @layer base {
   html {
     color-scheme: dark;

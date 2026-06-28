@@ -7,6 +7,7 @@ export { EdgeReticle } from "./EdgeReticle";
 export { SpiceMote } from "./SpiceMote";
 export { GrainField, type GrainFieldProps } from "./GrainField";
 export { MonoLabel, type MonoLabelProps } from "./MonoLabel";
+export { DecodeText } from "./DecodeText";
 export { MagneticButton, type MagneticButtonProps } from "./MagneticButton";
 export { ProximityText, type ProximityTextProps } from "./ProximityText";
 export { DitherField, type DitherPalette } from "./DitherField";

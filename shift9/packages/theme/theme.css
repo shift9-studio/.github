@@ -27,15 +27,42 @@
   --text-h2:      var(--s9-text-h2);
   --text-display: var(--s9-text-display);
 
-  --ease-premium: var(--s9-ease-premium);
+  --ease-premium:  var(--s9-ease-premium);
+  --ease-snap:     var(--s9-ease-snap);
+  --ease-out-expo: var(--s9-ease-out);
+  --ease-in-expo:  var(--s9-ease-in);
 }
 
-/* The house transition — one utility, used on every hover/focus state. */
+/* The transition vocabulary. transition-premium stays the default hover
+   curve; the variants below let a component pick a tempo that matches the
+   size of its move. All share one property list so they stay in sync. */
 @utility transition-premium {
   transition-property: color, background-color, border-color, box-shadow,
-                       transform, opacity, font-variation-settings, filter;
+                       transform, opacity, font-variation-settings, filter,
+                       clip-path;
   transition-duration: var(--s9-dur-premium);
   transition-timing-function: var(--s9-ease-premium);
+}
+@utility transition-fast {
+  transition-property: color, background-color, border-color, box-shadow,
+                       transform, opacity, font-variation-settings, filter,
+                       clip-path;
+  transition-duration: var(--s9-dur-fast);
+  transition-timing-function: var(--s9-ease-premium);
+}
+@utility transition-slow {
+  transition-property: color, background-color, border-color, box-shadow,
+                       transform, opacity, font-variation-settings, filter,
+                       clip-path;
+  transition-duration: var(--s9-dur-slow);
+  transition-timing-function: var(--s9-ease-out);
+}
+@utility transition-snap {
+  transition-property: color, background-color, border-color, box-shadow,
+                       transform, opacity, font-variation-settings, filter,
+                       clip-path;
+  transition-duration: var(--s9-dur-base);
+  transition-timing-function: var(--s9-ease-snap);
 }
 
 /* Brutalist hairline helpers. */
@@ -85,6 +112,28 @@
   100% { background-position: 0 0; }
 }
 .s9-grain { animation: s9-grain-shift 1.1s steps(5, end) infinite; }
+
+/* Skeleton shimmer — a single signal-tinted highlight sweeps across the
+   surface-colored block, left to right. The reduced-motion contract below
+   collapses the duration to ~0, parking the highlight off-canvas so the
+   block rests as a flat panel (identical to the old static state). */
+@keyframes s9-shimmer {
+  from { background-position: 220% 0; }
+  to   { background-position: -120% 0; }
+}
+.s9-shimmer {
+  background-color: color-mix(in oklab, var(--s9-surface) 60%, transparent);
+  background-image: linear-gradient(
+    100deg,
+    transparent 28%,
+    var(--s9-signal-soft) 50%,
+    transparent 72%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  background-position: 220% 0;
+  animation: s9-shimmer 1.5s var(--s9-ease-inout) infinite;
+}
 
 @layer base {
   /* High-contrast focus — restyle the outline, never remove it. */
