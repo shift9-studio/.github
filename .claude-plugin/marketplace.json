@@ -1,0 +1,11 @@
+{
+  "name": "shift9",
+  "owner": { "name": "Shift-9 Studio" },
+  "plugins": [
+    {
+      "name": "premium-web-craft",
+      "source": "./plugins/premium-web-craft",
+      "description": "Research the current award-winning web and apply bleeding-edge, accessible visual/motion techniques to any project — then harvest them into a reusable UI/UX component library."
+    }
+  ]
+}

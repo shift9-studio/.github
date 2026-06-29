@@ -1,0 +1,7 @@
+{
+  "name": "premium-web-craft",
+  "description": "Research the current award-winning web (Awwwards / FWA / CSSDA / Godly + top motion studios) and apply bleeding-edge, accessible visual/motion techniques to any project, then harvest them into a reusable UI/UX component library. Reduced-motion, performant, and a11y-safe by default.",
+  "version": "0.1.0",
+  "author": { "name": "Shift-9 Studio" },
+  "license": "MIT"
+}
