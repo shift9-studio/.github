@@ -2,6 +2,7 @@ import {
   CustomCursor,
   EdgeReticle,
   GridFrame,
+  MagneticButton,
   MonoLabel,
   ProximityText,
 } from "@shift9/ui";
@@ -117,6 +118,58 @@ const live = [
     name: "SpiceMote · GrainField",
     value: "Just a Pinch · warm signatures",
     use: "The product surface gets its own voice — a 'pinch of spice' cursor sprinkle and an editorial cookbook grain — instead of the studio's console chrome. Same engine, different flavor.",
+  },
+];
+
+/* The Just a Pinch surface — the same INSTRUMENT engine, re-skinned warm.
+   Swatches use literal hex (this page renders in the cool studio theme), so
+   the warm palette shows true even here. Mirrors apps/just-a-pinch globals. */
+const pinchPalette = [
+  { name: "espresso", value: "#1b1410", label: "Warm base" },
+  { name: "well", value: "#130d0a", label: "Deeper well" },
+  { name: "surface", value: "#241a13", label: "Raised panel" },
+  { name: "cream", value: "#f6ead8", label: "Primary text" },
+  { name: "taupe", value: "#a99780", label: "Mono / secondary" },
+  { name: "saffron", value: "#f5a524", label: "Accent — signal" },
+  { name: "paprika", value: "#e8633a", label: "Accent — pulse" },
+];
+
+const pinchTech = [
+  {
+    id: "01",
+    name: "Fraunces display",
+    value: "variable antiqua · opsz / wght / SOFT / WONK",
+    use: "Swaps the studio's Anybody for a warm, high-contrast serif with a little 'wonk' — same kinetic-variable DNA, a softer, appetite-first voice.",
+  },
+  {
+    id: "02",
+    name: "SeasonHeadline",
+    value: "per-word rise + de-blur · staggered",
+    use: "Headlines 'season in' word by word on a warm curve, then gain weight with scroll velocity once settled — the product's own type signature.",
+  },
+  {
+    id: "03",
+    name: "SpiceMote",
+    value: "Canvas2D · additive blend · gravity",
+    use: "A pinch-of-spice cursor: saffron, paprika, and cream motes spray from the pointer and settle under gravity, glowing where they overlap. Keeps the native OS cursor.",
+  },
+  {
+    id: "04",
+    name: "GrainField",
+    value: "SVG fractal noise · soft-light",
+    use: "An editorial cookbook-paper grain over the warm surface — printed-recipe tactility that reads as expensive without announcing itself.",
+  },
+  {
+    id: "05",
+    name: "Hero parallax",
+    value: "scroll-linked ken burns",
+    use: "The food photo drifts and scales behind the warm Dither for depth, overscanned so the motion never exposes an edge.",
+  },
+  {
+    id: "06",
+    name: "Warm Dither re-skin",
+    value: "same shader · saffron → paprika palette",
+    use: "The exact INSTRUMENT dither hero, recolored by passing a warm palette as uniforms. One engine, a different flavor — the unification proof in a single component.",
   },
 ];
 
@@ -252,6 +305,82 @@ export default function InstrumentPage() {
                   </article>
                 </Reveal>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ───────────────────── JUST A PINCH SURFACE ───────────────── */}
+        <section
+          data-tele-section="SURFACE"
+          className="border-b border-line px-6 py-24 sm:px-10"
+        >
+          <div className="mx-auto max-w-[84rem]">
+            <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <MonoLabel className="mb-4">// surface — just a pinch</MonoLabel>
+                <ProximityText as="h2" className="text-h2 uppercase text-ink">
+                  One engine, a warmer flavor
+                </ProximityText>
+              </div>
+              <MonoLabel marker={false} className="text-signal">
+                [ same system · re-skinned ]
+              </MonoLabel>
+            </div>
+
+            <p className="mb-12 max-w-2xl text-body leading-relaxed text-muted">
+              Just a Pinch runs on this exact INSTRUMENT system, then re-skins it
+              for food. The console cool of shift9.dev gives way to a warm,
+              appetite-first surface — a different palette, a serif display, and a
+              set of tactile signatures, all driven by the same engine.
+            </p>
+
+            {/* warm palette */}
+            <div className="mb-14 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+              {pinchPalette.map((t, i) => (
+                <Reveal key={t.name} delay={i * 0.04}>
+                  <div className="flex flex-col gap-3">
+                    <div
+                      className="h-20 w-full border border-line"
+                      style={{ background: t.value }}
+                    />
+                    <div>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink">
+                        {t.name}
+                      </p>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+                        {t.value}
+                      </p>
+                      <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-muted opacity-70">
+                        {t.label}
+                      </p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+
+            {/* warm techniques */}
+            <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+              {pinchTech.map((m, i) => (
+                <Reveal key={m.id} delay={i * 0.05} className="bg-void">
+                  <article className="flex h-full flex-col gap-4 p-8 transition-premium hover:bg-well">
+                    <span className="font-mono text-mono text-signal">{m.id}</span>
+                    <h3 className="font-mono text-sm uppercase tracking-[0.16em] text-ink">
+                      {m.name}
+                    </h3>
+                    <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-pulse">
+                      {m.value}
+                    </p>
+                    <p className="text-body leading-relaxed text-muted">{m.use}</p>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+
+            <div className="mt-12">
+              <MagneticButton href="https://pinch.shift9.dev">
+                See Just a Pinch live ↗
+              </MagneticButton>
             </div>
           </div>
         </section>
