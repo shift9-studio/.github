@@ -12,6 +12,8 @@ import { cn } from "./cn";
 
 export interface Project {
   title: string;
+  /** Stable slug for the project's detail page (/work/<slug>). */
+  slug?: string;
   role: string;
   year: string;
   tags: string[];
@@ -99,8 +101,29 @@ export function WorkWall({
     };
   }, [reduced]);
 
+  // Orchestrate the reveal from THIS wrapper (which only carries `perspective`,
+  // never a 3D rotation) so its IntersectionObserver is reliable. Per-tile
+  // whileInView observers inside the rotated preserve-3d plane were not firing
+  // for the lower rows, leaving those tiles stuck hidden — the cause of "only
+  // six of ten show". One observer here staggers every child in.
+  const container = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: reduced ? 0 : 0.06,
+        delayChildren: reduced ? 0 : 0.02,
+      },
+    },
+  };
+
   return (
-    <div className={cn("lg:[perspective:1600px]", className)}>
+    <motion.div
+      className={cn("lg:[perspective:1600px]", className)}
+      variants={container}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-80px" }}
+    >
       <div
         ref={planeRef}
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:[transform-style:preserve-3d] lg:motion-safe:[transform:rotateX(13deg)_rotateZ(-7deg)]"
@@ -109,25 +132,34 @@ export function WorkWall({
           <WorkTile key={project.title} project={project} index={i} />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function WorkTile({ project, index }: { project: Project; index: number }) {
+  const reduced = useReducedMotionSafe();
   const { ref, x, y, bind } = useMagnetic<HTMLDivElement>(0.22, 170);
-  const [entered, setEntered] = React.useState(false);
   const isPulse = project.accent === "pulse";
+
+  // Reveal is a variant, driven by the parent's single observer (no per-tile
+  // observer inside the 3D plane). Magnetic x/y stay on `style`, untouched.
+  const variants = {
+    hidden: reduced
+      ? { opacity: 0 }
+      : { opacity: 0, clipPath: "inset(0% 0% 100% 0%)" },
+    show: {
+      opacity: 1,
+      clipPath: "inset(0% 0% 0% 0%)",
+      transition: { duration: reduced ? 0 : 0.6, ease: SCAN_EASE },
+    },
+  };
 
   return (
     <motion.article
       ref={ref}
       style={{ x, y }}
       {...bind}
-      initial={{ opacity: 0, clipPath: "inset(0% 0% 100% 0%)" }}
-      whileInView={{ opacity: 1, clipPath: "inset(0% 0% 0% 0%)" }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, delay: index * 0.06, ease: SCAN_EASE }}
-      onViewportEnter={() => setEntered(true)}
+      variants={variants}
       className="group relative flex min-h-[15rem] flex-col justify-between border border-line bg-well/60 p-5 transition-premium hover:border-signal hover:bg-surface/70 motion-safe:hover:[transform:translateZ(42px)]"
     >
       {project.videoUrl && (
@@ -158,11 +190,7 @@ function WorkTile({ project, index }: { project: Project; index: number }) {
 
       <h3
         className="font-display text-2xl leading-[0.95] text-ink transition-premium group-hover:text-signal sm:text-3xl"
-        style={{
-          fontVariationSettings: entered
-            ? '"wght" 720, "wdth" 112'
-            : '"wght" 400, "wdth" 96',
-        }}
+        style={{ fontVariationSettings: '"wght" 720, "wdth" 112' }}
       >
         {project.title}
       </h3>
