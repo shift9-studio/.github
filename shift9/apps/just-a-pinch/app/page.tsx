@@ -11,6 +11,8 @@ import { getFeaturedBoard } from "@shift9/data";
 import { Reveal, RevealGroup, RevealItem } from "./_components/Reveal";
 import { SeasonHeadline } from "./_components/SeasonHeadline";
 import { ParallaxImage } from "./_components/ParallaxImage";
+import { WaitlistForm } from "./_components/WaitlistForm";
+import { PhoneShowcase } from "./_components/PhoneShowcase";
 import { board as fallbackBoard } from "@/lib/menu-data";
 
 /* ISR — refresh the featured recipes hourly. The page stays static + instant;
@@ -93,7 +95,7 @@ export default async function Home() {
 
         <div className="mx-auto w-full max-w-[84rem]">
           <MonoLabel decode className="mb-8">
-            JUST A PINCH — RECIPE ORGANIZER + COOKING
+            JUST A PINCH — IN CLOSED TESTING · ANDROID · LAUNCHING SOON
           </MonoLabel>
 
           <SeasonHeadline
@@ -113,7 +115,7 @@ export default async function Home() {
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <MagneticButton href="#get">Get the app</MagneticButton>
+            <MagneticButton href="#get">Get early access</MagneticButton>
             <MagneticButton href="#how" variant="ghost">
               See how it works
             </MagneticButton>
@@ -220,6 +222,9 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ───────────────────── APP SCREENS (real) ─────────────────── */}
+      <PhoneShowcase />
+
       {/* ─────────────────────────── CTA ──────────────────────────── */}
       <section
         id="get"
@@ -236,13 +241,15 @@ export default async function Home() {
             ]}
           />
           <p className="mt-8 max-w-xl text-body leading-relaxed text-muted">
-            Join the first batch of cooks. We&apos;ll ping you the moment Just a
-            Pinch lands — no spam, just a heads-up worth opening.
+            Just a Pinch is in closed testing on Android right now — a small
+            group of cooks using it every day while we polish the last details.
+            Leave your email and we&apos;ll tell you the moment it&apos;s open to
+            everyone. No spam, just the one message that matters.
           </p>
-          <div className="mt-12 flex flex-wrap items-center gap-4">
-            <MagneticButton href="mailto:shift9.dev@gmail.com?subject=Just%20a%20Pinch%20waitlist">
-              Join the waitlist
-            </MagneticButton>
+          <div className="mt-12">
+            <WaitlistForm />
+          </div>
+          <div className="mt-8">
             <MagneticButton href="https://shift9.dev" variant="ghost">
               By Shift-9 ↗
             </MagneticButton>
@@ -256,7 +263,7 @@ export default async function Home() {
           <MonoLabel marker={false}>
             © 2026 JUST A PINCH — a Shift-9 product
           </MonoLabel>
-          <MonoLabel>build: simmering</MonoLabel>
+          <MonoLabel>build: closed testing · Android</MonoLabel>
         </div>
       </footer>
     </main>
