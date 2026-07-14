@@ -50,9 +50,9 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
     items: [
       {
         n: "Just a Pinch",
-        s: "LIVE",
-        sc: "live",
-        d: "Smart recipe organizer + guided cooking app. Save from links, photos, or scratch; cook mode scales servings and suggests swaps. Includes the Recipe Engine — a Supabase-backed content pipeline that seeds and serves the catalog.",
+        s: "IN TESTING",
+        sc: "dev",
+        d: "Smart recipe organizer + guided cooking app. Save from links, photos, or scratch; cook mode scales servings and suggests swaps. Includes the Recipe Engine — a Supabase-backed content pipeline that seeds and serves the catalog. In closed testing on Android — launching soon.",
         tags: ["React Native", "TypeScript", "Supabase", "Android · iOS soon"],
       },
       {
