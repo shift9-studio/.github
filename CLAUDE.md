@@ -142,3 +142,21 @@ with the blueprint and this file. State the assumption you made in the PR body.
 If blocked mid-task by a failing build you cannot attribute to your own diff:
 verify against a clean checkout of the base branch first; if it fails there too,
 report it as pre-existing and continue only with your scoped change.
+
+## Execution environment — capability map (READ THIS BEFORE FIGHTING A WALL)
+
+This repo runs in a sandboxed remote environment with a policy proxy. The walls
+below are **fixed** — retrying the blocked call is wasted effort. For each, the
+**working path is already known**; take it the first time. Do not rediscover
+these by trial and error every session.
+
+| You need to… | ❌ Blocked path (don't retry) | ✅ Working path (do this) |
+|---|---|---|
+| **Read another owner's / out-of-scope repo** (e.g. `Kariimc/*`) | `add_repo` → "cross-tier not supported"; github MCP / REST → 403 "not configured for this session" | `git clone https://github.com/<owner>/<repo>` — the env rewrites `github.com` → an internal git proxy that serves **any** repo read-only. Clone into the scratchpad, don't commit it. |
+| **Run another repo's app / capture real screens** | asking the user for screenshots | Clone it (above), install, run headless. RN/Expo apps: `expo start --web` (they're web-aware) → drive with the pre-installed Chromium (`/opt/pw-browsers/...`) + `playwright-core`. |
+| **Change GitHub repo/org *settings*** — rename, archive, description, topics, pins, org metadata, website | REST API (`PATCH /repos/...`, `/orgs/...`) → **403**. The session token is a GitHub **App installation token scoped to `shift9-studio/.github` only** (empty OAuth scopes). Git push to other repos is also 403. | **Owner-only.** These are metadata, not git — no file/branch performs them. Do them in a session whose token has admin on the target repos/org, or hand the user the one-click Settings steps. Record it and move on; never loop on the API. |
+| **Supabase DB work** (schema, insert, verify a row) | direct HTTPS to `*.supabase.co` from the sandbox → "Host not in allowlist" (works fine on Vercel at runtime) | Use the **Supabase MCP** (`apply_migration`, `execute_sql`). App code that hits Supabase over HTTP will 500 in the sandbox but works in production — verify the DB path via MCP, not a local round-trip. |
+| **Fetch a file from an arbitrary host** (e.g. a paste/temp host) | `curl`/`wget`/WebFetch → 403 CONNECT (egress policy) | Have the user upload it (arrives under `/root/.claude/uploads/…`), or host it on an allowlisted service (GitHub, Drive). Never re-curl a host that already 403'd. |
+| **npm/pnpm/pip installs, `github.com` git, `api.github.com` reads** | — | Allowed. These work normally. |
+
+Rule of thumb: **git works for any repo (read); REST admin works for nothing beyond `shift9-studio/.github`; HTTP egress is allowlist-only.** If a call is blocked, switch primitive (usually to git or an MCP) — do not repeat it.
