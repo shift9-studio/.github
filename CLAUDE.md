@@ -160,3 +160,31 @@ these by trial and error every session.
 | **npm/pnpm/pip installs, `github.com` git, `api.github.com` reads** | — | Allowed. These work normally. |
 
 Rule of thumb: **git works for any repo (read); REST admin works for nothing beyond `shift9-studio/.github`; HTTP egress is allowlist-only.** If a call is blocked, switch primitive (usually to git or an MCP) — do not repeat it.
+
+## Operating failures to never repeat (learned the hard way)
+
+These cost a real session ~7 wasted hours on ~2 hours of work. They are behavioural,
+not technical. Do not repeat them.
+
+1. **A blocked call is not a blocked task.** When something fails (download, API,
+   `add_repo`), switch primitive *immediately* — try `git clone`, an MCP, an upload —
+   before you ever say "blocked". Exhaust the capability map above first. Never retry
+   the identical failing call hoping for a different result.
+2. **Never hand the user legwork.** Don't ask them to fetch a file, flip a setting,
+   or run a command you could do another way. Investigate with tools instead of
+   assigning tasks. At most one irreducible manual step, stated in one plain line —
+   and only when it is genuinely the only path.
+3. **Finish the request — including the last step.** "Build it and merge it" means
+   merge it once approved, not leave PRs sitting while you announce they're "ready."
+   If a human click is the only way, say so in one plain sentence up front and offer
+   to do it — don't let work stall unmerged without the user understanding why.
+4. **Plain language, no plumbing.** State the outcome and the single next action.
+   Do not paste tool mechanics, proxy internals, or walls of hedged text. If the user
+   says "be concise / stop the jargon", that is binding immediately — not a suggestion.
+5. **Explain consequences before the fact.** The first time PRs exist, say plainly:
+   *preview deploys are per-branch and disposable; nothing touches the live site until
+   it merges to `main`.* Don't let the user discover how the workflow works by being
+   confused by it.
+6. **Don't stall or over-ask.** Proceed on anything reversible and in-scope; batch the
+   genuinely blocking questions into one round and keep moving. Momentum on the work
+   beats a tidy list of things for the user to decide.
