@@ -43,10 +43,10 @@ Public projects — games, tooling, and studio R&D.
 
 | Project | What it is | Stack |
 | :-- | :-- | :-- |
+| **Titanium Forge Pro** | A UI/UX component workbench — live demos and copyable snippets (v2 of Neon Forge) | `React` · `TypeScript` |
 | **Midnight Return** | A Metroidvania platformer with hand-built movement and combat | `C#` |
 | **Omni-3D** | A modular toolkit for building 3D games | `TypeScript` |
-| **Sub Scraper** | Download your entire Spotify & SoundCloud library in one command | `Python` |
-| **whome Diagnostic** | A utility that fixes the Windows 10 Home upgrade bug | `Python` |
+| **WinFix** | A utility that fixes the Windows 10 Home upgrade bug | `Python` |
 
 ### In the Workshop
 
@@ -54,10 +54,8 @@ Internal projects in progress.
 
 | Project | What it is | Stack |
 | :-- | :-- | :-- |
-| **Voxel Arcade Basketball** | A 3D voxel basketball arcade game, targeting a Steam release | `Python` |
-| **Recipe Engine** | The data pipeline that seeds structured recipes into Supabase at scale, powering Just a Pinch | `Python` · `Supabase` |
-| **Signal Grid** | Shift-9's brand identity and design-token system, unified across every surface | `Tokens` · `CSS` |
-| **Dither Lab** | WebGL R&D for dithering techniques and GLSL shaders — origin of the animated backgrounds | `WebGL` · `GLSL` |
+| **Voxel Arcade Basketball** | A 3D arcade basketball game, targeting a Steam release | `Godot` · `GDScript` |
+| **Game Design Forge** | A UE5 plugin suite that lets non-programmers assemble games LEGO-style (R&D) | `Unreal 5` · `C++` |
 
 ## The Stack
 
