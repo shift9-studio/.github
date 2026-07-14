@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Anybody, Martian_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { SmoothScroll } from "./_components/SmoothScroll";
 
@@ -16,6 +17,18 @@ const display = Anybody({
 const mono = Martian_Mono({
   subsets: ["latin"],
   variable: "--font-mono-src",
+  display: "swap",
+});
+
+/* Fraunces (variable, wght 500–600, latin) — the "Enter the Studio" film-title
+   lockup face on the entry front door. Self-hosted through the site font
+   pipeline (was base64-inlined in the prototype); exposed as a CSS variable the
+   entry component consumes, so it makes no runtime network request. */
+const fraunces = localFont({
+  src: "./_fonts/Fraunces-var.woff2",
+  weight: "500 600",
+  style: "normal",
+  variable: "--font-fraunces",
   display: "swap",
 });
 
@@ -38,7 +51,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${display.variable} ${mono.variable} ${fraunces.variable}`}
+    >
       <body>
         <SmoothScroll />
         {children}

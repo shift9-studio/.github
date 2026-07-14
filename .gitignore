@@ -3,3 +3,4 @@ package-lock.json
 package.json
 *.js.map
 .DS_Store
+.shift9-entry/
