@@ -1,0 +1,944 @@
+/* ────────────────────────────────────────────────────────────────────────
+   ENTER THE STUDIO — front-door experience for shift9.dev
+   Ported verbatim from the approved v3 prototype (HANDOFF §5, §13–§18).
+   This is the light Windows-11 "desktop" that mirrors the intro video's final
+   frame. It is deliberately NOT the dark INSTRUMENT look — immersion at the
+   seam outranks brand consistency here (decision log §12). All colours are the
+   prototype's own local variables so nothing leaks into / from INSTRUMENT.
+   Fraunces comes from the site font pipeline via var(--font-fraunces).
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  --w-bg: #eceadf;
+  --w-panel: #f7f6f1;
+  --w-side: #f0efe8;
+  --w-line: #d8d6cc;
+  --w-txt: #1f2328;
+  --w-dim: #6b7078;
+  --blue: #0b6bd6;
+  --folder: #f6c445;
+  --folder-tab: #e8b02e;
+  --acc: #3ddc84;
+  --nine: #20c0e0;
+  --mono: "Courier New", ui-monospace, monospace;
+  --ui: "Segoe UI", system-ui, Arial, sans-serif;
+
+  position: fixed;
+  inset: 0;
+  background: #000;
+  font-family: var(--ui);
+  overflow: hidden;
+}
+.root *,
+.root *::before,
+.root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- STAGE 1: VIDEO ---------- */
+.stageVideo {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 30;
+  transition: opacity 0.6s ease;
+}
+.stageVideo video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.skip {
+  position: absolute;
+  bottom: 22px;
+  right: 22px;
+  z-index: 3;
+  background: rgba(10, 14, 22, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.72);
+  padding: 8px 15px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 11px;
+  cursor: pointer;
+  letter-spacing: 0.14em;
+  backdrop-filter: blur(4px);
+  transition: all 0.18s;
+}
+.skip:hover {
+  color: #fff;
+  border-color: var(--nine);
+  background: rgba(10, 14, 22, 0.72);
+}
+
+/* Enter-the-Studio film-title lockup (autoplay-block fallback) */
+.tap {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 0 0 52px 46px;
+  cursor: pointer;
+  background: radial-gradient(75% 65% at 22% 82%, rgba(4, 7, 14, 0.5), transparent 72%);
+}
+.tap.show {
+  display: flex;
+}
+.lockC {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+}
+.ring {
+  width: 76px;
+  height: 76px;
+  position: relative;
+  flex: 0 0 auto;
+}
+.ring .r1 {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+}
+.ring .r2 {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #e8b955;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  animation: tapspin 5.5s linear infinite;
+}
+.ring .pc {
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  transition: background 0.2s;
+}
+.ring .pc svg {
+  width: 20px;
+  height: 20px;
+  fill: #fff;
+  margin-left: 3px;
+}
+.ring .pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid #e8b955;
+  opacity: 0;
+  animation: tappulse 2.4s ease-out infinite;
+}
+.lk b {
+  display: block;
+  font-family: var(--font-fraunces), serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: #e8b955;
+}
+.lk strong {
+  display: block;
+  font-family: var(--font-fraunces), serif;
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: 0.005em;
+  color: #fff;
+  margin-top: 7px;
+}
+.lk em {
+  display: block;
+  width: 0;
+  height: 1px;
+  background: #e8b955;
+  margin-top: 11px;
+  transition: width 0.5s ease;
+}
+.tap:hover .lk em {
+  width: 200px;
+}
+.tap:hover .ring .pc {
+  background: rgba(232, 185, 85, 0.14);
+}
+@keyframes tapspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes tappulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* ---------- WAKE: the laptop screen powers on ---------- */
+.wake {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: none;
+  background: #05070c;
+  opacity: 0;
+}
+.wake.dim {
+  display: block;
+  animation: wdim 0.34s ease forwards;
+}
+@keyframes wdim {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.98;
+  }
+}
+.glow {
+  position: fixed;
+  inset: 0;
+  z-index: 41;
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    58% 44% at 50% 47%,
+    rgba(224, 240, 255, 0.95),
+    rgba(150, 200, 255, 0.28) 46%,
+    rgba(255, 255, 255, 0) 72%
+  );
+}
+.glow.on {
+  display: block;
+  animation: wglow 0.8s ease forwards;
+}
+@keyframes wglow {
+  0% {
+    opacity: 0;
+  }
+  34% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- STAGE 2: THE DESKTOP PAGE ---------- */
+.desktop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  flex-direction: column;
+  background: var(--w-bg);
+  color: var(--w-txt);
+  opacity: 0;
+  transform-origin: 50% 46%;
+}
+.desktop.show {
+  display: flex;
+}
+.desktop.on {
+  opacity: 1;
+}
+.desktop.boot {
+  z-index: 42;
+  transform-origin: 50% 47%;
+  animation: boot 1s cubic-bezier(0.2, 0.62, 0.32, 1) forwards;
+}
+@keyframes boot {
+  0% {
+    transform: scale(0.74);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.titlerow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px 6px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 18px;
+}
+.brand img {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+}
+.brand b {
+  color: var(--nine);
+  font-weight: 800;
+}
+.navlinks {
+  margin-left: auto;
+  display: flex;
+  gap: 26px;
+  font-size: 13.5px;
+  color: var(--w-dim);
+  align-items: center;
+}
+.navlinks span {
+  cursor: default;
+}
+.navlinks a.cta {
+  background: var(--blue);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(11, 107, 214, 0.35);
+}
+.navlinks a.cta:hover {
+  background: #0a5cb8;
+}
+.winbtns {
+  display: flex;
+  gap: 14px;
+  margin-left: 20px;
+  color: #9a9a92;
+  font-size: 13px;
+}
+
+.searchrow {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 6px 22px 12px;
+}
+.search {
+  flex: 1;
+  max-width: 620px;
+  margin: 0 auto;
+  background: var(--w-panel);
+  border: 1px solid var(--w-line);
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: var(--w-dim);
+  font-size: 13.5px;
+  display: flex;
+  justify-content: space-between;
+}
+.viewbtn {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--w-line);
+  background: var(--w-panel);
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.side {
+  width: 210px;
+  background: var(--w-side);
+  border-right: 1px solid var(--w-line);
+  padding: 12px 10px;
+  font-size: 13px;
+  color: var(--w-dim);
+}
+.sideflex {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.side .it {
+  padding: 8px 12px;
+  border-radius: 7px;
+  margin-bottom: 2px;
+  cursor: default;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.side .it.on {
+  background: #e3ecf9;
+  color: var(--blue);
+  font-weight: 600;
+}
+.side .glyph {
+  width: 14px;
+  text-align: center;
+  opacity: 0.7;
+}
+.side .me {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.side .me img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+}
+
+/* grid mirrors the frame: door-tile first, then folders */
+.grid {
+  flex: 1;
+  padding: 36px 60px;
+  display: grid;
+  grid-template-columns: repeat(3, 180px);
+  gap: 40px 60px;
+  align-content: start;
+  justify-content: center;
+  overflow: auto;
+  transition: gap 0.3s ease, padding 0.3s ease;
+}
+.dicon {
+  width: 160px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 12px 6px 10px;
+  transition: width 0.3s ease, padding 0.3s ease;
+}
+.dicon:hover {
+  background: rgba(11, 107, 214, 0.08);
+}
+.dicon.sel {
+  background: #fdf3d3;
+  outline: 1px solid var(--folder-tab);
+}
+.fico {
+  width: 100px;
+  height: 76px;
+  margin: 0 auto 10px;
+  position: relative;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
+  transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, border-radius 0.3s ease;
+}
+.fico .tab {
+  position: absolute;
+  top: 0;
+  left: 6px;
+  width: 42px;
+  height: 16px;
+  background: var(--folder-tab);
+  border-radius: 5px 5px 0 0;
+}
+.fico .body2 {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(#f9d266, var(--folder));
+  border-radius: 6px;
+}
+.fico .lip {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: #fbe19a;
+  border-radius: 6px 6px 0 0;
+}
+.fname {
+  font-size: 14px;
+  color: var(--w-txt);
+}
+.fcount {
+  font-size: 11px;
+  color: var(--w-dim);
+  margin-top: 2px;
+}
+
+/* the shift9.dev app icon — the door out */
+.appico {
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 12px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
+}
+.appico img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.dicon.site:hover .appico {
+  transform: scale(1.06);
+}
+.dicon.site .fname {
+  font-weight: 650;
+  color: var(--blue);
+}
+
+/* compelling primary CTA on the shift9.dev tile */
+.dicon.site {
+  position: relative;
+  background: linear-gradient(180deg, rgba(11, 107, 214, 0.08), rgba(11, 107, 214, 0.02));
+  border: 1px solid rgba(11, 107, 214, 0.3);
+  border-radius: 14px;
+  animation: sitepulse 2.6s ease-in-out infinite;
+}
+.dicon.site:hover {
+  background: linear-gradient(180deg, rgba(11, 107, 214, 0.14), rgba(11, 107, 214, 0.04));
+}
+.dicon.site .appico {
+  box-shadow: 0 6px 20px rgba(11, 107, 214, 0.42);
+}
+.dicon.site .fcount {
+  color: var(--blue);
+  font-weight: 600;
+}
+@keyframes sitepulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(11, 107, 214, 0.32);
+  }
+  50% {
+    box-shadow: 0 0 0 9px rgba(11, 107, 214, 0);
+  }
+}
+
+/* grid/icon view toggle + compact view */
+.vseg {
+  padding: 5px 12px;
+  border-radius: 7px;
+  color: var(--w-dim);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.vseg.on {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(11, 107, 214, 0.35);
+}
+.vseg:not(.on):hover {
+  background: rgba(11, 107, 214, 0.08);
+  color: var(--w-txt);
+}
+.grid.compact {
+  grid-template-columns: repeat(5, 112px);
+  gap: 22px 30px;
+}
+.grid.compact .dicon {
+  width: 112px;
+  padding: 10px 4px 8px;
+}
+.grid.compact .fico {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 9px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.grid.compact .appico {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 9px;
+  border-radius: 13px;
+}
+.grid.compact .fname {
+  font-size: 12px;
+}
+.grid.compact .fcount {
+  font-size: 10px;
+}
+
+/* category glyphs — storytelling icons in Icons view */
+.fico .gly {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.fico .gly svg {
+  width: 30px;
+  height: 30px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.fico .tab,
+.fico .body2,
+.fico .lip {
+  transition: opacity 0.3s ease;
+}
+.grid.compact .fico .tab,
+.grid.compact .fico .body2,
+.grid.compact .fico .lip {
+  opacity: 0;
+}
+.grid.compact .fico .gly {
+  opacity: 1;
+}
+.grid.compact .dicon[data-f="apps"] .fico {
+  background: rgba(32, 192, 224, 0.13);
+}
+.grid.compact .dicon[data-f="apps"] .gly {
+  color: var(--nine);
+}
+.grid.compact .dicon[data-f="games"] .fico {
+  background: rgba(61, 220, 132, 0.15);
+}
+.grid.compact .dicon[data-f="games"] .gly {
+  color: var(--acc);
+}
+.grid.compact .dicon[data-f="tools"] .fico {
+  background: rgba(232, 176, 46, 0.17);
+}
+.grid.compact .dicon[data-f="tools"] .gly {
+  color: var(--folder-tab);
+}
+.grid.compact .dicon[data-f="about"] .fico {
+  background: rgba(125, 120, 230, 0.16);
+}
+.grid.compact .dicon[data-f="about"] .gly {
+  color: #7d78e6;
+}
+
+.helpdot {
+  position: fixed;
+  right: 26px;
+  bottom: 64px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  z-index: 12;
+  border: none;
+  text-decoration: none;
+}
+
+.taskbar {
+  height: 46px;
+  background: rgba(247, 246, 241, 0.92);
+  border-top: 1px solid var(--w-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  position: relative;
+}
+.tb {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  opacity: 0.85;
+}
+.tb.start {
+  background: conic-gradient(
+    from 45deg,
+    #0078d4 0 90deg,
+    #00a2ed 0 180deg,
+    #7fba00 0 270deg,
+    #ffb900 0
+  );
+}
+.tb.pin {
+  overflow: hidden;
+  border-radius: 7px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+.tb.pin img {
+  width: 100%;
+  height: 100%;
+}
+.clock {
+  position: absolute;
+  right: 16px;
+  font-size: 12px;
+  color: var(--w-dim);
+  text-align: right;
+  line-height: 1.3;
+}
+
+/* ---------- FOLDER WINDOW ---------- */
+.win {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 32, 36, 0.35);
+  backdrop-filter: blur(2px);
+}
+.win.show {
+  display: flex;
+}
+.window {
+  width: min(900px, 94vw);
+  max-height: 86vh;
+  background: var(--w-panel);
+  border: 1px solid var(--w-line);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  animation: pop 0.2s ease;
+}
+@keyframes pop {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.wtBar {
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--w-line);
+  background: #fbfaf6;
+}
+.wtBar .path {
+  font-size: 13px;
+  color: var(--w-dim);
+}
+.wtBar .path b {
+  color: var(--w-txt);
+  font-weight: 600;
+}
+.wtBar button {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--w-dim);
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 15px;
+  border-radius: 6px;
+}
+.wtBar button:hover {
+  background: #eee9dd;
+  color: #c33;
+}
+.wbody {
+  overflow-y: auto;
+}
+.item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--w-line);
+  align-items: baseline;
+  background: var(--w-panel);
+}
+.item:nth-child(even) {
+  background: #fbfaf5;
+}
+.item:last-child {
+  border-bottom: none;
+}
+.item .no {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--w-dim);
+  min-width: 24px;
+}
+.item .info {
+  flex: 1;
+}
+.item h3 {
+  font-size: 15.5px;
+  font-weight: 650;
+  margin-bottom: 3px;
+}
+.item p {
+  font-size: 13px;
+  color: #4a4f57;
+  line-height: 1.55;
+}
+.item .tags {
+  margin-top: 7px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--w-dim);
+  border: 1px solid var(--w-line);
+  background: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.06em;
+}
+.status {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  border-radius: 10px;
+}
+.live {
+  color: #0a7d3b;
+  background: #e3f5ea;
+}
+.dev {
+  color: #9a6b00;
+  background: #faf0d4;
+}
+.rnd {
+  color: #274f9e;
+  background: #e5ecfa;
+}
+.ship {
+  color: #0a6e52;
+  background: #dff3ec;
+}
+.aboutBody {
+  padding: 26px 32px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: #2a2e33;
+}
+.aboutBody p {
+  margin-bottom: 15px;
+}
+.aboutBody .sig {
+  font-family: var(--mono);
+  color: #0a6e52;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  margin-top: 20px;
+}
+.contact {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--w-line);
+  font-size: 13px;
+  line-height: 2;
+}
+.contact a {
+  color: var(--blue);
+  text-decoration: none;
+  font-weight: 600;
+}
+.note {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--w-dim);
+  padding: 10px 22px;
+  border-top: 1px solid var(--w-line);
+  background: #fbfaf6;
+  letter-spacing: 0.05em;
+}
+
+/* Reduced motion: kill decorative loops (contract §18). The desktop is the
+   static legible fallback — it renders in full without any of these. */
+@media (prefers-reduced-motion: reduce) {
+  .ring .r2,
+  .ring .pulse {
+    animation: none;
+  }
+  .ring .r2 {
+    border-color: #e8b955;
+  }
+  .dicon.site {
+    animation: none;
+  }
+  /* Fall straight to the desktop: hide the intro overlay entirely so the
+     legible static state shows even before/without JS (contract §18). */
+  .stageVideo,
+  .wake,
+  .glow {
+    display: none !important;
+  }
+}
+
+/* ---------- Mobile: degrade the desktop metaphor gracefully (HANDOFF §8.4) ---------- */
+@media (max-width: 768px) {
+  .navlinks span,
+  .winbtns {
+    display: none;
+  }
+  .navlinks {
+    gap: 12px;
+  }
+  .searchrow {
+    padding: 6px 14px 12px;
+  }
+  .side {
+    display: none;
+  }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 160px));
+    gap: 26px 24px;
+    padding: 26px 18px;
+  }
+  .grid.compact {
+    grid-template-columns: repeat(3, minmax(0, 96px));
+    gap: 18px 14px;
+  }
+  .window {
+    width: 100vw;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+  }
+}
