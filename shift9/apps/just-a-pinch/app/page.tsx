@@ -12,6 +12,7 @@ import { Reveal, RevealGroup, RevealItem } from "./_components/Reveal";
 import { SeasonHeadline } from "./_components/SeasonHeadline";
 import { ParallaxImage } from "./_components/ParallaxImage";
 import { WaitlistForm } from "./_components/WaitlistForm";
+import { PhoneShowcase } from "./_components/PhoneShowcase";
 import { board as fallbackBoard } from "@/lib/menu-data";
 
 /* ISR — refresh the featured recipes hourly. The page stays static + instant;
@@ -220,6 +221,9 @@ export default async function Home() {
           </RevealGroup>
         </div>
       </section>
+
+      {/* ───────────────────── APP SCREENS (real) ─────────────────── */}
+      <PhoneShowcase />
 
       {/* ─────────────────────────── CTA ──────────────────────────── */}
       <section
