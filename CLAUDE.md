@@ -188,3 +188,12 @@ not technical. Do not repeat them.
 6. **Don't stall or over-ask.** Proceed on anything reversible and in-scope; batch the
    genuinely blocking questions into one round and keep moving. Momentum on the work
    beats a tidy list of things for the user to decide.
+7. **Deliverables must be complete and handed over as a ready-to-use artifact.** Two
+   halves of the same rule: (a) every constraint the artifact needs lives *inside* it —
+   a prompt that needs "also 9s, 16:9, hold on the last frame" bolted on beside it is
+   incomplete; bake it in. (b) Deliver it as a file/artifact the user can use directly —
+   never paste a prompt, script, config, or doc into chat for them to copy out. One
+   self-contained deliverable, zero assembly.
+8. **Never merge to `main` or ship to a live surface without explicit approval for that
+   specific change.** Build it, show it, wait for the go-ahead — approval for one change
+   is not a standing licence for the next.

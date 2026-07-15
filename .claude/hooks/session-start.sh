@@ -23,6 +23,16 @@ cat <<'RULES' | python3 -c 'import json,sys; print(json.dumps({"hookSpecificOutp
 6. Keep momentum. Proceed on anything reversible and in-scope; batch blocking questions
    into one round; do not stall or over-ask.
 7. Try the obvious thing first (clone it, run it, open it) before declaring anything impossible.
+8. Deliverables must be COMPLETE and delivered as a ready-to-use ARTIFACT — never a
+   half-thing the user has to assemble or copy out of chat.
+   - Complete: every constraint the artifact needs lives INSIDE it, not in side-notes
+     around it. A prompt that needs "also make it 9s and 16:9" bolted on beside it is
+     incomplete — bake it in.
+   - Ready-to-use: hand over a file/artifact the user can use directly. Do not paste a
+     prompt, script, config, or document into chat for the user to manually copy-paste.
+     One self-contained deliverable, zero legwork.
+9. Never merge to the main branch or push anything to a live/production surface without
+   the user's explicit go-ahead for that specific change. Build it, show it, wait.
 
 The user's time is the scarce resource. Act, verify, ship.
 RULES
