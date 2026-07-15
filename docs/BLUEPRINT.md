@@ -1,7 +1,13 @@
 # SHIFT-9 — System Architecture Blueprint
 
 > **Phase 1 deliverable** · Vision Extraction & System Architecture
-> Status: `DRAFT FOR APPROVAL` · A unified digital ecosystem across three surfaces.
+> Status: `CREATIVE DIRECTION LOCKED` · A unified digital ecosystem across three surfaces.
+>
+> **This document is the locked creative direction, NOT a status report.** Phase 2 is
+> largely built. For what actually exists and what is in flight, read `HANDOFF.md` at
+> the repo root - it is the single source of truth for state. Sections 1-6 below remain
+> authoritative for design; section 6.1's tree and section 7's phases are aspirational
+> and marked where they diverge from reality.
 
 ```
 ┌─ SHIFT-9 // INSTRUMENT ─────────────────────────────────────────┐
@@ -204,15 +210,15 @@ shift9/
 │   │   └── Dither hero · manifesto · Living Work Wall · services · blog
 │   ├── just-a-pinch/        # Platform 2 — product landing (Next.js App Router)
 │   │   └── recipe-app story · features · screens · reviews · CTA
-│   └── github-profile/      # Platform 1 — generator (Node script, not a site)
+│   └── github-profile/      # PLANNED as Node; REALITY: profile/scripts/build-panels.py + build-banner-photo.py
 │       └── reads theme+Supabase → emits profile/README.md + branded SVGs
 ├── packages/
 │   ├── theme/               # @shift9/theme — TOKENS (single source of truth) §2
 │   ├── ui/                  # @shift9/ui — DitherField, WorkWall, GridFrame, buttons, skeletons
 │   ├── motion/              # @shift9/motion — springs, useMagnetic, useProximityWeight, reduced-motion gate
 │   ├── data/                # @shift9/data — typed Supabase client + queries §5
-│   └── config/              # @shift9/config — shared tsconfig / eslint / prettier
-├── supabase/                # migrations · seed · generated types
+│   └── config/              # @shift9/config — PLANNED, does not exist; tsconfig.base.json at workspace root instead
+├── supabase/                # PLANNED, does not exist; @shift9/data talks to Supabase directly
 ├── turbo.json · pnpm-workspace.yaml · package.json
 ```
 
@@ -251,8 +257,8 @@ Edit `--s9-signal` once → both Next.js apps recompile against it **and** the n
 ## 7. Phase Roadmap
 
 - **Phase 1 — Vision & Blueprint** ✅ *(this document)*
-- **Phase 2 — Foundation & Flagship** *(proposed)*: scaffold the monorepo, build `@shift9/theme` + `@shift9/ui` + `@shift9/motion`, ship `shift9.dev` with the full INSTRUMENT signature + Supabase work-wall.
-- **Phase 3 — Ecosystem**: build `just-a-pinch`, the generated GitHub profile, wire Supabase sync end-to-end, deploy all three, accessibility + perf audit.
+- **Phase 2 — Foundation & Flagship** ✅ *(BUILT — theme/ui/motion/data all shipped; shift9.dev live with `/`, `/instrument`, `/work/[slug]`)*: scaffold the monorepo, build `@shift9/theme` + `@shift9/ui` + `@shift9/motion`, ship `shift9.dev` with the full INSTRUMENT signature + Supabase work-wall.
+- **Phase 3 — Ecosystem** *(in progress — `just-a-pinch` landing shipped at pinch.shift9.dev; profile generated via `profile/scripts/*.py`, NOT `apps/github-profile`)*: build `just-a-pinch`, the generated GitHub profile, wire Supabase sync end-to-end, deploy all three, accessibility + perf audit.
 
 ---
 
@@ -263,4 +269,6 @@ Edit `--s9-signal` once → both Next.js apps recompile against it **and** the n
 3. **Just a Pinch domain** — standalone domain, or `shift9.dev/just-a-pinch` subpath?
 4. **Phase 2 scope** — confirm "foundation + shift9.dev flagship first" is the right opening move.
 
-> Nothing here is built yet — this is the architecture for your approval. Say the word and we move to Phase 2.
+> **Superseded.** This line said "nothing here is built yet" — that was true when written and false now.
+> Phase 2 shipped. See `HANDOFF.md` at the repo root for real state, open PRs, and next steps.
+> Section 8's open decisions above: item 3 is RESOLVED — Just a Pinch lives at `pinch.shift9.dev`.
