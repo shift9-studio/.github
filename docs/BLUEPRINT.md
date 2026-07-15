@@ -1,7 +1,13 @@
 # SHIFT-9 — System Architecture Blueprint
 
 > **Phase 1 deliverable** · Vision Extraction & System Architecture
-> Status: `DRAFT FOR APPROVAL` · A unified digital ecosystem across three surfaces.
+> Status: `CREATIVE DIRECTION LOCKED` · A unified digital ecosystem across three surfaces.
+>
+> **This document is the locked creative direction, NOT a status report.** Phase 2 is
+> largely built. For what actually exists and what is in flight, read `HANDOFF.md` at
+> the repo root - it is the single source of truth for state. Sections 1-6 below remain
+> authoritative for design; section 6.1's tree and section 7's phases are aspirational
+> and marked where they diverge from reality.
 
 ```
 ┌─ SHIFT-9 // INSTRUMENT ─────────────────────────────────────────┐
