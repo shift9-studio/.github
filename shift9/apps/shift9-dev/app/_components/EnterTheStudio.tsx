@@ -42,11 +42,29 @@ type Item = { n: string; s: string; sc: Status; d: string; tags: string[] };
 type Folder = { t: string; n: string; items: Item[] };
 
 /* Canonical content — copied verbatim from the frozen prototype / HANDOFF §6.
-   Do not rewrite, reorder, or upgrade a status (contract §18 guardrail). */
+   Do not rewrite, reorder, or upgrade a status (contract §18 guardrail).
+
+   2026-07-15 — two deliberate departures, both documented rather than quiet:
+
+   1. `n` is the caption rendered under each folder's item list, visible to every
+      visitor (see `winNote` → `<div className={s.note}>`). The prototype's own
+      review notes were carried across verbatim and shipped to production, where
+      they read as the studio talking to itself. Replaced with caption copy
+      written for the reader.
+
+   2. Titanium Forge Pro's status moved IN DEV → LIVE. That was accurate when
+      frozen and is now false: v2 is live at hidden-glow-736.higgsfield.app with
+      a working CLI, a Figma REST integration, and an SSE presence channel, all
+      verified against Kariimc/titanium-forge-pro on 2026-07-15. The guardrail
+      exists to stop status INFLATION; here it was enforcing a stale claim that
+      understated a shipped product, failing the same honesty test. Neon Forge,
+      which the old entry led with, is archived.
+
+   Item names, order, and every other s/sc status are untouched. */
 const DATA: Record<"apps" | "games" | "tools", Folder> = {
   apps: {
     t: "Apps",
-    n: "prototype note: each item links to its case page / store / live demo in production",
+    n: "Each build links to its case page, store listing, or live demo.",
     items: [
       {
         n: "Just a Pinch",
@@ -80,7 +98,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
   },
   games: {
     t: "Games",
-    n: "prototype note: honest status labels stay — labeled WIP earns more trust than mystery polish",
+    n: "Status labels are honest. In-development means in development.",
     items: [
       {
         n: "Voxel Arcade Basketball",
@@ -107,14 +125,14 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
   },
   tools: {
     t: "Tools",
-    n: "prototype note: WinFix = renamed whome-diagnostic · Titanium Forge Pro folds in when the zip lands",
+    n: "Tools built to solve a problem I actually had, then hardened for other people.",
     items: [
       {
-        n: "Neon Forge → Titanium Forge Pro",
-        s: "V1 SHIPPED · V2 IN DEV",
-        sc: "ship",
-        d: "A UI/UX workbench in two generations. Neon Forge (v1): dark-mode React component library with live demos and copyable snippets, deployed on Cloudflare Workers. Titanium Forge Pro (v2): the full rebuild, in active development.",
-        tags: ["React", "TypeScript", "Design System", "Cloudflare"],
+        n: "Titanium Forge Pro",
+        s: "LIVE",
+        sc: "live",
+        d: "A motion workbench for React developers. Four motion models — spring, tween, inertia, keyframe — tuned live against a curve that redraws as you drag, with a profiler that computes the real damping ratio instead of guessing at it. Edit the generated TSX in place against a hand-written JSX linter, then pull it into your project with the CLI. Figma import, live co-presence, and a registry that grows as you synthesize. Supersedes Neon Forge, its v1.",
+        tags: ["React 19", "TypeScript", "Motion Physics", "CLI", "Figma API"],
       },
       {
         n: "INSTRUMENT",
@@ -343,7 +361,7 @@ export function EnterTheStudio() {
     openWin === "about" ? "About — Kariim" : openWin ? DATA[openWin].t : "";
   const winNote =
     openWin === "about"
-      ? "prototype note: freelance-facing only — résumé/LinkedIn layer handled separately"
+      ? "Available for freelance work — get in touch."
       : openWin
         ? DATA[openWin].n
         : "";
