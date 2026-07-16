@@ -143,7 +143,7 @@ export const details: Record<string, ProjectDetail> = {
       { title: "Cross-runtime primitives", body: "Shared building blocks that work across web and game engines." },
     ],
     tech: ["TypeScript", "3D", "Game dev"],
-    external: { label: "View on GitHub ↗", href: "https://github.com/shift9-studio" },
+    external: { label: "View on GitHub ↗", href: "https://github.com/Kariimc/Omni-3d" },
   },
 
   "sub-scraper": {
@@ -159,13 +159,12 @@ export const details: Record<string, ProjectDetail> = {
       { title: "Scheduled runs", body: "Set it to keep itself up to date." },
     ],
     tech: ["Python", "Spotify API", "SoundCloud"],
-    external: { label: "View on GitHub ↗", href: "https://github.com/shift9-studio" },
   },
 
-  "whome-diagnostic": {
+  winfix: {
     tagline: "A one-shot Windows health check.",
     overview: [
-      "whome Diagnostic is a lightweight utility that runs a quick, readable health check on a Windows machine and hands back a clear report.",
+      "WinFix is a lightweight utility that runs a quick, readable health check on a Windows machine and hands back a clear report.",
       "Small, fast, and useful — the kind of tool you reach for when something feels off.",
     ],
     features: [
@@ -175,7 +174,7 @@ export const details: Record<string, ProjectDetail> = {
       { title: "Lightweight", body: "No install footprint to speak of — run it and go." },
     ],
     tech: ["Python", "Windows"],
-    external: { label: "View on GitHub ↗", href: "https://github.com/shift9-studio" },
+    external: { label: "View on GitHub ↗", href: "https://github.com/Kariimc/WinFix" },
   },
 };
 

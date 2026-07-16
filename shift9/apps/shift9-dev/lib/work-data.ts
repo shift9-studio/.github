@@ -119,15 +119,15 @@ export const projects: Project[] = [
     linkLabel: "View ↗",
   },
   {
-    title: "whome Diagnostic",
-    slug: "whome-diagnostic",
+    title: "WinFix",
+    slug: "winfix",
     role: "Utility · Engineering",
     year: "2026",
     tags: ["Python", "Windows", "Diagnostic"],
     accent: "pulse",
     status: "shipped",
     videoUrl: "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260625_142831_fbb84def-fcf6-4f5b-ab76-532a4d2ae87a.mp4",
-    href: "/work/whome-diagnostic",
+    href: "/work/winfix",
     linkLabel: "View ↗",
   },
 ];
