@@ -118,6 +118,9 @@ importers:
       '@fontsource/martian-mono':
         specifier: ^5.2.0
         version: 5.3.0
+      n8ao:
+        specifier: ^2.0.0
+        version: 2.0.0(postprocessing@6.39.3(three@0.182.0))(three@0.182.0)
       three:
         specifier: ^0.182.0
         version: 0.182.0
@@ -1047,6 +1050,12 @@ packages:
   motion-utils@11.18.1:
     resolution: {integrity: sha512-49Kt+HKjtbJKLtgO/LKj9Ld+6vw9BjH5d9sc40R/kVyH8GLAXgT42M2NnuPcJNuA3s9ZfZBUcwIgpmZWGEE+hA==}
 
+  n8ao@2.0.0:
+    resolution: {integrity: sha512-7oajUGXk10jJIcjGxOgjRY2X/gy5wiLOY4eOiAfFJ51ljN6Djmsg+j8HMOip+SpqV7OkwzF9VCkDRLluxVlySA==}
+    peerDependencies:
+      postprocessing: '>=6.30.0'
+      three: '>=0.137'
+
   nanoid@3.3.15:
     resolution: {integrity: sha512-y7Wygv/7mEOvxTuEQDB8StXdMRBWf1kR/tlhAzBRUFkB2jfcLOAxO/SHmOO2zgz1pVgK29/kyupn059/bCHdjA==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -1087,6 +1096,11 @@ packages:
   postcss@8.5.15:
     resolution: {integrity: sha512-FfR8sjd4em2T6fb3I2MwAJU7HWVMr9zba+enmQeeWFfCbm+UOC/0X4DS8XtpUTMwWMGbjKYP7xjfNekzyGmB3A==}
     engines: {node: ^10 || ^12 || >=14}
+
+  postprocessing@6.39.3:
+    resolution: {integrity: sha512-h5H1iuN96aRkU06CzJ8d/FqFe3Qs2bI7LiGHTzOI5T5mQqjzovi2t1EkRHb8qkHgoD9cTJDb4uA30AkSxsFB7A==}
+    peerDependencies:
+      three: '>= 0.168.0 < 0.186.0'
 
   react-dom@19.2.7:
     resolution: {integrity: sha512-t0BRVXvbiE/o20Hfw669rLbMCDWtYZLvmJigy2f0MxsXF+71pxhR3xOkspmsO8h3ZlNzyibAmtCa3l4lYKk6gQ==}
@@ -1798,6 +1812,11 @@ snapshots:
 
   motion-utils@11.18.1: {}
 
+  n8ao@2.0.0(postprocessing@6.39.3(three@0.182.0))(three@0.182.0):
+    dependencies:
+      postprocessing: 6.39.3(three@0.182.0)
+      three: 0.182.0
+
   nanoid@3.3.15: {}
 
   next@16.2.9(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
@@ -1839,6 +1858,10 @@ snapshots:
       nanoid: 3.3.15
       picocolors: 1.1.1
       source-map-js: 1.2.1
+
+  postprocessing@6.39.3(three@0.182.0):
+    dependencies:
+      three: 0.182.0
 
   react-dom@19.2.7(react@19.2.7):
     dependencies:

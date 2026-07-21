@@ -23,6 +23,7 @@ import {
   Object3D,
   PCFSoftShadowMap,
   PerspectiveCamera,
+  RectAreaLight,
   PlaneGeometry,
   Scene,
   ShaderMaterial,
@@ -35,7 +36,9 @@ import {
   WebGLRenderer,
 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+// @ts-expect-error n8ao ships no type declarations
+import { N8AOPass } from 'n8ao';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
@@ -166,6 +169,7 @@ export class StudioEngine {
   constructor(root: HTMLElement) {
     this.root = root;
     const C = SCENE_CONSTANTS;
+    RectAreaLightUniformsLib.init();
 
     this.renderer = new WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     // "super high resolution": device pixel ratio, no cap (handoff README).
@@ -202,9 +206,17 @@ export class StudioEngine {
     // cinema stack: render → bloom → tone map → final grade (BUILD_CONTRACT
     // clause 10, pulled forward by user directive 2026-07-21)
     this.composer = new EffectComposer(this.renderer);
-    this.composer.addPass(new RenderPass(this.scene, this.camera));
-    // NOTE: screen-space AO (GTAO) was trialled and removed — it blacks out
-    // whole surfaces under some GL stacks. Occlusion is baked per set instead.
+    // N8AO renders the scene itself (replaces RenderPass) and layers in
+    // temporally-stable, transparency-aware ambient occlusion. Chosen over
+    // three's GTAOPass, which blacked out whole surfaces under some GL stacks.
+    const n8ao = new N8AOPass(this.scene, this.camera, 1, 1);
+    n8ao.configuration.aoRadius = 0.9;
+    n8ao.configuration.distanceFalloff = 1.0;
+    n8ao.configuration.intensity = 2.2;
+    n8ao.configuration.transparencyAware = true;
+    n8ao.configuration.gammaCorrection = false; // OutputPass handles colour
+    n8ao.setQualityMode('Medium');
+    this.composer.addPass(n8ao);
     this.bloom = new UnrealBloomPass(new Vector2(1, 1), 0.2, 0.4, 1.05);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
@@ -554,11 +566,17 @@ export class StudioEngine {
     panel.position.set(x, y, z);
     panel.rotation.x = Math.PI / 2;
     g.add(panel);
+    // physically-true softbox: a real area light the size of the panel
+    // (RectAreaLightUniformsLib is initialised once in the constructor)
+    const area = new RectAreaLight(color ?? 0xffffff, intensity * 0.09, w, h);
+    area.position.set(x, y - 0.05, z);
+    area.rotation.x = -Math.PI / 2;
+    g.add(area);
     const gl = this.glow(color ?? 0xffffff, w * 1.2);
     gl.material.opacity = 0.45;
     gl.position.set(x, y - 0.2, z);
     g.add(gl);
-    const sp = new SpotLight(color ?? 0xffffff, intensity, y * 3, 0.9, 0.5, 1.2);
+    const sp = new SpotLight(color ?? 0xffffff, intensity * 0.55, y * 3, 0.9, 0.5, 1.2);
     sp.position.set(x, y, z);
     sp.target.position.set(x, 0, z);
     // cinema stack: the key panel casts true soft shadows
