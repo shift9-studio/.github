@@ -15,4 +15,8 @@ export type SetBuilder = (
   p: Project,
 ) => void;
 
-export const SET_BUILDERS: Partial<Record<SetKind, SetBuilder>> = {};
+import { buildKitchen } from './kitchen';
+
+export const SET_BUILDERS: Partial<Record<SetKind, SetBuilder>> = {
+  kitchen: buildKitchen,
+};
