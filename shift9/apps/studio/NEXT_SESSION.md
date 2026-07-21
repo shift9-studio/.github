@@ -1,7 +1,8 @@
 # Warm start — read this first in every new session
 
 You are continuing the shift9.dev/studio rebuild ("The Uncut Soundstage").
-Phase 1 of 8 is DONE and user-approved. The user judges every phase; you never
+Phase 1 of 8 is DONE and user-approved; Phase 2 (engine core) is BUILT and
+awaiting the user's judgment. The user judges every phase; you never
 self-certify. Read these, in order, before writing any code:
 
 1. `/BUILD_CONTRACT.md` (repo root) — the binding rules, the 8 phases, the
@@ -12,27 +13,40 @@ self-certify. Read these, in order, before writing any code:
 4. `handoff/reference/` — the working previz prototype. Pixel-fidelity target.
 5. `RESEARCH.md` — live-site content inventory + award-site technique table.
 
-## State after Phase 1 (commit 203a66b + follow-ups on claude/shift9-upgrade-research-t6gdna)
+## State after Phase 2 (branch claude/studio-rebuild-phase-2-y4ew51)
 
-- App scaffold: this directory (`shift9/apps/studio`), Vite + TS + three 0.182,
-  pnpm workspace member. `pnpm build` = typecheck + build, both clean.
-- `src/constants.ts`, `src/accessibility.ts`, `src/projects.ts` — ported verbatim;
-  do not touch without a recorded user decision.
-- Reduced-motion hard gate works (static 12-card grid before any GPU mount).
-- `src/engine/experience.ts` — stub only: renderer + camera + void. Phase 2
-  replaces this with the real engine.
-- `compare/ref/ref-z*.png` — reference screenshotted at all 12 set z-positions.
-- PR #29 is open and accumulates all phases; never merge it yourself.
+- Phase 1 baseline as before: scaffold, verbatim `constants.ts` /
+  `accessibility.ts` / `projects.ts` (do not touch without a recorded user
+  decision), reduced-motion hard gate, `compare/ref/ref-z*.png` baseline.
+- Phase 1 gap repaired: `apps/studio/package.json` restored (the root
+  `.gitignore` used to swallow every `package.json`; rule now scoped to `/`).
+- `src/engine/experience.ts` — REAL engine, ported 1:1 from the reference:
+  wheel → velocity (never position), damping `pow(1-0.05, dt*60)`, max vel 3.0,
+  z clamp [-250, 50], keyboard + touch, streaming (build < 50 / destroy > 100 /
+  full dispose), glideTo (capped 3.2s, cancelled by input), handheld drift,
+  tunnel intro (34 bulkheads + 140 streaks, fov kick, barrel roll), emitHud →
+  `shift9-hud`/`shift9-open`/`shift9-ready`/`shift9-entered` CustomEvents,
+  idleK, setLocked. Stagecraft helpers (glow/softbox/dustPlane/lightCone) +
+  shaders ported, ready for the set builders.
+- `src/engine/sets/index.ts` — empty SET_BUILDERS registry: Phases 3-4 add one
+  builder per `kind` here (until then streaming builds only the shared floor).
+- `src/ui/hud.ts` — HUD chrome consuming the events (letterbox, grain, vignette,
+  brand row, index/status/name with 22-unit dimming, progress bar). Idle
+  overlay + dossier pages deliberately deferred to Phase 6; HUD idle-dimming
+  (0.12) goes in with them.
+- Harness hooks in production: `window.__S9_SET_Z(z)`, `__S9_GLIDE(z)`,
+  `__S9_STATE()`; `?skip-intro` query param jumps the tunnel.
+- `harness/verify-physics.mjs` — 11 headless assertions of the physics
+  contract, all passing (report: `compare/phase2/physics-report.json`).
+  `harness/shoot-phase2.mjs` — stills at all 12 ref z + tunnel + reduced +
+  video recording. Evidence committed under `compare/phase2/`.
 
-## Phase plan (next up: PHASE 2)
+## Phase plan (next up: PHASE 3, after the user passes Phase 2)
 
-Phase 2 = engine core, ported 1:1 from `handoff/reference/shift9-scene.js`:
-wheel → velocity (NEVER position), damping `Math.pow(1 - 0.05, dt*60)`, max vel
-3.0, z clamped [-250, 50], keyboard arrows + touch drag, set streaming
-(build < 50, destroy > 100 with full dispose), glideTo (ease-in-out-cubic,
-dur 0.9 + dist/90 capped 3.2s, cancelled by any input), handheld camera drift
-(sin(t*0.13)*0.12 x, 2.2 + sin(t*0.19)*0.06 y), HUD event plumbing
-(`emitHud`-equivalent), intro tunnel hook. Then phases 3-8 per the contract table.
+Phase 3 = sets 12–07 ported 1:1 from the reference builders (kitchen,
+fluid, floatcube, lumen, arcade, corridor) into `src/engine/sets/`, one file
+per kind, each verified screenshot-vs-reference at its set z against
+`compare/ref/`. Then phases 4-8 per the contract table.
 
 ## How to verify (the harness)
 
