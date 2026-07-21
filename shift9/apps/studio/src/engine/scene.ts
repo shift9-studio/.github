@@ -4,11 +4,15 @@
 import * as THREE from 'three/webgpu';
 import { SCENE_CONSTANTS } from '../constants';
 import { PROJECTS, type Project } from '../projects';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RectAreaLightTexturesLib } from 'three/addons/lights/RectAreaLightTexturesLib.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {
   makeDustMaterial, makeConeMaterial, makeBeamMaterial,
   makeFluidMaterial, makeProjectionMaterial
 } from './tsl';
 import { createPostStack, type PostStack } from './post';
+import * as TX from './textures';
 
 export interface HudDetail {
   id: string; name: string; status: string; accent: string; index: string;
@@ -52,7 +56,7 @@ export class StudioScene {
   private hudKey = '';
   private pendingIntro: boolean | null = null;
   // per-set canvas-cycle latches (mirror the reference's this._* fields)
-  private _jpT = -1; private _dcT = -1; private _arT = -1; private _laT = -1; private _lu = -1;
+  private _jpT = -1; private _dcT = -1; private _arT = -1; private _laT = -1; private _lu = -1; private _gdT = -1;
 
   constructor(host: HTMLElement) { this.host = host; }
 
@@ -76,6 +80,12 @@ export class StudioScene {
     this.camera.position.set(0, 2.2, SCENE_CONSTANTS.CAMERA_START_Z);
     this.scene.add(new THREE.AmbientLight(0x111114, 0.6));
     this.glowTex = this.makeGlowTexture();
+    // image-based lighting: faint studio environment so metals/gloss pick up real
+    // reflections; intensity kept low so the void stays light-tight black
+    THREE.RectAreaLightNode.setLTC(RectAreaLightTexturesLib.init());
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    this.scene.environmentIntensity = 0.14;
 
     this.post = createPostStack(renderer, this.scene, this.camera, this.mobile);
 
@@ -399,24 +409,85 @@ export class StudioScene {
     anims.push(this.dustPlane(g, 0xffffff, 4, 6, 0, 3.2, -0.5));
   }
 
-  // 12 Just a Pinch — surgically lit white kitchen counter (LIVE)
+  // 12 Just a Pinch — the master-reference kitchen: surgical ceiling light panel,
+  // white upper cabinets with a backlit niche, monolithic island with sink +
+  // faucet, tablet leaning on the counter, SHIFT-9 branded concrete floor.
   private buildKitchen(g: THREE.Group, anims: Animator[]) {
-    this.softbox(g, 0, 8, 0, 4.6, 2.6, 140);
-    this.lightCone(g, 0xffffff, 0, 7.9, 0, 4, 0.045);
-    const white = new THREE.MeshStandardMaterial({ color: 0xf2f2f2, roughness: 0.4 });
-    const grey = new THREE.MeshStandardMaterial({ color: 0xcfd2d6, roughness: 0.3, metalness: 0.15 });
-    const island = new THREE.Mesh(new THREE.BoxGeometry(6, 1.15, 1.6), grey); island.position.y = 0.575; island.castShadow = true; g.add(island);
-    const top = new THREE.Mesh(new THREE.BoxGeometry(6.2, 0.07, 1.75), white); top.position.y = 1.185; g.add(top);
-    const back = new THREE.Mesh(new THREE.BoxGeometry(4.6, 2.4, 0.5), new THREE.MeshStandardMaterial({ color: 0xd6d6da, roughness: 0.65 })); back.position.set(0, 2.6, -2.2); g.add(back);
-    const niche = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.0, 0.52), new THREE.MeshStandardMaterial({ color: 0xe4e4e6, roughness: 0.6 }));
-    niche.position.set(0, 2.0, -2.19); g.add(niche);
-    const tc = document.createElement('canvas'); tc.width = 96; tc.height = 64;
-    const tcx = tc.getContext('2d')!; const ttex = new THREE.CanvasTexture(tc);
-    tcx.fillStyle = '#eafcfd'; tcx.fillRect(0, 0, 96, 64);
-    const tablet = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.6, 0.04), new THREE.MeshBasicMaterial({ color: 0xffffff, map: ttex }));
-    tablet.position.set(-1.5, 1.55, 0.1); tablet.rotation.x = -0.18; g.add(tablet);
-    const tg = this.glow(0x9fe8ec, 1.5); tg.position.copy(tablet.position); g.add(tg);
-    const pl = new THREE.PointLight(0xbfeef0, 4, 4); pl.position.set(-1.5, 1.6, 0.5); g.add(pl);
+    this._jpT = -1;   // reset the canvas latch so the tablet redraws after a streaming rebuild
+    // concrete stage floor with a soft pool + SHIFT-9 brand in front
+    const conc = TX.concrete(512, '#6e7074');
+    const kFloor = new THREE.Mesh(new THREE.CircleGeometry(10, 64),
+      new THREE.MeshStandardMaterial({ color: 0x9a9c9f, roughness: 0.85, metalness: 0.02, map: conc.map, normalMap: conc.normalMap }));
+    kFloor.rotation.x = -Math.PI / 2; kFloor.position.y = 0.012; kFloor.receiveShadow = true; g.add(kFloor);
+    const brand = new THREE.Mesh(new THREE.PlaneGeometry(4.4, 1.37),
+      new THREE.MeshStandardMaterial({ map: TX.floorBrand('SHIFT-9', 'rgba(74,76,82,0.95)'), transparent: true, roughness: 0.9, metalness: 0 }));
+    brand.rotation.x = -Math.PI / 2; brand.rotation.z = 0; brand.position.set(0, 0.02, 5.1); g.add(brand);
+    // the big rectangular ceiling light panel (the image's key light)
+    const panelG = new THREE.Group(); panelG.position.set(0, 6.1, -0.2); g.add(panelG);
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(4.9, 0.16, 3.1), new THREE.MeshStandardMaterial({ color: 0xd9dadc, roughness: 0.5, metalness: 0.3 }));
+    panelG.add(frame);
+    const lens = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 2.8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    lens.rotation.x = Math.PI / 2; lens.position.y = -0.09; panelG.add(lens);
+    const area = new THREE.RectAreaLight(0xffffff, 7, 4.6, 2.8);
+    area.position.set(0, 6.0, -0.2); area.rotation.x = -Math.PI / 2; g.add(area);
+    const fill = new THREE.SpotLight(0xffffff, 110, 22, 0.95, 0.65, 1.4);
+    fill.position.set(0, 6.0, -0.2); fill.target.position.set(0, 0, -0.2);
+    if (!this.mobile) { fill.castShadow = true; fill.shadow.mapSize.set(2048, 2048); fill.shadow.bias = -0.0004; fill.shadow.radius = 6; }
+    g.add(fill, fill.target);
+    const pg = this.glow(0xffffff, 3.2); pg.position.set(0, 5.85, -0.2); pg.material.opacity = 0.5; g.add(pg);
+    this.lightCone(g, 0xffffff, 0, 5.9, -0.2, 3.4, 0.04);
+    // bounce fill: the photo's island front reads white — fake the GI with a soft
+    // low-intensity front light (no shadow) aimed back at the counter
+    const bounce = new THREE.SpotLight(0xfff6ec, 120, 22, 0.95, 0.9, 1.6);
+    bounce.position.set(0, 4.5, 10); bounce.target.position.set(0, 0.9, 0); g.add(bounce, bounce.target);
+    // materials
+    const white = new THREE.MeshStandardMaterial({ color: 0xdfe0e3, roughness: 0.55 });
+    const islandMat = new THREE.MeshStandardMaterial({ color: 0xe9eaec, roughness: 0.34, metalness: 0.04 });
+    const cabTex = TX.cabinetFronts();
+    const cabMat = new THREE.MeshStandardMaterial({ color: 0xe6e7ea, roughness: 0.58, map: cabTex.map, normalMap: cabTex.normalMap, normalScale: new THREE.Vector2(1.5, 1.5) });
+    const steel = new THREE.MeshStandardMaterial({ color: 0xc9ccd1, roughness: 0.25, metalness: 0.9 });
+    // back wall block: uppers + tall side columns + glowing niche (per the image)
+    const backWall = new THREE.Mesh(new THREE.BoxGeometry(5.4, 3.1, 0.55), white); backWall.position.set(0, 3.15, -2.25); backWall.castShadow = true; g.add(backWall);
+    const uppers = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.05, 0.6), cabMat); uppers.position.set(0, 4.05, -2.2); g.add(uppers);
+    const colL = new THREE.Mesh(new THREE.BoxGeometry(1.2, 3.1, 0.62), cabMat); colL.position.set(-2.1, 3.15, -2.21); g.add(colL);
+    const colR = colL.clone(); colR.position.x = 2.1; g.add(colR);
+    // niche: recessed, softly lit, with jars
+    const nicheBack = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.05, 0.1), new THREE.MeshStandardMaterial({ color: 0xdddee2, roughness: 0.7 }));
+    nicheBack.position.set(0, 2.95, -2.5); g.add(nicheBack);
+    const nicheLight = new THREE.PointLight(0xfff2dd, 1.1, 2.2); nicheLight.position.set(0, 3.35, -2.15); g.add(nicheLight);
+    for (const [jx, jh, jc] of [[-0.7, 0.34, 0xd8cfc2], [-0.3, 0.26, 0xcfd6cf], [0.25, 0.4, 0xd9d3c8], [0.75, 0.3, 0xc9ced6]] as const) {
+      const jar = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.1, jh, 18), new THREE.MeshStandardMaterial({ color: jc, roughness: 0.35 }));
+      jar.position.set(jx, 2.47 + jh / 2, -2.28); g.add(jar);
+    }
+    // island: clean monolith with waterfall top, kickspace shadow gap
+    const island = new THREE.Mesh(new RoundedBoxGeometry(5.6, 1.12, 1.7, 2, 0.02), islandMat); island.position.y = 0.62; island.castShadow = true; island.receiveShadow = true; g.add(island);
+    const kick = new THREE.Mesh(new THREE.BoxGeometry(5.3, 0.12, 1.5), new THREE.MeshStandardMaterial({ color: 0x3a3b40, roughness: 0.8 }));
+    kick.position.y = 0.06; g.add(kick);
+    const top = new THREE.Mesh(new RoundedBoxGeometry(5.72, 0.08, 1.82, 2, 0.02), white); top.position.y = 1.22; top.castShadow = true; g.add(top);
+    // sink + faucet (right of counter, as photographed)
+    const basin = new THREE.Mesh(new THREE.BoxGeometry(0.98, 0.05, 0.62), new THREE.MeshStandardMaterial({ color: 0xb8bcc2, roughness: 0.3, metalness: 0.85 }));
+    basin.position.set(1.7, 1.245, -0.1); g.add(basin);
+    const basinIn = new THREE.Mesh(new THREE.BoxGeometry(0.86, 0.06, 0.5), new THREE.MeshStandardMaterial({ color: 0x50545a, roughness: 0.35, metalness: 0.9 }));
+    basinIn.position.set(1.7, 1.235, -0.1); g.add(basinIn);
+    const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.03, 0.42, 16), steel);
+    stalk.position.set(2.05, 1.44, -0.32); g.add(stalk);
+    const spout = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.022, 10, 24, Math.PI), steel);
+    spout.position.set(1.95, 1.65, -0.32); spout.rotation.z = Math.PI / 2; spout.rotation.y = Math.PI / 2; g.add(spout);
+    // cutting board + bowl props
+    const board = new THREE.Mesh(new RoundedBoxGeometry(0.62, 0.03, 0.4, 2, 0.01), new THREE.MeshStandardMaterial({ color: 0xc9a877, roughness: 0.7 }));
+    board.position.set(0.4, 1.27, 0.15); g.add(board);
+    const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.16, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0xe7e2d9, roughness: 0.4, side: THREE.DoubleSide }));
+    bowl.rotation.x = Math.PI; bowl.position.set(-0.5, 1.41, -0.2); g.add(bowl);
+    // tablet leaning against the counter showing the recipe app (photo left)
+    const tc = document.createElement('canvas'); tc.width = 192; tc.height = 128;
+    const tcx = tc.getContext('2d')!; const ttex = new THREE.CanvasTexture(tc); ttex.colorSpace = THREE.SRGBColorSpace;
+    const tabG = new THREE.Group(); tabG.position.set(-1.75, 1.52, 0.12); tabG.rotation.x = -0.16; g.add(tabG);
+    const tabBody = new THREE.Mesh(new RoundedBoxGeometry(0.92, 0.64, 0.035, 2, 0.015), new THREE.MeshStandardMaterial({ color: 0x2a2c31, roughness: 0.3, metalness: 0.6 }));
+    tabG.add(tabBody);
+    const tabScr = new THREE.Mesh(new THREE.PlaneGeometry(0.84, 0.56), new THREE.MeshBasicMaterial({ map: ttex }));
+    tabScr.position.z = 0.019; tabG.add(tabScr);
+    const tg = this.glow(0x9fe8ec, 1.3); tg.position.set(-1.75, 1.55, 0.35); tg.material.opacity = 0.35; g.add(tg);
+    const pl = new THREE.PointLight(0xbfeef0, 3, 3); pl.position.set(-1.75, 1.6, 0.55); g.add(pl);
     anims.push(this.dustPlane(g, 0xffffff, 5, 6, 0, 3.5, -1));
     // idle beat: tablet cycles recipe cards; soft steam rises off the counter
     const wisps: THREE.Sprite[] = [];
@@ -425,10 +496,15 @@ export class StudioScene {
       const ci = (t / 2 | 0) % 3;
       if (ci !== this._jpT) {
         this._jpT = ci;
-        tcx.fillStyle = '#eafcfd'; tcx.fillRect(0, 0, 96, 64);
-        tcx.fillStyle = ['#ffb3a0', '#a0d8b0', '#f5d78e'][ci]; tcx.fillRect(8, 8, 34, 48);
-        tcx.fillStyle = '#89a0a4';
-        for (let j = 0; j < 4; j++) tcx.fillRect(50, 12 + j * 11, 38 - j * 6, 4);
+        // recipe card UI: hero photo block, title bars, step list
+        tcx.fillStyle = '#f4fbfc'; tcx.fillRect(0, 0, 192, 128);
+        tcx.fillStyle = ['#ffb3a0', '#a0d8b0', '#f5d78e'][ci]; tcx.fillRect(10, 10, 74, 84);
+        tcx.fillStyle = 'rgba(255,255,255,0.35)'; tcx.beginPath(); tcx.arc(47, 44, 22, 0, 7); tcx.fill();
+        tcx.fillStyle = '#31474c'; tcx.fillRect(96, 14, 80, 8);
+        tcx.fillStyle = '#8aa0a6';
+        for (let j = 0; j < 4; j++) tcx.fillRect(96, 34 + j * 16, 78 - j * 12, 5);
+        tcx.fillStyle = '#2ec4b6'; tcx.fillRect(10, 104, 90, 14);
+        tcx.fillStyle = '#ffffff'; tcx.font = 'bold 9px sans-serif'; tcx.fillText('COOK MODE', 22, 114);
         ttex.needsUpdate = true;
       }
       const k = this.idleK(g);
@@ -440,36 +516,106 @@ export class StudioScene {
     });
   }
 
-  // 07 Midnight Return — dark metal corridor, blue/orange flicker, steam
+  // 07 Midnight Return — rusted octagonal corridor per the master reference image:
+  // grated floor with orange under-glow, recessed blue ceiling lights, orange wall
+  // sconces, SHIFT-9 stamped deck plate, volumetric shaft, saturated flicker.
   private buildCorridor(g: THREE.Group, anims: Animator[]) {
-    const metal = new THREE.MeshStandardMaterial({ color: 0x1a1c20, roughness: 0.45, metalness: 0.85 });
-    for (let i = 0; i < 7; i++) {
+    const rust = TX.rustSteel(512, 1);
+    const rustB = TX.rustSteel(512, 8);
+    const metal = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.72, metalness: 0.45, map: rust.map, normalMap: rust.normalMap, normalScale: new THREE.Vector2(1.3, 1.3) });
+    const metalB = new THREE.MeshStandardMaterial({ color: 0xe8e0d6, roughness: 0.8, metalness: 0.4, map: rustB.map, normalMap: rustB.normalMap });
+    const darkSteel = new THREE.MeshStandardMaterial({ color: 0x17181c, roughness: 0.42, metalness: 0.9 });
+    // octagonal ring segments marching into the dark
+    for (let i = 0; i < 8; i++) {
       const frame = new THREE.Group();
-      const mk = (w: number, h: number, x: number, y: number) => {
-        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.35), metal); m.position.set(x, y, 0); frame.add(m);
+      const deep = i % 2 ? metal : metalB;
+      const slab = (w: number, h: number, x: number, y: number, rz = 0, d = 0.5) => {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), deep);
+        m.position.set(x, y, 0); m.rotation.z = rz; m.castShadow = true; m.receiveShadow = true; frame.add(m);
       };
-      mk(0.4, 5.4, -3.2, 2.7); mk(0.4, 5.4, 3.2, 2.7); mk(6.8, 0.4, 0, 5.2);
-      const grate = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.08, 1.6), new THREE.MeshStandardMaterial({ color: 0x0c0d10, roughness: 0.3, metalness: 0.9 }));
-      grate.position.y = 0.04; frame.add(grate);
+      slab(0.7, 4.0, -3.25, 2.6);  slab(0.7, 4.0, 3.25, 2.6);              // side walls
+      slab(2.6, 0.7, -2.35, 4.95, -Math.PI / 4); slab(2.6, 0.7, 2.35, 4.95, Math.PI / 4); // chamfers ↑
+      slab(3.4, 0.7, 0, 5.55);                                             // ceiling band
+      slab(2.2, 0.7, -2.5, 0.35, Math.PI / 4); slab(2.2, 0.7, 2.5, 0.35, -Math.PI / 4);   // chamfers ↓
+      // greebles: pipes + rivet strip on the deep frames
+      if (i % 2) {
+        const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 4.6, 10), darkSteel);
+        pipe.position.set(-2.95, 2.5, 0.32); frame.add(pipe);
+        const box = new THREE.Mesh(new RoundedBoxGeometry(0.5, 0.7, 0.25, 2, 0.04), darkSteel);
+        box.position.set(2.95, 1.6, 0.3); frame.add(box);
+      }
       frame.position.z = -i * 2.4 + 7; g.add(frame);
+    }
+    // floor: center stamped deck plates flanked by open grates with hot under-glow
+    const plateTex = TX.stampedPlate('SHIFT-9');
+    for (let i = 0; i < 5; i++) {
+      const plate = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.08, 3.6),
+        i === 1
+          ? new THREE.MeshStandardMaterial({ color: 0x9a9aa0, roughness: 0.55, metalness: 0.85, map: plateTex.map, normalMap: plateTex.normalMap, normalScale: new THREE.Vector2(1.6, 1.6) })
+          : new THREE.MeshStandardMaterial({ color: 0x24262b, roughness: 0.5, metalness: 0.85, map: rustB.map, normalMap: rustB.normalMap }));
+      plate.position.set(0, 0.04, -i * 3.8 + 7); plate.receiveShadow = true; g.add(plate);
+      for (const side of [-1, 1]) {
+        // under-glow slit + emissive floor light
+        const glowP = new THREE.Mesh(new THREE.PlaneGeometry(0.95, 3.4), new THREE.MeshBasicMaterial({ color: 0xff4a10 }));
+        glowP.rotation.x = -Math.PI / 2; glowP.position.set(side * 2.0, 0.005, -i * 3.8 + 7); g.add(glowP);
+        // grate bars over the glow
+        for (let b = 0; b < 13; b++) {
+          const bar = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.06, 0.14), darkSteel);
+          bar.position.set(side * 2.0, 0.07, -i * 3.8 + 7 - 1.68 + b * 0.28); g.add(bar);
+        }
+        const rail = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.1, 3.6), darkSteel);
+        rail.position.set(side * 1.38, 0.08, -i * 3.8 + 7); g.add(rail);
+        if (i % 2 === 0) {
+          const up = new THREE.PointLight(0xff4a10, 6, 3.2, 1.8);
+          up.position.set(side * 2.1, 0.4, -i * 3.8 + 7); g.add(up);
+        }
+      }
+    }
+    // recessed ceiling light housings (cool blue-white) + orange wall sconce bars
+    const housings: THREE.Mesh[] = [];
+    for (let i = 0; i < 4; i++) {
+      for (const side of [-1.2, 1.2]) {
+        const housing = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.12, 0.5), darkSteel);
+        housing.position.set(side, 5.18, -i * 4.8 + 6); g.add(housing);
+        const lens = new THREE.Mesh(new THREE.PlaneGeometry(0.95, 0.36), new THREE.MeshBasicMaterial({ color: 0x9fc4ff }));
+        lens.rotation.x = Math.PI / 2; lens.position.set(side, 5.11, -i * 4.8 + 6); g.add(lens); housings.push(lens);
+      }
+    }
+    const sconces: THREE.Mesh[] = [];
+    for (let i = 0; i < 4; i++) {
+      for (const side of [-1, 1]) {
+        const box = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.1, 0.34), darkSteel);
+        box.position.set(side * 3.02, 1.9, -i * 4.8 + 5); g.add(box);
+        const bar = new THREE.Mesh(new THREE.PlaneGeometry(0.09, 0.92), new THREE.MeshBasicMaterial({ color: 0xffa04a }));
+        bar.rotation.y = -side * Math.PI / 2; bar.position.set(side * 2.93, 1.9, -i * 4.8 + 5); g.add(bar); sconces.push(bar);
+        const gl = this.glow(0xff7a22, 1.1); gl.position.set(side * 2.8, 1.9, -i * 4.8 + 5); g.add(gl);
+      }
+    }
+    // volumetric shaft falling from the first ceiling light + warm haze fills so
+    // the rusted panels actually read (the photo is brown-dominated, not black)
+    this.lightCone(g, 0xbfd4ff, 0, 5.1, 4.2, 1.7, 0.05);
+    for (const [fz, fi] of [[5, 8], [-1, 6], [-7, 6]] as const) {
+      const warm = new THREE.PointLight(0xffb377, fi, 10, 1.7); warm.position.set(0, 2.6, fz); g.add(warm);
     }
     const flickers: { pl: THREE.PointLight; gl: THREE.Sprite; base: number; ph: number }[] = [];
     const maxLights = this.mobile ? 3 : 5; // mobile shader simplification: fewer lights
     const addLight = (color: number, x: number, y: number, z: number, intensity: number) => {
       if (flickers.length >= maxLights) return;
-      const pl = new THREE.PointLight(color, intensity, 8, 1.6); pl.position.set(x, y, z); g.add(pl);
+      const pl = new THREE.PointLight(color, intensity, 9, 1.6); pl.position.set(x, y, z); g.add(pl);
       const gl = this.glow(color, 1.6); gl.position.set(x, y, z); g.add(gl);
-      const bulb = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 0.08), new THREE.MeshBasicMaterial({ color })); bulb.position.set(x, y, z); g.add(bulb);
       flickers.push({ pl, gl, base: intensity, ph: Math.random() * 10 });
     };
-    addLight(0x0033ff, -2.85, 4.6, 4.5, 26); addLight(0x0033ff, 2.85, 4.6, -0.5, 26);
-    addLight(0xff6a1a, 2.85, 1.4, 2.2, 15); addLight(0xff6a1a, -2.85, 1.4, -3, 12);
-    addLight(0x0033ff, 0, 5.0, -7, 30);
+    addLight(0x2a66ff, -1.2, 4.8, 4.5, 34); addLight(0x2a66ff, 1.2, 4.8, -1.5, 34);
+    addLight(0xff6a1a, 2.6, 1.6, 2.2, 16); addLight(0xff6a1a, -2.6, 1.6, -3, 14);
+    addLight(0x2a66ff, 0, 5.0, -7, 36);
     anims.push((t) => {
       for (const f of flickers) {
         const fl = 0.55 + 0.45 * Math.max(0, Math.sin(t * 17 + f.ph) * Math.sin(t * 5.3 + f.ph * 2) + 0.4);
         f.pl.intensity = f.base * fl; f.gl.material.opacity = 0.85 * fl;
       }
+      // fixture lenses flicker with their lights
+      housings.forEach((hh, i) => { const m = hh.material as THREE.MeshBasicMaterial; m.color.setScalar(0); m.color.set(0x9fc4ff).multiplyScalar(0.7 + 0.3 * Math.sin(t * 13 + i * 3)); });
+      sconces.forEach((s, i) => { const m = s.material as THREE.MeshBasicMaterial; m.color.set(0xffa04a).multiplyScalar(0.75 + 0.25 * Math.sin(t * 9 + i * 2.1)); });
     });
     anims.push(this.dustPlane(g, 0x2244ff, 5, 4.5, 0, 2.5, -1));
     anims.push(this.dustPlane(g, 0xff8844, 5, 4.5, 0.5, 2.5, -4));
@@ -496,13 +642,14 @@ export class StudioScene {
     anims.push((t) => {
       const k = this.idleK(g), c = (Math.sin(t * 0.35) + 1) / 2;
       sil.visible = k > 0.05; sil.position.z = -10 + k * c * 4;
-      doorGlow.material.opacity = k * (0.55 + 0.12 * Math.sin(t * 1.7));
-      dg.material.opacity = k * 0.5;
+      doorGlow.material.opacity = k * (0.3 + 0.08 * Math.sin(t * 1.7));
+      dg.material.opacity = k * 0.28;
     });
   }
 
   // 09 Lumen — projective texture mapping onto a stack of white boxes
   private buildLumen(g: THREE.Group, anims: Animator[]) {
+    this._lu = -1;    // reset canvas latch (streaming rebuild)
     // live glitching UI map texture
     const c = document.createElement('canvas'); c.width = c.height = 512;
     const ctx = c.getContext('2d')!;
@@ -575,24 +722,34 @@ export class StudioScene {
     const wall = new THREE.Mesh(new THREE.BoxGeometry(11, 8, 0.4), white); wall.position.set(0, 4, -3); g.add(wall);
     const sideL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 8, 7), white); sideL.position.set(-5.3, 4, 0.5); g.add(sideL);
     const sideR = sideL.clone(); sideR.position.x = 5.3; g.add(sideR);
-    this.softbox(g, -2.5, 7.6, 1, 3.2, 2.4, 200); this.softbox(g, 2.5, 7.6, 1, 3.2, 2.4, 200);
-    g.add(new THREE.HemisphereLight(0xffffff, 0x999999, 0.9));
-    // dark broken monolith — a fractured slab (the thing WinFix fixes)
-    const dark = new THREE.MeshStandardMaterial({ color: 0x14141a, roughness: 0.5, metalness: 0.2 });
-    const shards: { sh: THREE.Mesh; off: { x: number; rz: number } }[] = [];
-    for (let i = 0; i < 4; i++) {
-      const sh = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.9, 0.5), dark);
-      const off = { x: (i - 1.5) * 0.15, rz: (i % 2 ? 1 : -1) * 0.05 * i };
-      sh.position.set(off.x, 0.45 + i * 0.85, 0); sh.rotation.z = off.rz; sh.castShadow = true; g.add(sh); shards.push({ sh, off });
-    }
-    const scar = new THREE.Mesh(new THREE.BoxGeometry(0.05, 3.4, 0.55), new THREE.MeshBasicMaterial({ color: 0x0033FF }));
-    scar.position.set(0.1, 1.9, 0.01); g.add(scar);
-    const gl = this.glow(0x0033FF, 1.6); gl.position.copy(scar.position); g.add(gl);
-    // idle beat: the fracture heals shut, breathes, re-cracks (repair motif)
+    this.softbox(g, -2.5, 7.6, 1, 3.2, 2.4, 110); this.softbox(g, 2.5, 7.6, 1, 3.2, 2.4, 110);
+    g.add(new THREE.HemisphereLight(0xffffff, 0x999999, 0.35));
+    // ceiling light panel over the room (per the master composite: lit white cube room)
+    const lensW = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 2.2), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    lensW.rotation.x = Math.PI / 2; lensW.position.set(0, 7.4, 0.4); g.add(lensW);
+    // recessed grey shadowbox so the neon reads against midtone, not white-on-white
+    const shadowbox = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 4.6),
+      new THREE.MeshStandardMaterial({ color: 0x55575c, roughness: 0.9 }));
+    shadowbox.position.set(0, 2.9, -2.78); g.add(shadowbox);
+    const sbFrame = new THREE.Mesh(new THREE.BoxGeometry(4.9, 4.9, 0.12),
+      new THREE.MeshStandardMaterial({ color: 0xcfd1d5, roughness: 0.6 }));
+    sbFrame.position.set(0, 2.9, -2.86); g.add(sbFrame);
+    // the glowing neon wrench sign floating in the shadowbox (the thing WinFix is)
+    const wrenchTex = TX.neonWrench();
+    const wrench = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 4.2),
+      new THREE.MeshBasicMaterial({ map: wrenchTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+    wrench.position.set(0, 2.9, -2.7); g.add(wrench);
+    const wLight = new THREE.PointLight(0xeef4ff, 9, 8); wLight.position.set(0, 2.9, -1.8); g.add(wLight);
+    const wGlow = this.glow(0xf4f8ff, 2.6); wGlow.position.set(0, 2.9, -2.5); wGlow.material.opacity = 0.22; g.add(wGlow);
+    // idle beat: the neon flickers half-dead, then heals to a steady burn (repair motif)
     anims.push((t) => {
-      const k = this.idleK(g), heal = k * (0.5 + 0.5 * Math.sin(t * 0.9));
-      for (const { sh, off } of shards) { sh.position.x = off.x * (1 - heal); sh.rotation.z = off.rz * (1 - heal); }
-      gl.material.opacity = 0.3 + heal * 0.6;
+      const k = this.idleK(g);
+      const sick = 0.55 + 0.45 * Math.max(0, Math.sin(t * 21) * Math.sin(t * 6.1) + 0.55);
+      const healed = 0.92 + 0.08 * Math.sin(t * 2);
+      const b = sick * (1 - k) + healed * k;
+      (wrench.material as THREE.MeshBasicMaterial).opacity = b;
+      wGlow.material.opacity = 0.22 * b;
+      wLight.intensity = 9 * b;
     });
   }
 
@@ -601,6 +758,24 @@ export class StudioScene {
     const metal = new THREE.MeshStandardMaterial({ color: 0x1b1d22, roughness: 0.6, metalness: 0.7 });
     const back = new THREE.Mesh(new THREE.BoxGeometry(16, 11, 0.4), new THREE.MeshStandardMaterial({ color: 0x0d0e12, roughness: 0.9 })); back.position.set(0, 5.5, -5); g.add(back);
     for (let i = 0; i < 5; i++) { const beam = new THREE.Mesh(new THREE.BoxGeometry(0.3, 9, 0.3), metal); beam.position.set(-6 + i * 3, 4.5, -4.6); g.add(beam); }
+    // warehouse shelving racks with crates flanking the mech (master composite look)
+    const shelfSteel = new THREE.MeshStandardMaterial({ color: 0x2c2f36, roughness: 0.5, metalness: 0.8 });
+    const crateMat = new THREE.MeshStandardMaterial({ color: 0x4a423a, roughness: 0.85 });
+    for (const sx of [-5.4, 5.4]) {
+      for (let lvl = 0; lvl < 3; lvl++) {
+        const shelf = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.1, 1.5), shelfSteel);
+        shelf.position.set(sx, 1 + lvl * 1.5, -2.5); g.add(shelf);
+        for (let ci = 0; ci < 3; ci++) {
+          if ((lvl + ci) % 3 === 2) continue;
+          const cr = new THREE.Mesh(new RoundedBoxGeometry(0.8, 0.75, 0.9, 2, 0.03), crateMat);
+          cr.position.set(sx - 1.1 + ci * 1.1, 1 + lvl * 1.5 + 0.43, -2.5); cr.rotation.y = (ci + lvl) * 0.12; cr.castShadow = true; g.add(cr);
+        }
+      }
+      for (const px of [sx - 1.7, sx + 1.7]) {
+        const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 4.6, 0.12), shelfSteel);
+        post.position.set(px, 2.3, -2.5); g.add(post);
+      }
+    }
     // mech: stacked masses
     const mech = new THREE.Group();
     const torso = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.2, 1.2), metal); torso.position.y = 3.4; torso.castShadow = true; mech.add(torso);
@@ -648,15 +823,23 @@ export class StudioScene {
     });
   }
 
-  // 03 Automation Sys — sterile data center, rows of racks with blinking LEDs
+  // 03 Automation Sys — bright sterile data center with a white robot arm working
+  // the aisle (master composite look): glossy floor, ceiling light rails, LED racks
   private buildDataCenter(g: THREE.Group, anims: Animator[]) {
-    const rack = new THREE.MeshStandardMaterial({ color: 0x202329, roughness: 0.4, metalness: 0.6 });
-    g.add(new THREE.AmbientLight(0x223040, 0.7));
+    const rack = new THREE.MeshStandardMaterial({ color: 0xcfd3d8, roughness: 0.35, metalness: 0.5 });
+    const rackDoor = new THREE.MeshStandardMaterial({ color: 0x30343b, roughness: 0.25, metalness: 0.7 });
+    g.add(new THREE.AmbientLight(0xdce8f0, 0.55));
+    // glossy sterile floor
+    const dcFloor = new THREE.Mesh(new THREE.CircleGeometry(9.5, 56),
+      new THREE.MeshStandardMaterial({ color: 0xb8bcc2, roughness: 0.18, metalness: 0.35 }));
+    dcFloor.rotation.x = -Math.PI / 2; dcFloor.position.y = 0.015; dcFloor.receiveShadow = true; g.add(dcFloor);
     const leds: THREE.Mesh[] = [];
     for (let side = -1; side <= 1; side += 2) {
       for (let i = 0; i < 5; i++) {
-        const r = new THREE.Mesh(new THREE.BoxGeometry(1.1, 4.2, 1.4), rack);
+        const r = new THREE.Mesh(new RoundedBoxGeometry(1.1, 4.2, 1.4, 2, 0.03), rack);
         r.position.set(side * 3.4, 2.1, -i * 2.6 + 4); r.castShadow = true; g.add(r);
+        const door = new THREE.Mesh(new THREE.BoxGeometry(0.02, 3.9, 1.2), rackDoor);
+        door.position.set(side * 3.4 - side * 0.56, 2.1, -i * 2.6 + 4); g.add(door);
         for (let j = 0; j < 10; j++) {
           const on = Math.random() < 0.7;
           const led = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.03), new THREE.MeshBasicMaterial({ color: on ? 0x33ffcc : 0x0a2a26 }));
@@ -665,13 +848,44 @@ export class StudioScene {
         }
       }
     }
+    // white robot arm working the aisle
+    const armWhite = new THREE.MeshStandardMaterial({ color: 0xeef0f2, roughness: 0.32, metalness: 0.15 });
+    const joint = new THREE.MeshStandardMaterial({ color: 0x24262b, roughness: 0.4, metalness: 0.6 });
+    const armG = new THREE.Group(); armG.position.set(0.4, 0, 1.2); g.add(armG);
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.7, 0.35, 32), armWhite); base.position.y = 0.19; base.castShadow = true; armG.add(base);
+    const shoulder = new THREE.Group(); shoulder.position.y = 0.45; armG.add(shoulder);
+    const j1 = new THREE.Mesh(new THREE.SphereGeometry(0.32, 24, 16), joint); shoulder.add(j1);
+    const upper = new THREE.Mesh(new RoundedBoxGeometry(0.42, 1.7, 0.42, 2, 0.08), armWhite); upper.position.y = 0.85; upper.rotation.z = 0; upper.castShadow = true; shoulder.add(upper);
+    const elbow = new THREE.Group(); elbow.position.y = 1.7; shoulder.add(elbow);
+    const j2 = new THREE.Mesh(new THREE.SphereGeometry(0.26, 24, 16), joint); elbow.add(j2);
+    const fore = new THREE.Mesh(new RoundedBoxGeometry(0.34, 1.4, 0.34, 2, 0.07), armWhite); fore.position.y = 0.7; fore.castShadow = true; elbow.add(fore);
+    const wristG = new THREE.Group(); wristG.position.y = 1.4; elbow.add(wristG);
+    const head = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 0.4, 24), joint); head.position.y = 0.18; wristG.add(head);
+    const eyeLed = new THREE.Mesh(new THREE.CircleGeometry(0.05, 16), new THREE.MeshBasicMaterial({ color: 0x35d5ee }));
+    eyeLed.position.set(0, 0.32, 0.13); wristG.add(eyeLed);
+    shoulder.rotation.z = -0.5; elbow.rotation.z = 1.1; wristG.rotation.z = -0.5;
+    anims.push((t) => {
+      const sway = Math.sin(t * 0.5);
+      shoulder.rotation.y = Math.sin(t * 0.3) * 0.7;
+      shoulder.rotation.z = -0.5 + sway * 0.12;
+      elbow.rotation.z = 1.1 - sway * 0.2;
+      wristG.rotation.z = -0.5 + sway * 0.1;
+    });
+    // ceiling light rails (white) + cyan aisle strips
+    for (const x of [-2.2, 0, 2.2]) {
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.06, 12), new THREE.MeshBasicMaterial({ color: 0xf4f8ff }));
+      rail.position.set(x, 4.6, -1); g.add(rail);
+    }
     const strip = (x: number) => {
       const s = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 12), new THREE.MeshBasicMaterial({ color: 0x00e0ff }));
       s.position.set(x, 4.3, -1); g.add(s);
       const gl = this.glow(0x00e0ff, 2); gl.position.set(x, 4.3, 2); g.add(gl);
     };
     strip(-2.6); strip(2.6);
-    const overhead = new THREE.PointLight(0x66eaff, 18, 16); overhead.position.set(0, 5, 3); g.add(overhead);
+    const overhead = new THREE.SpotLight(0xf0f6ff, 150, 20, 1.0, 0.55, 1.3);
+    overhead.position.set(0, 6.5, 2); overhead.target.position.set(0, 0, 1);
+    if (!this.mobile) { overhead.castShadow = true; overhead.shadow.mapSize.set(1024, 1024); overhead.shadow.bias = -0.0004; overhead.shadow.radius = 4; }
+    g.add(overhead, overhead.target);
     anims.push(this.dustPlane(g, 0x66eaff, 6, 5, 0, 3, -1));
     anims.push((t) => {
       if ((t * 8 | 0) !== this._dcT) {
@@ -691,21 +905,39 @@ export class StudioScene {
 
   // 04 INSTRUMENT — monolithic brutalist synth console
   private buildSynth(g: THREE.Group, anims: Animator[]) {
-    this.softbox(g, 0, 7.8, 1.5, 3, 2, 120, 0xffe6c2);
-    const dark = new THREE.MeshStandardMaterial({ color: 0x1a1a1f, roughness: 0.6, metalness: 0.3 });
-    const face = new THREE.MeshStandardMaterial({ color: 0x26262c, roughness: 0.5, metalness: 0.4 });
-    const body = new THREE.Mesh(new THREE.BoxGeometry(5.5, 2.6, 1.8), dark); body.position.y = 1.3; body.castShadow = true; g.add(body);
-    const panel = new THREE.Mesh(new THREE.BoxGeometry(5.2, 1.6, 0.2), face); panel.position.set(0, 1.9, 0.9); panel.rotation.x = -0.5; g.add(panel);
+    this.softbox(g, 0, 7.8, 1.5, 3, 2, 220, 0xffe6c2);
+    const brushed = TX.brushedMetal(512, '#26282e');
+    const dark = new THREE.MeshStandardMaterial({ color: 0x8a8d94, roughness: 0.45, metalness: 0.85, map: brushed.map, normalMap: brushed.normalMap });
+    const face = new THREE.MeshStandardMaterial({ color: 0x9a9da4, roughness: 0.38, metalness: 0.9, map: brushed.map, normalMap: brushed.normalMap });
+    const body = new THREE.Mesh(new RoundedBoxGeometry(5.5, 2.6, 1.8, 2, 0.04), dark); body.position.y = 1.3; body.castShadow = true; g.add(body);
+    const panel = new THREE.Mesh(new RoundedBoxGeometry(5.2, 1.6, 0.2, 2, 0.03), face); panel.position.set(0, 1.9, 0.9); panel.rotation.x = -0.5; g.add(panel);
+    // glowing key strip across the console lip (master composite: lit blue keys)
+    const keys: THREE.Mesh[] = [];
+    for (let i = 0; i < 16; i++) {
+      const key = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 0.3), new THREE.MeshBasicMaterial({ color: 0x35b8ee }));
+      key.position.set(-2.1 + i * 0.28, 1.34, 1.16); key.rotation.x = -0.5; g.add(key); keys.push(key);
+    }
+    const keyWash = new THREE.PointLight(0x35b8ee, 7, 5); keyWash.position.set(0, 1.6, 1.6); g.add(keyWash);
     for (let i = 0; i < 9; i++) {
-      const k = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.14, 16), new THREE.MeshStandardMaterial({ color: 0x3a3a42, roughness: 0.4 }));
+      const k = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.14, 24), new THREE.MeshStandardMaterial({ color: 0x3a3a42, roughness: 0.3, metalness: 0.7 }));
       k.rotation.x = -0.5 + Math.PI / 2; k.position.set(-2 + i * 0.5, 2.35, 1.05); g.add(k);
+      const dot = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.09), new THREE.MeshBasicMaterial({ color: 0xffe6c2 }));
+      dot.rotation.x = -0.5 + Math.PI / 2; dot.position.set(-2 + i * 0.5, 2.42, 1.08); g.add(dot);
     }
     const sliders: THREE.Mesh[] = [];
     for (let i = 0; i < 6; i++) {
+      const track = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.56, 0.02), new THREE.MeshStandardMaterial({ color: 0x101014, roughness: 0.4 }));
+      track.position.set(-1.5 + i * 0.6, 1.55, 1.015); track.rotation.x = -0.5; g.add(track);
       const sl = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.5, 0.03), new THREE.MeshBasicMaterial({ color: 0x0033FF }));
       sl.position.set(-1.5 + i * 0.6, 1.55, 1.02); sl.rotation.x = -0.5; g.add(sl); sliders.push(sl);
     }
     const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.5), new THREE.MeshBasicMaterial({ color: 0x0a2a4a })); screen.position.set(1.6, 2.15, 1.06); screen.rotation.x = -0.5; g.add(screen);
+    anims.push((t) => {
+      keys.forEach((key, i) => {
+        const on = Math.sin(t * 1.8 + i * 0.7) > -0.2;
+        (key.material as THREE.MeshBasicMaterial).color.setHex(on ? 0x35b8ee : 0x0e2a38);
+      });
+    });
     const amber = new THREE.PointLight(0xffb35a, 8, 8); amber.position.set(-2, 3, 3); g.add(amber);
     const blue = new THREE.PointLight(0x0033FF, 8, 8); blue.position.set(2, 2.5, 2); g.add(blue);
     const gl = this.glow(0x0033FF, 2.2); gl.position.set(0, 1.6, 1.4); g.add(gl);
@@ -720,18 +952,44 @@ export class StudioScene {
 
   // 05 Titanium Forge — steel press extruding a white-hot billet
   private buildForge(g: THREE.Group, anims: Animator[]) {
-    const steel = new THREE.MeshStandardMaterial({ color: 0x2a2c30, roughness: 0.35, metalness: 0.9 });
-    const topPress = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.6, 2.4), steel); topPress.castShadow = true; g.add(topPress);
-    const botPress = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.4, 2.4), steel); botPress.position.y = 0.7; g.add(botPress);
-    const col = (x: number) => { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 6, 16), steel); c.position.set(x, 3, -0.9); g.add(c); };
+    const pressTex = TX.brushedMetal(512, '#33363c');
+    const steel = new THREE.MeshStandardMaterial({ color: 0x9a9ca2, roughness: 0.4, metalness: 0.95, map: pressTex.map, normalMap: pressTex.normalMap });
+    const topPress = new THREE.Mesh(new RoundedBoxGeometry(3.4, 1.6, 2.4, 2, 0.05), steel); topPress.castShadow = true; g.add(topPress);
+    const jaw = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.22, 2.0), new THREE.MeshStandardMaterial({ color: 0x1a1b1f, roughness: 0.3, metalness: 0.9 }));
+    topPress.add(jaw); jaw.position.y = -0.9;
+    const botPress = new THREE.Mesh(new RoundedBoxGeometry(3.4, 1.4, 2.4, 2, 0.05), steel); botPress.position.y = 0.7; botPress.castShadow = true; g.add(botPress);
+    const col = (x: number) => {
+      const c = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 6, 24), steel); c.position.set(x, 3, -0.9); c.castShadow = true; g.add(c);
+      const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.33, 0.3, 24), new THREE.MeshStandardMaterial({ color: 0x202226, roughness: 0.4, metalness: 0.9 }));
+      collar.position.set(x, 1.6, -0.9); g.add(collar);
+    };
     col(-1.9); col(1.9);
-    const cap = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.7, 2.6), steel); cap.position.y = 6; g.add(cap);
-    // white-hot billet
-    const hotMat = new THREE.MeshBasicMaterial({ color: 0xffd9b0 });
-    const billet = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.8, 1.2), hotMat); billet.position.set(2.6, 1.1, 0); g.add(billet);
-    const heat = new THREE.PointLight(0xff4a10, 40, 12, 2); heat.position.set(2.6, 1.3, 0.6); g.add(heat);
+    const cap = new THREE.Mesh(new RoundedBoxGeometry(4.6, 0.7, 2.6, 2, 0.06), steel); cap.position.y = 6; g.add(cap);
+    // hazard chevrons on the press face
+    const hz = document.createElement('canvas'); hz.width = 256; hz.height = 32;
+    const hzx = hz.getContext('2d')!;
+    for (let i = 0; i < 16; i++) { hzx.fillStyle = i % 2 ? '#151313' : '#c8b93a'; hzx.beginPath(); hzx.moveTo(i * 16, 32); hzx.lineTo(i * 16 + 16, 0); hzx.lineTo(i * 16 + 32, 0); hzx.lineTo(i * 16 + 16, 32); hzx.fill(); }
+    const hzT = new THREE.CanvasTexture(hz); hzT.colorSpace = THREE.SRGBColorSpace;
+    const hzM = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 0.18), new THREE.MeshStandardMaterial({ map: hzT, roughness: 0.6 }));
+    hzM.position.set(0, 0.28, 1.21); g.add(hzM);
+    // white-hot billet with a real heat gradient
+    const bc = document.createElement('canvas'); bc.width = bc.height = 64;
+    const bcx = bc.getContext('2d')!;
+    const bg2 = bcx.createLinearGradient(0, 0, 64, 0);
+    bg2.addColorStop(0, '#fff4dd'); bg2.addColorStop(0.5, '#ffb24a'); bg2.addColorStop(1, '#ff5a10');
+    bcx.fillStyle = bg2; bcx.fillRect(0, 0, 64, 64);
+    const bT = new THREE.CanvasTexture(bc); bT.colorSpace = THREE.SRGBColorSpace;
+    const hotMat = new THREE.MeshBasicMaterial({ color: 0xffffff, map: bT });
+    const billet = new THREE.Mesh(new RoundedBoxGeometry(1.2, 0.8, 1.2, 2, 0.06), hotMat); billet.position.set(2.6, 1.1, 0); g.add(billet);
+    const heat = new THREE.PointLight(0xff4a10, 70, 12, 2); heat.position.set(2.6, 1.3, 0.6); g.add(heat);
+    const heat2 = new THREE.PointLight(0xff7a30, 26, 8, 1.8); heat2.position.set(1.2, 1.8, 0.8); g.add(heat2);
     const hg = this.glow(0xff5a1a, 3.2); hg.position.set(2.6, 1.1, 0.4); g.add(hg);
-    const rim = new THREE.PointLight(0x3a4a66, 14, 14); rim.position.set(-3, 5, 4); g.add(rim);
+    const rim = new THREE.PointLight(0x3a4a66, 20, 14); rim.position.set(-3, 5, 4); g.add(rim);
+    // cool steel key so the press mass reads out of the black (grid look)
+    const pressKey = new THREE.SpotLight(0xb8c4d8, 100, 20, 0.7, 0.6);
+    pressKey.position.set(-3, 7.5, 4.5); pressKey.target.position.set(0, 2.4, 0);
+    if (!this.mobile) { pressKey.castShadow = true; pressKey.shadow.bias = -0.0004; pressKey.shadow.radius = 4; }
+    g.add(pressKey, pressKey.target);
     // idle beat: extruded chip cools white-hot → steel as it slides off the press
     const chip = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.3, 0.5), new THREE.MeshBasicMaterial({ color: 0xffd9b0 }));
     chip.visible = false; g.add(chip);
@@ -765,23 +1023,52 @@ export class StudioScene {
 
   // 06 Game Design Forge — cluttered R&D workbench
   private buildWorkbench(g: THREE.Group, anims: Animator[]) {
-    const wood = new THREE.MeshStandardMaterial({ color: 0x3a3230, roughness: 0.8 });
-    const top = new THREE.Mesh(new THREE.BoxGeometry(6, 0.18, 2.6), wood); top.position.y = 1.4; top.castShadow = true; top.receiveShadow = true; g.add(top);
-    for (const x of [-2.7, 2.7]) for (const z of [-1, 1]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.4, 0.16), wood); leg.position.set(x, 0.7, z); g.add(leg); }
+    this._gdT = -1;   // reset canvas latch (streaming rebuild)
+    // real plank-textured bench + code-running monitors + chalk schematic board
+    const wc = document.createElement('canvas'); wc.width = 512; wc.height = 256;
+    const wcx = wc.getContext('2d')!;
+    wcx.fillStyle = '#4a3b30'; wcx.fillRect(0, 0, 512, 256);
+    for (let i = 0; i < 90; i++) {
+      wcx.strokeStyle = `rgba(${26 + Math.random() * 30 | 0},${18 + Math.random() * 20 | 0},${10 + Math.random() * 12 | 0},0.55)`;
+      wcx.lineWidth = 1 + Math.random() * 2; wcx.beginPath();
+      const y = Math.random() * 256; wcx.moveTo(0, y);
+      wcx.bezierCurveTo(128, y + (Math.random() - 0.5) * 10, 320, y + (Math.random() - 0.5) * 10, 512, y + (Math.random() - 0.5) * 6);
+      wcx.stroke();
+    }
+    for (const px of [128, 256, 384]) { wcx.strokeStyle = 'rgba(0,0,0,0.5)'; wcx.lineWidth = 3; wcx.beginPath(); wcx.moveTo(px, 0); wcx.lineTo(px, 256); wcx.stroke(); }
+    const woodT = new THREE.CanvasTexture(wc); woodT.colorSpace = THREE.SRGBColorSpace;
+    const wood = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.75, map: woodT });
+    const woodDark = new THREE.MeshStandardMaterial({ color: 0x695244, roughness: 0.8, map: woodT });
+    const top = new THREE.Mesh(new RoundedBoxGeometry(6, 0.18, 2.6, 2, 0.02), wood); top.position.y = 1.4; top.castShadow = true; top.receiveShadow = true; g.add(top);
+    for (const x of [-2.7, 2.7]) for (const z of [-1, 1]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.4, 0.16), woodDark); leg.position.set(x, 0.7, z); g.add(leg); }
+    // chalkboard schematic wall behind the bench (master composite look)
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 3.2), new THREE.MeshStandardMaterial({ map: TX.chalkboard(), roughness: 0.95 }));
+    board.position.set(0, 3.2, -2.4); g.add(board);
+    const boardFrame = new THREE.Mesh(new THREE.BoxGeometry(6.7, 3.5, 0.1), woodDark);
+    boardFrame.position.set(0, 3.2, -2.48); g.add(boardFrame);
     const dark = new THREE.MeshStandardMaterial({ color: 0x22242a, roughness: 0.5, metalness: 0.4 });
     // scattered clutter
     const rnd = (a: number, b: number) => a + Math.random() * (b - a);
     for (let i = 0; i < 9; i++) {
-      const c = new THREE.Mesh(new THREE.BoxGeometry(rnd(0.2, 0.6), rnd(0.15, 0.5), rnd(0.2, 0.6)), dark);
+      const c = new THREE.Mesh(new RoundedBoxGeometry(rnd(0.2, 0.6), rnd(0.15, 0.5), rnd(0.2, 0.6), 2, 0.02), dark);
       c.position.set(rnd(-2.5, 2.5), 1.5 + 0.1, rnd(-0.9, 0.9)); c.rotation.y = Math.random() * 3; c.castShadow = true; g.add(c);
     }
-    // two monitors
-    for (const mx of [-1.4, 0.4]) {
-      const mon = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.8), new THREE.MeshBasicMaterial({ color: 0x123a4a })); mon.position.set(mx, 2.2, -0.9); g.add(mon);
-      const gl = this.glow(0x1fb0d0, 1.2); gl.position.set(mx, 2.2, -0.7); g.add(gl);
+    // two monitors actually running code
+    const screens: { draw: (t: number) => void }[] = [];
+    for (const [mx, accent] of [[-1.4, '#7fd4ff'], [0.4, '#8affc0']] as const) {
+      const cs = TX.codeScreen(512, 320, accent);
+      const shellM = new THREE.Mesh(new RoundedBoxGeometry(1.42, 0.92, 0.06, 2, 0.02), dark);
+      shellM.position.set(mx, 2.2, -0.94); g.add(shellM);
+      const mon = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.8), new THREE.MeshBasicMaterial({ map: cs.tex })); mon.position.set(mx, 2.2, -0.9); g.add(mon);
+      const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.08, 0.5, 12), dark);
+      stand.position.set(mx, 1.65, -0.95); g.add(stand);
+      const gl = this.glow(0x1fb0d0, 1.2); gl.position.set(mx, 2.2, -0.7); gl.material.opacity = 0.4; g.add(gl);
+      const wash = new THREE.PointLight(accent === '#7fd4ff' ? 0x7fd4ff : 0x8affc0, 2.4, 4); wash.position.set(mx, 2.2, -0.4); g.add(wash);
+      screens.push(cs);
     }
+    anims.push((t) => { if ((t * 4 | 0) !== this._gdT) { this._gdT = t * 4 | 0; for (const s of screens) s.draw(t); } });
     // desk lamp cone
-    const lamp = new THREE.SpotLight(0xfff0d0, 26, 8, 0.7, 0.5); lamp.position.set(1.8, 3.4, 0.6); lamp.target.position.set(0.5, 1.4, 0);
+    const lamp = new THREE.SpotLight(0xfff0d0, 60, 9, 0.75, 0.5); lamp.position.set(1.8, 3.4, 0.6); lamp.target.position.set(0.5, 1.4, 0);
     if (!this.mobile) { lamp.castShadow = true; lamp.shadow.mapSize.set(1024, 1024); lamp.shadow.bias = -0.0004; lamp.shadow.radius = 4; }
     g.add(lamp, lamp.target);
     this.lightCone(g, 0xffe6b0, 1.8, 3.2, 0.6, 1.1, 0.05);
@@ -801,13 +1088,33 @@ export class StudioScene {
 
   // 08 Voxel Arcade BB — retro-futuristic cabinet with glowing screen
   private buildArcade(g: THREE.Group, anims: Animator[]) {
+    this._arT = -1;   // reset canvas latch (streaming rebuild)
     this.softbox(g, 0, 7.8, 1.2, 3.0, 2.2, 240);                    // overhead pool lighting the floor
     this.lightCone(g, 0xffffff, 0, 7.7, 1.2, 3.2, 0.045);
     const floorSpot = new THREE.SpotLight(0xff9ad0, 24, 12, 0.8, 0.6); floorSpot.position.set(0, 5.5, 3.5); floorSpot.target.position.set(0, 0, 1.5); g.add(floorSpot, floorSpot.target);
-    const shell = new THREE.MeshStandardMaterial({ color: 0x161620, roughness: 0.5, metalness: 0.3 });
-    const body = new THREE.Mesh(new THREE.BoxGeometry(2.4, 5.4, 1.6), shell); body.position.y = 2.7; body.castShadow = true; g.add(body); // sits on the floor
-    const marquee = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.7, 1.0), shell); marquee.position.set(0, 5.35, 0.35); marquee.rotation.x = 0.35; g.add(marquee);
-    const mq = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 0.42), new THREE.MeshBasicMaterial({ color: 0xff00aa })); mq.position.set(0, 5.38, 0.93); mq.rotation.x = 0.35; g.add(mq);
+    const shell = new THREE.MeshStandardMaterial({ color: 0x161620, roughness: 0.45, metalness: 0.3 });
+    // glossy pool under the cabinet so the neon reflects (master composite look)
+    const pool2 = new THREE.Mesh(new THREE.CircleGeometry(5, 48), new THREE.MeshStandardMaterial({ color: 0x101014, roughness: 0.12, metalness: 0.6 }));
+    pool2.rotation.x = -Math.PI / 2; pool2.position.y = 0.018; pool2.receiveShadow = true; g.add(pool2);
+    const body = new THREE.Mesh(new RoundedBoxGeometry(2.4, 5.4, 1.6, 2, 0.04), shell); body.position.y = 2.7; body.castShadow = true; g.add(body); // sits on the floor
+    // printed side art on both flanks
+    const artT = TX.arcadeSideArt();
+    for (const sx of [-1.21, 1.21]) {
+      const art = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 5.2), new THREE.MeshStandardMaterial({ map: artT, roughness: 0.6 }));
+      art.rotation.y = sx < 0 ? -Math.PI / 2 : Math.PI / 2; art.position.set(sx, 2.7, 0); g.add(art);
+    }
+    const marquee = new THREE.Mesh(new RoundedBoxGeometry(2.4, 0.7, 1.0, 2, 0.03), shell); marquee.position.set(0, 5.35, 0.35); marquee.rotation.x = 0.35; g.add(marquee);
+    // lit marquee with the game name
+    const mqc = document.createElement('canvas'); mqc.width = 512; mqc.height = 96;
+    const mqx = mqc.getContext('2d')!;
+    const mg2 = mqx.createLinearGradient(0, 0, 0, 96);
+    mg2.addColorStop(0, '#ff2fb8'); mg2.addColorStop(1, '#a4008a');
+    mqx.fillStyle = mg2; mqx.fillRect(0, 0, 512, 96);
+    mqx.font = '900 52px Arial, sans-serif'; mqx.textAlign = 'center'; mqx.textBaseline = 'middle';
+    mqx.fillStyle = '#ffe95c'; mqx.strokeStyle = '#3a0030'; mqx.lineWidth = 8;
+    mqx.strokeText('VOXEL BB', 256, 52); mqx.fillText('VOXEL BB', 256, 52);
+    const mqT = new THREE.CanvasTexture(mqc); mqT.colorSpace = THREE.SRGBColorSpace;
+    const mq = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 0.42), new THREE.MeshBasicMaterial({ map: mqT })); mq.position.set(0, 5.38, 0.93); mq.rotation.x = 0.35; g.add(mq);
     const mg = this.glow(0xff00aa, 2.2); mg.position.set(0, 5.4, 1.1); g.add(mg);
     const cv = document.createElement('canvas'); cv.width = cv.height = 128;
     const cx = cv.getContext('2d')!;
@@ -858,6 +1165,7 @@ export class StudioScene {
 
   // 10 Learning App — big colorful kids tablet floating in the air (ReadingLand)
   private buildFloatCube(g: THREE.Group, anims: Animator[]) {
+    this._laT = -1;   // reset canvas latch (streaming rebuild)
     this.softbox(g, 0, 8, 0.5, 2.6, 2.6, 130);
     const tabletG = new THREE.Group(); tabletG.position.y = 2.7; g.add(tabletG);
     const caseMat = new THREE.MeshStandardMaterial({ color: 0xff6b4a, roughness: 0.55 });   // chunky coral kid case
@@ -932,14 +1240,30 @@ export class StudioScene {
     });
   }
 
-  // 11 Flow State — obsidian space with a churning fluid orb
+  // 11 Flow State — obsidian space; the churning fluid lives inside a glass cube
+  // on a lit white pedestal (master composite look)
   private buildFluid(g: THREE.Group, anims: Animator[]) {
     const pool = new THREE.Mesh(new THREE.CircleGeometry(4, 64), new THREE.MeshStandardMaterial({ color: 0x05060a, roughness: 0.15, metalness: 0.9 }));
     pool.rotation.x = -Math.PI / 2; pool.position.y = 0.02; g.add(pool);
-    const geo = new THREE.IcosahedronGeometry(1.3, 5);
+    // pedestal
+    const ped = new THREE.Mesh(new RoundedBoxGeometry(2.2, 0.9, 2.2, 2, 0.03),
+      new THREE.MeshStandardMaterial({ color: 0xdadce0, roughness: 0.4 }));
+    ped.position.y = 0.45; ped.castShadow = true; g.add(ped);
+    const pedLight = new THREE.SpotLight(0xffffff, 60, 12, 0.6, 0.6); pedLight.position.set(0, 6.5, 1.5); pedLight.target.position.set(0, 1, 0);
+    if (!this.mobile) { pedLight.castShadow = true; pedLight.shadow.bias = -0.0004; }
+    g.add(pedLight, pedLight.target);
+    // glass tank
+    const glass = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff, roughness: 0.02, metalness: 0, transmission: 0.97,
+      thickness: 0.15, ior: 1.45, transparent: true
+    });
+    const tank = new THREE.Mesh(new RoundedBoxGeometry(2.3, 2.3, 2.3, 3, 0.06), glass);
+    tank.position.y = 2.1; g.add(tank);
+    // churning fluid, cube-shaped to fill the tank
+    const geo = new THREE.BoxGeometry(1.9, 1.9, 1.9, 24, 24, 24);
     const { mat, uTime } = makeFluidMaterial();
-    const orb = new THREE.Mesh(geo, mat); orb.position.y = 1.9; g.add(orb);
-    const glow = this.glow(0x0a3aff, 2.4); glow.material.opacity = 0.35; glow.position.set(0, 1.9, 0); g.add(glow);
+    const orb = new THREE.Mesh(geo, mat); orb.position.y = 2.1; orb.scale.setScalar(0.75); g.add(orb);
+    const glow = this.glow(0x0a3aff, 2.6); glow.material.opacity = 0.35; glow.position.set(0, 2.1, 0); g.add(glow);
     const key = new THREE.PointLight(0x2a5cff, 12, 14); key.position.set(0, 5, 4); g.add(key);
     const rim = new THREE.PointLight(0x0022aa, 8, 12); rim.position.set(-4, 2, -2); g.add(rim);
     anims.push(this.dustPlane(g, 0x3366ff, 5, 6, 0, 3, -1));

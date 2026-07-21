@@ -95,12 +95,12 @@ export function makeFluidMaterial() {
     .add(noise3(positionLocal.mul(3.2).sub(uTime.mul(0.3))).mul(0.25));
   const vD = varying(d);
 
-  const mat = new THREE.MeshBasicNodeMaterial({ fog: false });
+  const mat = new THREE.MeshBasicNodeMaterial();   // fogged: must not bleed through neighboring sets
   mat.positionNode = positionLocal.add(normalLocal.mul(d).mul(0.7));
-  // reference ShaderMaterial bypassed tone mapping; pre-compensate for the ACES
-  // output transform (×0.24) so the orb reads the same deep obsidian blue
-  const deep = vec3(0.005, 0.01, 0.03).mul(0.24);
-  const lit = vec3(0.03, 0.12, 0.45).mul(0.24);
+  // pre-compensate for the ACES output transform so the fluid reads deep
+  // obsidian blue with luminous churn crests (visible through the glass tank)
+  const deep = vec3(0.005, 0.01, 0.03).mul(0.3);
+  const lit = vec3(0.05, 0.2, 0.75).mul(0.55);
   const fres = pow(max(float(1.0).sub(abs(normalLocal.z)), 0.0), 2.5);
   mat.colorNode = mix(deep, lit, clamp(vD.mul(vD).mul(1.4).add(fres.mul(0.5)), 0.0, 1.0));
   return { mat, uTime };
