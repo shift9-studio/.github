@@ -1,9 +1,11 @@
 # Warm start — read this first in every new session
 
 You are continuing the shift9.dev/studio rebuild ("The Uncut Soundstage").
-Phase 1 of 8 is DONE and user-approved; Phase 2 (engine core) is BUILT and
-awaiting the user's judgment. The user judges every phase; you never
-self-certify. Read these, in order, before writing any code:
+Phase 1 is DONE (user-approved). Phase 2 (engine core) is DONE — pushed on
+PR #30 with 11/11 physics checks; the user reviewed the evidence and directed
+Phase 3 prep (if they raise anything about the engine feel, fix it before set
+work). The user judges every phase; you never self-certify. Read these, in
+order, before writing any code:
 
 1. `/BUILD_CONTRACT.md` (repo root) — the binding rules, the 8 phases, the
    judging protocol, and the highest-quality-assets clause. It is law.
@@ -41,12 +43,71 @@ self-certify. Read these, in order, before writing any code:
   `harness/shoot-phase2.mjs` — stills at all 12 ref z + tunnel + reduced +
   video recording. Evidence committed under `compare/phase2/`.
 
-## Phase plan (next up: PHASE 3, after the user passes Phase 2)
+## Phase plan (next up: PHASE 3 — read this whole section, the process changed)
 
-Phase 3 = sets 12–07 ported 1:1 from the reference builders (kitchen,
-fluid, floatcube, lumen, arcade, corridor) into `src/engine/sets/`, one file
-per kind, each verified screenshot-vs-reference at its set z against
-`compare/ref/`. Then phases 4-8 per the contract table.
+**User directive (2026-07-21, binding — BUILD_CONTRACT clause 9): the twelve
+sets are built ONE PER FRESH SESSION**, to prevent drift. Phase 3 = sets
+12→07, phase 4 = sets 06→01, then ONE consolidation session before Phase 5.
+
+### The per-set session script (follow exactly)
+
+1. Warm-start (docs above) and get on the right branch (see "Branch dance").
+2. Say hello in PLAIN language: name the set this session builds and ask the
+   user for their reference images for it. **STOP AND WAIT. Do not build any
+   visuals before their images arrive** (uploads land under
+   `/root/.claude/uploads/`; they may also paste into chat).
+3. Build the set in `src/engine/sets/<kind>.ts`, registered in
+   `sets/index.ts`. Start from the reference builder in
+   `handoff/reference/shift9-scene.js` (composition/z/palette contract), then
+   raise fidelity to the user's images: hyper-real, AAA — real PBR materials,
+   textures, soft shadows, believable lighting. Contract clause 8: no
+   placeholders, no "good enough".
+4. Verify yourself first: `pnpm build` clean; screenshot at the set's z
+   (harness `shoot-phase2.mjs` pattern, `__S9_SET_Z`); compare against BOTH
+   `compare/ref/ref-z*.png` (composition) and the user's images (look).
+   Iterate until you can't tell them apart.
+5. Deliver in chat: stills + a short video of dollying through the set.
+   Plain words only. THE USER VERIFIES VISUALLY — the set is done only on
+   their explicit pass; "fix X" reopens it, fix until pass.
+6. On pass: commit set + evidence under `compare/phase3/<set>/`, push, update
+   the scoreboard below and this file's state notes, keep the PR updated.
+
+### Set scoreboard (update every session)
+
+| Set | Kind | z | Session status |
+|---|---|---|---|
+| 12 Just a Pinch | kitchen | 20 | not started |
+| 11 Flow State | fluid | -3 | not started |
+| 10 Learning App | floatcube | -26 | not started |
+| 09 Lumen Mapper | lumen | -49 | not started |
+| 08 Voxel Arcade BB | arcade | -72 | not started |
+| 07 Midnight Return | corridor | -95 | not started |
+| 06 Game Design Forge | workbench | -118 | not started (phase 4) |
+| 05 Titanium Forge | forge | -141 | not started (phase 4) |
+| 04 INSTRUMENT | synth | -164 | not started (phase 4) |
+| 03 Automation Sys | datacenter | -187 | not started (phase 4) |
+| 02 Omni-3D | warehouse | -210 | not started (phase 4) |
+| 01 WinFix | whiteroom | -233 | not started (phase 4) |
+
+After all 12 pass: consolidation session — full run-through on one branch,
+every set re-verified at its z, full-length video to the user, their pass
+gates Phase 5.
+
+### Branch dance (each fresh session gets its own claude/... branch)
+
+The platform assigns each session a new designated branch that starts from
+`main`. The studio work lives on the PREVIOUS session's branch. First moves
+(this is exactly what the Phase 2 session did):
+
+```
+git fetch origin
+git checkout -B <your-designated-branch> origin/<latest-studio-branch>
+```
+
+Latest studio branch right now: `claude/studio-rebuild-phase-2-y4ew51`
+(PR #30 — supersedes #29; both PRs accumulate, never merge them yourself).
+Push to YOUR designated branch only; open a PR for it if none exists and note
+it supersedes the previous one. Update this "latest" pointer every session.
 
 ## How to verify (the harness)
 
@@ -73,7 +134,7 @@ phase gates require screen recordings sent to the user in chat, not just stills.
 
 1. Build the phase. 2. Screenshot production vs reference at the same z for every
    affected set; iterate until they match. 3. Record video of the running build.
-4. Commit evidence under `compare/`, push, keep PR #29 updated.
+4. Commit evidence under `compare/`, push, keep the current studio PR (#30 as of phase 2) updated.
 5. Redeploy the user's test link (Vercel MCP `deploy_to_vercel`, project
    `shift9-studio-soundstage`, team `shift-9`, target `preview` — upload the app
    SOURCE files inline; Vercel builds them. The 14 MB entrance video is too big
@@ -91,5 +152,5 @@ phase gates require screen recordings sent to the user in chat, not just stills.
   space must look exactly like the reference images.
 - Tool-permission pop-ups: explain in one plain sentence what a pop-up will do
   BEFORE triggering it (the user has declined tools they didn't understand).
-- Watch PR #29 via the subscription; Vercel bot comments about shift9-dev /
+- Watch the current studio PR via the subscription; Vercel bot comments about shift9-dev /
   just-a-pinch previews are noise unless they fail.
