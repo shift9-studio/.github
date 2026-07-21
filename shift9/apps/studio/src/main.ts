@@ -44,9 +44,18 @@ async function boot(): Promise<void> {
     renderStaticGrid();
     return;
   }
-  // Motion allowed → entrance sequence + engine (built out in Phases 2–7).
-  const { startExperience } = await import('./engine/experience');
-  await startExperience(app);
+  // Motion allowed → engine + HUD. Boot dives straight through the tunnel
+  // into the studio; the full entrance sequence (video → desk → Windows 11)
+  // goes in front of it in Phase 5. `?skip-intro` jumps to CAMERA_START_Z
+  // (used by the screenshot harness; the visible SKIP INTRO control returns
+  // with the entrance stages in Phase 5).
+  const [{ startExperience }, { mountHud }] = await Promise.all([
+    import('./engine/experience'),
+    import('./ui/hud'),
+  ]);
+  const engine = await startExperience(app);
+  mountHud(app); // overlays mount above the canvas, as in the reference shell
+  engine.playIntro(new URLSearchParams(location.search).has('skip-intro'));
 }
 
 void boot();

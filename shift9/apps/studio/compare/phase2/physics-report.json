@@ -1,0 +1,57 @@
+[
+  {
+    "name": "boot: z=50, vel=0, no intro",
+    "ok": true,
+    "detail": "{\"z\":50,\"vel\":0,\"locked\":false,\"glide\":false,\"intro\":false}"
+  },
+  {
+    "name": "wheel: same-tick z unchanged, vel changed",
+    "ok": true,
+    "detail": "z 50→50, vel 0.0000→-0.1152"
+  },
+  {
+    "name": "damping: |vel| after 0.5s ≈ pow(0.95, 30)·|vel₀|",
+    "ok": true,
+    "detail": "|vel₀|=2.0827 expected≈0.4470 got=0.4248"
+  },
+  {
+    "name": "damping: settles to rest, z stable",
+    "ok": true,
+    "detail": "vel=-0.00020"
+  },
+  {
+    "name": "max velocity: |vel| ≤ 3.0",
+    "ok": true,
+    "detail": "vel=-3.000"
+  },
+  {
+    "name": "z clamp far rail: z never < -250, rests there",
+    "ok": true,
+    "detail": "minZ=-250.00 rest=-250"
+  },
+  {
+    "name": "rail zeroes velocity",
+    "ok": true,
+    "detail": "vel=0.00000"
+  },
+  {
+    "name": "z clamp near rail: z ≤ 50, rests there",
+    "ok": true,
+    "detail": "z=50"
+  },
+  {
+    "name": "glideTo: glide active mid-flight, lands on target, vel=0",
+    "ok": true,
+    "detail": "mid.glide=true end z=-220.00 vel=0"
+  },
+  {
+    "name": "input cancels glide",
+    "ok": true,
+    "detail": "{\"z\":-219.88876342773438,\"vel\":-0.1152,\"locked\":false,\"glide\":false,\"intro\":false}"
+  },
+  {
+    "name": "keyboard: ArrowDown adds -0.4 velocity, not position",
+    "ok": true,
+    "detail": "vel 0.000→-0.400"
+  }
+]

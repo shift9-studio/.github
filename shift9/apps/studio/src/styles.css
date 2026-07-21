@@ -109,3 +109,175 @@ body {
   font-size: clamp(20px, 2vw, 30px);
   color: var(--color-ui-fg);
 }
+
+/* ── HUD chrome (values 1:1 from the reference shell) ────────────────────
+   Grain + letterbox are CSS stand-ins until the real post stack (Phase 7). */
+@keyframes s9pulse {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes s9grain {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-2%, 1%);
+  }
+  50% {
+    transform: translate(1%, -2%);
+  }
+  75% {
+    transform: translate(-1%, -1%);
+  }
+  100% {
+    transform: translate(2%, 2%);
+  }
+}
+
+.s9-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.s9-grain {
+  position: absolute;
+  inset: -4%;
+  pointer-events: none;
+  opacity: 0.07;
+  animation: s9grain 0.4s steps(4) infinite;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22><filter id=%22n%22><feTurbulence baseFrequency=%220.9%22 numOctaves=%222%22/></filter><rect width=%22160%22 height=%22160%22 filter=%22url(%23n)%22/></svg>');
+}
+
+.s9-letterbox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 6.5vh;
+  background: #000;
+  pointer-events: none;
+}
+
+.s9-letterbox-top {
+  top: 0;
+}
+
+.s9-letterbox-bottom {
+  bottom: 0;
+}
+
+.s9-hud-top {
+  position: absolute;
+  top: 8.5vh;
+  left: 3.5vw;
+  right: 3.5vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  pointer-events: none;
+}
+
+.s9-brand {
+  font-family: var(--font-stack-display);
+  font-size: clamp(20px, 1.8vw, 28px);
+  color: #fff;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  animation: s9pulse 3.2s ease-in-out infinite;
+}
+
+.s9-tagline {
+  font-size: var(--text-ui);
+  color: #555;
+  letter-spacing: 0.12em;
+}
+
+.s9-bottom-grad {
+  position: absolute;
+  bottom: 6.5vh;
+  left: 0;
+  right: 0;
+  height: 18vh;
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.65));
+  pointer-events: none;
+}
+
+.s9-run-hud {
+  position: absolute;
+  bottom: 8.5vh;
+  left: 3.5vw;
+  right: 3.5vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
+  transition: opacity 0.6s;
+}
+
+.s9-run-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.s9-run-meta {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  font-size: var(--text-ui);
+}
+
+.s9-run-index {
+  color: #555;
+}
+
+.s9-run-status {
+  color: #8a8a92;
+  letter-spacing: 0.1em;
+}
+
+.s9-run-name {
+  font-family: var(--font-stack-display);
+  font-size: clamp(26px, 2.6vw, 42px);
+  color: #fff;
+  line-height: 1;
+  transition: opacity 0.4s;
+}
+
+.s9-run-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.s9-scroll-hint {
+  font-size: 11px;
+  color: #555;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.s9-progress {
+  width: 180px;
+  height: 2px;
+  background: #1c1c20;
+  position: relative;
+}
+
+.s9-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--color-accent-blue);
+  width: 0%;
+}
