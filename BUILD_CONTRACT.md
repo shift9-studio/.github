@@ -25,6 +25,22 @@ Signed by Claude Code. Binding for every commit on this build.
    such decision must land on whatever most closely matches the reference.
 7. **Nothing merges or ships live without explicit approval.** All work stays on
    `claude/shift9-upgrade-research-t6gdna` until the user says go.
+8. **Highest-quality assets only, no substitutions — ever** (user directive,
+   2026-07-21). This is a fresh, brand-new website. No placeholder geometry, no
+   "good enough" stand-ins, no quiet downgrades at any later phase. If a set can't
+   yet be built at reference-image quality, the phase stays open — quality is never
+   traded for schedule. The finished 3D space must look exactly like the reference
+   images.
+
+## Judging protocol (user is the sole judge)
+
+- Every phase gate delivers into chat: screen recordings of the real running
+  build + side-by-side stills vs the reference at identical camera positions,
+  and the same evidence is committed under `shift9/apps/studio/compare/`.
+- A private test link (throwaway preview deployment, never wired to shift9.dev)
+  is redeployed each phase so the user can drive the build themselves.
+- A phase is done ONLY when the user says pass. Claude never self-certifies.
+  "Fix X" reopens the phase; fix until pass, no excuses.
 
 ## The 8 phases
 
