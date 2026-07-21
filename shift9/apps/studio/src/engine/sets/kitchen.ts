@@ -3,27 +3,151 @@
    softbox key, dust, steam, recipe-card idle beat are the contract), fidelity
    raised to the user's Set-12 reference image (2026-07-21): monolithic white
    island on a plinth shadow line, inset sink + chrome gooseneck tap, cabinet
-   wall with hairline door seams, proud side towers, a genuinely recessed and
-   warmly lit prop niche, dark-bezel tablet running the live Pinch interface,
-   and SHIFT-9 painted on the stage floor. Recorded deviations from the
-   reference builder, all in service of matching the user's image: key panel
-   lowered 8 → 6.7 so it sits in frame at the viewing mark, key cone tightened
-   so the floor pool hugs the island, light cone faded to a haze, island
-   painted white instead of grey. */
+   wall with hairline door seams, proud side towers, a recessed warm-lit prop
+   niche, dark-bezel tablet running the live Pinch interface, SHIFT-9 painted
+   on the stage floor. Hyper-real material + cinematic lighting pass (user
+   directives, this session): image-based lighting on every PBR surface,
+   clear-coated stone worktop with mineral speckle, painted-lacquer island and
+   cabinets with orange-peel micro-relief, mirror chrome, glass/ceramic props,
+   textured concrete stage floor, cool rim lights, warm under-cabinet strip,
+   layered key-panel bloom. Recorded deviations from the reference builder,
+   all toward the user's image: key panel lowered into frame, key cone
+   tightened, light cone faded to a haze, island painted white. */
 import {
   BoxGeometry,
   CanvasTexture,
+  CircleGeometry,
   CylinderGeometry,
   DoubleSide,
   Group,
   Mesh,
   MeshBasicMaterial,
+  MeshPhysicalMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
+  PMREMGenerator,
   PointLight,
+  RepeatWrapping,
+  SRGBColorSpace,
+  Texture,
   TorusGeometry,
+  WebGLRenderer,
 } from 'three';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { SetBuilder } from './index';
+
+/* ── shared, generated-once assets (survive set streaming in/out) ────────── */
+
+let envTex: Texture | null = null;
+/** Neutral studio environment map — gives chrome something true to mirror and
+    every white PBR surface the soft sheen of the reference photograph. */
+const studioEnv = (renderer: WebGLRenderer): Texture => {
+  if (!envTex) {
+    const pmrem = new PMREMGenerator(renderer);
+    envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    pmrem.dispose();
+  }
+  return envTex;
+};
+
+const texCache = new Map<string, CanvasTexture>();
+const cached = (key: string, make: () => CanvasTexture): CanvasTexture => {
+  let t = texCache.get(key);
+  if (!t) {
+    t = make();
+    texCache.set(key, t);
+  }
+  return t;
+};
+
+/** Fine monochrome noise — roughness/bump micro-variation ("orange peel"). */
+const noiseTex = (key: string, base: number, amp: number, scale: number): CanvasTexture =>
+  cached(key, () => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 256;
+    const x = c.getContext('2d')!;
+    const img = x.createImageData(256, 256);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = Math.max(0, Math.min(255, base + (Math.random() - 0.5) * 2 * amp));
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+      img.data[i + 3] = 255;
+    }
+    x.putImageData(img, 0, 0);
+    const t = new CanvasTexture(c);
+    t.wrapS = t.wrapT = RepeatWrapping;
+    t.repeat.set(scale, scale);
+    return t;
+  });
+
+/** Corian-style worktop speckle — near-white mineral surface, fine flecks. */
+const counterTex = (): CanvasTexture =>
+  cached('counter', () => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 512;
+    const x = c.getContext('2d')!;
+    x.fillStyle = '#f5f6f8';
+    x.fillRect(0, 0, 512, 512);
+    for (let i = 0; i < 2600; i++) {
+      const g = 214 + Math.random() * 34;
+      x.fillStyle = `rgba(${g},${g},${g + 3},${0.25 + Math.random() * 0.5})`;
+      const r = Math.random() < 0.92 ? 0.7 : 1.6;
+      x.beginPath();
+      x.arc(Math.random() * 512, Math.random() * 512, r, 0, Math.PI * 2);
+      x.fill();
+    }
+    const t = new CanvasTexture(c);
+    t.colorSpace = SRGBColorSpace;
+    t.wrapS = t.wrapT = RepeatWrapping;
+    t.repeat.set(2, 1);
+    return t;
+  });
+
+/** Poured-concrete stage floor — mottled patches, aggregate, trowel drift. */
+const concreteTex = (): CanvasTexture =>
+  cached('concrete', () => {
+    const c = document.createElement('canvas');
+    c.width = c.height = 512;
+    const x = c.getContext('2d')!;
+    x.fillStyle = '#212227';
+    x.fillRect(0, 0, 512, 512);
+    for (let i = 0; i < 46; i++) {
+      // broad tonal blotches
+      const r = 40 + Math.random() * 110;
+      const px = Math.random() * 512;
+      const py = Math.random() * 512;
+      const lift = Math.random() < 0.5;
+      const grd = x.createRadialGradient(px, py, 0, px, py, r);
+      grd.addColorStop(0, lift ? 'rgba(58,60,68,0.16)' : 'rgba(10,10,13,0.18)');
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      x.fillStyle = grd;
+      x.fillRect(px - r, py - r, r * 2, r * 2);
+    }
+    for (let i = 0; i < 5200; i++) {
+      // fine aggregate
+      const g = 18 + Math.random() * 48;
+      x.fillStyle = `rgba(${g},${g},${g + 4},${0.2 + Math.random() * 0.5})`;
+      x.fillRect(Math.random() * 512, Math.random() * 512, 1, 1);
+    }
+    for (let i = 0; i < 26; i++) {
+      // faint trowel arcs
+      x.strokeStyle = `rgba(255,255,255,${0.008 + Math.random() * 0.014})`;
+      x.lineWidth = 6 + Math.random() * 16;
+      x.beginPath();
+      x.arc(
+        Math.random() * 512,
+        Math.random() * 512,
+        60 + Math.random() * 160,
+        0,
+        Math.PI * (0.3 + Math.random()),
+      );
+      x.stroke();
+    }
+    const t = new CanvasTexture(c);
+    t.colorSpace = SRGBColorSpace;
+    t.wrapS = t.wrapT = RepeatWrapping;
+    t.repeat.set(3, 3);
+    return t;
+  });
 
 /* Soft elliptical contact shadow — bakes the photo's grounded look without a
    renderer-wide shadow-map change (engine core is Phase 2 contract). */
@@ -132,11 +256,19 @@ const drawPinchScreen = (
 };
 
 export const buildKitchen: SetBuilder = (engine, g, anims) => {
-  // ── key light — softbox panel low enough to sit in frame at the mark ──
+  const env = studioEnv(engine.renderer);
+
+  // ── cinematic light rig ──
+  // key — softbox panel low enough to sit in frame at the mark
   const key = engine.softbox(g, 0, 6.0, 0, 3.6, 2.1, 85);
   key.angle = 0.58; // tighten the pool so it hugs the island like the photo
   key.penumbra = 0.85;
   engine.lightCone(g, 0xffffff, 0, 5.9, 0, 3.0, 0.018); // haze, not a beam
+  // layered halo doubles the key panel's bloom
+  const halo = engine.glow(0xffffff, 5.2);
+  halo.material.opacity = 0.32;
+  halo.position.set(0, 6.05, 0);
+  g.add(halo);
   // soft frontal bounce — the photo's faces are white, not silhouetted
   const bounce = new PointLight(0xf4f6f8, 42, 16, 2);
   bounce.position.set(0, 1.7, 6.5);
@@ -145,18 +277,91 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   const cabinetWash = new PointLight(0xf6f7f9, 14, 9, 2);
   cabinetWash.position.set(0, 4.2, -0.2);
   g.add(cabinetWash);
+  // cool rims — lift the white edges off the black void
+  for (const rx of [-5.5, 5.5]) {
+    const rim = new PointLight(0xdfe8ff, 8, 10, 2);
+    rim.position.set(rx, 2.6, -4.2);
+    g.add(rim);
+  }
 
-  const satin = new MeshStandardMaterial({ color: 0xe9ebee, roughness: 0.42, metalness: 0.03 });
-  const bright = new MeshStandardMaterial({ color: 0xf4f5f7, roughness: 0.34, metalness: 0.02 });
-  const cabinet = new MeshStandardMaterial({ color: 0xe2e4e7, roughness: 0.55 });
+  // ── materials — the hyper-real pass ──
+  const peel = noiseTex('peel', 176, 26, 6); // painted-lacquer orange peel
+  const satin = new MeshPhysicalMaterial({
+    color: 0xe9ebee,
+    roughness: 0.42,
+    roughnessMap: peel,
+    bumpMap: peel,
+    bumpScale: 0.0035,
+    metalness: 0.03,
+    clearcoat: 0.28,
+    clearcoatRoughness: 0.5,
+    envMap: env,
+    envMapIntensity: 0.35,
+  });
+  const stone = new MeshPhysicalMaterial({
+    color: 0xffffff,
+    map: counterTex(),
+    roughness: 0.26,
+    roughnessMap: noiseTex('stone-r', 150, 40, 3),
+    metalness: 0.02,
+    clearcoat: 0.55,
+    clearcoatRoughness: 0.22,
+    envMap: env,
+    envMapIntensity: 0.5,
+  });
+  const cabinet = new MeshPhysicalMaterial({
+    color: 0xe2e4e7,
+    roughness: 0.5,
+    roughnessMap: peel,
+    bumpMap: peel,
+    bumpScale: 0.0025,
+    clearcoat: 0.18,
+    clearcoatRoughness: 0.6,
+    envMap: env,
+    envMapIntensity: 0.28,
+  });
+  const towerMat = new MeshPhysicalMaterial({
+    color: 0xf4f5f7,
+    roughness: 0.4,
+    roughnessMap: peel,
+    bumpMap: peel,
+    bumpScale: 0.003,
+    clearcoat: 0.25,
+    clearcoatRoughness: 0.5,
+    envMap: env,
+    envMapIntensity: 0.32,
+  });
+  const chrome = new MeshStandardMaterial({
+    color: 0xe8eaec,
+    roughness: 0.12,
+    roughnessMap: noiseTex('chrome-r', 40, 26, 2),
+    metalness: 1.0,
+    envMap: env,
+    envMapIntensity: 1.35,
+  });
   const seamDark = new MeshStandardMaterial({ color: 0x8d9096, roughness: 0.6 });
-  const chrome = new MeshStandardMaterial({ color: 0xd9dcdf, roughness: 0.16, metalness: 1.0 });
+
+  // ── textured concrete overlay on the shared stage floor ──
+  const concrete = new Mesh(
+    new CircleGeometry(9, 64),
+    new MeshStandardMaterial({
+      map: concreteTex(),
+      bumpMap: concreteTex(),
+      bumpScale: 0.012,
+      color: 0xbfc2c8,
+      roughness: 0.88,
+      metalness: 0.05,
+    }),
+  );
+  concrete.rotation.x = -Math.PI / 2;
+  concrete.position.y = 0.006;
+  g.add(concrete);
 
   // ── the island — reference envelope 6 × 1.15 × 1.6, top slab 6.2 × 0.07 ──
   const island = new Mesh(new BoxGeometry(6, 1.15, 1.6), satin);
   island.position.y = 0.575;
   g.add(island);
-  const top = new Mesh(new BoxGeometry(6.2, 0.07, 1.75), bright);
+  const top = new Mesh(new BoxGeometry(6.2, 0.07, 1.75), stone);
   top.position.y = 1.185;
   g.add(top);
   // recessed dark plinth — the photo's island floats on a shadow line
@@ -183,34 +388,38 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   g.add(sinkRim);
   const sinkBasin = new Mesh(
     new BoxGeometry(0.78, 0.02, 0.36),
-    new MeshStandardMaterial({ color: 0x9ba0a5, roughness: 0.45, metalness: 0.3 }),
+    new MeshStandardMaterial({
+      color: 0x9ba0a5,
+      roughness: 0.4,
+      metalness: 0.75,
+      envMap: env,
+      envMapIntensity: 0.7,
+    }),
   );
   sinkBasin.position.set(1.7, 1.226, -0.05);
   g.add(sinkBasin);
   const tap = new Group();
-  const tapBase = new Mesh(new CylinderGeometry(0.035, 0.045, 0.05, 20), chrome);
+  const tapBase = new Mesh(new CylinderGeometry(0.035, 0.045, 0.05, 24), chrome);
   tapBase.position.y = 0.025;
   tap.add(tapBase);
-  const tapStem = new Mesh(new CylinderGeometry(0.021, 0.021, 0.42, 16), chrome);
+  const tapStem = new Mesh(new CylinderGeometry(0.021, 0.021, 0.42, 20), chrome);
   tapStem.position.y = 0.23;
   tap.add(tapStem);
-  const tapNeck = new Mesh(new TorusGeometry(0.12, 0.019, 12, 24, Math.PI), chrome);
+  const tapNeck = new Mesh(new TorusGeometry(0.12, 0.019, 14, 32, Math.PI), chrome);
   tapNeck.position.set(-0.12, 0.44, 0);
   tap.add(tapNeck);
-  const tapSpout = new Mesh(new CylinderGeometry(0.017, 0.017, 0.09, 12), chrome);
+  const tapSpout = new Mesh(new CylinderGeometry(0.017, 0.017, 0.09, 14), chrome);
   tapSpout.position.set(-0.24, 0.4, 0);
   tap.add(tapSpout);
   tap.position.set(2.18, 1.22, -0.42);
   g.add(tap);
 
   // ── back unit — reference envelope 4.6 wide × 2.4 high around (0, 2.6) ──
-  // side towers, slightly proud of the cabinet plane, as in the photo
   for (const tx of [-1.9, 1.9]) {
-    const tower = new Mesh(new BoxGeometry(0.8, 2.44, 0.56), bright);
+    const tower = new Mesh(new BoxGeometry(0.8, 2.44, 0.56), towerMat);
     tower.position.set(tx, 2.6, -2.19);
     g.add(tower);
   }
-  // upper cabinet block — three door fronts split by hairline seams
   const cabinets = new Mesh(new BoxGeometry(3.0, 1.0, 0.5), cabinet);
   cabinets.position.set(0, 3.3, -2.2);
   g.add(cabinets);
@@ -222,11 +431,17 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   // the niche — a real recess: lit back panel, shelf, warm light, shadows
   const nicheBack = new Mesh(
     new BoxGeometry(3.0, 1.34, 0.05),
-    new MeshStandardMaterial({ color: 0xd4d6da, roughness: 0.6 }),
+    new MeshPhysicalMaterial({
+      color: 0xd4d6da,
+      roughness: 0.55,
+      roughnessMap: peel,
+      envMap: env,
+      envMapIntensity: 0.22,
+    }),
   );
   nicheBack.position.set(0, 2.13, -2.44);
   g.add(nicheBack);
-  const nicheShelf = new Mesh(new BoxGeometry(3.0, 0.06, 0.56), bright);
+  const nicheShelf = new Mesh(new BoxGeometry(3.0, 0.06, 0.56), stone);
   nicheShelf.position.set(0, 1.5, -2.19);
   g.add(nicheShelf);
   const nicheBase = new Mesh(new BoxGeometry(3.0, 0.4, 0.5), cabinet);
@@ -238,22 +453,53 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   const nicheLight = new PointLight(0xfff3e2, 1.8, 3.0, 2);
   nicheLight.position.set(0, 2.35, -1.9);
   g.add(nicheLight);
-  // props on the shelf — two bottles and a low jar, left of centre
+  // warm under-cabinet strip — premium kitchen cue, feeds the niche glow
+  const strip = new Mesh(
+    new BoxGeometry(2.9, 0.015, 0.02),
+    new MeshBasicMaterial({ color: 0xfff2df }),
+  );
+  strip.position.set(0, 2.792, -1.96);
+  g.add(strip);
+  const stripLight = new PointLight(0xffe9cf, 1.1, 2.2, 2);
+  stripLight.position.set(0, 2.7, -2.05);
+  g.add(stripLight);
+  // props on the shelf — stoneware bottle, frosted glass bottle, glazed jar
   const bottleA = new Mesh(
-    new CylinderGeometry(0.05, 0.05, 0.3, 18),
-    new MeshStandardMaterial({ color: 0xd9d3c5, roughness: 0.5 }),
+    new CylinderGeometry(0.05, 0.05, 0.3, 24),
+    new MeshPhysicalMaterial({
+      color: 0xd9d3c5,
+      roughness: 0.34,
+      clearcoat: 0.7,
+      clearcoatRoughness: 0.3,
+      envMap: env,
+      envMapIntensity: 0.5,
+    }),
   );
   bottleA.position.set(-0.38, 1.68, -2.14);
   g.add(bottleA);
   const bottleB = new Mesh(
-    new CylinderGeometry(0.04, 0.04, 0.21, 18),
-    new MeshStandardMaterial({ color: 0xccd3cf, roughness: 0.45 }),
+    new CylinderGeometry(0.04, 0.04, 0.21, 24),
+    new MeshPhysicalMaterial({
+      color: 0xdfe6e3,
+      roughness: 0.22,
+      transmission: 0.55,
+      thickness: 0.06,
+      envMap: env,
+      envMapIntensity: 0.6,
+    }),
   );
   bottleB.position.set(-0.54, 1.635, -2.2);
   g.add(bottleB);
   const jar = new Mesh(
-    new CylinderGeometry(0.065, 0.065, 0.09, 18),
-    new MeshStandardMaterial({ color: 0xe7e2d8, roughness: 0.55 }),
+    new CylinderGeometry(0.065, 0.065, 0.09, 24),
+    new MeshPhysicalMaterial({
+      color: 0xe7e2d8,
+      roughness: 0.3,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.35,
+      envMap: env,
+      envMapIntensity: 0.5,
+    }),
   );
   jar.position.set(-0.18, 1.575, -2.17);
   g.add(jar);
@@ -268,10 +514,18 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   const tcx = tc.getContext('2d')!;
   drawPinchScreen(tcx, 416, 296, 0);
   const ttex = new CanvasTexture(tc);
+  ttex.colorSpace = SRGBColorSpace;
   const tablet = new Group();
   const bezel = new Mesh(
     new BoxGeometry(0.85, 0.6, 0.04),
-    new MeshStandardMaterial({ color: 0x191b1e, roughness: 0.4, metalness: 0.3 }),
+    new MeshStandardMaterial({
+      color: 0x191b1e,
+      roughness: 0.35,
+      roughnessMap: noiseTex('bezel-r', 90, 20, 2),
+      metalness: 0.6,
+      envMap: env,
+      envMapIntensity: 0.6,
+    }),
   );
   tablet.add(bezel);
   const screen = new Mesh(
