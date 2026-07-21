@@ -76,7 +76,7 @@ sets are built ONE PER FRESH SESSION**, to prevent drift. Phase 3 = sets
 
 | Set | Kind | z | Session status |
 |---|---|---|---|
-| 12 Just a Pinch | kitchen | 20 | not started |
+| 12 Just a Pinch | kitchen | 20 | built (cinema stack), awaiting user pass |
 | 11 Flow State | fluid | -3 | not started |
 | 10 Learning App | floatcube | -26 | not started |
 | 09 Lumen Mapper | lumen | -49 | not started |
@@ -104,8 +104,13 @@ git fetch origin
 git checkout -B <your-designated-branch> origin/<latest-studio-branch>
 ```
 
-Latest studio branch right now: `claude/studio-rebuild-phase-2-y4ew51`
-(PR #30 — supersedes #29; both PRs accumulate, never merge them yourself).
+Latest studio branch right now: `claude/start-set-12-kgtbwi`
+(PR #31 — supersedes #30; the studio PRs accumulate, never merge them yourself).
+ENGINE NOTE (binding for every set session): BUILD_CONTRACT clause 10 — the
+cinema stack now lives in the engine (soft shadow maps on softbox(), HDR bloom
++ film grade in an EffectComposer, `engine/environment.ts` stage env map for
+PBR surfaces). Build every set with real PBR materials (see sets/kitchen.ts
+as the template), never bare geometry. GTAO is banned (blacks out surfaces).
 Push to YOUR designated branch only; open a PR for it if none exists and note
 it supersedes the previous one. Update this "latest" pointer every session.
 

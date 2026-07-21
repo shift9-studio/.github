@@ -14,9 +14,11 @@
    all toward the user's image: key panel lowered into frame, key cone
    tightened, light cone faded to a haze, island painted white. */
 import {
+  AdditiveBlending,
   BoxGeometry,
   CanvasTexture,
   CircleGeometry,
+  ConeGeometry,
   CylinderGeometry,
   DoubleSide,
   Group,
@@ -25,30 +27,17 @@ import {
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
-  PMREMGenerator,
   PointLight,
   RepeatWrapping,
+  ShaderMaterial,
   SRGBColorSpace,
-  Texture,
   TorusGeometry,
-  WebGLRenderer,
 } from 'three';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { stageEnv } from '../environment';
 import type { SetBuilder } from './index';
 
 /* ── shared, generated-once assets (survive set streaming in/out) ────────── */
-
-let envTex: Texture | null = null;
-/** Neutral studio environment map — gives chrome something true to mirror and
-    every white PBR surface the soft sheen of the reference photograph. */
-const studioEnv = (renderer: WebGLRenderer): Texture => {
-  if (!envTex) {
-    const pmrem = new PMREMGenerator(renderer);
-    envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    pmrem.dispose();
-  }
-  return envTex;
-};
 
 const texCache = new Map<string, CanvasTexture>();
 const cached = (key: string, make: () => CanvasTexture): CanvasTexture => {
@@ -256,21 +245,45 @@ const drawPinchScreen = (
 };
 
 export const buildKitchen: SetBuilder = (engine, g, anims) => {
-  const env = studioEnv(engine.renderer);
+  const env = stageEnv(engine.renderer);
 
   // ── cinematic light rig ──
   // key — softbox panel low enough to sit in frame at the mark
   const key = engine.softbox(g, 0, 6.0, 0, 3.6, 2.1, 85);
   key.angle = 0.58; // tighten the pool so it hugs the island like the photo
   key.penumbra = 0.85;
-  engine.lightCone(g, 0xffffff, 0, 5.9, 0, 3.0, 0.018); // haze, not a beam
+  // volumetric haze cone — soft-edged, gently breathing (cinema stack)
+  const volMat = new ShaderMaterial({
+    vertexShader:
+      'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: `
+      varying vec2 vUv; uniform float uTime;
+      void main(){
+        float body = pow(vUv.y, 2.6);
+        float edge = pow(sin(vUv.x * 3.14159), 2.4);
+        float drift = 0.9 + 0.1 * sin(uTime * 0.35 + vUv.y * 8.0 + vUv.x * 6.0);
+        gl_FragColor = vec4(vec3(1.0), body * edge * drift * 0.01);
+      }`,
+    uniforms: { uTime: { value: 0 } },
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    side: DoubleSide,
+  });
+  const vol = new Mesh(new ConeGeometry(3.0, 5.9, 48, 1, true), volMat);
+  vol.position.set(0, 5.9 / 2, 0);
+  vol.rotation.y = Math.PI; // seam to the back
+  g.add(vol);
+  anims.push((t) => {
+    volMat.uniforms.uTime.value = t;
+  });
   // layered halo doubles the key panel's bloom
   const halo = engine.glow(0xffffff, 5.2);
-  halo.material.opacity = 0.32;
+  halo.material.opacity = 0.1;
   halo.position.set(0, 6.05, 0);
   g.add(halo);
   // soft frontal bounce — the photo's faces are white, not silhouetted
-  const bounce = new PointLight(0xf4f6f8, 42, 16, 2);
+  const bounce = new PointLight(0xf4f6f8, 48, 16, 2);
   bounce.position.set(0, 1.7, 6.5);
   g.add(bounce);
   // wash for the cabinet wall — the photo's back unit is white, not shadowed
@@ -355,14 +368,17 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   );
   concrete.rotation.x = -Math.PI / 2;
   concrete.position.y = 0.006;
+  concrete.receiveShadow = true;
   g.add(concrete);
 
   // ── the island — reference envelope 6 × 1.15 × 1.6, top slab 6.2 × 0.07 ──
-  const island = new Mesh(new BoxGeometry(6, 1.15, 1.6), satin);
+  const island = new Mesh(new RoundedBoxGeometry(6, 1.15, 1.6, 3, 0.03), satin);
   island.position.y = 0.575;
+  island.castShadow = island.receiveShadow = true;
   g.add(island);
-  const top = new Mesh(new BoxGeometry(6.2, 0.07, 1.75), stone);
+  const top = new Mesh(new RoundedBoxGeometry(6.2, 0.07, 1.75, 3, 0.018), stone);
   top.position.y = 1.185;
+  top.castShadow = top.receiveShadow = true;
   g.add(top);
   // recessed dark plinth — the photo's island floats on a shadow line
   const plinth = new Mesh(
@@ -378,7 +394,7 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   );
   seam.position.set(-1.55, 0.6, 0.802);
   g.add(seam);
-  const islandShadow = contactShadow(7.4, 2.9, 0.85);
+  const islandShadow = contactShadow(7.4, 2.9, 0.5);
   islandShadow.position.y = 0.012;
   g.add(islandShadow);
 
@@ -412,16 +428,21 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   tapSpout.position.set(-0.24, 0.4, 0);
   tap.add(tapSpout);
   tap.position.set(2.18, 1.22, -0.42);
+  tap.traverse((o) => {
+    o.castShadow = true;
+  });
   g.add(tap);
 
   // ── back unit — reference envelope 4.6 wide × 2.4 high around (0, 2.6) ──
   for (const tx of [-1.9, 1.9]) {
-    const tower = new Mesh(new BoxGeometry(0.8, 2.44, 0.56), towerMat);
+    const tower = new Mesh(new RoundedBoxGeometry(0.8, 2.44, 0.56, 3, 0.025), towerMat);
     tower.position.set(tx, 2.6, -2.19);
+    tower.castShadow = tower.receiveShadow = true;
     g.add(tower);
   }
-  const cabinets = new Mesh(new BoxGeometry(3.0, 1.0, 0.5), cabinet);
+  const cabinets = new Mesh(new RoundedBoxGeometry(3.0, 1.0, 0.5, 3, 0.02), cabinet);
   cabinets.position.set(0, 3.3, -2.2);
+  cabinets.castShadow = cabinets.receiveShadow = true;
   g.add(cabinets);
   for (const sx of [-0.5, 0.5]) {
     const ds = new Mesh(new BoxGeometry(0.01, 0.96, 0.03), seamDark);
@@ -443,14 +464,15 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   g.add(nicheBack);
   const nicheShelf = new Mesh(new BoxGeometry(3.0, 0.06, 0.56), stone);
   nicheShelf.position.set(0, 1.5, -2.19);
+  nicheShelf.receiveShadow = true;
   g.add(nicheShelf);
-  const nicheBase = new Mesh(new BoxGeometry(3.0, 0.4, 0.5), cabinet);
+  const nicheBase = new Mesh(new RoundedBoxGeometry(3.0, 0.4, 0.5, 2, 0.015), cabinet);
   nicheBase.position.set(0, 1.27, -2.2);
   g.add(nicheBase);
   const nicheAO = aoStrip(2.96, 0.7, 0.7);
   nicheAO.position.set(0, 2.45, -2.41);
   g.add(nicheAO);
-  const nicheLight = new PointLight(0xfff3e2, 1.8, 3.0, 2);
+  const nicheLight = new PointLight(0xfff3e2, 0.6, 3.0, 2);
   nicheLight.position.set(0, 2.35, -1.9);
   g.add(nicheLight);
   // warm under-cabinet strip — premium kitchen cue, feeds the niche glow
@@ -460,7 +482,7 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   );
   strip.position.set(0, 2.792, -1.96);
   g.add(strip);
-  const stripLight = new PointLight(0xffe9cf, 1.1, 2.2, 2);
+  const stripLight = new PointLight(0xffe9cf, 0.22, 1.4, 2);
   stripLight.position.set(0, 2.7, -2.05);
   g.add(stripLight);
   // props on the shelf — stoneware bottle, frosted glass bottle, glazed jar
@@ -476,6 +498,7 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
     }),
   );
   bottleA.position.set(-0.38, 1.68, -2.14);
+  bottleA.castShadow = true;
   g.add(bottleA);
   const bottleB = new Mesh(
     new CylinderGeometry(0.04, 0.04, 0.21, 24),
@@ -489,6 +512,7 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
     }),
   );
   bottleB.position.set(-0.54, 1.635, -2.2);
+  bottleB.castShadow = true;
   g.add(bottleB);
   const jar = new Mesh(
     new CylinderGeometry(0.065, 0.065, 0.09, 24),
@@ -502,8 +526,9 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
     }),
   );
   jar.position.set(-0.18, 1.575, -2.17);
+  jar.castShadow = true;
   g.add(jar);
-  const backShadow = contactShadow(5.2, 1.6, 0.8);
+  const backShadow = contactShadow(5.2, 1.6, 0.45);
   backShadow.position.set(0, 0.012, -2.2);
   g.add(backShadow);
 
@@ -517,7 +542,7 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   ttex.colorSpace = SRGBColorSpace;
   const tablet = new Group();
   const bezel = new Mesh(
-    new BoxGeometry(0.85, 0.6, 0.04),
+    new RoundedBoxGeometry(0.85, 0.6, 0.04, 3, 0.012),
     new MeshStandardMaterial({
       color: 0x191b1e,
       roughness: 0.35,
@@ -536,6 +561,7 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   tablet.add(screen);
   tablet.position.set(-1.5, 1.55, 0.1);
   tablet.rotation.x = -0.18;
+  bezel.castShadow = true;
   g.add(tablet);
   const tg = engine.glow(0x9fe8ec, 1.4);
   tg.material.opacity = 0.55;

@@ -21,6 +21,7 @@ import {
   MeshBasicMaterial,
   MeshStandardMaterial,
   Object3D,
+  PCFSoftShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
   Scene,
@@ -30,8 +31,14 @@ import {
   SpriteMaterial,
   SRGBColorSpace,
   Texture,
+  Vector2,
   WebGLRenderer,
 } from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { SCENE_CONSTANTS } from '../constants';
 import { PROJECTS, type Project } from '../projects';
 import { CONE_FRAG, DUST_FRAG, VUV_VERT } from './shaders';
@@ -114,6 +121,27 @@ const disposeDeep = (root: Object3D): void => {
 const easeInOutCubic = (k: number): number =>
   k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
 
+/* Final grade — matches the render's tone to the reference plates: gentle
+   S-curve contrast, blacks crushed to the plates' floor, a whisper of cool
+   bias and saturation. Runs in sRGB after tone mapping (cinema-stack pass,
+   BUILD_CONTRACT clause 10). */
+const GradeShader = {
+  uniforms: { tDiffuse: { value: null as Texture | null } },
+  vertexShader:
+    'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `
+    uniform sampler2D tDiffuse; varying vec2 vUv;
+    void main(){
+      vec3 c = texture2D(tDiffuse, vUv).rgb;
+      c = (c - 0.5) * 1.06 + 0.5;
+      c = c * 1.03 - vec3(0.014);
+      c.b *= 1.012;
+      float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+      c = mix(vec3(l), c, 1.04);
+      gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);
+    }`,
+};
+
 export class StudioEngine {
   readonly renderer: WebGLRenderer;
   readonly scene: Scene;
@@ -121,6 +149,8 @@ export class StudioEngine {
   readonly state: EngineState;
   readonly glowTex: Texture;
 
+  private readonly composer: EffectComposer;
+  private readonly bloom: UnrealBloomPass;
   private readonly root: HTMLElement;
   private readonly resizeObserver: ResizeObserver;
   private raf = 0;
@@ -143,6 +173,9 @@ export class StudioEngine {
     this.renderer.outputColorSpace = SRGBColorSpace;
     this.renderer.toneMapping = ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.15;
+    // cinema stack (BUILD_CONTRACT clause 10): true soft shadows everywhere
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = PCFSoftShadowMap;
     this.renderer.domElement.style.cssText = 'display:block;width:100%;height:100%;';
     root.append(this.renderer.domElement);
 
@@ -166,10 +199,22 @@ export class StudioEngine {
     };
     this.glowTex = this.makeGlowTexture();
 
+    // cinema stack: render → bloom → tone map → final grade (BUILD_CONTRACT
+    // clause 10, pulled forward by user directive 2026-07-21)
+    this.composer = new EffectComposer(this.renderer);
+    this.composer.addPass(new RenderPass(this.scene, this.camera));
+    // NOTE: screen-space AO (GTAO) was trialled and removed — it blacks out
+    // whole surfaces under some GL stacks. Occlusion is baked per set instead.
+    this.bloom = new UnrealBloomPass(new Vector2(1, 1), 0.2, 0.4, 1.05);
+    this.composer.addPass(this.bloom);
+    this.composer.addPass(new OutputPass());
+    this.composer.addPass(new ShaderPass(GradeShader));
+
     const resize = (): void => {
       const w = root.clientWidth || 1;
       const h = root.clientHeight || 1;
       this.renderer.setSize(w, h, false);
+      this.composer.setSize(w, h);
       this.camera.aspect = w / h;
       this.camera.updateProjectionMatrix();
     };
@@ -270,7 +315,7 @@ export class StudioEngine {
       this.camera.position.y = 2.2 + Math.sin(s.t * 0.19) * 0.06;
       this.stream();
       for (const a of s.animators) a.fn(s.t, dt);
-      this.renderer.render(this.scene, this.camera);
+      this.composer.render(dt);
       this.emitHud();
     };
     this.raf = requestAnimationFrame(loop);
@@ -285,6 +330,7 @@ export class StudioEngine {
     removeEventListener('touchstart', this.onTouchStart);
     removeEventListener('touchmove', this.onTouchMove);
     this.renderer.domElement.removeEventListener('click', this.onClick);
+    this.composer.dispose();
     this.renderer.dispose();
   }
 
@@ -478,6 +524,7 @@ export class StudioEngine {
       new MeshStandardMaterial({ color: 0x16161a, roughness: 0.9, metalness: 0.1 }),
     );
     floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
     g.add(floor);
     const anims: AnimatorFn[] = [];
     // Per-set builders are ported 1:1 in Phases 3-4 (BUILD_CONTRACT phase table).
@@ -507,12 +554,19 @@ export class StudioEngine {
     panel.position.set(x, y, z);
     panel.rotation.x = Math.PI / 2;
     g.add(panel);
-    const gl = this.glow(color ?? 0xffffff, w * 2.2);
+    const gl = this.glow(color ?? 0xffffff, w * 1.2);
+    gl.material.opacity = 0.45;
     gl.position.set(x, y - 0.2, z);
     g.add(gl);
     const sp = new SpotLight(color ?? 0xffffff, intensity, y * 3, 0.9, 0.5, 1.2);
     sp.position.set(x, y, z);
     sp.target.position.set(x, 0, z);
+    // cinema stack: the key panel casts true soft shadows
+    sp.castShadow = true;
+    sp.shadow.mapSize.set(2048, 2048);
+    sp.shadow.bias = -0.0004;
+    sp.shadow.camera.near = 0.5;
+    sp.shadow.camera.far = y * 3;
     g.add(sp, sp.target);
     return sp;
   }

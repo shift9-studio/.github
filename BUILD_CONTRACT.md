@@ -41,6 +41,17 @@ Signed by Claude Code. Binding for every commit on this build.
    reference images — and a set is done only on their explicit pass. All
    explanations to the user in plain, simple terms; no jargon, ever.
 
+10. **The cinema stack is engine-wide law** (user directive, 2026-07-21,
+    set-12 session): every stage is built and judged under the full stack —
+    true soft shadow mapping, HDR bloom, a final film grade matched to the
+    reference plates, a shared black-soundstage environment map for all
+    reflective/satin surfaces, volumetric key-light haze, rounded-edge
+    joinery, and PBR texture work (procedural or scanned) on every visible
+    surface. Pulled forward from Phase 7 by the user; visuals must read
+    "ultra premium — as if a senior Disney-calibre designer built it".
+    Screen-space AO (GTAO) was trialled and removed — it blacks out whole
+    surfaces on some GL stacks; occlusion is baked per set instead.
+
 ## Judging protocol (user is the sole judge)
 
 - Every phase gate delivers into chat: screen recordings of the real running
