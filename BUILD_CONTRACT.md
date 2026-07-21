@@ -31,6 +31,15 @@ Signed by Claude Code. Binding for every commit on this build.
    yet be built at reference-image quality, the phase stays open — quality is never
    traded for schedule. The finished 3D space must look exactly like the reference
    images.
+9. **The twelve sets are built ONE PER FRESH SESSION** (user directive,
+   2026-07-21, second session). At the start of each set's session, STOP and wait
+   for the user to provide reference images showing exactly how that set must
+   look — do not build the set's visuals before they arrive. Twelve set sessions
+   (phase 3 = sets 12→07, phase 4 = sets 06→01), then one consolidation session
+   that brings everything together and verifies the full run before the next
+   phase. The user verifies every set visually — in-chat renders vs their
+   reference images — and a set is done only on their explicit pass. All
+   explanations to the user in plain, simple terms; no jargon, ever.
 
 ## Judging protocol (user is the sole judge)
 
