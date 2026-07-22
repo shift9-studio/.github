@@ -72,12 +72,66 @@ sets are built ONE PER FRESH SESSION**, to prevent drift. Phase 3 = sets
 6. On pass: commit set + evidence under `compare/phase3/<set>/`, push, update
    the scoreboard below and this file's state notes, keep the PR updated.
 
+### Final refinement path — APPLY AS THE FIRST PASS on every remaining set
+
+Set 12 reached its final look through ~8 refinement rounds. **Do not repeat the
+rounds — start the next set already at that bar.** `sets/kitchen.ts` is the
+worked reference; mirror its structure. The path, in order:
+
+**A. Inherit the engine — do NOT rebuild these (they're global, every set gets them free):**
+- Cinema stack in `experience.ts`: `EffectComposer` = N8AO (ambient occlusion,
+  renders the scene; replaces RenderPass) → `UnrealBloomPass(0.2, 0.4, 1.05)` →
+  `OutputPass` → `GradeShader` (film grade matched to the reference plates).
+- `softbox()` emits a real `RectAreaLight` key + a PCF-soft shadow-casting spot.
+- `stageEnv(renderer)` (`engine/environment.ts`) = black-soundstage IBL for all
+  reflective/satin PBR surfaces.
+- Dust is fixed engine-wide (fine, drifting, twinkling) in `shaders.ts DUST_FRAG`.
+- Helpers on the engine: `glow`, `dustPlane`, `lightCone`, `contactShadow`/
+  `aoStrip` (in kitchen.ts, promote if reused), `RoundedBoxGeometry`.
+
+**B. Build the set at final quality first-pass (kitchen.ts is the template):**
+1. Blockout from `handoff/reference/shift9-scene.js` builder — keep its
+   envelope, z, palette, copy strings. That's the composition contract.
+2. Materials: `MeshPhysicalMaterial`, never bare Standard for hero surfaces.
+   Give each a `roughnessMap`+`bumpMap` from `noiseTex()` (orange-peel micro-
+   relief), `clearcoat` on anything painted/lacquered, `envMap: stageEnv(...)`,
+   `envMapIntensity` tuned (matte 0.2–0.5, metal 0.9–1.3). Procedural stone via
+   the domain-warped `counterTex()` marble pattern; `concreteTex()` for floors.
+3. Geometry: `RoundedBoxGeometry` for ALL joinery (bevels catch light — the
+   #1 "not a game" tell). Mechanical parts = swept `TubeGeometry` along a
+   `CatmullRomCurve3`, never stacked primitives. Props = `LatheGeometry`
+   silhouettes. Real glass = `MeshPhysicalMaterial{transmission:1, ior:1.5,
+   thickness, attenuationColor}`.
+4. Lighting = formal 3-point matched to THAT set's reference mood: key =
+   `softbox()`; fill front-offset at ~¼ key (cool for clinical sets, warm for
+   moody); white rim behind for void separation. **Wash lights go HIGH and
+   BACK so their falloff pools land above frame** — a point light near a wall
+   makes a blown-out hotspot (learned the hard way). Interior back panels
+   fully MATTE (roughness ~0.9, no envMap) or they catch the key as a glow blob.
+5. `castShadow`/`receiveShadow` on every hero mesh; keep `contactShadow` bakes
+   light (~0.45) UNDER the real shadows. Volumetric key haze = soft
+   `ConeGeometry` shader at very low opacity (~0.006–0.01).
+
+**C. Verify (3d-master-modeler Phase 5 loop):** `pnpm build` clean → shoot at
+the set's z (mark/near/wide) → **READ the PNGs yourself** → fix hotspots /
+blown-out / muddy / floating artifacts → re-render. Then record the dolly video.
+
+**D. Deliver VIDEO ONLY to the user** (their standing preference), plain words,
+then wait for their explicit pass. "Fix X" → fix until pass.
+
+**Banned / known walls (don't rediscover):** GTAO pass (blacks out whole
+surfaces on the sandbox GL) — N8AO only. Poly Haven / ambientCG direct
+download = egress 403 — use procedural, or textures the user uploads / a public
+GitHub repo you clone. A skill the user names that isn't loaded lives in the
+public `Kariimc/my-skills` repo (`skills/<name>/SKILL.md`) — clone + follow it;
+`3d-master-modeler` is the 3D build method.
+
 ### Set scoreboard (update every session)
 
 | Set | Kind | z | Session status |
 |---|---|---|---|
-| 12 Just a Pinch | kitchen | 20 | built (cinema stack), awaiting user pass |
-| 11 Flow State | fluid | -3 | not started |
+| 12 Just a Pinch | kitchen | 20 | DONE — full cinema-stack build, real tap/sink/glass, fitted cabinetry, fixed dust; user banked it |
+| 11 Flow State | fluid | -3 | NEXT — apply the refinement path above first-pass |
 | 10 Learning App | floatcube | -26 | not started |
 | 09 Lumen Mapper | lumen | -49 | not started |
 | 08 Voxel Arcade BB | arcade | -72 | not started |
@@ -106,13 +160,11 @@ git checkout -B <your-designated-branch> origin/<latest-studio-branch>
 
 Latest studio branch right now: `claude/start-set-12-kgtbwi`
 (PR #31 — supersedes #30; the studio PRs accumulate, never merge them yourself).
-ENGINE NOTE (binding for every set session): BUILD_CONTRACT clause 10 — the
-cinema stack now lives in the engine (soft shadow maps on softbox(), HDR bloom
-+ film grade in an EffectComposer, `engine/environment.ts` stage env map for
-PBR surfaces). Build every set with real PBR materials (see sets/kitchen.ts
-as the template), never bare geometry. GTAO is banned (blacks out surfaces).
-Push to YOUR designated branch only; open a PR for it if none exists and note
-it supersedes the previous one. Update this "latest" pointer every session.
+ENGINE NOTE (binding): the full cinema stack + refinement path is now baked in
+and documented above ("Final refinement path"). Read that section, then build
+the next set at that bar on the first pass. Push to YOUR designated branch only;
+open a PR for it if none exists, note it supersedes the previous one, and update
+this "latest" pointer + the scoreboard every session.
 
 ## How to verify (the harness)
 
