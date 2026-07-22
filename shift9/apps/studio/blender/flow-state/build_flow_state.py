@@ -70,37 +70,110 @@ def mat_stone():
     nt.links.new(bump.outputs["Normal"], b.inputs["Normal"])
     return m
 
-def mat_fluid():
-    """Glowing cyan volume: swirling ink tendrils via distorted noise → density +
-       emission. Transparent surface so the glass refracts the volume behind it."""
-    m = bpy.data.materials.new("Fluid"); m.use_nodes = True
+def mat_glow_fill():
+    """Very faint, UNIFORM volume (no vein detail) — just enough density/emission
+       so the fluid isn't literally empty space between the ink planes, giving
+       soft ambient depth-glow. Pure-volume ray integration blows any patterned
+       emission to a flat white block (proven twice now — see WARM_START), so
+       all tendril detail lives on the ink planes below, never in this volume."""
+    m = bpy.data.materials.new("GlowFill"); m.use_nodes = True
     nt = m.node_tree
-    for n in list(nt.nodes):
-        nt.nodes.remove(n)
+    for n in list(nt.nodes): nt.nodes.remove(n)
     out = new(nt, "ShaderNodeOutputMaterial")
     transp = new(nt, "ShaderNodeBsdfTransparent")
     nt.links.new(transp.outputs["BSDF"], out.inputs["Surface"])
     vol = new(nt, "ShaderNodeVolumePrincipled")
-    # swirl field: object coords → mapping (elongated in Z for rising plumes) →
-    #   distorted high-detail noise. The tendril MASK isolates thin bright veins.
+    vol.inputs["Density"].default_value = 0.035
+    if "Emission Strength" in vol.inputs: vol.inputs["Emission Strength"].default_value = 0.35
+    if "Emission Color" in vol.inputs: vol.inputs["Emission Color"].default_value = (0.1,0.45,0.95,1)
+    vol.inputs["Color"].default_value = (0.02,0.16,0.55,1)
+    nt.links.new(vol.outputs["Volume"], out.inputs["Volume"])
+    return m
+
+def mat_ink_plane(seed):
+    """Crisp 2D ink-tendril layer — SURFACE emission (Transparent<->Emission Mix
+       Shader), not a volume, so the pattern never blurs from ray integration.
+       Vortex-warped noise + a voronoi ridge give ink-drop spiral tendrils that
+       fragment and re-join, matching the reference. Object-space X/Y (the
+       plane's own mesh-local flat axes, before its 90° mount rotation) is the
+       2D field the swirl runs in. `seed` offsets coords + vortex centers so
+       each stacked layer reads as a distinct depth slice, not a repeat."""
+    m = bpy.data.materials.new(f"Ink{seed}"); m.use_nodes = True
+    nt = m.node_tree
+    for n in list(nt.nodes): nt.nodes.remove(n)
+    out = new(nt, "ShaderNodeOutputMaterial")
     tc = new(nt, "ShaderNodeTexCoord")
     mp = new(nt, "ShaderNodeMapping")
-    mp.inputs["Scale"].default_value = (3.0, 3.0, 2.1)  # mild vertical stretch
+    mp.inputs["Location"].default_value = (seed*0.83, seed*0.51, 0)
+    mp.inputs["Scale"].default_value = (2.6, 2.6, 2.6)
     nt.links.new(tc.outputs["Object"], mp.inputs["Vector"])
-    # higher-frequency distorted noise octaves → MANY fine curling filaments
+
+    def vortex(vec_socket, cx, cy, strength, softness=0.30):
+        sep = new(nt, "ShaderNodeSeparateXYZ")
+        nt.links.new(vec_socket, sep.inputs["Vector"])
+        dx = new(nt, "ShaderNodeMath"); dx.operation='SUBTRACT'; dx.inputs[1].default_value=cx
+        nt.links.new(sep.outputs["X"], dx.inputs[0])
+        dy = new(nt, "ShaderNodeMath"); dy.operation='SUBTRACT'; dy.inputs[1].default_value=cy
+        nt.links.new(sep.outputs["Y"], dy.inputs[0])
+        x2 = new(nt, "ShaderNodeMath"); x2.operation='MULTIPLY'
+        nt.links.new(dx.outputs[0], x2.inputs[0]); nt.links.new(dx.outputs[0], x2.inputs[1])
+        y2 = new(nt, "ShaderNodeMath"); y2.operation='MULTIPLY'
+        nt.links.new(dy.outputs[0], y2.inputs[0]); nt.links.new(dy.outputs[0], y2.inputs[1])
+        rad2 = new(nt, "ShaderNodeMath"); rad2.operation='ADD'
+        nt.links.new(x2.outputs[0], rad2.inputs[0]); nt.links.new(y2.outputs[0], rad2.inputs[1])
+        rad = new(nt, "ShaderNodeMath"); rad.operation='SQRT'
+        nt.links.new(rad2.outputs[0], rad.inputs[0])
+        ang = new(nt, "ShaderNodeMath"); ang.operation='ARCTAN2'
+        nt.links.new(dy.outputs[0], ang.inputs[0]); nt.links.new(dx.outputs[0], ang.inputs[1])
+        rsoft = new(nt, "ShaderNodeMath"); rsoft.operation='ADD'; rsoft.inputs[1].default_value=softness
+        nt.links.new(rad.outputs[0], rsoft.inputs[0])
+        twist = new(nt, "ShaderNodeMath"); twist.operation='DIVIDE'
+        twist.inputs[0].default_value = strength
+        nt.links.new(rsoft.outputs[0], twist.inputs[1])
+        nang = new(nt, "ShaderNodeMath"); nang.operation='ADD'
+        nt.links.new(ang.outputs[0], nang.inputs[0]); nt.links.new(twist.outputs[0], nang.inputs[1])
+        cosv = new(nt, "ShaderNodeMath"); cosv.operation='COSINE'
+        nt.links.new(nang.outputs[0], cosv.inputs[0])
+        sinv = new(nt, "ShaderNodeMath"); sinv.operation='SINE'
+        nt.links.new(nang.outputs[0], sinv.inputs[0])
+        nx = new(nt, "ShaderNodeMath"); nx.operation='MULTIPLY'
+        nt.links.new(rad.outputs[0], nx.inputs[0]); nt.links.new(cosv.outputs[0], nx.inputs[1])
+        ny = new(nt, "ShaderNodeMath"); ny.operation='MULTIPLY'
+        nt.links.new(rad.outputs[0], ny.inputs[0]); nt.links.new(sinv.outputs[0], ny.inputs[1])
+        nxc = new(nt, "ShaderNodeMath"); nxc.operation='ADD'; nxc.inputs[1].default_value=cx
+        nt.links.new(nx.outputs[0], nxc.inputs[0])
+        nyc = new(nt, "ShaderNodeMath"); nyc.operation='ADD'; nyc.inputs[1].default_value=cy
+        nt.links.new(ny.outputs[0], nyc.inputs[0])
+        comb = new(nt, "ShaderNodeCombineXYZ")
+        nt.links.new(nxc.outputs[0], comb.inputs["X"])
+        nt.links.new(nyc.outputs[0], comb.inputs["Y"])
+        nt.links.new(sep.outputs["Z"], comb.inputs["Z"])
+        return comb.outputs["Vector"]
+
+    warped = vortex(mp.outputs["Vector"], 0.10+seed*0.06, 0.35-seed*0.05, 1.0, 0.28)
+    warped = vortex(warped, -0.30+seed*0.04, -0.30+seed*0.05, 0.55, 0.28)
+
     n1 = new(nt, "ShaderNodeTexNoise")
-    n1.inputs["Scale"].default_value = 6.0; n1.inputs["Detail"].default_value = 14.0
-    n1.inputs["Roughness"].default_value = 0.72
-    if "Distortion" in n1.inputs: n1.inputs["Distortion"].default_value = 6.0
-    nt.links.new(mp.outputs["Vector"], n1.inputs["Vector"])
+    n1.inputs["Scale"].default_value = 7.5; n1.inputs["Detail"].default_value = 14.0
+    n1.inputs["Roughness"].default_value = 0.7
+    if "Distortion" in n1.inputs: n1.inputs["Distortion"].default_value = 2.5
+    nt.links.new(warped, n1.inputs["Vector"])
     n2 = new(nt, "ShaderNodeTexNoise")
-    n2.inputs["Scale"].default_value = 12.0; n2.inputs["Detail"].default_value = 10.0
-    n2.inputs["Roughness"].default_value = 0.68
-    if "Distortion" in n2.inputs: n2.inputs["Distortion"].default_value = 4.0
-    nt.links.new(mp.outputs["Vector"], n2.inputs["Vector"])
-    # RIDGED curl → thin bright filament NETWORK (not soft blobs). For a noise n,
-    #   ridge = 1-|2n-1| peaks to 1 on the n=0.5 crossing surfaces; powered high →
-    #   thin veins. Union of two octaves = intricate ink tendrils.
+    n2.inputs["Scale"].default_value = 15.0; n2.inputs["Detail"].default_value = 9.0
+    n2.inputs["Roughness"].default_value = 0.65
+    if "Distortion" in n2.inputs: n2.inputs["Distortion"].default_value = 1.8
+    nt.links.new(warped, n2.inputs["Vector"])
+    vor = new(nt, "ShaderNodeTexVoronoi"); vor.voronoi_dimensions = '3D'
+    if hasattr(vor, "feature"): vor.feature = 'DISTANCE_TO_EDGE'
+    vor.inputs["Scale"].default_value = 8.0
+    if "Randomness" in vor.inputs: vor.inputs["Randomness"].default_value = 1.0
+    nt.links.new(warped, vor.inputs["Vector"])
+    vor_ridge = new(nt, "ShaderNodeMath"); vor_ridge.operation='SUBTRACT'
+    vor_ridge.inputs[0].default_value = 1.0
+    nt.links.new(vor.outputs["Distance"], vor_ridge.inputs[1])
+    vor_pw = new(nt, "ShaderNodeMath"); vor_pw.operation='POWER'; vor_pw.inputs[1].default_value=2.2
+    nt.links.new(vor_ridge.outputs[0], vor_pw.inputs[0])
+
     def ridge(src, power):
         sub = new(nt, "ShaderNodeMath"); sub.operation='SUBTRACT'; sub.inputs[1].default_value=0.5
         nt.links.new(src, sub.inputs[0])
@@ -113,35 +186,37 @@ def mat_fluid():
         pw = new(nt, "ShaderNodeMath"); pw.operation='POWER'; pw.inputs[1].default_value=power
         nt.links.new(inv.outputs[0], pw.inputs[0])
         return pw.outputs[0]
-    r1 = ridge(n1.outputs["Fac"], 3.2)
-    r2 = ridge(n2.outputs["Fac"], 4.2)
+    r1 = ridge(n1.outputs["Fac"], 3.4)
+    r2 = ridge(n2.outputs["Fac"], 4.6)
+    veins12 = new(nt, "ShaderNodeMath"); veins12.operation='MAXIMUM'
+    nt.links.new(r1, veins12.inputs[0]); nt.links.new(r2, veins12.inputs[1])
     veins = new(nt, "ShaderNodeMath"); veins.operation='MAXIMUM'
-    nt.links.new(r1, veins.inputs[0]); nt.links.new(r2, veins.inputs[1])
+    nt.links.new(veins12.outputs[0], veins.inputs[0]); nt.links.new(vor_pw.outputs[0], veins.inputs[1])
     veins_out = veins.outputs[0]
-    # DENSITY — near-non-scattering body (so emission stays CRISP, doesn't blur to
-    #   a uniform glow) + dense emissive veins.
-    vein_d = new(nt, "ShaderNodeMath"); vein_d.operation = 'MULTIPLY'
-    vein_d.inputs[1].default_value = 5.0
-    nt.links.new(veins_out, vein_d.inputs[0])
-    dens = new(nt, "ShaderNodeMath"); dens.operation = 'ADD'
-    dens.inputs[1].default_value = 0.03
-    nt.links.new(vein_d.outputs["Value"], dens.inputs[0])
-    nt.links.new(dens.outputs["Value"], vol.inputs["Density"])
-    # EMISSION — ONLY the sparse ridged veins emit; body barely glows. A uniform
-    #   body-emission blows the deep center to white (emission integrates along
-    #   the ray); sparse veins instead read as bright tendrils over dark gaps.
-    vein_e = new(nt, "ShaderNodeMath"); vein_e.operation = 'MULTIPLY'
-    vein_e.inputs[1].default_value = 11.0
-    nt.links.new(veins_out, vein_e.inputs[0])
-    em = new(nt, "ShaderNodeMath"); em.operation = 'ADD'
-    em.inputs[1].default_value = 0.18  # faint body fill only
-    nt.links.new(vein_e.outputs["Value"], em.inputs[0])
-    if "Emission Strength" in vol.inputs:
-        nt.links.new(em.outputs["Value"], vol.inputs["Emission Strength"])
-    if "Emission Color" in vol.inputs:
-        vol.inputs["Emission Color"].default_value = (0.06,0.55,1.0,1)
-    vol.inputs["Color"].default_value = (0.02,0.18,0.6,1)
-    nt.links.new(vol.outputs["Volume"], out.inputs["Volume"])
+
+    # threshold ramp — crisp thin lines, not a soft band (this is a SURFACE mask
+    #   now, no ray integration, so a hard-ish threshold reads as fine ink lines).
+    thresh = new(nt, "ShaderNodeValToRGB")
+    thresh.color_ramp.elements[0].position = 0.42; thresh.color_ramp.elements[0].color = (0,0,0,1)
+    thresh.color_ramp.elements[1].position = 0.78; thresh.color_ramp.elements[1].color = (1,1,1,1)
+    nt.links.new(veins_out, thresh.inputs["Fac"])
+    # color ramp — teal glow around a near-white hot core
+    colr = new(nt, "ShaderNodeValToRGB")
+    colr.color_ramp.elements[0].position = 0.42; colr.color_ramp.elements[0].color = (0.05,0.4,0.95,1)
+    colr.color_ramp.elements[1].position = 0.9; colr.color_ramp.elements[1].color = (0.78,0.94,1.0,1)
+    nt.links.new(veins_out, colr.inputs["Fac"])
+
+    strength = new(nt, "ShaderNodeMath"); strength.operation='MULTIPLY'; strength.inputs[1].default_value=9.0
+    nt.links.new(thresh.outputs["Color"], strength.inputs[0])
+    emis = new(nt, "ShaderNodeEmission")
+    nt.links.new(colr.outputs["Color"], emis.inputs["Color"])
+    nt.links.new(strength.outputs["Value"], emis.inputs["Strength"])
+    transp = new(nt, "ShaderNodeBsdfTransparent")
+    mix = new(nt, "ShaderNodeMixShader")
+    nt.links.new(thresh.outputs["Color"], mix.inputs["Fac"])
+    nt.links.new(transp.outputs["BSDF"], mix.inputs[1])
+    nt.links.new(emis.outputs["Emission"], mix.inputs[2])
+    nt.links.new(mix.outputs["Shader"], out.inputs["Surface"])
     return m
 
 def mat_beam():
@@ -167,7 +242,7 @@ def mat_emit(color, strength):
     nt.links.new(e.outputs["Emission"], out.inputs["Surface"])
     return m
 
-GLASS, CHROME, STONE, FLUID, BEAM = mat_glass(), mat_chrome(), mat_stone(), mat_fluid(), mat_beam()
+GLASS, CHROME, STONE, GLOWFILL, BEAM = mat_glass(), mat_chrome(), mat_stone(), mat_glow_fill(), mat_beam()
 
 # ---------- helpers ----------
 def cube(name, sx, sy, sz, loc, mat, bevel=0.0, seg=2):
@@ -216,9 +291,17 @@ bpy.ops.mesh.primitive_cylinder_add(vertices=32, radius=0.2, depth=0.08,
                                     location=(0,0,TOP+BH+SHH+0.17))
 cap = bpy.context.active_object; cap.name = "Cap"; cap.data.materials.append(CHROME)
 
-# ---------- fluid volume (fills lower ~66%, sits inside the glass) ----------
+# ---------- fluid: faint glow volume + stacked ink-tendril planes ----------
 FLH = BH*0.66
-fluid = cube("Fluid", BW-0.14, BD-0.14, FLH, (0,0,TOP+0.05+FLH/2), FLUID, bevel=0.05, seg=3)
+fluid = cube("Fluid", BW-0.14, BD-0.14, FLH, (0,0,TOP+0.05+FLH/2), GLOWFILL, bevel=0.05, seg=3)
+FLUID_CX, FLUID_CZ = 0.0, TOP+0.05+FLH/2
+PLANE_W, PLANE_H = BW-0.18, FLH-0.05
+for i, py in enumerate((-0.30, -0.15, 0.0, 0.15, 0.30)):
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(FLUID_CX, py, FLUID_CZ))
+    pl = bpy.context.active_object; pl.name = f"InkPlane{i}"
+    pl.scale = (PLANE_W, PLANE_H, 1)
+    pl.rotation_euler = (math.radians(90), 0, 0)
+    pl.data.materials.append(mat_ink_plane(i))
 # bright meniscus level line
 bpy.ops.mesh.primitive_plane_add(size=1, location=(0,0,TOP+0.05+FLH))
 men = bpy.context.active_object; men.name = "Meniscus"; men.scale = (BW-0.16, BD-0.16, 1)
@@ -246,6 +329,16 @@ key.data.shadow_soft_size = 0.4
 tgt = bpy.data.objects.new("KeyTarget", None); tgt.location = (0,0,TOP+BH*0.5)
 scene.collection.objects.link(tgt)
 c = key.constraints.new('TRACK_TO'); c.target = tgt; c.track_axis='TRACK_NEGATIVE_Z'; c.up_axis='UP_Y'
+# shadow caustics (MNEE) — the key casts real blue caustic spill through the
+#   glass + fluid onto the plinth. Cycles 4.x/5.x: per-light use_caustics under
+#   light.cycles; scene-level caustics_refractive is the older path — try both,
+#   AUDIT-log whichever isn't present rather than guessing the exact API.
+for holder, attr, val in ((key.data, "use_caustics", True),):
+    try:
+        lc = holder.cycles if hasattr(holder, "cycles") else None
+        if lc is not None: setattr(lc, attr, val)
+        else: print(f"AUDIT: WARN no .cycles on light for {attr}")
+    except Exception as e: print(f"AUDIT: WARN caustics {attr}", e)
 
 # visible beam medium — a cone from the key toward the vessel
 import mathutils
@@ -313,7 +406,8 @@ scene.cycles.adaptive_threshold = 0.01
 scene.cycles.samples = 200
 scene.cycles.use_denoising = True
 for attr, val in (("denoiser", 'OPENIMAGEDENOISE'), ("denoising_input_passes", 'RGB_ALBEDO_NORMAL'),
-                  ("denoising_prefilter", 'ACCURATE'), ("use_light_tree", True)):
+                  ("denoising_prefilter", 'ACCURATE'), ("use_light_tree", True),
+                  ("caustics_reflective", True), ("caustics_refractive", True)):
     try: setattr(scene.cycles, attr, val)
     except Exception as e: print("AUDIT: skip", attr, e)
 scene.cycles.volume_bounces = 3
