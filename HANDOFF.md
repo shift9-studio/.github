@@ -4,7 +4,7 @@
 > Update it in the same commit as any code change.
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 
-**Last updated:** 2026-07-14
+**Last updated:** 2026-07-22
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
 ## Read first - the discovery trap
@@ -39,6 +39,18 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 - `@shift9/ui` - CustomCursor, DecodeText, DitherField, EdgeReticle, GrainField, GridFrame, GridSweep, MagneticButton, MonoLabel, ProximityText, Skeleton, SpiceMote, TelemetryRail, WorkWall.
 - `@shift9/motion` - springs, scrollSignal, useMagnetic, useProximityWeight, useReducedMotionSafe, useScrollVelocity, useInstrumentTelemetry.
 - `@shift9/data` - read-only Supabase client + recipes. Returns `null` when env vars are absent; every consumer carries a static fallback.
+
+## Recent changes
+
+- **2026-07-22 - Studio About + origin story.** Added an "Origin" panel to
+  `profile/README.md` (founder line + Galaxy Z Fold / Steam Deck origin story),
+  generated via `profile/scripts/build-panels.py` (new `origin.svg`/`.png`,
+  existing panel coordinate labels bumped). Added `my-skills` and `relay` to
+  the Open Source table and folded "AI-agent and developer tooling" into
+  the Work With Us blurb. On `shift9.dev`, swapped the copy in the "About"
+  window inside the interactive desktop (`EnterTheStudio.tsx`, opened from
+  the root page after the intro video) to the same founder/origin-story copy
+  - the `/studio` INSTRUMENT work-wall page was intentionally left untouched.
 
 ## Open work - 3 PRs awaiting review, none merged
 

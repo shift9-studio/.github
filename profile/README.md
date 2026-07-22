@@ -4,7 +4,8 @@
 <!-- ░░░░░░░░░░░░░░░░░░░░  NAV  ░░░░░░░░░░░░░░░░░░░░ -->
 <div align="center">
 
-[![What We Build](https://img.shields.io/badge/What_We_Build-0a0e1a?style=flat-square&logoColor=22d3ee)](#what-we-build)
+[![Origin](https://img.shields.io/badge/Origin-0a0e1a?style=flat-square&logoColor=22d3ee)](#origin)
+&nbsp;[![What We Build](https://img.shields.io/badge/What_We_Build-0a0e1a?style=flat-square&logoColor=22d3ee)](#what-we-build)
 &nbsp;[![Open Source](https://img.shields.io/badge/Open_Source-0a0e1a?style=flat-square&logo=github&logoColor=22d3ee)](#open-source)
 &nbsp;[![The Stack](https://img.shields.io/badge/The_Stack-0a0e1a?style=flat-square&logoColor=22d3ee)](#the-stack)
 &nbsp;[![Work With Us](https://img.shields.io/badge/Work_With_Us-0a0e1a?style=flat-square&logoColor=22d3ee)](#work-with-us)
@@ -27,6 +28,10 @@
 
 </div>
 
+## Origin
+
+<img src="./assets/panels/origin.png" width="100%" alt="Founded by Kariim — former restaurant GM, now builder. Built on a Galaxy Z Fold and a Steam Deck. The studio and its first shipped app, Just-a-Pinch, were both built this way — no dev machine, no office. The gear was never the point. The systems are.">
+
 ## What We Build
 
 One design system runs through everything — the studio site, the apps, and this page.
@@ -43,6 +48,8 @@ Public projects — games, tooling, and studio R&D.
 
 | Project | What it is | Stack |
 | :-- | :-- | :-- |
+| **[my-skills](https://github.com/Kariimc/my-skills)** | A 420-skill AI agent operating system — versioned skills, sub-agents, and safety gates across Claude Code and Codex | `Markdown` · `Python` |
+| **[relay](https://github.com/Kariimc/relay)** | A cross-surface handoff system that keeps AI coding agents in sync across machines | `TypeScript` |
 | **Titanium Forge Pro** | A UI/UX component workbench — live demos and copyable snippets (v2 of Neon Forge) | `React` · `TypeScript` |
 | **Midnight Return** | A Metroidvania platformer with hand-built movement and combat | `C#` |
 | **Omni-3D** | A modular toolkit for building 3D games | `TypeScript` |
@@ -75,7 +82,7 @@ Internal projects in progress.
 
 ## Work With Us
 
-Have a project? We take on **brand systems, production web apps, and the infrastructure behind them** — from a single landing page to a full design system shared across products. We design *and* ship, so one team carries it from first pixel to deploy.
+Have a project? We take on **brand systems, production web apps, and the infrastructure behind them** — apps and automations for hospitality & local business, plus AI-agent and developer tooling. We design *and* ship, so one team carries it from first pixel to deploy.
 
 <div align="center">
 

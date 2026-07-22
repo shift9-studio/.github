@@ -91,8 +91,16 @@ svg("intro.svg", 1200, 248, "X:001 · Y:STUDIO", "\n".join([
     t(60, 234, "and the systems that keep them running.", 21, MUTED, "400", SANS),
 ]))
 
+# ── ORIGIN (founder + hardware origin story) ────────────────────────────────
+svg("origin.svg", 1200, 178, "X:002 · Y:ORIGIN", "\n".join([
+    t(60, 56, "// FOUNDED BY KARIIM — FORMER RESTAURANT GM, NOW BUILDER", 16, SIGNAL, "700", MONO, "3"),
+    t(60, 98, "Built on a " + f'<tspan fill="{SIGNAL}">Galaxy Z Fold</tspan>' + " and a " + f'<tspan fill="{PULSE}">Steam Deck.</tspan>', 30, INK, "800", SANS, "0.5"),
+    t(60, 134, "The studio and its first shipped app, Just-a-Pinch, were both built this way —", 18.5, MUTED, "400", SANS),
+    t(60, 158, "no dev machine, no office. The gear was never the point. The systems are.", 18.5, MUTED, "400", SANS),
+]))
+
 # ── LEAD line ───────────────────────────────────────────────────────────────
-svg("lead.svg", 1200, 124, "X:002 · Y:SYSTEM", "\n".join([
+svg("lead.svg", 1200, 124, "X:003 · Y:SYSTEM", "\n".join([
     t(60, 56, "One design system runs through everything we make — " + f'<tspan fill="{SIGNAL}">site, apps, this page.</tspan>', 24, INK, "700", SANS),
     t(60, 90, "The same colors, type, and motion everywhere, so all our work feels like one studio.", 19, MUTED, "400", SANS),
 ]))
@@ -154,7 +162,7 @@ for ln in stack_lines:
         body.append(t(60, y, ln[0], 22, ln[1], "700", MONO))
         body.append(t(290, y, ln[2], 21, ln[3], "400", MONO))
     y += 38
-svg("stack.svg", 1200, y + 6, "X:003 · Y:STACK", "\n".join(body))
+svg("stack.svg", 1200, y + 6, "X:004 · Y:STACK", "\n".join(body))
 
 # ── CURRENTLY SHIPPING ──────────────────────────────────────────────────────
 ship = [
@@ -168,10 +176,10 @@ for code, rest in ship:
     body.append(t(92, y, code, 20, INK, "700", MONO))
     body.append(t(92 + len(code) * 13 + 24, y, rest, 19, MUTED, "400", SANS))
     y += 52
-svg("shipping.svg", 1200, y + 4, "X:004 · Y:SHIPPING", "\n".join(body))
+svg("shipping.svg", 1200, y + 4, "X:005 · Y:SHIPPING", "\n".join(body))
 
 # ── CONTACT (wraps mailto) ──────────────────────────────────────────────────
-svg("contact.svg", 1200, 150, "X:005 · Y:CONTACT", "\n".join([
+svg("contact.svg", 1200, 150, "X:006 · Y:CONTACT", "\n".join([
     t(60, 56, "// transmission open", 16, SIGNAL, "700", MONO, "4"),
     t(60, 104, "shift9.dev@gmail.com", 40, INK, "900", SANS, "0.5"),
     chip(642, 80, 150, "EMAIL  ↗", PULSE),
