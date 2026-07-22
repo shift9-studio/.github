@@ -262,7 +262,7 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
         float body = pow(vUv.y, 2.6);
         float edge = pow(sin(vUv.x * 3.14159), 2.4);
         float drift = 0.9 + 0.1 * sin(uTime * 0.35 + vUv.y * 8.0 + vUv.x * 6.0);
-        gl_FragColor = vec4(vec3(1.0), body * edge * drift * 0.01);
+        gl_FragColor = vec4(vec3(1.0), body * edge * drift * 0.006);
       }`,
     uniforms: { uTime: { value: 0 } },
     transparent: true,
@@ -277,23 +277,27 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   anims.push((t) => {
     volMat.uniforms.uTime.value = t;
   });
-  // layered halo doubles the key panel's bloom
-  const halo = engine.glow(0xffffff, 5.2);
-  halo.material.opacity = 0.1;
+  // ── Phase 4 rig (3d-master-modeler) — cool clinical studio, not warm ──
+  // the RectAreaLight KEY is emitted by softbox() above. This adds fill+rim.
+  // faint halo so the panel itself reads as a glowing source (not the wall)
+  const halo = engine.glow(0xffffff, 4.6);
+  halo.material.opacity = 0.09;
   halo.position.set(0, 6.05, 0);
   g.add(halo);
-  // soft frontal bounce — the photo's faces are white, not silhouetted
-  const bounce = new PointLight(0xf4f6f8, 48, 16, 2);
-  bounce.position.set(0, 1.7, 6.5);
-  g.add(bounce);
-  // wash for the cabinet wall — the photo's back unit is white, not shadowed
-  const cabinetWash = new PointLight(0xf6f7f9, 14, 9, 2);
-  cabinetWash.position.set(0, 4.2, -0.2);
-  g.add(cabinetWash);
-  // cool rims — lift the white edges off the black void
-  for (const rx of [-5.5, 5.5]) {
-    const rim = new PointLight(0xdfe8ff, 8, 10, 2);
-    rim.position.set(rx, 2.6, -4.2);
+  // FILL — cool, front-right, soft, ~1/4 key: opens the shadowed white faces
+  //   without punching a hotspot (kept forward of the wall on purpose)
+  const fill = new PointLight(0xe8eefc, 26, 22, 2);
+  fill.position.set(3.4, 2.0, 6.0);
+  g.add(fill);
+  // even top-down wash on the back unit — placed HIGH and pulled back so its
+  //   falloff pool lands above frame, not as a blob on the backsplash centre
+  const ambientLift = new PointLight(0xf2f5fb, 10, 30, 1.4);
+  ambientLift.position.set(0, 7.0, -1.0);
+  g.add(ambientLift);
+  // RIM — white, behind and above, draws the edge line off the black void
+  for (const rx of [-5.6, 5.6]) {
+    const rim = new PointLight(0xf0f4ff, 6, 9, 2);
+    rim.position.set(rx, 3.4, -4.6);
     g.add(rim);
   }
 
@@ -452,13 +456,9 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   // the niche — a real recess: lit back panel, shelf, warm light, shadows
   const nicheBack = new Mesh(
     new BoxGeometry(3.0, 1.34, 0.05),
-    new MeshPhysicalMaterial({
-      color: 0xd4d6da,
-      roughness: 0.55,
-      roughnessMap: peel,
-      envMap: env,
-      envMapIntensity: 0.22,
-    }),
+    // fully matte: the reference backsplash is flat clean white, no specular
+    // catch of the key panel (that read as a glow blob before)
+    new MeshStandardMaterial({ color: 0xdcdee2, roughness: 0.92, metalness: 0 }),
   );
   nicheBack.position.set(0, 2.13, -2.44);
   g.add(nicheBack);
@@ -472,7 +472,7 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   const nicheAO = aoStrip(2.96, 0.7, 0.7);
   nicheAO.position.set(0, 2.45, -2.41);
   g.add(nicheAO);
-  const nicheLight = new PointLight(0xfff3e2, 0.6, 3.0, 2);
+  const nicheLight = new PointLight(0xfff3e2, 0.3, 2.6, 2);
   nicheLight.position.set(0, 2.35, -1.9);
   g.add(nicheLight);
   // warm under-cabinet strip — premium kitchen cue, feeds the niche glow
