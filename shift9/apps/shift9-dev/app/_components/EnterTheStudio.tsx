@@ -583,23 +583,20 @@ export function EnterTheStudio() {
             <div className={s.wbody}>
               {openWin === "about" ? (
                 <div className={s.aboutBody}>
+                  <p>I&#8217;m Kariim &#8212; founder of Shift-9.</p>
                   <p>
-                    Technology was always the pull — life just kept scheduling
-                    around it. Between running restaurants as a GM and operations
-                    manager, I stopped waiting and went all in.
+                    I ran restaurants for a decade before I wrote a line of
+                    code. Now I build software: apps, tools, games, and the
+                    systems that run them.
                   </p>
                   <p>
-                    Now I design and build complete products solo: the app, the
-                    brand around it, and the systems that keep them running. The
-                    restaurant years taught me what most developers learn last —
-                    deadlines are real, the customer&#8217;s experience is the
-                    product, and shipping matters more than talking about shipping.
+                    Everything here &#8212; the studio itself, and
+                    Just-a-Pinch, my first shipped app, now live on Google
+                    Play &#8212; was built on a Samsung Galaxy Z Fold and a
+                    Steam Deck. No dev machine. No office. A folding phone, a
+                    handheld, and a refusal to wait for the right setup.
                   </p>
-                  <p>
-                    The work here is live and working, not mocked up. If you want
-                    someone who takes an idea and hands back a finished product,
-                    that&#8217;s the job I do.
-                  </p>
+                  <p>The gear was never the point. The systems are.</p>
                   <div className={s.sig}>&#8212; KARIIM &#183; SHIFT-9</div>
                   <div className={s.contact}>
                     Hire me for &#8594; full app builds &#183; web design &#183;
