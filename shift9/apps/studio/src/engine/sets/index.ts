@@ -16,7 +16,9 @@ export type SetBuilder = (
 ) => void;
 
 import { buildKitchen } from './kitchen';
+import { buildFluid } from './fluid';
 
 export const SET_BUILDERS: Partial<Record<SetKind, SetBuilder>> = {
   kitchen: buildKitchen,
+  fluid: buildFluid,
 };
