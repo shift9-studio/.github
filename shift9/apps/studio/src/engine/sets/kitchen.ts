@@ -17,6 +17,7 @@ import {
   AdditiveBlending,
   BoxGeometry,
   CanvasTexture,
+  CatmullRomCurve3,
   CircleGeometry,
   ConeGeometry,
   CylinderGeometry,
@@ -31,9 +32,11 @@ import {
   PointLight,
   RepeatWrapping,
   ShaderMaterial,
+  SphereGeometry,
   SRGBColorSpace,
-  TorusGeometry,
+  TubeGeometry,
   Vector2,
+  Vector3,
 } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { stageEnv } from '../environment';
@@ -398,14 +401,6 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
     envMap: env,
     envMapIntensity: 0.32,
   });
-  const chrome = new MeshStandardMaterial({
-    color: 0xe8eaec,
-    roughness: 0.12,
-    roughnessMap: noiseTex('chrome-r', 40, 26, 2),
-    metalness: 1.0,
-    envMap: env,
-    envMapIntensity: 1.35,
-  });
   const seamDark = new MeshStandardMaterial({ color: 0x8d9096, roughness: 0.6 });
 
   // ── textured concrete overlay on the shared stage floor ──
@@ -452,36 +447,92 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   islandShadow.position.y = 0.012;
   g.add(islandShadow);
 
-  // ── sink + gooseneck tap, right of centre on the worktop ──
-  const sinkRim = new Mesh(new BoxGeometry(0.92, 0.012, 0.5), chrome);
-  sinkRim.position.set(1.7, 1.225, -0.05);
-  g.add(sinkRim);
-  const sinkBasin = new Mesh(
-    new BoxGeometry(0.78, 0.02, 0.36),
-    new MeshStandardMaterial({
-      color: 0x9ba0a5,
-      roughness: 0.4,
-      metalness: 0.75,
-      envMap: env,
-      envMapIntensity: 0.7,
-    }),
-  );
-  sinkBasin.position.set(1.7, 1.226, -0.05);
-  g.add(sinkBasin);
+  // ── sink — a real recessed undermount basin, not a flat plate ──
+  const steel = new MeshStandardMaterial({
+    color: 0xb7bcc1,
+    roughness: 0.3,
+    roughnessMap: noiseTex('steel-r', 70, 30, 4),
+    metalness: 1.0,
+    envMap: env,
+    envMapIntensity: 1.1,
+  });
+  const steelDark = new MeshStandardMaterial({
+    color: 0x8f959b,
+    roughness: 0.38,
+    metalness: 1.0,
+    envMap: env,
+    envMapIntensity: 0.8,
+  });
+  const sink = new Group();
+  const BW = 0.82;
+  const BD = 0.44;
+  const DEPTH = 0.13;
+  // thin polished rim framing the cut in the worktop
+  const rim = new Mesh(new BoxGeometry(BW + 0.06, 0.014, BD + 0.06), steel);
+  rim.position.y = 0.004;
+  sink.add(rim);
+  // four basin walls + floor, tucked below the worktop surface
+  const wallMat = steelDark;
+  const wLR = new BoxGeometry(0.012, DEPTH, BD);
+  for (const wx of [-BW / 2, BW / 2]) {
+    const w = new Mesh(wLR, wallMat);
+    w.position.set(wx, -DEPTH / 2, 0);
+    sink.add(w);
+  }
+  const wFB = new BoxGeometry(BW, DEPTH, 0.012);
+  for (const wz of [-BD / 2, BD / 2]) {
+    const w = new Mesh(wFB, wallMat);
+    w.position.set(0, -DEPTH / 2, wz);
+    sink.add(w);
+  }
+  const basinFloor = new Mesh(new BoxGeometry(BW, 0.012, BD), steelDark);
+  basinFloor.position.y = -DEPTH;
+  basinFloor.receiveShadow = true;
+  sink.add(basinFloor);
+  // drain disc
+  const drain = new Mesh(new CylinderGeometry(0.03, 0.03, 0.006, 20), steel);
+  drain.position.set(0, -DEPTH + 0.006, 0);
+  sink.add(drain);
+  sink.position.set(1.72, 1.222, -0.02);
+  g.add(sink);
+
+  // ── gooseneck tap — one continuous swept tube (TubeGeometry) + lever ──
+  const brushed = new MeshStandardMaterial({
+    color: 0xc2c7cc,
+    roughness: 0.22,
+    roughnessMap: noiseTex('brushed-r', 60, 34, 6),
+    metalness: 1.0,
+    envMap: env,
+    envMapIntensity: 1.25,
+  });
   const tap = new Group();
-  const tapBase = new Mesh(new CylinderGeometry(0.035, 0.045, 0.05, 24), chrome);
-  tapBase.position.y = 0.025;
-  tap.add(tapBase);
-  const tapStem = new Mesh(new CylinderGeometry(0.021, 0.021, 0.42, 20), chrome);
-  tapStem.position.y = 0.23;
-  tap.add(tapStem);
-  const tapNeck = new Mesh(new TorusGeometry(0.12, 0.019, 14, 32, Math.PI), chrome);
-  tapNeck.position.set(-0.12, 0.44, 0);
-  tap.add(tapNeck);
-  const tapSpout = new Mesh(new CylinderGeometry(0.017, 0.017, 0.09, 14), chrome);
-  tapSpout.position.set(-0.24, 0.4, 0);
-  tap.add(tapSpout);
-  tap.position.set(2.18, 1.22, -0.42);
+  const base = new Mesh(new CylinderGeometry(0.04, 0.05, 0.045, 28), brushed);
+  base.position.y = 0.022;
+  tap.add(base);
+  // the gooseneck: rises, arcs forward over the basin, drops to the spout
+  const curve = new CatmullRomCurve3([
+    new Vector3(0, 0.04, 0),
+    new Vector3(0, 0.34, 0),
+    new Vector3(0, 0.5, 0.03),
+    new Vector3(0, 0.56, 0.14),
+    new Vector3(0, 0.5, 0.24),
+    new Vector3(0, 0.42, 0.26),
+  ]);
+  const neck = new Mesh(new TubeGeometry(curve, 48, 0.02, 18, false), brushed);
+  tap.add(neck);
+  // aerator tip at the spout
+  const aerator = new Mesh(new CylinderGeometry(0.026, 0.022, 0.03, 20), brushed);
+  aerator.position.set(0, 0.405, 0.26);
+  tap.add(aerator);
+  // single-lever handle, angled up off the base
+  const lever = new Mesh(new CylinderGeometry(0.012, 0.012, 0.17, 16), brushed);
+  lever.position.set(0.055, 0.12, -0.02);
+  lever.rotation.z = Math.PI / 5;
+  tap.add(lever);
+  const leverCap = new Mesh(new SphereGeometry(0.016, 16, 12), brushed);
+  leverCap.position.set(0.11, 0.19, -0.02);
+  tap.add(leverCap);
+  tap.position.set(2.18, 1.222, -0.42);
   tap.traverse((o) => {
     o.castShadow = true;
   });
@@ -535,6 +586,36 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   const stripLight = new PointLight(0xffe9cf, 0.22, 1.4, 2);
   stripLight.position.set(0, 2.7, -2.05);
   g.add(stripLight);
+
+  // ── fitted-kitchen detailing (3d-master-modeler Phase 2 refinement) ──
+  const reveal = new MeshStandardMaterial({ color: 0x9a9ea3, roughness: 0.7 });
+  // undermount shadow line under the worktop front lip — gives the slab weight
+  const underReveal = new Mesh(new BoxGeometry(6.2, 0.02, 0.02), reveal);
+  underReveal.position.set(0, 1.14, 0.86);
+  g.add(underReveal);
+  // handleless finger-pull reveals: thin dark gaps top-of-drawer / under-cabinet
+  const islandPull = new Mesh(new BoxGeometry(2.7, 0.02, 0.018), reveal);
+  islandPull.position.set(-0.05, 1.11, 0.802);
+  g.add(islandPull);
+  for (const cx of [-1.0, 0, 1.0]) {
+    // vertical door seams on the upper cabinet fronts (three fitted doors)
+    const v = new Mesh(new BoxGeometry(0.01, 0.9, 0.012), seamDark);
+    v.position.set(cx, 3.3, -1.94);
+    g.add(v);
+  }
+  // toe-kick shadow reveal at the base of the back towers
+  const toeKick = new Mesh(new BoxGeometry(4.6, 0.12, 0.02), reveal);
+  toeKick.position.set(0, 1.44, -1.92);
+  g.add(toeKick);
+  // tablet kickstand — the slab now rests on the counter instead of floating
+  const stand = new Mesh(
+    new BoxGeometry(0.3, 0.24, 0.02),
+    new MeshStandardMaterial({ color: 0x14161a, roughness: 0.5, metalness: 0.4, envMap: env }),
+  );
+  stand.position.set(-1.5, 1.44, -0.02);
+  stand.rotation.x = 0.42;
+  stand.castShadow = true;
+  g.add(stand);
   // props on the shelf — real refractive-glass vases, turned from a silhouette
   //   profile (LatheGeometry). MeshPhysicalMaterial transmission = true glass:
   //   light passes through, refracts (IOR 1.5), picks up the rim highlight.
