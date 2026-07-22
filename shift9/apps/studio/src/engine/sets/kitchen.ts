@@ -22,6 +22,7 @@ import {
   CylinderGeometry,
   DoubleSide,
   Group,
+  LatheGeometry,
   Mesh,
   MeshBasicMaterial,
   MeshPhysicalMaterial,
@@ -32,12 +33,18 @@ import {
   ShaderMaterial,
   SRGBColorSpace,
   TorusGeometry,
+  Vector2,
 } from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { stageEnv } from '../environment';
 import type { SetBuilder } from './index';
 
 /* ── shared, generated-once assets (survive set streaming in/out) ────────── */
+
+const smoothstep01 = (e0: number, e1: number, v: number): number => {
+  const t = Math.min(1, Math.max(0, (v - e0) / (e1 - e0)));
+  return t * t * (3 - 2 * t);
+};
 
 const texCache = new Map<string, CanvasTexture>();
 const cached = (key: string, make: () => CanvasTexture): CanvasTexture => {
@@ -68,26 +75,69 @@ const noiseTex = (key: string, base: number, amp: number, scale: number): Canvas
     return t;
   });
 
-/** Corian-style worktop speckle — near-white mineral surface, fine flecks. */
+/** White quartz/marble worktop — domain-warped turbulent veining (real archviz
+    technique), near-white with faint warm-grey veins and fine mineral flecks.
+    Reads as photographed stone without a photo scan (Poly Haven is firewalled). */
 const counterTex = (): CanvasTexture =>
   cached('counter', () => {
+    const S = 1024;
     const c = document.createElement('canvas');
-    c.width = c.height = 512;
+    c.width = c.height = S;
     const x = c.getContext('2d')!;
-    x.fillStyle = '#f5f6f8';
-    x.fillRect(0, 0, 512, 512);
-    for (let i = 0; i < 2600; i++) {
-      const g = 214 + Math.random() * 34;
-      x.fillStyle = `rgba(${g},${g},${g + 3},${0.25 + Math.random() * 0.5})`;
-      const r = Math.random() < 0.92 ? 0.7 : 1.6;
-      x.beginPath();
-      x.arc(Math.random() * 512, Math.random() * 512, r, 0, Math.PI * 2);
-      x.fill();
+    x.fillStyle = '#f4f5f7';
+    x.fillRect(0, 0, S, S);
+    // value-noise field + fractal turbulence, sampled to place vein strokes
+    const rand = (i: number, j: number): number => {
+      const s = Math.sin(i * 127.1 + j * 311.7) * 43758.5453;
+      return s - Math.floor(s);
+    };
+    const smooth = (t: number): number => t * t * (3 - 2 * t);
+    const vnoise = (px: number, py: number): number => {
+      const xi = Math.floor(px);
+      const yi = Math.floor(py);
+      const xf = smooth(px - xi);
+      const yf = smooth(py - yi);
+      const a = rand(xi, yi);
+      const b = rand(xi + 1, yi);
+      const c2 = rand(xi, yi + 1);
+      const d = rand(xi + 1, yi + 1);
+      return a + (b - a) * xf + (c2 - a) * yf + (a - b - c2 + d) * xf * yf;
+    };
+    const fbm = (px: number, py: number): number => {
+      let v = 0;
+      let amp = 0.5;
+      let f = 1;
+      for (let o = 0; o < 5; o++) {
+        v += amp * vnoise(px * f, py * f);
+        f *= 2;
+        amp *= 0.5;
+      }
+      return v;
+    };
+    // draw veins where a domain-warped ridged field is near a threshold
+    const img = x.getImageData(0, 0, S, S);
+    for (let py = 0; py < S; py++) {
+      for (let px = 0; px < S; px++) {
+        const u = (px / S) * 6;
+        const v = (py / S) * 6;
+        const warp = fbm(u + 5.2, v + 1.3) * 2.4;
+        const ridged = Math.abs(fbm(u + warp, v - warp) - 0.5);
+        const vein = smoothstep01(0.03, 0.0, ridged); // 1 on the vein line
+        const soft = smoothstep01(0.09, 0.02, ridged) * 0.35;
+        const fleck = rand(px * 1.7, py * 1.3) > 0.985 ? 0.08 : 0;
+        const dark = vein * 0.14 + soft * 0.06 + fleck;
+        const i4 = (py * S + px) * 4;
+        img.data[i4] = 244 - dark * 150;
+        img.data[i4 + 1] = 245 - dark * 148;
+        img.data[i4 + 2] = 247 - dark * 140;
+        img.data[i4 + 3] = 255;
+      }
     }
+    x.putImageData(img, 0, 0);
     const t = new CanvasTexture(c);
     t.colorSpace = SRGBColorSpace;
     t.wrapS = t.wrapT = RepeatWrapping;
-    t.repeat.set(2, 1);
+    t.repeat.set(1.6, 0.9);
     return t;
   });
 
@@ -485,49 +535,83 @@ export const buildKitchen: SetBuilder = (engine, g, anims) => {
   const stripLight = new PointLight(0xffe9cf, 0.22, 1.4, 2);
   stripLight.position.set(0, 2.7, -2.05);
   g.add(stripLight);
-  // props on the shelf — stoneware bottle, frosted glass bottle, glazed jar
-  const bottleA = new Mesh(
-    new CylinderGeometry(0.05, 0.05, 0.3, 24),
-    new MeshPhysicalMaterial({
-      color: 0xd9d3c5,
-      roughness: 0.34,
-      clearcoat: 0.7,
-      clearcoatRoughness: 0.3,
+  // props on the shelf — real refractive-glass vases, turned from a silhouette
+  //   profile (LatheGeometry). MeshPhysicalMaterial transmission = true glass:
+  //   light passes through, refracts (IOR 1.5), picks up the rim highlight.
+  const glassVase = (
+    profile: [number, number][],
+    tint: number,
+    tintDepth: number,
+  ): Mesh => {
+    const pts = profile.map(([r, y]) => new Vector2(r, y));
+    const geo = new LatheGeometry(pts, 48);
+    const mat = new MeshPhysicalMaterial({
+      color: tint,
+      roughness: 0.06,
+      metalness: 0,
+      transmission: 1,
+      ior: 1.5,
+      thickness: tintDepth,
+      attenuationColor: tint,
+      attenuationDistance: 0.5,
+      clearcoat: 1,
+      clearcoatRoughness: 0.08,
       envMap: env,
-      envMapIntensity: 0.5,
-    }),
+      envMapIntensity: 0.9,
+      transparent: true,
+    });
+    const m = new Mesh(geo, mat);
+    m.castShadow = true;
+    return m;
+  };
+  // tall slim carafe — clear glass
+  const vaseA = glassVase(
+    [
+      [0.0, 0.0],
+      [0.055, 0.0],
+      [0.06, 0.02],
+      [0.06, 0.24],
+      [0.03, 0.3],
+      [0.028, 0.34],
+      [0.03, 0.36],
+      [0.0, 0.36],
+    ],
+    0xeef4f2,
+    0.05,
   );
-  bottleA.position.set(-0.38, 1.68, -2.14);
-  bottleA.castShadow = true;
-  g.add(bottleA);
-  const bottleB = new Mesh(
-    new CylinderGeometry(0.04, 0.04, 0.21, 24),
-    new MeshPhysicalMaterial({
-      color: 0xdfe6e3,
-      roughness: 0.22,
-      transmission: 0.55,
-      thickness: 0.06,
-      envMap: env,
-      envMapIntensity: 0.6,
-    }),
+  vaseA.position.set(-0.42, 1.53, -2.12);
+  g.add(vaseA);
+  // rounded bud vase — faint sea-green glass
+  const vaseB = glassVase(
+    [
+      [0.0, 0.0],
+      [0.05, 0.0],
+      [0.075, 0.06],
+      [0.07, 0.13],
+      [0.04, 0.19],
+      [0.038, 0.22],
+      [0.0, 0.22],
+    ],
+    0xd8e8e0,
+    0.06,
   );
-  bottleB.position.set(-0.54, 1.635, -2.2);
-  bottleB.castShadow = true;
-  g.add(bottleB);
-  const jar = new Mesh(
-    new CylinderGeometry(0.065, 0.065, 0.09, 24),
-    new MeshPhysicalMaterial({
-      color: 0xe7e2d8,
-      roughness: 0.3,
-      clearcoat: 0.8,
-      clearcoatRoughness: 0.35,
-      envMap: env,
-      envMapIntensity: 0.5,
-    }),
+  vaseB.position.set(-0.58, 1.53, -2.18);
+  g.add(vaseB);
+  // low tumbler — clear, thick base
+  const vaseC = glassVase(
+    [
+      [0.0, 0.0],
+      [0.06, 0.0],
+      [0.062, 0.02],
+      [0.055, 0.1],
+      [0.05, 0.12],
+      [0.0, 0.12],
+    ],
+    0xeef2f4,
+    0.07,
   );
-  jar.position.set(-0.18, 1.575, -2.17);
-  jar.castShadow = true;
-  g.add(jar);
+  vaseC.position.set(-0.2, 1.53, -2.16);
+  g.add(vaseC);
   const backShadow = contactShadow(5.2, 1.6, 0.45);
   backShadow.position.set(0, 0.012, -2.2);
   g.add(backShadow);
