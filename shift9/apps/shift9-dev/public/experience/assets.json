@@ -367,7 +367,21 @@
       "size": "1920x1080",
       "credits": 17.5,
       "startFrame": "6160c4c4-f9d7-441d-b312-883fbc2e8dc1",
-      "note": "Screen wakes to a featureless glow on purpose - the real desktop UI takes over from the live page, so the film never draws an interface that could drift from it.",
+      "note": "Screen wakes to a featureless glow on purpose - the real desktop UI takes over from the live page, so the film never draws an interface that could drift from it. Rejected: the sit read as pushing the chair aside rather than sitting, and the hand was a fingerless mitten.",
+      "approved": false
+    },
+    {
+      "id": "opening-4-clip-v3",
+      "path": "opening/04-sit-mouse-screen-v3.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_165303_560bdc6c-67a8-4a5f-8c14-75b304180f10.mp4",
+      "job": "560bdc6c-67a8-4a5f-8c14-75b304180f10",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 10,
+      "size": "1920x1080",
+      "credits": 17.5,
+      "startFrame": "6160c4c4-f9d7-441d-b312-883fbc2e8dc1",
+      "note": "Awaiting Kariim's review. Reshot for a weighted vertical drop into the chair plus a roll-in to the desk, and for five separate crocheted fingers on the mouse. Screen stays featureless by design.",
       "approved": false
     }
   ]
