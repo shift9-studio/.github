@@ -245,7 +245,9 @@
   z-index: 10;
   display: none;
   flex-direction: column;
-  background: var(--w-bg);
+  /* The live ASCII wallpaper sits behind everything; the veil below supplies
+     the desktop tint, so this stays transparent. */
+  background: transparent;
   color: var(--w-txt);
   opacity: 0;
   transform-origin: 50% 46%;
@@ -940,5 +942,225 @@
     height: 100%;
     max-height: 100%;
     border-radius: 0;
+  }
+}
+
+/* ---------- LIVE ASCII WALLPAPER ----------
+   The desktop background is the real Shift-9 banner, resampled to a 170x57
+   character grid by scripts/build-ascii-art.py and animated on a canvas
+   (AsciiWallpaper.tsx). The veil above it supplies the Windows tint and keeps
+   every existing dark-on-light contrast pair exactly as it was — it is thinnest
+   over the icon grid, where the artwork is meant to read, and thickest under
+   the chrome, where text has to stay crisp. */
+.wallLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--w-bg);
+  overflow: hidden;
+}
+.wallCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.5;
+}
+.wallVeil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      74% 58% at 56% 52%,
+      rgba(236, 234, 223, 0.42) 0%,
+      rgba(236, 234, 223, 0.68) 46%,
+      rgba(236, 234, 223, 0.88) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(236, 234, 223, 0.9) 0%,
+      rgba(236, 234, 223, 0.34) 22%,
+      rgba(236, 234, 223, 0.34) 78%,
+      rgba(236, 234, 223, 0.92) 100%
+    );
+}
+
+/* Chrome sits above the wallpaper and keeps its own solid surfaces. */
+.titlerow,
+.searchrow,
+.main,
+.taskbar,
+.helpdot {
+  position: relative;
+  z-index: 1;
+}
+.titlerow,
+.searchrow {
+  background: rgba(236, 234, 223, 0.82);
+  backdrop-filter: blur(9px) saturate(1.05);
+}
+.side {
+  backdrop-filter: blur(9px) saturate(1.05);
+}
+.taskbar {
+  backdrop-filter: blur(14px) saturate(1.1);
+}
+
+/* ---------- DESKTOP ICON HOVER ----------
+   Pointer and keyboard land on the same state; nothing is hover-only. Every
+   transform is inside a no-preference block, so reduced motion keeps the full
+   colour/contrast response and drops only the movement. */
+.dicon {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid transparent;
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.28s ease,
+    width 0.3s ease,
+    padding 0.3s ease;
+}
+.dicon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(247, 246, 241, 0.72);
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.dicon:hover,
+.dicon:focus-visible {
+  background: rgba(11, 107, 214, 0.1);
+  border-color: rgba(11, 107, 214, 0.34);
+  box-shadow: 0 14px 30px -14px rgba(15, 23, 42, 0.5);
+  outline: none;
+}
+.dicon:hover::before,
+.dicon:focus-visible::before {
+  opacity: 1;
+}
+.dicon:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue),
+    0 14px 30px -14px rgba(15, 23, 42, 0.5);
+}
+.dicon .fname {
+  transition: color 0.22s ease;
+}
+.dicon:hover .fname,
+.dicon:focus-visible .fname {
+  color: var(--blue);
+}
+.dicon .fcount {
+  transition: color 0.22s ease, opacity 0.22s ease;
+  opacity: 0.85;
+}
+.dicon:hover .fcount,
+.dicon:focus-visible .fcount {
+  opacity: 1;
+}
+
+/* The folder icon reacts as an object: tab lifts, lip swings open, the glyph
+   rises out of the shadow. */
+.fico .tab,
+.fico .lip,
+.fico .body2,
+.fico .gly {
+  transition:
+    transform 0.34s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.24s ease,
+    filter 0.24s ease;
+}
+.fico .gly {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dicon {
+    transition:
+      background 0.22s ease,
+      border-color 0.22s ease,
+      box-shadow 0.28s ease,
+      transform 0.34s cubic-bezier(0.2, 0.7, 0.2, 1),
+      width 0.3s ease,
+      padding 0.3s ease;
+  }
+  .dicon:hover,
+  .dicon:focus-visible {
+    transform: translateY(-6px);
+  }
+  .dicon:active {
+    transform: translateY(-2px) scale(0.985);
+  }
+  .dicon:hover .fico .tab,
+  .dicon:focus-visible .fico .tab {
+    transform: translate(2px, -3px);
+  }
+  .dicon:hover .fico .gly,
+  .dicon:focus-visible .fico .gly {
+    transform: translateY(-5px) scale(1.08);
+    filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.35));
+  }
+
+  /* A single sheen crosses the tile on hover — one pass, not a loop. */
+  .dicon::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    overflow: hidden;
+    background: linear-gradient(
+      105deg,
+      transparent 38%,
+      rgba(255, 255, 255, 0.62) 50%,
+      transparent 62%
+    );
+    background-size: 260% 100%;
+    background-position: 130% 0;
+    opacity: 0;
+    transition: background-position 0.62s ease, opacity 0.2s ease;
+  }
+  .dicon:hover::after,
+  .dicon:focus-visible::after {
+    opacity: 1;
+    background-position: -30% 0;
+  }
+}
+
+/* The lip swinging forward is a 3D effect — desktop pointers only. Touch and
+   coarse pointers keep the flat layout, which loses nothing. */
+@media (hover: hover) and (pointer: fine) and (min-width: 900px) {
+  .fico {
+    perspective: 420px;
+  }
+  .fico .lip {
+    transform-origin: 50% 0;
+  }
+  .dicon:hover .fico .lip,
+  .dicon:focus-visible .fico .lip {
+    transform: rotateX(-26deg) translateY(1px);
+  }
+  .dicon:hover .fico .body2,
+  .dicon:focus-visible .fico .body2 {
+    transform: translateY(2px);
+  }
+}
+
+/* The shift9.dev door tile keeps its own accent treatment on top. */
+.dicon.site:hover,
+.dicon.site:focus-visible {
+  border-color: rgba(11, 107, 214, 0.55);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dicon.site:hover .appico,
+  .dicon.site:focus-visible .appico {
+    transform: translateY(-2px) scale(1.07);
   }
 }

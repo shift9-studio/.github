@@ -26,6 +26,7 @@
    ──────────────────────────────────────────────────────────────────────── */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { SHIFT9_LOGO } from "./logo-data";
 
@@ -412,6 +413,14 @@ export function EnterTheStudio() {
       {/* STAGE 2 — the desktop, mirroring the video's final frame. Always
           rendered so it is the SSR-legible static fallback. */}
       <div className={`${s.desktop} ${s.show} ${s.on}`} ref={deskRef}>
+        {/* Live wallpaper — the real banner as an animated ASCII field, with
+            the Windows tint veiled over it. Decorative; the chrome above is
+            the content. */}
+        <div className={s.wallLayer} aria-hidden="true">
+          <AsciiWallpaper className={s.wallCanvas} />
+          <div className={s.wallVeil} />
+        </div>
+
         <div className={s.titlerow}>
           <span className={s.brand}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
