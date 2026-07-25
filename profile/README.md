@@ -50,7 +50,7 @@ Public projects — games, tooling, and studio R&D.
 | :-- | :-- | :-- |
 | **[my-skills](https://github.com/Kariimc/my-skills)** | A 420-skill AI agent operating system — versioned skills, sub-agents, and safety gates across Claude Code and Codex | `Markdown` · `Python` |
 | **[relay](https://github.com/Kariimc/relay)** | A cross-surface handoff system that keeps AI coding agents in sync across machines | `TypeScript` |
-| **Titanium Forge Pro** | A UI/UX component workbench — live demos and copyable snippets (v2 of Neon Forge) | `React` · `TypeScript` |
+| **Titanium Forge Pro** | A UI/UX component workbench — live demos and copyable snippets | `React` · `TypeScript` |
 | **Midnight Return** | A Metroidvania platformer with hand-built movement and combat | `C#` |
 | **Omni-3D** | A modular toolkit for building 3D games | `TypeScript` |
 | **WinFix** | A utility that fixes the Windows 10 Home upgrade bug | `Python` |

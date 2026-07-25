@@ -43,7 +43,7 @@ export type CardVariant =
   | "scoreboard"
   | "corridor"
   | "schematic"
-  | "versions"
+  | "swatch"
   | "panel"
   | "terminal"
   | "wireframe"
@@ -133,14 +133,14 @@ export const SET_PIECES: SetPiece[] = [
   },
   {
     n: "08",
-    title: "Neon Forge → Titanium Forge Pro",
-    status: "V1 SHIPPED · V2 IN DEV",
+    title: "Titanium Forge Pro",
+    status: "IN DEV",
     resolution: "volatile",
-    note: "A UI/UX workbench in two generations. Neon Forge (v1) is a dark-mode React component library with live demos and copyable snippets on Cloudflare Workers. Titanium Forge Pro (v2) is the full rebuild, in active development.",
+    note: "A UI/UX component workbench: a dark-mode React component library with live demos and copyable snippets you can lift straight into a project. In active development.",
     tags: ["React", "TypeScript", "Design System", "Cloudflare"],
     plate: `${BASE}08-titanium-forge.png`,
     clip: `${BASE}08-titanium-forge.mp4`,
-    card: "versions",
+    card: "swatch",
   },
   {
     n: "09",

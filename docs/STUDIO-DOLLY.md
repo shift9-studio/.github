@@ -44,7 +44,7 @@ No additions. No reordering. No status upgrades.
 | 05 | **Voxel Arcade Basketball** | IN DEV | A retro-futuristic arcade cabinet against a dark brick wall. The screen shows pixel-art C# code. The cabinet flickers with neon electric blue and orange. |
 | 06 | **Midnight Return** | IN DEV | A heavy metallic industrial corridor soundstage. Moody atmospheric lighting dominated by flickering saturated industrial blues and oranges. |
 | 07 | **Game Design Forge** | R&D | A cluttered R&D workbench. Screens show raw C# code and engine schematics. Soldering iron visible. Accent light is deep, hot orange. |
-| 08 | **Neon Forge → Titanium Forge Pro** | V1 SHIPPED · V2 IN DEV | A brutalist steel structure. V1 is a resolved glowing neon armature. V2 is a massive raw titanium press actively extruding metal geometry, glowing white-hot. |
+| 08 | **Titanium Forge Pro** | IN DEV | A brutalist steel structure: a massive raw titanium press actively extruding metal geometry, glowing white-hot. **Revised 2026-07-25 at Kariim's direction**: the earlier generation is no longer referenced anywhere; Titanium Forge Pro is v1. |
 | 09 | **INSTRUMENT** | LIVE | A dark monolithic soundstage. A massive minimalist sculptural form — a brutalist synthesizer — centred, pulsing with soft rhythmic electric blue. |
 | 10 | **Automation Systems** | LIVE | A clean sterile data centre. Server racks receding into darkness. A single perfectly resolved robotic arm performing a precise repetitive assembly task. |
 | 11 | **Omni-3D** | IN DEV | A dark warehouse. A volumetric 3D humanoid mech projected in air — unfinished and glitching, visible wireframe artifacts and missing geometry. |

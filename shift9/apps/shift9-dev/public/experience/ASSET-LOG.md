@@ -31,8 +31,8 @@ geometry and framing carry over exactly.
 | 06 | Midnight Return | IN DEV | clip `set-pieces/06-midnight-return.mp4` — 5s, a shadowy figure crosses the crypt and climbs to the moonlit hall | `894a6085-89c3-45ea-a1ab-019fad0bcbfd` | 8.75 | **Approved** |
 | 07 | Game Design Forge | R&D | plate `set-pieces/07-game-design-forge.png` | `6857d218-47d7-40f6-873a-e9547855fcc8` | 4 | **Approved** |
 | 07 | Game Design Forge | R&D | clip `set-pieces/07-game-design-forge-v2.mp4` — 5s, code scrolls, node graph pulses, the wireframe object fails to resolve | `696b118b-36a6-47a1-a8c3-c16d0d50b80d` | 8.75 | **Approved** |
-| 08 | Neon Forge → Titanium Forge Pro | V1 SHIPPED · V2 IN DEV | plate `set-pieces/08-titanium-forge.png` | `475c8ab3-02de-4805-9f2f-8f8eb1187fe0` | 4 | **Approved** |
-| 08 | Neon Forge → Titanium Forge Pro | V1 SHIPPED · V2 IN DEV | clip `set-pieces/08-titanium-forge.mp4` — 5s, the press extrudes white-hot titanium, heat shimmer only | `5a3f9997-e4c6-42fe-849e-dec9cd82176a` | 8.75 | **Approved** |
+| 08 | Titanium Forge Pro | IN DEV | plate `set-pieces/08-titanium-forge.png` | `475c8ab3-02de-4805-9f2f-8f8eb1187fe0` | 4 | **Approved** |
+| 08 | Titanium Forge Pro | IN DEV | clip `set-pieces/08-titanium-forge.mp4` — 5s, the press extrudes white-hot titanium, heat shimmer only | `5a3f9997-e4c6-42fe-849e-dec9cd82176a` | 8.75 | **Approved** |
 | 09 | INSTRUMENT | LIVE | plate `set-pieces/09-instrument.png` | `dec8c910-915c-400d-9c21-6186364332e3` | 4 | **Approved** |
 | 09 | INSTRUMENT | LIVE | clip `set-pieces/09-instrument.mp4` — 5s, camera locked, only light moves: keybed slots step like a sequencer, faders fill and drain | `bd510c87-2e8c-4c73-8b5f-94eee0490545` | 8.75 | **Approved** |
 | 10 | Automation Systems | LIVE | plate `set-pieces/10-automation-systems.png` | `50e5605b-d5d8-4a6e-b598-3406778af92b` | 4 | **Approved** |

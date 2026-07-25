@@ -127,10 +127,10 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
     n: "prototype note: WinFix = renamed whome-diagnostic · Titanium Forge Pro folds in when the zip lands",
     items: [
       {
-        n: "Neon Forge → Titanium Forge Pro",
-        s: "V1 SHIPPED · V2 IN DEV",
-        sc: "ship",
-        d: "A UI/UX workbench in two generations. Neon Forge (v1): dark-mode React component library with live demos and copyable snippets, deployed on Cloudflare Workers. Titanium Forge Pro (v2): the full rebuild, in active development.",
+        n: "Titanium Forge Pro",
+        s: "IN DEV",
+        sc: "dev",
+        d: "A UI/UX component workbench — a dark-mode React component library with live demos and copyable snippets you can lift straight into a project. In active development.",
         tags: ["React", "TypeScript", "Design System", "Cloudflare"],
       },
       {
