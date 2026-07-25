@@ -24,6 +24,10 @@ geometry and framing carry over exactly.
 | 04 | Lumen Projection Mapper | IN DEV | clip `set-pieces/04-lumen.mp4` — 10s, calibration locks then the acid-trip pass floods the boxes | `d8e85d5d-7938-4161-a66d-0d6e78356f48` | 17.5 | **Approved** |
 | 05 | Voxel Arcade Basketball | IN DEV | plate `set-pieces/05-voxel-arcade-v3.png` | `d15474fb-ba16-44c5-a0a1-12b39a306cf7` | 4 | **Approved** |
 | 05 | Voxel Arcade Basketball | IN DEV | clip `set-pieces/05-voxel-arcade-v3.mp4` — 5s, the voxel shot drops, CRT tears, a neon segment dies | `71b0e7dd-0002-4493-b8d5-d7cfa7e38fe7` | 8.75 | **Approved** |
+| 06 | Midnight Return | IN DEV | plate `set-pieces/06-midnight-return.png` | `bf53521d-78e1-4c27-9afd-f234bab81194` | 4 | **Approved** |
+| 06 | Midnight Return | IN DEV | clip `set-pieces/06-midnight-return.mp4` — 5s, a shadowy figure crosses the crypt and climbs to the moonlit hall | `894a6085-89c3-45ea-a1ab-019fad0bcbfd` | 8.75 | **Approved** |
+| 07 | Game Design Forge | R&D | plate `set-pieces/07-game-design-forge.png` | `6857d218-47d7-40f6-873a-e9547855fcc8` | 4 | **Approved** |
+| 07 | Game Design Forge | R&D | clip `set-pieces/07-game-design-forge-v2.mp4` — 5s, code scrolls, node graph pulses, the wireframe object fails to resolve | `696b118b-36a6-47a1-a8c3-c16d0d50b80d` | 8.75 | **Approved** |
 
 **Video settings that produced the clip** (the canary that proved the pipeline):
 `kling3_0`, `mode: pro`, `sound: off`, `duration: 5`, `aspect_ratio: 16:9`,
@@ -38,9 +42,13 @@ Rejected takes, kept so the same mistake is not paid for twice:
 | `174ee312-98be-4ac8-820c-d09ac89d819b` | Camera too close. The set-piece has to read as a lit diorama on a huge dark stage — subject in the middle third, deep negative space around it. Every later prompt bakes that framing in. |
 | `f7ac1b74-11fa-44a0-b4f5-67f44de03e67` + `084cc877-6039-4504-8ea6-248dcfc1afe6` | Voxel Arcade take 1: no Shift-9 branding on the cabinet. |
 | `3a353f68-ee83-443f-8435-3490f5a3f376` | Voxel Arcade take 2: the marquee rendered as a separate sign hung on the brick wall instead of the cabinet's own header. Ask for a built-in header flush with the cabinet body, same width, no gap, nothing mounted on the wall. |
+| `a656da8f-d456-47d9-ab8f-6bf726f08986` | Midnight Return take 1: shot as a sci-fi industrial corridor. The project is a metroidvania in the SOTN / Dead Cells lineage — the set is the level itself, a gothic castle cutaway. |
+| `f203d451-852b-436d-9042-6c7e369e47be` | Midnight Return take 2: right subject, wrong staging. It filled the frame as a flat slab with hard rectangular edges instead of reading as a lit object standing on the stage floor. Every set-piece is an object in a black room with a floor under it and deep negative space around it. |
+| `328b2db7-48e8-458c-88e5-0704533c6277` | Midnight Return take 3: staging fixed, lighting too flat and grey. Take 4 pushed a volumetric moonbeam, hot torch bloom, a cool rim separating the silhouette from the void, and self-lit cyan wireframe. |
+| `6b1a1d3b-d6b0-4e73-a148-b010c9b2a42a` | Game Design Forge clip take 1: the soldering iron burned with an actual flame. It is an electric iron — a faint heat shimmer above the tip is right, fire is not. |
 | `c0236258-5dbd-4dbf-9f84-92f099a6a4cb` | Smoke. The fluid rendered as vapour rather than liquid, and two haze wisps drifted in the black outside the glass. Every later video prompt now forbids smoke/haze/mist/fog by name and asks for sharp-edged liquid ribbons — glowing ink in water, not gas. |
 
-**Still to shoot:** 06 Midnight Return · 07 Game Design Forge · 08 Neon Forge →
+**Still to shoot:** 08 Neon Forge →
 Titanium Forge Pro · 09 INSTRUMENT · 10 Automation Systems · 11 Omni-3D ·
 12 WinFix. **03 Learning App artwork is supplied — never regenerate it.**
 
