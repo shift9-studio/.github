@@ -34,6 +34,8 @@ geometry and framing carry over exactly.
 | 09 | INSTRUMENT | LIVE | clip `set-pieces/09-instrument.mp4` — 5s, camera locked, only light moves: keybed slots step like a sequencer, faders fill and drain | `bd510c87-2e8c-4c73-8b5f-94eee0490545` | 8.75 | **Approved** |
 | 10 | Automation Systems | LIVE | plate `set-pieces/10-automation-systems.png` | `50e5605b-d5d8-4a6e-b598-3406778af92b` | 4 | **Approved** |
 | 10 | Automation Systems | LIVE | clip `set-pieces/10-automation-systems.mp4` — 5s, the arm runs a hypnotic repeating sled insertion, LED grids ripple down the aisle | `5815afff-1edf-4a6d-afd8-0ad868d69939` | 8.75 | **Approved** |
+| 11 | Omni-3D | IN DEV | plate `set-pieces/11-omni-3d.png` | `ea16058a-5f08-453e-bb8f-007e413628b8` | 4 | **Approved** |
+| 11 | Omni-3D | IN DEV | clip `set-pieces/11-omni-3d.mp4` — 5s, the mech hologram tries to resolve, collapses back to wireframe, tears and judders | `726bc8fc-7a4c-437b-91b7-9efc6ca3a45a` | 8.75 | **Approved** |
 
 **Video settings that produced the clip** (the canary that proved the pipeline):
 `kling3_0`, `mode: pro`, `sound: off`, `duration: 5`, `aspect_ratio: 16:9`,

@@ -204,6 +204,19 @@
       "size": "1376x768",
       "credits": 4,
       "approved": true
+    },
+    {
+      "id": "set-piece-11-clip",
+      "path": "set-pieces/11-omni-3d.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_142831_726bc8fc-7a4c-437b-91b7-9efc6ca3a45a.mp4",
+      "job": "726bc8fc-7a4c-437b-91b7-9efc6ca3a45a",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "ea16058a-5f08-453e-bb8f-007e413628b8",
+      "approved": true
     }
   ]
 }
