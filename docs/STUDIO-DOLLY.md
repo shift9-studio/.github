@@ -39,7 +39,7 @@ No additions. No reordering. No status upgrades.
 |---|---|---|---|
 | 01 | **Just a Pinch** | LIVE | Stark, surgically lit, brilliant white minimalist kitchen counter against absolute black. A tablet displays the live pinch.shift9.dev interface. |
 | 02 | **Flow State** | SHIPPING | A dark obsidian studio space. A perfectly clear vessel holds a glowing low-viscosity blue fluid in complex laminar flow. Lit to emphasise refraction. |
-| 03 | **Learning App** | SHIPPING | A minimalist floating cubic structure in architectural concrete. Clean sharp internal light reveals a geometric UI projected onto the cube's inner walls. **Artwork is supplied — never regenerate this tile.** |
+| 03 | **Learning App** | SHIPPING | A warm children's reading nook standing as an island of honey-coloured light in the black void: a low rounded play platform, a chunky tablet running a friendly early-reading interface, and three crocheted plush animal characters — fox, owl, rabbit — gathered around it. Real yarn fibre, real subsurface. **Revised 2026-07-25 at Kariim's direction**: this tile was previously frozen to supplied artwork; he asked for it to be generated to this brief instead. |
 | 04 | **Lumen Projection Mapper** | IN DEV | A dark room. A large stack of plain white geometric boxes, centred, with a projector beam raking across them and dust motes in the light. **The clip is the point here** — it runs the real projection-mapping sequence you see on stage: calibration grid snapping onto the box faces and locking to the edges, then the mapped show taking over across a few distinct passes (a saturated acid-trip pass, a retro video-game pass, and a hard architectural deconstruction pass where the boxes appear to open, slide and collapse in light). In dev, so the calibration visibly fights before it locks and the map tears at the seams. Needs 10s. |
 | 05 | **Voxel Arcade Basketball** | IN DEV | A retro-futuristic arcade cabinet against a dark brick wall. The screen shows pixel-art C# code. The cabinet flickers with neon electric blue and orange. |
 | 06 | **Midnight Return** | IN DEV | A heavy metallic industrial corridor soundstage. Moody atmospheric lighting dominated by flickering saturated industrial blues and oranges. |
@@ -54,8 +54,9 @@ No additions. No reordering. No status upgrades.
 
 - The master grid **mislabels tile 04** as "05 Voxel Arcade Basketball." Tile 04
   is **Lumen Projection Mapper**. The roster above is correct; the grid is not.
-- The grid's Learning App tile is **superseded** by the supplied replacement
-  artwork. Use the supplied file; do not regenerate.
+- The grid's Learning App tile is **superseded**. It was first replaced by
+  supplied artwork; on 2026-07-25 Kariim lifted the freeze and asked for the
+  tile to be generated to the brief now in the roster above.
 - Roster status for 03 reads SHIPPING here, matching the grid and the app's
   existing project data. An earlier note called it "shipped" — SHIPPING stands
   until Kariim says otherwise.

@@ -250,6 +250,19 @@
       "size": "1376x768",
       "credits": 4,
       "approved": true
+    },
+    {
+      "id": "set-piece-03-clip",
+      "path": "set-pieces/03-learning-app.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_145738_a3a9607b-eaff-4ced-a005-c787e645bd2f.mp4",
+      "job": "a3a9607b-eaff-4ced-a005-c787e645bd2f",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "0c9e5bae-374a-450a-b3c3-8f35a44b89d3",
+      "approved": true
     }
   ]
 }
