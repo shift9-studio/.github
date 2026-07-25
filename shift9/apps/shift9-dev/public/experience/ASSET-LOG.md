@@ -36,6 +36,8 @@ geometry and framing carry over exactly.
 | 10 | Automation Systems | LIVE | clip `set-pieces/10-automation-systems.mp4` — 5s, the arm runs a hypnotic repeating sled insertion, LED grids ripple down the aisle | `5815afff-1edf-4a6d-afd8-0ad868d69939` | 8.75 | **Approved** |
 | 11 | Omni-3D | IN DEV | plate `set-pieces/11-omni-3d.png` | `ea16058a-5f08-453e-bb8f-007e413628b8` | 4 | **Approved** |
 | 11 | Omni-3D | IN DEV | clip `set-pieces/11-omni-3d.mp4` — 5s, the mech hologram tries to resolve, collapses back to wireframe, tears and judders | `726bc8fc-7a4c-437b-91b7-9efc6ca3a45a` | 8.75 | **Approved** |
+| 12 | WinFix | SHIPPED | plate `set-pieces/12-winfix.png` | `06db635c-2fac-4f59-b844-2600f74bb7ee` | 4 | **Approved** |
+| 12 | WinFix | SHIPPED | clip `set-pieces/12-winfix.mp4` — 5s, the chrome wrench-and-gear turns one unbroken revolution, glow breathing in step | `cdb229b5-fac3-4f6c-8637-b3a4bd213945` | 8.75 | **Approved** |
 
 **Video settings that produced the clip** (the canary that proved the pipeline):
 `kling3_0`, `mode: pro`, `sound: off`, `duration: 5`, `aspect_ratio: 16:9`,
@@ -56,11 +58,12 @@ Rejected takes, kept so the same mistake is not paid for twice:
 | `6b1a1d3b-d6b0-4e73-a148-b010c9b2a42a` | Game Design Forge clip take 1: the soldering iron burned with an actual flame. It is an electric iron — a faint heat shimmer above the tip is right, fire is not. |
 | `c0236258-5dbd-4dbf-9f84-92f099a6a4cb` | Smoke. The fluid rendered as vapour rather than liquid, and two haze wisps drifted in the black outside the glass. Every later video prompt now forbids smoke/haze/mist/fog by name and asks for sharp-edged liquid ribbons — glowing ink in water, not gas. |
 
-**Still to shoot:** 10 Automation Systems · 11 Omni-3D · 12 WinFix.
-**03 Learning App artwork is supplied — never regenerate it.**
+**Eleven of twelve are shot and approved.** The only one outstanding is **03
+Learning App**, whose artwork is supplied and must never be regenerated — it
+needs the supplied file committed, then its clip animated from that plate.
 
-Three plates left at 4 credits and four clips left at 8.75 (03 still needs its
-clip once the supplied artwork lands) = **roughly 47 credits** to finish the set.
+One clip left at 8.75 credits once 03's artwork lands. Spent so far on the
+set-pieces: **11 plates × 4 + 12 clips × 8.75 (one at 10s) = 158.75 credits.**
 
 ## Built in code, not generated
 

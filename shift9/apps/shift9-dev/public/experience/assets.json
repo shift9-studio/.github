@@ -227,6 +227,19 @@
       "size": "1376x768",
       "credits": 4,
       "approved": true
+    },
+    {
+      "id": "set-piece-12-clip",
+      "path": "set-pieces/12-winfix.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_144727_cdb229b5-fac3-4f6c-8637-b3a4bd213945.mp4",
+      "job": "cdb229b5-fac3-4f6c-8637-b3a4bd213945",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "06db635c-2fac-4f59-b844-2600f74bb7ee",
+      "approved": true
     }
   ]
 }
