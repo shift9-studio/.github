@@ -23,9 +23,9 @@
     },
     {
       "id": "set-piece-02-clip",
-      "path": "set-pieces/02-flow-state.mp4",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_103317_c0236258-5dbd-4dbf-9f84-92f099a6a4cb.mp4",
-      "job": "c0236258-5dbd-4dbf-9f84-92f099a6a4cb",
+      "path": "set-pieces/02-flow-state-v2.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_104235_aceb808f-47bb-4526-9e8d-ff3f04644c12.mp4",
+      "job": "aceb808f-47bb-4526-9e8d-ff3f04644c12",
       "model": "kling3_0",
       "mode": "pro",
       "duration": 5,
