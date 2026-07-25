@@ -11,9 +11,21 @@ A refinement is a new job only after Kariim rejects the previous one.
 
 Style contract and the full roster live in `docs/STUDIO-DOLLY.md`.
 
-| # | Project | Status | File | Job | Credits | Verdict |
+Every project ships as two assets: an approved **plate** (16:9 still, locks the
+composition) and a **clip** animated from that plate as its start frame, so
+geometry and framing carry over exactly.
+
+| # | Project | Status | Asset | Job | Credits | Verdict |
 |---|---|---|---|---|---|---|
-| 01 | Just a Pinch | LIVE | `set-pieces/01-just-a-pinch.png` | `81e13a22-7b12-4725-a1df-e72205ccae61` | 4 | **Approved** |
+| 01 | Just a Pinch | LIVE | plate `set-pieces/01-just-a-pinch.png` | `81e13a22-7b12-4725-a1df-e72205ccae61` | 4 | **Approved** |
+| 02 | Flow State | SHIPPING | plate `set-pieces/02-flow-state.png` | `69320e31-c80f-4624-8004-2c6cf21e76d3` | 4 | **Approved** |
+| 02 | Flow State | SHIPPING | clip `set-pieces/02-flow-state.mp4` — 5s, camera locked, only the fluid moves | `c0236258-5dbd-4dbf-9f84-92f099a6a4cb` | 8.75 | Awaiting verdict |
+
+**Video settings that produced the clip** (the canary that proved the pipeline):
+`kling3_0`, `mode: pro`, `sound: off`, `duration: 5`, `aspect_ratio: 16:9`,
+`medias: [{role: start_image, value: <plate job id>}]`. 8.75 credits. Seedance
+2.0 at 1080p costs 45 for the same five seconds and was rejected on price —
+the plate already carries the detail, the clip only has to move it.
 
 Rejected takes, kept so the same mistake is not paid for twice:
 
@@ -26,7 +38,9 @@ Basketball · 06 Midnight Return · 07 Game Design Forge · 08 Neon Forge →
 Titanium Forge Pro · 09 INSTRUMENT · 10 Automation Systems · 11 Omni-3D ·
 12 WinFix. **03 Learning App artwork is supplied — never regenerate it.**
 
-Ten renders left at 4 credits each = **40 credits**.
+Ten plates left at 4 credits and eleven clips left at 8.75 (more if a set needs
+10s, like Lumen's projection-mapping sequence) = **roughly 136 credits** to
+finish the set.
 
 ## Built in code, not generated
 
