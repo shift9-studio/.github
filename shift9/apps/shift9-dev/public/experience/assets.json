@@ -312,6 +312,19 @@
       "credits": 4,
       "references": ["6160c4c4-f9d7-441d-b312-883fbc2e8dc1"],
       "approved": true
+    },
+    {
+      "id": "opening-123-clip",
+      "path": "opening/01-03-approach-entry-hall.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_154616_2c4081a0-8777-48cf-ae7e-30db35419b0e.mp4",
+      "job": "2c4081a0-8777-48cf-ae7e-30db35419b0e",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 10,
+      "size": "1920x1080",
+      "credits": 17.5,
+      "startFrame": "88410175-3faa-4f28-8360-ab7bd038fecf",
+      "approved": true
     }
   ]
 }
