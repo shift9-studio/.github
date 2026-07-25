@@ -54,8 +54,13 @@ jobs:
             echo "nothing new to commit"
             exit 0
           fi
-          # [skip ci] keeps a binary drop from spending a Vercel deployment.
-          # These commits only add files under public/ — there is nothing to
-          # rebuild until an actual code change lands.
-          git commit -m "assets: fetch approved experience renders listed in assets.json [skip ci]"
+          # [vercel skip] keeps a binary drop from spending a Vercel preview
+          # deployment — these commits only add files under public/, so there
+          # is nothing to rebuild until real code changes.
+          #
+          # Deliberately NOT [skip ci]: GitHub Actions honours that one too, so
+          # it would stop this very workflow from running on the assets.json
+          # commit that is supposed to trigger it. [vercel skip] is read by
+          # Vercel only.
+          git commit -m "assets: fetch approved experience renders listed in assets.json [vercel skip]"
           git push origin HEAD:${{ github.ref_name }}
