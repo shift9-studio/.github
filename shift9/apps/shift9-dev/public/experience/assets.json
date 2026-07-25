@@ -102,6 +102,29 @@
       "credits": 8.75,
       "startFrame": "bf53521d-78e1-4c27-9afd-f234bab81194",
       "approved": true
+    },
+    {
+      "id": "set-piece-07",
+      "path": "set-pieces/07-game-design-forge.png",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_133913_6857d218-47d7-40f6-873a-e9547855fcc8.png",
+      "job": "6857d218-47d7-40f6-873a-e9547855fcc8",
+      "model": "nano_banana_pro",
+      "size": "1376x768",
+      "credits": 4,
+      "approved": true
+    },
+    {
+      "id": "set-piece-07-clip",
+      "path": "set-pieces/07-game-design-forge.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_134124_6b1a1d3b-d6b0-4e73-a148-b010c9b2a42a.mp4",
+      "job": "6b1a1d3b-d6b0-4e73-a148-b010c9b2a42a",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "6857d218-47d7-40f6-873a-e9547855fcc8",
+      "approved": true
     }
   ]
 }
