@@ -263,6 +263,19 @@
       "credits": 8.75,
       "startFrame": "0c9e5bae-374a-450a-b3c3-8f35a44b89d3",
       "approved": true
+    },
+    {
+      "id": "set-piece-01-clip",
+      "path": "set-pieces/01-just-a-pinch.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_150424_99620b15-7b72-415f-a52b-f296dc73d825.mp4",
+      "job": "99620b15-7b72-415f-a52b-f296dc73d825",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "81e13a22-7b12-4725-a1df-e72205ccae61",
+      "approved": true
     }
   ]
 }

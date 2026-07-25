@@ -18,6 +18,7 @@ geometry and framing carry over exactly.
 | # | Project | Status | Asset | Job | Credits | Verdict |
 |---|---|---|---|---|---|---|
 | 01 | Just a Pinch | LIVE | plate `set-pieces/01-just-a-pinch.png` | `81e13a22-7b12-4725-a1df-e72205ccae61` | 4 | **Approved** |
+| 01 | Just a Pinch | LIVE | clip `set-pieces/01-just-a-pinch.mp4` — 5s, the pinch of seasoning falls in discrete grains, the recipe step advances | `99620b15-7b72-415f-a52b-f296dc73d825` | 8.75 | **Approved** |
 | 02 | Flow State | SHIPPING | plate `set-pieces/02-flow-state.png` | `69320e31-c80f-4624-8004-2c6cf21e76d3` | 4 | **Approved** |
 | 02 | Flow State | SHIPPING | clip `set-pieces/02-flow-state-v2.mp4` — 5s, camera locked, only the fluid moves | `aceb808f-47bb-4526-9e8d-ff3f04644c12` | 8.75 | **Approved** |
 | 03 | Learning App | SHIPPING | plate `set-pieces/03-learning-app.png` | `0c9e5bae-374a-450a-b3c3-8f35a44b89d3` | 4 | **Approved** |
@@ -64,8 +65,11 @@ Rejected takes, kept so the same mistake is not paid for twice:
 `set-pieces/`. The set is complete and ready to be assembled into the
 fly-through.
 
-Total spent on the set-pieces: **12 plates × 4 + 12 clips × 8.75, with Lumen's
-at 10s = 4 × 12 + 8.75 × 11 + 17.5 = 161.75 credits.**
+Total spent on the set-pieces: **12 plates × 4 + 12 clips, eleven at 5s and
+Lumen's at 10s = 48 + 8.75 × 11 + 17.5 = 161.75 credits.**
+
+01 was approved as a plate before the all-twelve-animated decision, so its clip
+was shot last, after the other eleven.
 
 Note on 03: the roster originally froze this tile to supplied artwork. Kariim
 lifted that on 2026-07-25 and asked for it to be generated — a kids' early-reading
