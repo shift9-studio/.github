@@ -3,21 +3,21 @@ import s from "./soon.module.css";
 /* ────────────────────────────────────────────────────────────────────────
    UNDER CONSTRUCTION — the landing place for work that has no page yet.
 
-   A laptop lid covered in stickers, done as a deliberate joke: blinking text,
-   a marquee, hazard tape, the whole 1997 GeoCities apparatus. It is loud on
-   purpose and it is the only surface on shift9.dev allowed to be, which is
-   what makes it read as a gag rather than a lapse.
+   Persona 5's menu language in one bit: pure black and white, every panel a
+   skewed cut-out rather than a box, type large enough to run past the measure,
+   and two ribbons crossing the composition on opposing diagonals.
 
-   Everything here is CSS. No GIFs, no images, no JavaScript — a page that
-   exists to say "not finished yet" should not cost a megabyte to say it.
+   The mid-tones are genuine ordered dithering — 1-bit PNGs generated from an
+   8x8 Bayer threshold matrix, 77 to 269 bytes each. The whole page carries no
+   photography, no GIFs and no JavaScript.
 
-   Accessibility is not part of the joke:
-   - Every blink, crawl and shimmer stops dead under prefers-reduced-motion.
-     Blinking content is a genuine seizure and vestibular risk, so this is a
-     hard requirement rather than a nicety.
-   - The stickers are decorative and hidden from assistive tech; the actual
-     message is one plain heading and one plain line.
-   - Nothing depends on colour or motion to be understood.
+   Accessibility:
+   - The ribbons are the only motion and they stop under
+     prefers-reduced-motion. Nothing blinks; the design is carried by contrast
+     and geometry rather than movement.
+   - Ribbons and stickers are decorative and hidden from assistive tech; they
+     repeat what the heading and the line already say.
+   - Two values at full contrast, so nothing depends on colour.
    ──────────────────────────────────────────────────────────────────────── */
 
 export const metadata = {
@@ -25,34 +25,48 @@ export const metadata = {
   description: "This one does not have a page yet.",
 };
 
-/* The lid. Written as data so the arrangement is legible at a glance and the
-   angles stay deliberate rather than accumulating by hand-editing markup. */
+/* Positions and angles as data, so the arrangement stays deliberate rather
+   than accumulating by hand-editing markup. */
 const STICKERS: { t: string; x: string; y: string; r: string; k: string }[] = [
-  { t: "WORKS ON MY MACHINE", x: "11%", y: "14%", r: "-5deg", k: "sig" },
-  { t: "// TODO", x: "70%", y: "8%", r: "6deg", k: "pul" },
-  { t: "$ rm -rf ./regrets", x: "58%", y: "70%", r: "-4deg", k: "term" },
-  { t: "SHIP IT", x: "12%", y: "72%", r: "11deg", k: "hot" },
-  { t: "404: SLEEP NOT FOUND", x: "62%", y: "36%", r: "-3deg", k: "paper" },
-  { t: "semicolon;", x: "8%", y: "44%", r: "4deg", k: "term" },
-  { t: "BUILD PASSING", x: "38%", y: "80%", r: "-7deg", k: "sig" },
-  { t: "WORKS 60% OF THE TIME", x: "40%", y: "6%", r: "3deg", k: "pul" },
-  { t: "Ctrl + Z", x: "80%", y: "56%", r: "-12deg", k: "paper" },
-  { t: "ONE MORE COMMIT", x: "24%", y: "32%", r: "-5deg", k: "hot" },
+  { t: "WORKS ON MY MACHINE", x: "9%", y: "13%", r: "-5deg", k: "solid" },
+  { t: "// TODO", x: "72%", y: "9%", r: "7deg", k: "knock" },
+  { t: "$ rm -rf ./regrets", x: "56%", y: "71%", r: "-4deg", k: "tex" },
+  { t: "SHIP IT", x: "11%", y: "73%", r: "10deg", k: "solid" },
+  { t: "404: SLEEP NOT FOUND", x: "60%", y: "34%", r: "-3deg", k: "knock" },
+  { t: "semicolon;", x: "7%", y: "45%", r: "5deg", k: "tex" },
+  { t: "BUILD PASSING", x: "36%", y: "82%", r: "-8deg", k: "knock" },
+  { t: "COMPILES ON THE THIRD TRY", x: "38%", y: "5%", r: "3deg", k: "solid" },
+  { t: "Ctrl + Z", x: "81%", y: "57%", r: "-12deg", k: "solid" },
+  { t: "ONE MORE COMMIT", x: "22%", y: "31%", r: "-5deg", k: "tex" },
 ];
+
+const RIBBON_A = "UNDER CONSTRUCTION ✦ NOT FINISHED ✦ COME BACK ✦ SHIFT-9 ✦ ";
+const RIBBON_B = "BUILDING ✦ IN PROGRESS ✦ WORK IN MOTION ✦ SHIFT-9 ✦ ";
+
+/* The track carries the message twice and translates by exactly -50%, so the
+   loop closes on a pixel-identical frame and never visibly jumps. */
+function Ribbon({ className, text }: { className: string; text: string }) {
+  const run = text.repeat(4);
+  return (
+    <div className={`${s.ribbon} ${className}`} aria-hidden="true">
+      <div className={s.track}>
+        <span>{run}</span>
+        <span>{run}</span>
+      </div>
+    </div>
+  );
+}
 
 export default function SoonPage() {
   return (
     <main className={s.root}>
-      {/* Hazard tape, top and bottom. Decorative. */}
-      <div className={`${s.tape} ${s.tapeTop}`} aria-hidden="true" />
+      <div className={s.ground} aria-hidden="true" />
+      <div className={s.slab} aria-hidden="true" />
 
       <div className={s.stage}>
-        {/* The laptop: lid, hinge, and the deck it sits on. */}
         <div className={s.laptop}>
           <div className={s.lid}>
-            <div className={s.brush} aria-hidden="true" />
-
-            {/* The glowing mark milled into the aluminium. */}
+            <div className={s.lidTex} aria-hidden="true" />
             <div className={s.badge} aria-hidden="true">
               <span className={s.badgeMark}>9</span>
             </div>
@@ -68,21 +82,12 @@ export default function SoonPage() {
               </span>
             ))}
           </div>
-          <div className={s.hinge} aria-hidden="true" />
-          <div className={s.deck} aria-hidden="true" />
         </div>
 
-        {/* The actual message: plain, and the only thing a screen reader gets
-            beyond the navigation. */}
         <h1 className={s.headline}>
-          <span className={s.blink} aria-hidden="true">
-            ▓
-          </span>{" "}
-          <span className={s.rainbow}>UNDER CONSTRUCTION</span>{" "}
-          <span className={s.blink} aria-hidden="true">
-            ▓
-          </span>
+          Under <em>construction</em>
         </h1>
+
         <p className={s.line}>
           This project doesn&#39;t have its own page yet. It exists, it&#39;s
           being built, and it will get one.
@@ -90,31 +95,16 @@ export default function SoonPage() {
 
         <div className={s.actions}>
           <a className={s.btn} href="/studio">
-            ← Back to the studio
+            <span>← Back to the studio</span>
           </a>
           <a className={s.btnGhost} href="/">
-            The desktop
+            <span>The desktop</span>
           </a>
         </div>
       </div>
 
-      {/* The crawl. Decorative — it repeats what the page already says. */}
-      <div className={s.marqueeWrap} aria-hidden="true">
-        <div className={s.marquee}>
-          <span>
-            best viewed in 1024×768 ✦ please sign the guestbook ✦ this page is
-            under construction ✦ no bytes were wasted on a single GIF ✦ made
-            with a text editor and spite ✦
-          </span>
-          <span>
-            best viewed in 1024×768 ✦ please sign the guestbook ✦ this page is
-            under construction ✦ no bytes were wasted on a single GIF ✦ made
-            with a text editor and spite ✦
-          </span>
-        </div>
-      </div>
-
-      <div className={`${s.tape} ${s.tapeBottom}`} aria-hidden="true" />
+      <Ribbon className={s.ribbonA ?? ""} text={RIBBON_A} />
+      <Ribbon className={s.ribbonB ?? ""} text={RIBBON_B} />
     </main>
   );
 }
