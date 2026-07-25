@@ -355,6 +355,20 @@
       "startFrame": "88410175-3faa-4f28-8360-ab7bd038fecf",
       "endFrame": "6160c4c4-f9d7-441d-b312-883fbc2e8dc1",
       "approved": true
+    },
+    {
+      "id": "opening-4-clip",
+      "path": "opening/04-sit-mouse-screen.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_163824_8a0a43b1-7a77-44c3-bef5-5e0b26f5efd3.mp4",
+      "job": "8a0a43b1-7a77-44c3-bef5-5e0b26f5efd3",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 10,
+      "size": "1920x1080",
+      "credits": 17.5,
+      "startFrame": "6160c4c4-f9d7-441d-b312-883fbc2e8dc1",
+      "note": "Screen wakes to a featureless glow on purpose - the real desktop UI takes over from the live page, so the film never draws an interface that could drift from it.",
+      "approved": false
     }
   ]
 }
