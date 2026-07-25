@@ -25,6 +25,11 @@ import { useEffect, useRef, useState } from "react";
 import s from "./StudioDolly.module.css";
 import { SET_PIECES } from "./studio-dolly-data";
 
+/* The closing artwork Kariim supplied — the chrome SHIFT-9 mark over the fibre
+   strands. Referenced through one constant so replacing the artwork is a single
+   line and never a hunt through markup. */
+const OUTRO_ART = "/experience/shift-9_new-banner.jpg";
+
 function Stage({
   piece,
   index,
@@ -150,16 +155,32 @@ export function StudioDolly() {
         <Stage key={piece.n} piece={piece} index={i} onEnter={(n) => setAt(n + 1)} />
       ))}
 
-      <footer className={s.bookend}>
-        <h1>End of take</h1>
-        <p className={s.lede}>
-          Every set-piece above is a real project. The ones marked in development
-          are unfinished on purpose — the set shows the state of the work.
-        </p>
-        <a className={s.link} href="/work" style={{ justifySelf: "center" }}>
-          See the work index &#8594;
-        </a>
+      {/* The take lands on the brand, then invites. The artwork resolves first,
+          the line follows, and the actions arrive only once both have settled —
+          including the way back out to the desktop the visitor came from. */}
+      <footer className={s.outro}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className={s.outroArt} src={OUTRO_ART} alt="" />
+        <div className={s.outroPanel}>
+          <p className={s.outroLede}>
+            Twelve projects, one take. If you want something built like this, the
+            studio is open.
+          </p>
+          <div className={s.outroActions}>
+            <a className={s.cta} href="mailto:shift9.dev@gmail.com">
+              Start a project &#8594;
+            </a>
+            <a className={s.exit} href="/">
+              &#8592; Back to the desktop
+            </a>
+          </div>
+        </div>
       </footer>
+
+      {/* Leaving must never depend on reaching the end of the travel. */}
+      <a className={s.exitPin} href="/">
+        &#8592; Desktop
+      </a>
 
       <div className={s.counter} aria-hidden="true">
         {String(at).padStart(2, "0")} / {String(SET_PIECES.length).padStart(2, "0")}

@@ -39,6 +39,16 @@ const cls = (name: string): string => (s as Record<string, string>)[name] ?? nam
    landing route. Same-site path, no target=_blank to itself (HANDOFF §8.1). */
 const STUDIO_HREF = "/studio";
 
+/* The opening film, in order. Two generated beats played back to back as one
+   continuous take: the approach and entry, then the desk. The last frame of the
+   second beat is the monitor filling the screen, which is where the real
+   desktop below takes over — so the handoff is a match cut, not a transition.
+   Both were shot against Kariim's own photographs of the room and the doll. */
+const OPENING: readonly string[] = [
+  "/experience/opening/01-03-approach-entry-hall-v4.mp4",
+  "/experience/opening/04-desk-mouse-screen-v5.mp4",
+];
+
 type Status = "live" | "ship" | "dev" | "rnd";
 type Item = { n: string; s: string; sc: Status; d: string; tags: string[] };
 type Folder = { t: string; n: string; items: Item[] };
@@ -358,6 +368,20 @@ export function EnterTheStudio() {
 
     const timers: ReturnType<typeof setTimeout>[] = [];
     const onEnded = () => {
+      /* The opening is shot as separate beats but has to read as one take, so
+         each clip hands straight to the next with no gap and no controls. Only
+         after the last one does the screen wake into the desktop. */
+      const next = OPENING.indexOf(vid.currentSrc.replace(window.location.origin, "")) + 1;
+      if (next > 0 && next < OPENING.length) {
+        vid.src = OPENING[next] ?? "";
+        vid.play().catch(() => {
+          /* refused mid-sequence — fall through to the desktop rather than
+             stranding the visitor on a frozen frame. */
+          enterDesk();
+        });
+        return;
+      }
+
       const wake = wakeRef.current;
       const glow = glowRef.current;
       if (!wake || !glow) return;
@@ -434,8 +458,8 @@ export function EnterTheStudio() {
       <div className={s.stageVideo} ref={stageRef} aria-hidden="true">
         <video
           ref={videoRef}
-          src="/intro.mp4"
-          poster="/poster.jpg"
+          src={OPENING[0]}
+          poster="/experience/opening/01-exterior-approach.png"
           muted
           autoPlay
           playsInline

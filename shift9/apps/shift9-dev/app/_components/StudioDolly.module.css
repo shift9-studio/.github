@@ -194,3 +194,152 @@
     display: none;
   }
 }
+
+/* ── OUTRO ───────────────────────────────────────────────────────────────
+   The take lands on the brand. The mark resolves out of black, the tagline
+   follows, and only once the motion has settled does the call to action
+   appear — so the invitation arrives after the statement, not over it. */
+
+.outro {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--s9-black, #000);
+}
+
+.outroArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.08);
+  animation: outroArt var(--s9-dur-boot) var(--s9-ease-out) forwards;
+}
+
+@keyframes outroArt {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The mark is in the artwork itself, so the panel only carries the words and
+   the actions — no second wordmark competing with the one on screen. */
+.outroPanel {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  padding: 6vh 6vw;
+  text-align: center;
+}
+
+.outroLede {
+  max-width: 40ch;
+  margin: 0;
+  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
+  line-height: 1.5;
+  color: rgb(248 250 252 / 0.85);
+  text-shadow: 0 1px 24px rgb(0 0 0 / 0.9);
+  opacity: 0;
+  animation: outroRise var(--s9-dur-slow) var(--s9-ease-out) var(--s9-dur-boot) forwards;
+}
+
+.outroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  opacity: 0;
+  /* Held until the artwork and the line have both settled. */
+  animation: outroRise var(--s9-dur-slow) var(--s9-ease-out) calc(var(--s9-dur-boot) + var(--s9-dur-slow)) forwards;
+}
+
+@keyframes outroRise {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.cta,
+.exit {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.9em 1.6em;
+  border-radius: 2px;
+  transition:
+    background-color var(--s9-dur-fast) var(--s9-ease-out),
+    border-color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.cta {
+  background: var(--s9-signal);
+  color: var(--s9-void);
+  border: 1px solid var(--s9-signal);
+}
+
+.cta:hover,
+.cta:focus-visible {
+  background: transparent;
+  color: var(--s9-signal);
+}
+
+/* The way back out. The dolly is a room you walk into, so it needs a door. */
+.exit {
+  background: transparent;
+  color: var(--s9-paper, #f8fafc);
+  border: 1px solid rgb(248 250 252 / 0.35);
+}
+
+.exit:hover,
+.exit:focus-visible {
+  border-color: var(--s9-paper, #f8fafc);
+}
+
+/* A persistent way back, so leaving never depends on reaching the end. */
+.exitPin {
+  position: fixed;
+  top: clamp(0.75rem, 2.5vw, 1.5rem);
+  left: clamp(0.75rem, 2.5vw, 1.5rem);
+  z-index: 6;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(248 250 252 / 0.6);
+  text-decoration: none;
+  padding: 0.55em 0.9em;
+  border: 1px solid rgb(248 250 252 / 0.2);
+  border-radius: 2px;
+  background: rgb(0 0 0 / 0.4);
+  backdrop-filter: blur(6px);
+}
+
+.exitPin:hover,
+.exitPin:focus-visible {
+  color: var(--s9-paper, #f8fafc);
+  border-color: rgb(248 250 252 / 0.5);
+}
+
+/* Reduced motion: everything is present immediately, at rest. */
+@media (prefers-reduced-motion: reduce) {
+  .outroArt,
+  .outroLede,
+  .outroActions {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
