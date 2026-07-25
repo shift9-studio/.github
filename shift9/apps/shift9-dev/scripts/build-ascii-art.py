@@ -50,6 +50,9 @@ RAMP = " .:-=+*#%@"
 
 PALETTE_SIZE = 16
 
+# Luminance below this is treated as pure black — empty cell, no glyph.
+BLACK_FLOOR = 0.30
+
 
 def luminance(px: tuple[int, int, int]) -> float:
     """Perceptual luminance, 0..1, on sRGB values."""
@@ -121,8 +124,13 @@ def encode(path: pathlib.Path, cols: int, rows: int, mode: str = "cover") -> dic
     for y in range(rows):
         row_chars, row_flow, row_tone = [], [], []
         for x in range(cols):
-            # Character from luminance, with a gentle gamma so midtones survive.
-            v = lum[y][x] ** 0.85
+            # Character from luminance. BLACK_FLOOR is what makes the wordmark
+            # readable: the banner's background and the gaps between letters are
+            # near-black, and without a hard floor their anti-aliased edges creep
+            # up the ramp and fill the negative space in, turning the letterforms
+            # into one solid block.
+            v = (lum[y][x] - BLACK_FLOOR) / (1.0 - BLACK_FLOOR)
+            v = 0.0 if v <= 0 else v**0.78
             row_chars.append(RAMP[min(len(RAMP) - 1, int(v * len(RAMP)))])
 
             # Sobel-ish gradient -> the direction light travels through this cell.

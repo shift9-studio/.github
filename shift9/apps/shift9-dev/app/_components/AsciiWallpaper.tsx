@@ -103,7 +103,11 @@ export function AsciiWallpaper({
       if (!actx) return null;
       actx.textBaseline = "middle";
       actx.textAlign = "center";
-      actx.font = `${Math.round(cellH * dpr * 0.92)}px ui-monospace, "SF Mono", "Courier New", monospace`;
+      /* A monospace advance is ~0.6em, so the glyph has to be sized off the
+         cell WIDTH or neighbouring characters overlap and the field smears
+         into a solid mass instead of reading as text. */
+      const fontPx = Math.max(4, Math.min(cellH * dpr * 0.98, (cellW * dpr) / 0.6));
+      actx.font = `${fontPx}px ui-monospace, "SF Mono", Menlo, "Courier New", monospace`;
       for (let t = 0; t < src.palette.length; t++) {
         actx.fillStyle = src.palette[t] ?? "#000000";
         for (let c = 0; c < ASCII_RAMP.length; c++) {
@@ -149,13 +153,22 @@ export function AsciiWallpaper({
           d -= Math.round(d); // wrap to -0.5..0.5
           const pulse = Math.exp(-(d * d) / (BAND_WIDTH * BAND_WIDTH));
 
-          /* Idle shimmer only where the artwork already has light. */
-          const shimmer = (base / maxChar) * breath * 0.6;
-
-          const lift = pulse * 2.6 + shimmer;
+          /* The wave travels THROUGH the artwork, never over it: a cell the
+             banner left black stays black, so the wordmark keeps its shape and
+             the negative space never fills in. */
+          const shimmer = breath * 0.35;
+          const lift = base === 0 ? 0 : pulse * 2.2 + shimmer;
           const char = Math.min(maxChar, Math.round(base + lift));
-          const lit = Math.min(maxTone, Math.round((baseTone[i] ?? 0) + pulse * 3.2));
-          const tone = ink ? maxTone - lit : lit;
+
+          /* Ink weight tracks glyph density, not the source pixel's own colour.
+             Tying the two together is what makes the field read as one image:
+             a dense glyph is dark ink, a sparse one is pale, so the wordmark
+             separates from the streaks instead of every cell landing at a
+             similar weight. baseTone only nudges the hue within that band. */
+          const density = char / maxChar;
+          const hue = ((baseTone[i] ?? 0) / maxTone - 0.5) * 1.5;
+          const weight = ink ? 1 - density : density;
+          const tone = Math.max(0, Math.min(maxTone, Math.round((weight + hue * 0.06) * maxTone)));
 
           const was = prev[i];
           if (!full && was && was.char === char && was.tone === tone) continue;
