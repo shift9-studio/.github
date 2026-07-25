@@ -26,6 +26,7 @@
    ──────────────────────────────────────────────────────────────────────── */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { AsciiTunnel } from "./AsciiTunnel";
 import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { SHIFT9_LOGO } from "./logo-data";
@@ -260,6 +261,23 @@ export function EnterTheStudio() {
     return () => os.removeEventListener("change", follow);
   }, []);
 
+  /* Travel to the studio. Opening the shift9.dev icon flies the desktop's own
+     ASCII field through a tunnel and then follows the link. The vanishing point
+     is the icon that was clicked, so the move starts where the eye already is.
+
+     Only the plain-left-click case is intercepted: modified clicks (new tab,
+     new window, download) and reduced motion fall straight through to normal
+     link behaviour, so nothing about the link is taken away. */
+  const [tunnel, setTunnel] = useState<{ x: number; y: number } | null>(null);
+
+  const enterStudio = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    e.preventDefault();
+    const r = e.currentTarget.getBoundingClientRect();
+    setTunnel({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+  }, []);
+
   const toggleTheme = useCallback(() => {
     setDark((d) => {
       const next = !d;
@@ -401,6 +419,16 @@ export function EnterTheStudio() {
 
   return (
     <div className={`${s.root} ${dark ? s.dark : ""}`}>
+      {tunnel ? (
+        <AsciiTunnel
+          originX={tunnel.x}
+          originY={tunnel.y}
+          onDone={() => {
+            window.location.href = STUDIO_HREF;
+          }}
+        />
+      ) : null}
+
       {/* STAGE 1 — the film. Decorative overlay; the desktop below is the real
           content, so this is hidden from assistive tech. */}
       <div className={s.stageVideo} ref={stageRef} aria-hidden="true">
@@ -557,7 +585,12 @@ export function EnterTheStudio() {
 
           <div className={`${s.grid} ${compact ? s.compact : ""}`}>
             {/* Door-tile first — the prominent entrance to the live studio. */}
-            <a className={`${s.dicon} ${s.site}`} href={STUDIO_HREF} style={{ textDecoration: "none" }}>
+            <a
+              className={`${s.dicon} ${s.site}`}
+              href={STUDIO_HREF}
+              style={{ textDecoration: "none" }}
+              onClick={enterStudio}
+            >
               <div className={s.appico}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={SHIFT9_LOGO} alt="shift9.dev" />
