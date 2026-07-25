@@ -56,6 +56,16 @@
       "credits": 17.5,
       "startFrame": "96727da3-0b52-4db2-a47f-1939aeb92a1c",
       "approved": true
+    },
+    {
+      "id": "set-piece-05",
+      "path": "set-pieces/05-voxel-arcade.png",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_114625_f7ac1b74-11fa-44a0-b4f5-67f44de03e67.png",
+      "job": "f7ac1b74-11fa-44a0-b4f5-67f44de03e67",
+      "model": "nano_banana_pro",
+      "size": "1376x768",
+      "credits": 4,
+      "approved": true
     }
   ]
 }
