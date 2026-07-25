@@ -79,6 +79,16 @@
       "credits": 8.75,
       "startFrame": "d15474fb-ba16-44c5-a0a1-12b39a306cf7",
       "approved": true
+    },
+    {
+      "id": "set-piece-06",
+      "path": "set-pieces/06-midnight-return.png",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_131140_a656da8f-d456-47d9-ab8f-6bf726f08986.png",
+      "job": "a656da8f-d456-47d9-ab8f-6bf726f08986",
+      "model": "nano_banana_pro",
+      "size": "1376x768",
+      "credits": 4,
+      "approved": true
     }
   ]
 }
