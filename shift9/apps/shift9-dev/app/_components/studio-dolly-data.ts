@@ -16,8 +16,13 @@ export type SetPiece = {
   title: string;
   status: string;
   resolution: Resolution;
-  /* One plain line: what the set is. No superlatives. */
+  /* What the thing actually is and does, in plain language. Taken from the
+     studio's own project data rather than written fresh, so the dolly and the
+     desktop never describe the same project two different ways. */
   note: string;
+  /* The real stack. Concrete nouns only — this is a spec line, not a badge
+     collection. */
+  tags: string[];
   plate: string;
   clip: string;
   /* Where the project actually lives, when it lives anywhere. */
@@ -32,7 +37,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Just a Pinch",
     status: "LIVE",
     resolution: "resolved",
-    note: "A recipe app. Surgically lit white counter, the live interface on a tablet.",
+    note: "Smart recipe organizer and guided cooking app. Save from links, photos or scratch; cook mode scales servings and suggests swaps. The Recipe Engine behind it is a Supabase-backed pipeline that seeds and serves the catalog.",
+    tags: ["React Native", "TypeScript", "Supabase", "Android \u00b7 iOS soon"],
     plate: `${BASE}01-just-a-pinch.png`,
     clip: `${BASE}01-just-a-pinch.mp4`,
     href: "https://pinch.shift9.dev",
@@ -42,7 +48,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Flow State",
     status: "SHIPPING",
     resolution: "resolved",
-    note: "A clear vessel holding glowing blue fluid in laminar flow, lit for refraction.",
+    note: "Local voice-to-text dictation for Windows. Profiles, custom vocabulary, selected-text commands, history and crash recovery \u2014 dictation that stays on your machine.",
+    tags: ["Python", "Whisper", "Windows", "Local-first"],
     plate: `${BASE}02-flow-state.png`,
     clip: `${BASE}02-flow-state-v2.mp4`,
   },
@@ -51,7 +58,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Learning App",
     status: "SHIPPING",
     resolution: "resolved",
-    note: "An early-reading app. A warm reading nook with three crocheted plush animals.",
+    note: "A children's reading tool that turns practice into play. Built for real kids, tested by real kids.",
+    tags: ["Python", "Education", "Kids"],
     plate: `${BASE}03-learning-app.png`,
     clip: `${BASE}03-learning-app.mp4`,
   },
@@ -60,7 +68,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Lumen Projection Mapper",
     status: "IN DEV",
     resolution: "volatile",
-    note: "Projection mapping onto stacked boxes. The calibration grid fights before it locks.",
+    note: "Point a projector at anything, drag the corners on your phone, and the image warps to fit. Projection mapping with zero jargon.",
+    tags: ["JavaScript", "WebSockets", "Projection"],
     plate: `${BASE}04-lumen.png`,
     clip: `${BASE}04-lumen.mp4`,
   },
@@ -69,7 +78,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Voxel Arcade Basketball",
     status: "IN DEV",
     resolution: "volatile",
-    note: "An arcade cabinet running pixel-art C#, flickering neon blue and orange.",
+    note: "Arcade basketball in Godot. Arena, broadcast camera, crowd shader bowl and player movement are live; ball physics and the box score are next.",
+    tags: ["Godot", "GDScript", "3D"],
     plate: `${BASE}05-voxel-arcade-v3.png`,
     clip: `${BASE}05-voxel-arcade-v3.mp4`,
     href: "/work/voxel-arcade-basketball",
@@ -79,7 +89,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Midnight Return",
     status: "IN DEV",
     resolution: "volatile",
-    note: "An industrial corridor soundstage under flickering saturated blues and oranges.",
+    note: "A metroidvania platformer in C#. Exploration-first design.",
+    tags: ["C#", "Metroidvania"],
     plate: `${BASE}06-midnight-return.png`,
     clip: `${BASE}06-midnight-return.mp4`,
   },
@@ -88,7 +99,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Game Design Forge",
     status: "R&D",
     resolution: "volatile",
-    note: "An R&D workbench. Raw C# and engine schematics on screen, soldering iron out.",
+    note: "A UE5 plugin suite that lets non-programmers assemble games LEGO-style: socket-matched auto-tiling, one-click destruction, and a tutorial overlay that watches what you do. Blueprint complete; build phase next.",
+    tags: ["Unreal 5", "C++", "R&D"],
     plate: `${BASE}07-game-design-forge.png`,
     clip: `${BASE}07-game-design-forge-v2.mp4`,
   },
@@ -97,7 +109,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Neon Forge → Titanium Forge Pro",
     status: "V1 SHIPPED · V2 IN DEV",
     resolution: "volatile",
-    note: "A steel structure. V1 resolved in neon; V2 a titanium press extruding white-hot geometry.",
+    note: "A UI/UX workbench in two generations. Neon Forge (v1) is a dark-mode React component library with live demos and copyable snippets on Cloudflare Workers. Titanium Forge Pro (v2) is the full rebuild, in active development.",
+    tags: ["React", "TypeScript", "Design System", "Cloudflare"],
     plate: `${BASE}08-titanium-forge.png`,
     clip: `${BASE}08-titanium-forge.mp4`,
   },
@@ -106,7 +119,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "INSTRUMENT",
     status: "LIVE",
     resolution: "resolved",
-    note: "The design system running these sites. A brutalist synthesizer pulsing in blue.",
+    note: "The design system running shift9.dev and pinch.shift9.dev \u2014 tokens, motion, accessibility. Proof you can click.",
+    tags: ["Tailwind v4", "Motion", "A11y"],
     plate: `${BASE}09-instrument.png`,
     clip: `${BASE}09-instrument.mp4`,
     href: "/instrument",
@@ -116,7 +130,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Automation Systems",
     status: "LIVE",
     resolution: "resolved",
-    note: "A data centre. One robotic arm performing a precise repeating assembly task.",
+    note: "The infrastructure behind the studio: Relay for cross-machine state handoff, a 400+ skill control plane governing AI-assisted builds, and claude-eyes, a screen-capture toolkit that gives coding agents vision.",
+    tags: ["Automation", "AI Agents", "Git", "Windows"],
     plate: `${BASE}10-automation-systems.png`,
     clip: `${BASE}10-automation-systems.mp4`,
   },
@@ -125,7 +140,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "Omni-3D",
     status: "IN DEV",
     resolution: "volatile",
-    note: "A humanoid mech projected in air, unfinished — wireframe artifacts, missing geometry.",
+    note: "A game-development toolkit in TypeScript.",
+    tags: ["TypeScript", "3D", "Tooling"],
     plate: `${BASE}11-omni-3d.png`,
     clip: `${BASE}11-omni-3d.mp4`,
   },
@@ -134,7 +150,8 @@ export const SET_PIECES: SetPiece[] = [
     title: "WinFix",
     status: "SHIPPED",
     resolution: "resolved",
-    note: "A Windows repair tool. One resolved wrench-and-gear mark in a high-contrast room.",
+    note: "A Windows utility that repairs the Windows 10 Home upgrade bug. Small tool, real problem, done. Windows 11 support is on the roadmap.",
+    tags: ["Python", "Windows", "Utility"],
     plate: `${BASE}12-winfix.png`,
     clip: `${BASE}12-winfix.mp4`,
   },

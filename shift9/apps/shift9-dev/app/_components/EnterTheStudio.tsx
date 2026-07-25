@@ -50,7 +50,10 @@ const OPENING: readonly string[] = [
 ];
 
 type Status = "live" | "ship" | "dev" | "rnd";
-type Item = { n: string; s: string; sc: Status; d: string; tags: string[] };
+/* `h` is the real destination, and only present when one genuinely exists —
+   a live site, the design system, or a case page that is actually built. Items
+   without a destination stay unlinked rather than pointing at a placeholder. */
+type Item = { n: string; s: string; sc: Status; d: string; tags: string[]; h?: string };
 type Folder = { t: string; n: string; items: Item[] };
 
 /* Canonical content — copied verbatim from the frozen prototype / HANDOFF §6.
@@ -58,7 +61,7 @@ type Folder = { t: string; n: string; items: Item[] };
 const DATA: Record<"apps" | "games" | "tools", Folder> = {
   apps: {
     t: "Apps",
-    n: "prototype note: each item links to its case page / store / live demo in production",
+    n: "live links where a destination exists; unlinked items are not shipped yet",
     items: [
       {
         n: "Just a Pinch",
@@ -66,6 +69,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "Smart recipe organizer + guided cooking app. Save from links, photos, or scratch; cook mode scales servings and suggests swaps. Includes the Recipe Engine — a Supabase-backed content pipeline that seeds and serves the catalog. In closed testing on Android — launching soon.",
         tags: ["React Native", "TypeScript", "Supabase", "Android · iOS soon"],
+        h: "https://pinch.shift9.dev",
       },
       {
         n: "Flow State",
@@ -100,6 +104,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "Arcade basketball in Godot — arena, broadcast camera, crowd shader bowl, and player movement live; ball physics and box score next.",
         tags: ["Godot", "GDScript", "3D"],
+        h: "/work/voxel-arcade-basketball",
       },
       {
         n: "Midnight Return",
@@ -107,6 +112,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "A metroidvania platformer in C#. Exploration-first design.",
         tags: ["C#", "Metroidvania"],
+        h: "/work/midnight-return",
       },
       {
         n: "Game Design Forge",
@@ -134,6 +140,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "live",
         d: "The design system running shift9.dev and pinch.shift9.dev — tokens, motion, accessibility. Proof you can click.",
         tags: ["Tailwind v4", "Motion", "A11y"],
+        h: "/instrument",
       },
       {
         n: "Automation Systems",
@@ -148,6 +155,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "A game-development toolkit in TypeScript.",
         tags: ["TypeScript", "3D", "Tooling"],
+        h: "/work/omni-3d",
       },
       {
         n: "WinFix",
@@ -155,6 +163,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "ship",
         d: "A Windows utility that repairs the Windows 10 Home upgrade bug. Small tool, real problem, done. Windows 11 support on the roadmap.",
         tags: ["Python", "Windows", "Utility"],
+        h: "/work/whome-diagnostic",
       },
     ],
   },
@@ -734,7 +743,23 @@ export function EnterTheStudio() {
                   <div key={it.n} className={s.item}>
                     <span className={s.no}>{String(i + 1).padStart(2, "0")}</span>
                     <div className={s.info}>
-                      <h3>{it.n}</h3>
+                      <h3>
+                        {/* Linked only where a destination exists. External
+                            destinations open in a new tab so the desktop the
+                            visitor is standing in does not disappear. */}
+                        {it.h ? (
+                          <a
+                            href={it.h}
+                            {...(it.h.startsWith("http")
+                              ? { target: "_blank", rel: "noreferrer" }
+                              : {})}
+                          >
+                            {it.n}
+                          </a>
+                        ) : (
+                          it.n
+                        )}
+                      </h3>
                       <p>{it.d}</p>
                       <div className={s.tags}>
                         {it.tags.map((t) => (
