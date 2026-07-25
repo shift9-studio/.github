@@ -343,3 +343,295 @@
     transform: none;
   }
 }
+
+/* ── THE TWELVE CARDS ────────────────────────────────────────────────────
+   One card per project, each laid out after the thing it describes. The type
+   scale, palette and spacing are shared; only the arrangement changes, so the
+   set reads as a designed series rather than twelve unrelated slides.
+
+   Every variant keeps the same contract: the caption sits over a chiaroscuro
+   frame, so it needs its own ground to stay legible, and nothing may depend on
+   colour alone to carry meaning. */
+
+.card {
+  --card-accent: var(--s9-signal);
+  position: relative;
+  width: min(1180px, 92vw);
+  margin-inline: auto;
+}
+
+.volatile .card {
+  --card-accent: var(--s9-pulse);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+
+.tag {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(248 250 252 / 0.7);
+  border: 1px solid rgb(248 250 252 / 0.22);
+  border-radius: 2px;
+  padding: 0.28em 0.6em;
+  white-space: nowrap;
+}
+
+/* 01 · RECIPE — an index card. Ruled, squared off, the stack read as a list of
+   ingredients rather than a badge row. */
+.recipe {
+  max-width: 40rem;
+  background: rgb(0 0 0 / 0.62);
+  border: 1px solid rgb(248 250 252 / 0.18);
+  border-left: 3px solid var(--card-accent);
+  padding: 1.5rem 1.75rem;
+  backdrop-filter: blur(3px);
+}
+.recipe .tags {
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid rgb(248 250 252 / 0.14);
+  padding-top: 0.6rem;
+}
+.recipe .tag {
+  border: 0;
+  border-bottom: 1px dotted rgb(248 250 252 / 0.16);
+  border-radius: 0;
+  padding: 0.4em 0;
+  width: 100%;
+}
+
+/* 02 · WAVEFORM — dictation. The text sits on a baseline the way a signal sits
+   on an axis, low in frame and running left to right. */
+.waveform {
+  max-width: 46rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid var(--card-accent);
+}
+.waveform .title {
+  font-size: clamp(2rem, 5.5vw, 3.8rem);
+}
+
+/* 03 · STORYBOOK — a kids' reading tool. Soft, rounded, warm, oversized. */
+.storybook {
+  max-width: 38rem;
+  background: rgb(0 0 0 / 0.55);
+  border-radius: 18px;
+  padding: 1.9rem 2.1rem;
+  text-align: left;
+}
+.storybook .title {
+  font-size: clamp(2.4rem, 7vw, 4.8rem);
+  letter-spacing: -0.03em;
+}
+.storybook .tag {
+  border-radius: 999px;
+}
+
+/* 04 · CALIBRATION — projection mapping. Crop marks at the corners, the way a
+   calibration grid frames a surface before it locks. */
+.calibration {
+  max-width: 42rem;
+  padding: 1.6rem 1.8rem;
+  background: rgb(0 0 0 / 0.5);
+}
+.calibration::before,
+.calibration::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--card-accent);
+}
+.calibration::before {
+  top: 0;
+  left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+.calibration::after {
+  right: 0;
+  bottom: 0;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* 05 · SCOREBOARD — arcade basketball. A segmented display block. */
+.scoreboard {
+  max-width: 44rem;
+  background: rgb(0 0 0 / 0.72);
+  border: 2px solid var(--card-accent);
+  padding: 1.4rem 1.7rem;
+}
+.scoreboard .title {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: clamp(1.6rem, 4.4vw, 3rem);
+  letter-spacing: 0.02em;
+}
+.scoreboard .tag {
+  background: rgb(248 250 252 / 0.06);
+}
+
+/* 06 · CORRIDOR — a metroidvania. A tall rule on the left and the text set
+   away from it, like a passage opening off a wall. */
+.corridor {
+  max-width: 40rem;
+  padding-left: 1.6rem;
+  border-left: 2px solid var(--card-accent);
+  margin-left: clamp(0rem, 6vw, 5rem);
+}
+
+/* 07 · SCHEMATIC — an R&D plugin suite. A dashed technical frame. */
+.schematic {
+  max-width: 44rem;
+  border: 1px dashed rgb(248 250 252 / 0.4);
+  padding: 1.6rem 1.8rem;
+  background: rgb(0 0 0 / 0.5);
+}
+.schematic .meta {
+  border-bottom: 1px dashed rgb(248 250 252 / 0.28);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+/* 08 · VERSIONS — two generations of the same tool, so the card is split. */
+.versions {
+  max-width: 52rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  background: rgb(0 0 0 / 0.58);
+  border-top: 2px solid var(--card-accent);
+  padding: 1.5rem 1.7rem;
+}
+.versions .meta,
+.versions .title {
+  grid-column: 1 / -1;
+}
+@media (max-width: 46rem) {
+  .versions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 09 · PANEL — the design system itself. Centred, measured, symmetrical. */
+.panel {
+  max-width: 46rem;
+  margin-inline: auto;
+  text-align: center;
+  border-top: 1px solid rgb(248 250 252 / 0.28);
+  border-bottom: 1px solid rgb(248 250 252 / 0.28);
+  padding: 1.7rem 1.5rem;
+}
+.panel .meta,
+.panel .tags {
+  justify-content: center;
+}
+.panel .note {
+  margin-inline: auto;
+}
+.panel .title {
+  letter-spacing: 0.02em;
+}
+
+/* 10 · TERMINAL — the automation stack. A log block with a prompt marker. */
+.terminal {
+  max-width: 46rem;
+  background: rgb(0 0 0 / 0.78);
+  border: 1px solid rgb(248 250 252 / 0.2);
+  border-radius: 4px;
+  padding: 1.5rem 1.7rem;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+}
+.terminal .title {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: clamp(1.5rem, 4vw, 2.6rem);
+}
+.terminal .note::before {
+  content: "$ ";
+  color: var(--card-accent);
+}
+.terminal .note {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.92rem;
+}
+
+/* 11 · WIREFRAME — unfinished 3D. A doubled, offset edge: geometry that has
+   not resolved onto itself yet. */
+.wireframe {
+  max-width: 42rem;
+  padding: 1.6rem 1.8rem;
+  border: 1px solid var(--card-accent);
+  background: rgb(0 0 0 / 0.5);
+}
+.wireframe::before {
+  content: "";
+  position: absolute;
+  inset: -7px -7px 7px 7px;
+  border: 1px solid rgb(248 250 252 / 0.22);
+  pointer-events: none;
+}
+
+/* 12 · DIALOG — a small Windows utility. A system dialog: title bar, body,
+   clinical edges. */
+.dialog {
+  max-width: 34rem;
+  background: rgb(0 0 0 / 0.8);
+  border: 1px solid rgb(248 250 252 / 0.35);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.dialog .meta {
+  background: rgb(248 250 252 / 0.1);
+  border-bottom: 1px solid rgb(248 250 252 / 0.25);
+  padding: 0.6rem 1rem;
+  margin: 0;
+}
+.dialog .title,
+.dialog .note,
+.dialog .tags,
+.dialog .link {
+  margin-inline: 1.2rem;
+}
+.dialog .title {
+  margin-top: 1rem;
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+}
+.dialog .tags {
+  padding-bottom: 1.3rem;
+}
+
+/* ── FOCUS FADE ──────────────────────────────────────────────────────────
+   A card belongs to the shot behind it, so it is only present while that
+   set-piece is the one you are looking at: it fades up as the project takes
+   focus and fades back out as the travel moves on. */
+
+.card {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition:
+    opacity var(--s9-dur-slow) var(--s9-ease-out),
+    transform var(--s9-dur-slow) var(--s9-ease-out);
+}
+
+.cardIn {
+  opacity: 1;
+  transform: none;
+}
+
+/* Reduced motion never runs the observer that sets the focus state, so the
+   fade has to be disabled rather than merely shortened — otherwise every card
+   would sit at zero opacity and the roster would be invisible. */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

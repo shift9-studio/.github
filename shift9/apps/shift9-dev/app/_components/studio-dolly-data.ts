@@ -27,7 +27,27 @@ export type SetPiece = {
   clip: string;
   /* Where the project actually lives, when it lives anywhere. */
   href?: string;
+  /* Each card is laid out after the thing it describes: a recipe card for the
+     cooking app, a scoreboard for the basketball game, a terminal for the
+     automation stack. Twelve variants of one system - the type scale, palette
+     and spacing are shared, only the arrangement changes - so the set reads as
+     a designed series rather than twelve unrelated slides. */
+  card: CardVariant;
 };
+
+export type CardVariant =
+  | "recipe"
+  | "waveform"
+  | "storybook"
+  | "calibration"
+  | "scoreboard"
+  | "corridor"
+  | "schematic"
+  | "versions"
+  | "panel"
+  | "terminal"
+  | "wireframe"
+  | "dialog";
 
 const BASE = "/experience/set-pieces/";
 
@@ -41,6 +61,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["React Native", "TypeScript", "Supabase", "Android \u00b7 iOS soon"],
     plate: `${BASE}01-just-a-pinch.png`,
     clip: `${BASE}01-just-a-pinch.mp4`,
+    card: "recipe",
     href: "https://pinch.shift9.dev",
   },
   {
@@ -52,6 +73,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["Python", "Whisper", "Windows", "Local-first"],
     plate: `${BASE}02-flow-state.png`,
     clip: `${BASE}02-flow-state-v2.mp4`,
+    card: "waveform",
   },
   {
     n: "03",
@@ -62,6 +84,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["Python", "Education", "Kids"],
     plate: `${BASE}03-learning-app.png`,
     clip: `${BASE}03-learning-app.mp4`,
+    card: "storybook",
   },
   {
     n: "04",
@@ -72,6 +95,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["JavaScript", "WebSockets", "Projection"],
     plate: `${BASE}04-lumen.png`,
     clip: `${BASE}04-lumen.mp4`,
+    card: "calibration",
   },
   {
     n: "05",
@@ -82,6 +106,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["Godot", "GDScript", "3D"],
     plate: `${BASE}05-voxel-arcade-v3.png`,
     clip: `${BASE}05-voxel-arcade-v3.mp4`,
+    card: "scoreboard",
     href: "/work/voxel-arcade-basketball",
   },
   {
@@ -93,6 +118,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["C#", "Metroidvania"],
     plate: `${BASE}06-midnight-return.png`,
     clip: `${BASE}06-midnight-return.mp4`,
+    card: "corridor",
   },
   {
     n: "07",
@@ -103,6 +129,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["Unreal 5", "C++", "R&D"],
     plate: `${BASE}07-game-design-forge.png`,
     clip: `${BASE}07-game-design-forge-v2.mp4`,
+    card: "schematic",
   },
   {
     n: "08",
@@ -113,6 +140,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["React", "TypeScript", "Design System", "Cloudflare"],
     plate: `${BASE}08-titanium-forge.png`,
     clip: `${BASE}08-titanium-forge.mp4`,
+    card: "versions",
   },
   {
     n: "09",
@@ -123,6 +151,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["Tailwind v4", "Motion", "A11y"],
     plate: `${BASE}09-instrument.png`,
     clip: `${BASE}09-instrument.mp4`,
+    card: "panel",
     href: "/instrument",
   },
   {
@@ -134,6 +163,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["Automation", "AI Agents", "Git", "Windows"],
     plate: `${BASE}10-automation-systems.png`,
     clip: `${BASE}10-automation-systems.mp4`,
+    card: "terminal",
   },
   {
     n: "11",
@@ -144,6 +174,7 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["TypeScript", "3D", "Tooling"],
     plate: `${BASE}11-omni-3d.png`,
     clip: `${BASE}11-omni-3d.mp4`,
+    card: "wireframe",
   },
   {
     n: "12",
@@ -154,5 +185,6 @@ export const SET_PIECES: SetPiece[] = [
     tags: ["Python", "Windows", "Utility"],
     plate: `${BASE}12-winfix.png`,
     clip: `${BASE}12-winfix.mp4`,
+    card: "dialog",
   },
 ];

@@ -118,19 +118,32 @@ function Stage({
         <div className={s.veil} aria-hidden="true" />
 
         <div className={s.caption}>
-          <div className={s.meta}>
-            <span className={s.num}>{piece.n}</span>
-            <span className={s.status}>{piece.status}</span>
+          {/* The card's variant is data, not a choice made here: each project's
+              layout belongs to the project, so it stays with the roster. */}
+          <div
+            className={`${s.card} ${s[piece.card] ?? ""} ${visible ? s.cardIn : ""}`}
+          >
+            <div className={s.meta}>
+              <span className={s.num}>{piece.n}</span>
+              <span className={s.status}>{piece.status}</span>
+            </div>
+            <h2 className={s.title} id={`set-piece-${piece.n}`}>
+              {piece.title}
+            </h2>
+            <p className={s.note}>{piece.note}</p>
+            <div className={s.tags}>
+              {piece.tags.map((t) => (
+                <span key={t} className={s.tag}>
+                  {t}
+                </span>
+              ))}
+            </div>
+            {piece.href ? (
+              <a className={s.link} href={piece.href}>
+                Open {piece.title} &#8594;
+              </a>
+            ) : null}
           </div>
-          <h2 className={s.title} id={`set-piece-${piece.n}`}>
-            {piece.title}
-          </h2>
-          <p className={s.note}>{piece.note}</p>
-          {piece.href ? (
-            <a className={s.link} href={piece.href}>
-              Open {piece.title} &#8594;
-            </a>
-          ) : null}
         </div>
       </div>
     </section>

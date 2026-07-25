@@ -30,7 +30,6 @@ import { AsciiTunnel } from "./AsciiTunnel";
 import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { SHIFT9_LOGO } from "./logo-data";
-
 /* CSS-module class access is typed `string | undefined` under
    noUncheckedIndexedAccess; classList APIs need a plain string. */
 const cls = (name: string): string => (s as Record<string, string>)[name] ?? name;
