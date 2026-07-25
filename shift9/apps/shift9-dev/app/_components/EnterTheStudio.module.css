@@ -9,17 +9,31 @@
    ──────────────────────────────────────────────────────────────────────── */
 
 .root {
+  /* Light — the Windows-11 daylight desktop. Channels are kept as raw triples
+     alongside the hex so translucent surfaces (veil, taskbar, glass tiles) can
+     be written once and follow the theme. */
   --w-bg: #eceadf;
+  --w-bg-rgb: 236 234 223;
   --w-panel: #f7f6f1;
+  --w-panel-rgb: 247 246 241;
   --w-side: #f0efe8;
   --w-line: #d8d6cc;
   --w-txt: #1f2328;
   --w-dim: #6b7078;
+  --w-sel: #e3ecf9;
+  --w-mark: #fdf3d3;
+  --w-chrome: #9a9a92;
+  --w-shadow: 15 23 42;
+  --w-halo-a: 0.9;
+  --w-halo-b: 0.85;
   --blue: #0b6bd6;
+  --blue-hover: #0a5cb8;
   --folder: #f6c445;
   --folder-tab: #e8b02e;
   --acc: #3ddc84;
   --nine: #20c0e0;
+  --pulse: #8b5cf6;
+  --pulse-deep: #6d3ee0;
   --mono: "Courier New", ui-monospace, monospace;
   --ui: "Segoe UI", system-ui, Arial, sans-serif;
 
@@ -28,6 +42,29 @@
   background: #000;
   font-family: var(--ui);
   overflow: hidden;
+}
+
+/* Dark — the same desktop after hours. Only the surface tokens move; every
+   rule below reads them, so nothing needs a second copy. The wallpaper flips
+   with it: AsciiWallpaper drops `ink`, so the artwork draws light-on-dark
+   instead of dark-on-light. */
+.root.dark {
+  --w-bg: #12151c;
+  --w-bg-rgb: 18 21 28;
+  --w-panel: #1b1f28;
+  --w-panel-rgb: 27 31 40;
+  --w-side: #171b23;
+  --w-line: #2b3140;
+  --w-txt: #e8eaf0;
+  --w-dim: #98a1b3;
+  --w-sel: #16304e;
+  --w-mark: #2e2a16;
+  --w-chrome: #6d7484;
+  --w-shadow: 0 0 0;
+  --w-halo-a: 0.72;
+  --w-halo-b: 0.55;
+  --blue: #3b93f0;
+  --blue-hover: #5aa6f5;
 }
 .root *,
 .root *::before,
@@ -327,13 +364,13 @@
   box-shadow: 0 2px 8px rgba(11, 107, 214, 0.35);
 }
 .navlinks a.cta:hover {
-  background: #0a5cb8;
+  background: var(--blue-hover);
 }
 .winbtns {
   display: flex;
   gap: 14px;
   margin-left: 20px;
-  color: #9a9a92;
+  color: var(--w-chrome);
   font-size: 13px;
 }
 
@@ -393,7 +430,7 @@
   align-items: center;
 }
 .side .it.on {
-  background: #e3ecf9;
+  background: var(--w-sel);
   color: var(--blue);
   font-weight: 600;
 }
@@ -438,7 +475,7 @@
   background: rgba(11, 107, 214, 0.08);
 }
 .dicon.sel {
-  background: #fdf3d3;
+  background: var(--w-mark);
   outline: 1px solid var(--folder-tab);
 }
 .fico {
@@ -665,7 +702,7 @@
 
 .taskbar {
   height: 46px;
-  background: rgba(247, 246, 241, 0.92);
+  background: rgb(var(--w-panel-rgb) / 0.92);
   border-top: 1px solid var(--w-line);
   display: flex;
   align-items: center;
@@ -974,16 +1011,16 @@
   background:
     radial-gradient(
       82% 66% at 52% 50%,
-      rgba(236, 234, 223, 0) 0%,
-      rgba(236, 234, 223, 0.18) 52%,
-      rgba(236, 234, 223, 0.62) 100%
+      rgb(var(--w-bg-rgb) / 0) 0%,
+      rgb(var(--w-bg-rgb) / 0.18) 52%,
+      rgb(var(--w-bg-rgb) / 0.62) 100%
     ),
     linear-gradient(
       180deg,
-      rgba(236, 234, 223, 0.86) 0%,
-      rgba(236, 234, 223, 0.06) 18%,
-      rgba(236, 234, 223, 0.06) 82%,
-      rgba(236, 234, 223, 0.88) 100%
+      rgb(var(--w-bg-rgb) / 0.86) 0%,
+      rgb(var(--w-bg-rgb) / 0.06) 18%,
+      rgb(var(--w-bg-rgb) / 0.06) 82%,
+      rgb(var(--w-bg-rgb) / 0.88) 100%
     );
 }
 
@@ -992,9 +1029,9 @@
 .grid .fname,
 .grid .fcount {
   text-shadow:
-    0 1px 0 rgba(247, 246, 241, 0.9),
-    0 0 6px rgba(247, 246, 241, 0.85),
-    0 0 14px rgba(247, 246, 241, 0.7);
+    0 1px 0 rgb(var(--w-bg-rgb) / var(--w-halo-a)),
+    0 0 6px rgb(var(--w-bg-rgb) / var(--w-halo-b)),
+    0 0 14px rgb(var(--w-bg-rgb) / var(--w-halo-b));
 }
 
 /* Chrome sits above the wallpaper and keeps its own solid surfaces. */
@@ -1008,7 +1045,7 @@
 }
 .titlerow,
 .searchrow {
-  background: rgba(236, 234, 223, 0.82);
+  background: rgb(var(--w-bg-rgb) / 0.82);
   backdrop-filter: blur(9px) saturate(1.05);
 }
 .side {
@@ -1039,7 +1076,7 @@
   inset: 0;
   z-index: -1;
   border-radius: inherit;
-  background: rgba(247, 246, 241, 0.72);
+  background: rgb(var(--w-panel-rgb) / 0.72);
   opacity: 0;
   transition: opacity 0.22s ease;
 }
@@ -1047,7 +1084,7 @@
 .dicon:focus-visible {
   background: rgba(11, 107, 214, 0.1);
   border-color: rgba(11, 107, 214, 0.34);
-  box-shadow: 0 14px 30px -14px rgba(15, 23, 42, 0.5);
+  box-shadow: 0 14px 30px -14px rgb(var(--w-shadow) / 0.5);
   outline: none;
 }
 .dicon:hover::before,
@@ -1058,7 +1095,7 @@
   box-shadow:
     0 0 0 2px var(--w-bg),
     0 0 0 4px var(--blue),
-    0 14px 30px -14px rgba(15, 23, 42, 0.5);
+    0 14px 30px -14px rgb(var(--w-shadow) / 0.5);
 }
 .dicon .fname {
   transition: color 0.22s ease;
@@ -1115,7 +1152,7 @@
   .dicon:hover .fico .gly,
   .dicon:focus-visible .fico .gly {
     transform: translateY(-5px) scale(1.08);
-    filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.35));
+    filter: drop-shadow(0 4px 6px rgb(var(--w-shadow) / 0.35));
   }
 
   /* A single sheen crosses the tile on hover — one pass, not a loop. */
@@ -1172,5 +1209,114 @@
   .dicon.site:hover .appico,
   .dicon.site:focus-visible .appico {
     transform: translateY(-2px) scale(1.07);
+  }
+}
+
+
+/* ---------- THEME TOGGLE ----------
+   A real Windows-style segmented switch in the title row. It carries its state
+   in aria-pressed, so it announces correctly and is reachable by keyboard; the
+   sun/moon pair is aria-hidden because the label already says which way it
+   goes. */
+.themeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--w-line);
+  background: var(--w-panel);
+  color: var(--w-dim);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.themeBtn:hover {
+  color: var(--w-txt);
+  border-color: var(--blue);
+}
+.themeBtn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue);
+}
+.themeBtn svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .themeBtn svg {
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .themeBtn:hover svg {
+    transform: rotate(-22deg);
+  }
+}
+
+/* ---------- ABOUT — a real app icon, not a folder ----------
+   About is a person, not a directory. It gets the same rounded-tile treatment
+   as the shift9.dev door so the grid reads as apps-and-folders rather than a
+   wall of identical yellow. */
+.aboutico {
+  /* Same 76px block height as .fico so the App tile's label sits on the same
+     baseline as the folders' — a taller icon would break the grid's rows. */
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 10px;
+  border-radius: 19px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(155deg, var(--pulse) 0%, var(--pulse-deep) 62%, #3f2a9e 100%);
+  box-shadow:
+    0 6px 18px rgb(var(--w-shadow) / 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s ease;
+}
+.aboutico::after {
+  /* Glass highlight across the top-left, the way a real tile catches light. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.3), transparent 52%);
+  pointer-events: none;
+}
+.aboutico svg {
+  width: 38px;
+  height: 38px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 3px rgba(24, 12, 60, 0.45));
+}
+.dicon.about .fname {
+  font-weight: 650;
+}
+.dicon.about:hover,
+.dicon.about:focus-visible {
+  border-color: rgba(139, 92, 246, 0.55);
+  background: rgba(139, 92, 246, 0.1);
+}
+.dicon.about:hover .fname,
+.dicon.about:focus-visible .fname {
+  color: var(--pulse);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dicon.about:hover .aboutico,
+  .dicon.about:focus-visible .aboutico {
+    transform: translateY(-3px) scale(1.06);
+    box-shadow:
+      0 14px 30px rgb(var(--w-shadow) / 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
 }

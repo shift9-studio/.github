@@ -198,6 +198,21 @@ const ABOUT_GLYPH = (
   </svg>
 );
 
+const THEME_KEY = "s9-desk-theme";
+
+const SUN = (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="4.2" />
+    <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" />
+  </svg>
+);
+
+const MOON = (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z" />
+  </svg>
+);
+
 const SIDEBAR: { label: string; glyph: string; on?: boolean }[] = [
   { label: "Home", glyph: "⌂" },
   { label: "Portfolio", glyph: "▤", on: true },
@@ -221,6 +236,41 @@ export function EnterTheStudio() {
   const [tapVisible, setTapVisible] = useState(false);
   const [compact, setCompact] = useState(false);
   const [openWin, setOpenWin] = useState<OpenWin>(null);
+
+  /* Theme. SSR renders light so the server and first client paint agree; the
+     stored choice (or the OS preference) is applied on mount. The desktop is
+     still behind the intro film at that point, so the switch is never seen. */
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    let stored: string | null = null;
+    try {
+      stored = window.localStorage.getItem(THEME_KEY);
+    } catch {
+      /* storage blocked — fall through to the OS preference */
+    }
+    if (stored === "dark" || stored === "light") {
+      setDark(stored === "dark");
+      return;
+    }
+    const os = window.matchMedia("(prefers-color-scheme: dark)");
+    setDark(os.matches);
+    const follow = (e: MediaQueryListEvent) => setDark(e.matches);
+    os.addEventListener("change", follow);
+    return () => os.removeEventListener("change", follow);
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setDark((d) => {
+      const next = !d;
+      try {
+        window.localStorage.setItem(THEME_KEY, next ? "dark" : "light");
+      } catch {
+        /* storage blocked — the choice just does not persist */
+      }
+      return next;
+    });
+  }, []);
 
   /* Reveal the interactive desktop and tear down the intro overlay. Used by
      SKIP, by reduced-motion, and as the terminal step of the wake sequence. */
@@ -350,7 +400,7 @@ export function EnterTheStudio() {
         : "";
 
   return (
-    <div className={s.root}>
+    <div className={`${s.root} ${dark ? s.dark : ""}`}>
       {/* STAGE 1 — the film. Decorative overlay; the desktop below is the real
           content, so this is hidden from assistive tech. */}
       <div className={s.stageVideo} ref={stageRef} aria-hidden="true">
@@ -417,7 +467,7 @@ export function EnterTheStudio() {
             the Windows tint veiled over it. Decorative; the chrome above is
             the content. */}
         <div className={s.wallLayer} aria-hidden="true">
-          <AsciiWallpaper className={s.wallCanvas} />
+          <AsciiWallpaper className={s.wallCanvas} ink={!dark} />
           <div className={s.wallVeil} />
         </div>
 
@@ -432,6 +482,16 @@ export function EnterTheStudio() {
             <span>About</span>
             <span>Accounts</span>
             <span>Log in</span>
+            <button
+              type="button"
+              className={s.themeBtn}
+              onClick={toggleTheme}
+              aria-pressed={dark}
+              title={dark ? "Switch to light" : "Switch to dark"}
+            >
+              {dark ? SUN : MOON}
+              {dark ? "Light" : "Dark"}
+            </button>
             <a className={s.cta} href={STUDIO_HREF}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -529,8 +589,9 @@ export function EnterTheStudio() {
               </div>
             ))}
 
+            {/* About is a person, not a directory — it gets a real app tile. */}
             <div
-              className={s.dicon}
+              className={`${s.dicon} ${s.about}`}
               data-f="about"
               role="button"
               tabIndex={0}
@@ -539,14 +600,9 @@ export function EnterTheStudio() {
                 if (e.key === "Enter" || e.key === " ") setOpenWin("about");
               }}
             >
-              <div className={s.fico}>
-                <div className={s.tab} />
-                <div className={s.body2} />
-                <div className={s.lip} />
-                <span className={s.gly}>{ABOUT_GLYPH}</span>
-              </div>
+              <div className={s.aboutico}>{ABOUT_GLYPH}</div>
               <div className={s.fname}>About</div>
-              <div className={s.fcount}>me</div>
+              <div className={s.fcount}>Kariim &#183; Shift-9</div>
             </div>
           </div>
         </div>
