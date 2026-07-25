@@ -181,6 +181,19 @@
       "size": "1376x768",
       "credits": 4,
       "approved": true
+    },
+    {
+      "id": "set-piece-10-clip",
+      "path": "set-pieces/10-automation-systems.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_142124_5815afff-1edf-4a6d-afd8-0ad868d69939.mp4",
+      "job": "5815afff-1edf-4a6d-afd8-0ad868d69939",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "50e5605b-d5d8-4a6e-b598-3406778af92b",
+      "approved": true
     }
   ]
 }

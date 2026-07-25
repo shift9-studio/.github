@@ -32,6 +32,8 @@ geometry and framing carry over exactly.
 | 08 | Neon Forge → Titanium Forge Pro | V1 SHIPPED · V2 IN DEV | clip `set-pieces/08-titanium-forge.mp4` — 5s, the press extrudes white-hot titanium, heat shimmer only | `5a3f9997-e4c6-42fe-849e-dec9cd82176a` | 8.75 | **Approved** |
 | 09 | INSTRUMENT | LIVE | plate `set-pieces/09-instrument.png` | `dec8c910-915c-400d-9c21-6186364332e3` | 4 | **Approved** |
 | 09 | INSTRUMENT | LIVE | clip `set-pieces/09-instrument.mp4` — 5s, camera locked, only light moves: keybed slots step like a sequencer, faders fill and drain | `bd510c87-2e8c-4c73-8b5f-94eee0490545` | 8.75 | **Approved** |
+| 10 | Automation Systems | LIVE | plate `set-pieces/10-automation-systems.png` | `50e5605b-d5d8-4a6e-b598-3406778af92b` | 4 | **Approved** |
+| 10 | Automation Systems | LIVE | clip `set-pieces/10-automation-systems.mp4` — 5s, the arm runs a hypnotic repeating sled insertion, LED grids ripple down the aisle | `5815afff-1edf-4a6d-afd8-0ad868d69939` | 8.75 | **Approved** |
 
 **Video settings that produced the clip** (the canary that proved the pipeline):
 `kling3_0`, `mode: pro`, `sound: off`, `duration: 5`, `aspect_ratio: 16:9`,
