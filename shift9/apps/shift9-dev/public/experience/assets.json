@@ -301,6 +301,17 @@
         "6160c4c4-f9d7-441d-b312-883fbc2e8dc1"
       ],
       "approved": true
+    },
+    {
+      "id": "opening-01-exterior-plate",
+      "path": "opening/01-exterior-approach.png",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_154045_88410175-3faa-4f28-8360-ab7bd038fecf.png",
+      "job": "88410175-3faa-4f28-8360-ab7bd038fecf",
+      "model": "nano_banana_pro",
+      "size": "1376x768",
+      "credits": 4,
+      "references": ["6160c4c4-f9d7-441d-b312-883fbc2e8dc1"],
+      "approved": true
     }
   ]
 }
