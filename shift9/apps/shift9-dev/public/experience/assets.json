@@ -135,6 +135,19 @@
       "size": "1376x768",
       "credits": 4,
       "approved": true
+    },
+    {
+      "id": "set-piece-08-clip",
+      "path": "set-pieces/08-titanium-forge.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_135743_5a3f9997-e4c6-42fe-849e-dec9cd82176a.mp4",
+      "job": "5a3f9997-e4c6-42fe-849e-dec9cd82176a",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "475c8ab3-02de-4805-9f2f-8f8eb1187fe0",
+      "approved": true
     }
   ]
 }
