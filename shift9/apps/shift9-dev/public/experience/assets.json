@@ -66,6 +66,19 @@
       "size": "1376x768",
       "credits": 4,
       "approved": true
+    },
+    {
+      "id": "set-piece-05-clip",
+      "path": "set-pieces/05-voxel-arcade.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_114950_084cc877-6039-4504-8ea6-248dcfc1afe6.mp4",
+      "job": "084cc877-6039-4504-8ea6-248dcfc1afe6",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "f7ac1b74-11fa-44a0-b4f5-67f44de03e67",
+      "approved": true
     }
   ]
 }
