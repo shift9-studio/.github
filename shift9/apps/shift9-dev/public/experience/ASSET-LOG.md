@@ -19,7 +19,7 @@ geometry and framing carry over exactly.
 |---|---|---|---|---|---|---|
 | 01 | Just a Pinch | LIVE | plate `set-pieces/01-just-a-pinch.png` | `81e13a22-7b12-4725-a1df-e72205ccae61` | 4 | **Approved** |
 | 02 | Flow State | SHIPPING | plate `set-pieces/02-flow-state.png` | `69320e31-c80f-4624-8004-2c6cf21e76d3` | 4 | **Approved** |
-| 02 | Flow State | SHIPPING | clip `set-pieces/02-flow-state.mp4` — 5s, camera locked, only the fluid moves | `c0236258-5dbd-4dbf-9f84-92f099a6a4cb` | 8.75 | Awaiting verdict |
+| 02 | Flow State | SHIPPING | clip `set-pieces/02-flow-state-v2.mp4` — 5s, camera locked, only the fluid moves | `aceb808f-47bb-4526-9e8d-ff3f04644c12` | 8.75 | **Approved** |
 
 **Video settings that produced the clip** (the canary that proved the pipeline):
 `kling3_0`, `mode: pro`, `sound: off`, `duration: 5`, `aspect_ratio: 16:9`,
@@ -32,8 +32,9 @@ Rejected takes, kept so the same mistake is not paid for twice:
 | Job | Why it was rejected |
 |---|---|
 | `174ee312-98be-4ac8-820c-d09ac89d819b` | Camera too close. The set-piece has to read as a lit diorama on a huge dark stage — subject in the middle third, deep negative space around it. Every later prompt bakes that framing in. |
+| `c0236258-5dbd-4dbf-9f84-92f099a6a4cb` | Smoke. The fluid rendered as vapour rather than liquid, and two haze wisps drifted in the black outside the glass. Every later video prompt now forbids smoke/haze/mist/fog by name and asks for sharp-edged liquid ribbons — glowing ink in water, not gas. |
 
-**Still to shoot:** 02 Flow State · 04 Lumen Projection Mapper · 05 Voxel Arcade
+**Still to shoot:** 04 Lumen Projection Mapper · 05 Voxel Arcade
 Basketball · 06 Midnight Return · 07 Game Design Forge · 08 Neon Forge →
 Titanium Forge Pro · 09 INSTRUMENT · 10 Automation Systems · 11 Omni-3D ·
 12 WinFix. **03 Learning App artwork is supplied — never regenerate it.**
