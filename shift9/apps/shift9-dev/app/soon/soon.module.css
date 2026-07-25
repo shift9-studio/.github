@@ -1,0 +1,349 @@
+/* ────────────────────────────────────────────────────────────────────────
+   UNDER CONSTRUCTION — a laptop lid covered in stickers.
+
+   The sticker palette is local to this page on purpose. These are novelty
+   colours for a joke surface; promoting them to @shift9/theme would put
+   highlighter yellow and sticker red in the same namespace as the brand
+   palette, where something serious would eventually reach for them. Same
+   reasoning as the desktop prototype's own `--w-*` variables: deliberately
+   isolated from INSTRUMENT rather than leaking into it.
+
+   Brand values still come from the theme — the mark is Signal, the ground is
+   Void — so the page belongs to the site even while it misbehaves.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  --sticker-hot: #ff5c2b;
+  --sticker-paper: #f4f1e8;
+  --sticker-ink: #16181d;
+  --tape-yellow: #f5c518;
+
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  /* Top clears the upper tape; bottom reserves the band the crawl and the
+     lower tape occupy, so the centred content can never sit on top of them. */
+  padding: 5.5rem 1.25rem 11rem;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgb(34 211 238 / 0.07), transparent 60%),
+    var(--s9-void);
+  color: var(--s9-paper, #f8fafc);
+  overflow: hidden;
+}
+
+/* ── Hazard tape ───────────────────────────────────────────────────────── */
+
+.tape {
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  height: 2.6rem;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--tape-yellow) 0 22px,
+    var(--sticker-ink) 22px 44px
+  );
+  opacity: 0.9;
+  box-shadow: 0 0 24px rgb(0 0 0 / 0.5);
+}
+
+.tapeTop {
+  top: 2.2rem;
+  transform: rotate(-2.5deg);
+}
+
+.tapeBottom {
+  bottom: 2.2rem;
+  transform: rotate(2deg);
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 1.4rem;
+  width: min(70rem, 100%);
+  text-align: center;
+}
+
+/* ── The laptop ────────────────────────────────────────────────────────── */
+
+.laptop {
+  width: min(46rem, 92vw);
+  perspective: 1400px;
+}
+
+.lid {
+  position: relative;
+  aspect-ratio: 16 / 10.4;
+  border-radius: 18px;
+  /* Brushed aluminium: a soft diagonal sheen over a cool grey body, with a
+     bright top edge and a dark bottom edge so it reads as a solid slab
+     catching light rather than a flat rectangle. */
+  background:
+    linear-gradient(115deg, rgb(255 255 255 / 0.14) 0%, transparent 38%),
+    linear-gradient(200deg, #9aa2ad 0%, #6f7883 42%, #545c66 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
+    inset 0 -2px 0 rgb(0 0 0 / 0.35),
+    0 34px 60px -18px rgb(0 0 0 / 0.75);
+  transform: rotateX(6deg);
+}
+
+/* The fine grain of brushed metal. */
+.brush {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    92deg,
+    rgb(255 255 255 / 0.05) 0 1px,
+    transparent 1px 3px
+  );
+  pointer-events: none;
+}
+
+.badge {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.badgeMark {
+  font-family: var(--s9-font-display, inherit);
+  font-size: clamp(4rem, 13vw, 9rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--s9-signal);
+  text-shadow:
+    0 0 26px rgb(34 211 238 / 0.85),
+    0 0 70px rgb(34 211 238 / 0.4);
+  opacity: 0.92;
+}
+
+/* ── Stickers ──────────────────────────────────────────────────────────── */
+
+.sticker {
+  position: absolute;
+  transform: rotate(var(--r, 0deg));
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: clamp(0.56rem, 1.15vw, 0.78rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0.45em 0.75em;
+  border-radius: 3px;
+  /* A sticker sits on the lid, so it needs its own shadow and a hint of the
+     die-cut edge. */
+  box-shadow:
+    0 2px 0 rgb(0 0 0 / 0.25),
+    0 6px 14px -4px rgb(0 0 0 / 0.55);
+  border: 2px solid rgb(255 255 255 / 0.65);
+}
+
+.sig {
+  background: var(--s9-signal);
+  color: var(--sticker-ink);
+}
+
+.pul {
+  background: var(--s9-pulse);
+  color: var(--sticker-paper);
+}
+
+.hot {
+  background: var(--sticker-hot);
+  color: var(--sticker-paper);
+}
+
+.paper {
+  background: var(--sticker-paper);
+  color: var(--sticker-ink);
+}
+
+.term {
+  background: var(--sticker-ink);
+  color: #4ade80;
+  border-color: rgb(74 222 128 / 0.55);
+}
+
+/* ── The type ──────────────────────────────────────────────────────────── */
+
+.headline {
+  margin: 0;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: clamp(1.3rem, 4.6vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+/* The 1997 rainbow, done as a moving gradient clipped to the glyphs. */
+.rainbow {
+  background: linear-gradient(
+    90deg,
+    #ff5c2b,
+    #f5c518,
+    #4ade80,
+    var(--s9-signal),
+    var(--s9-pulse),
+    #ff5c2b
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: slide 6s linear infinite;
+}
+
+@keyframes slide {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+.blink {
+  color: var(--tape-yellow);
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.line {
+  max-width: 44ch;
+  margin: 0;
+  font-size: clamp(0.95rem, 1.8vw, 1.1rem);
+  line-height: 1.6;
+  color: rgb(248 250 252 / 0.75);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: center;
+  margin-top: 0.2rem;
+}
+
+.btn,
+.btnGhost {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.85em 1.5em;
+  border-radius: 2px;
+  transition:
+    background-color var(--s9-dur-fast) var(--s9-ease-out),
+    color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.btn {
+  background: var(--s9-signal);
+  color: var(--s9-void);
+  border: 1px solid var(--s9-signal);
+}
+
+.btn:hover,
+.btn:focus-visible {
+  background: transparent;
+  color: var(--s9-signal);
+}
+
+.btnGhost {
+  background: transparent;
+  color: var(--s9-paper, #f8fafc);
+  border: 1px solid rgb(248 250 252 / 0.35);
+}
+
+.btnGhost:hover,
+.btnGhost:focus-visible {
+  border-color: var(--s9-paper, #f8fafc);
+}
+
+/* ── The crawl ─────────────────────────────────────────────────────────── */
+
+.marqueeWrap {
+  position: absolute;
+  bottom: 5.6rem;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  border-block: 1px solid rgb(248 250 252 / 0.14);
+  background: rgb(0 0 0 / 0.35);
+  padding-block: 0.4rem;
+}
+
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: crawl 26s linear infinite;
+}
+
+.marquee span {
+  padding-inline: 1.5rem;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(248 250 252 / 0.55);
+  white-space: nowrap;
+}
+
+@keyframes crawl {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────────
+   Not negotiable and not part of the joke. Blinking and scrolling text are a
+   real seizure and vestibular risk, so every animation here stops and each
+   element resolves to a complete, readable state: the rainbow settles on one
+   solid colour, the blink stays visible rather than hidden, the crawl parks. */
+
+@media (prefers-reduced-motion: reduce) {
+  .rainbow {
+    animation: none;
+    background: none;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    color: var(--s9-signal);
+  }
+
+  .blink {
+    animation: none;
+    opacity: 1;
+  }
+
+  .marquee {
+    animation: none;
+  }
+
+  .lid {
+    transform: none;
+  }
+}
+
+/* ── Small screens ─────────────────────────────────────────────────────────
+   Ten stickers on a phone is mush, so the lid keeps the mark and the tape and
+   drops the sticker layer entirely rather than shrinking it into noise. */
+
+@media (max-width: 34rem) {
+  .sticker {
+    display: none;
+  }
+
+  .marqueeWrap {
+    bottom: 4.6rem;
+  }
+}
