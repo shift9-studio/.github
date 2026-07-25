@@ -43,6 +43,15 @@ const STUDIO_HREF = "/studio";
    second beat is the monitor filling the screen, which is where the real
    desktop below takes over — so the handoff is a match cut, not a transition.
    Both were shot against Kariim's own photographs of the room and the doll. */
+/* The static screen the entrance starts from. It is the first thing painted on
+   the site, so it is a compressed 1920x1080 JPEG rather than the 2.4MB source
+   plate: a photographic frame in a lossless format made the largest paint on
+   the page roughly seven times heavier than it needed to be, and the plate was
+   only 1376px wide so it was being upscaled and softened on any full-size
+   screen. Matching the film's own dimensions means starting playback is not
+   also a change of resolution. */
+const OPENING_POSTER = "/experience/opening/01-exterior-approach-poster.jpg";
+
 const OPENING: readonly string[] = [
   "/experience/opening/01-03-approach-entry-hall-v4.mp4",
   "/experience/opening/04-desk-mouse-screen-v5.mp4",
@@ -467,7 +476,7 @@ export function EnterTheStudio() {
         <video
           ref={videoRef}
           src={OPENING[0]}
-          poster="/experience/opening/01-exterior-approach.png"
+          poster={OPENING_POSTER}
           muted
           autoPlay
           playsInline
