@@ -54,5 +54,8 @@ jobs:
             echo "nothing new to commit"
             exit 0
           fi
-          git commit -m "assets: fetch approved experience renders listed in assets.json"
+          # [skip ci] keeps a binary drop from spending a Vercel deployment.
+          # These commits only add files under public/ — there is nothing to
+          # rebuild until an actual code change lands.
+          git commit -m "assets: fetch approved experience renders listed in assets.json [skip ci]"
           git push origin HEAD:${{ github.ref_name }}
