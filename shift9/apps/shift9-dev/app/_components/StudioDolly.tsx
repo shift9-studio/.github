@@ -139,8 +139,19 @@ function Stage({
               ))}
             </div>
             {piece.href ? (
-              <a className={s.link} href={piece.href}>
-                Open {piece.title} &#8594;
+              /* A live product opens in its own tab: the studio is a place the
+                 visitor is standing in, and sending them away from it to look
+                 at one project costs them their position in the travel. */
+              <a
+                className={s.link}
+                href={piece.href}
+                {...(piece.href.startsWith("http")
+                  ? { target: "_blank", rel: "noreferrer" }
+                  : {})}
+              >
+                {piece.href.startsWith("http")
+                  ? `Open the live ${piece.title} ↗`
+                  : `Open ${piece.title} →`}
               </a>
             ) : null}
           </div>
