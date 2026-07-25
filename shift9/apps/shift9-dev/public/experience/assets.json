@@ -324,6 +324,21 @@
       "size": "1920x1080",
       "credits": 17.5,
       "startFrame": "88410175-3faa-4f28-8360-ab7bd038fecf",
+      "approved": false,
+      "note": "Superseded. The office glimpsed at the end drifted from the real room; reshot with Kariim's photograph pinned as the end frame."
+    },
+    {
+      "id": "opening-123-clip-v2",
+      "path": "opening/01-03-approach-entry-hall-v2.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_155934_2d63349f-b97d-440b-9143-49da1bdc0b7f.mp4",
+      "job": "2d63349f-b97d-440b-9143-49da1bdc0b7f",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 10,
+      "size": "1920x1080",
+      "credits": 17.5,
+      "startFrame": "88410175-3faa-4f28-8360-ab7bd038fecf",
+      "endFrame": "8f6346d2-cb39-4293-a97a-8fdcd054dcaa",
       "approved": true
     }
   ]
