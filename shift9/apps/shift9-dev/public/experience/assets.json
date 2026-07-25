@@ -82,12 +82,25 @@
     },
     {
       "id": "set-piece-06",
-      "path": "set-pieces/06-midnight-return-v3.png",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_132219_328b2db7-48e8-458c-88e5-0704533c6277.png",
-      "job": "328b2db7-48e8-458c-88e5-0704533c6277",
+      "path": "set-pieces/06-midnight-return.png",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_132459_bf53521d-78e1-4c27-9afd-f234bab81194.png",
+      "job": "bf53521d-78e1-4c27-9afd-f234bab81194",
       "model": "nano_banana_pro",
       "size": "1376x768",
       "credits": 4,
+      "approved": true
+    },
+    {
+      "id": "set-piece-06-clip",
+      "path": "set-pieces/06-midnight-return.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_133201_894a6085-89c3-45ea-a1ab-019fad0bcbfd.mp4",
+      "job": "894a6085-89c3-45ea-a1ab-019fad0bcbfd",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "bf53521d-78e1-4c27-9afd-f234bab81194",
       "approved": true
     }
   ]
