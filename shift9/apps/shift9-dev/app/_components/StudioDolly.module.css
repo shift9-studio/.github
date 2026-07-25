@@ -1,0 +1,196 @@
+/* ────────────────────────────────────────────────────────────────────────
+   UNCUT SOUNDSTAGE DOLLY — the twelve set-pieces as one continuous travel.
+
+   Absolute black holds the frame; each set-piece is a full-bleed shot and the
+   type sits over it. Scroll drives the travel, so the visitor controls the
+   pace of the take rather than waiting out a fixed runtime.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  position: relative;
+  background: var(--s9-black, #000);
+  color: var(--s9-paper, #f8fafc);
+}
+
+/* Each set-piece owns a tall scroll region; the shot inside is pinned to the
+   viewport for its duration, which is what makes the travel read as one take
+   instead of twelve stacked cards. */
+.stage {
+  position: relative;
+  height: 220vh;
+}
+
+.pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.shot {
+  position: absolute;
+  inset: 0;
+}
+
+.shot video,
+.shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The vignette keeps type legible over any frame without washing the shot
+   out — the sets are chiaroscuro and the darkness is the point. */
+.veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgb(0 0 0 / 0.92) 0%, rgb(0 0 0 / 0.35) 38%, rgb(0 0 0 / 0) 62%),
+    radial-gradient(120% 90% at 50% 50%, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0.55) 100%);
+  pointer-events: none;
+}
+
+.caption {
+  position: relative;
+  width: min(1180px, 92vw);
+  margin-inline: auto;
+  align-self: end;
+  padding-bottom: clamp(3rem, 9vh, 6rem);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s9-signal);
+}
+
+.num {
+  opacity: 0.7;
+}
+
+/* Status is the contract from STUDIO-DOLLY.md made visible: resolved sets read
+   settled, volatile ones read mid-build. */
+.status {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.18em 0.7em;
+  font-size: 0.66rem;
+}
+
+.volatile .status {
+  color: var(--s9-pulse);
+}
+
+.title {
+  font-size: clamp(2.1rem, 6vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.note {
+  max-width: 54ch;
+  margin: 0;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  line-height: 1.5;
+  color: rgb(248 250 252 / 0.72);
+}
+
+.link {
+  justify-self: start;
+  margin-top: 0.35rem;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--s9-signal);
+  text-decoration: none;
+  border-bottom: 1px solid rgb(34 211 238 / 0.35);
+  padding-bottom: 0.15em;
+  transition: border-color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.link:hover,
+.link:focus-visible {
+  border-bottom-color: currentColor;
+}
+
+/* Opening and closing plates — the take has to start and end somewhere. */
+.bookend {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  gap: 1.1rem;
+  padding: 12vh 6vw;
+  text-align: center;
+}
+
+.bookend h1 {
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.lede {
+  max-width: 46ch;
+  margin-inline: auto;
+  color: rgb(248 250 252 / 0.7);
+  line-height: 1.6;
+}
+
+.counter {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2.5rem);
+  bottom: clamp(1rem, 3vw, 2.5rem);
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: rgb(248 250 252 / 0.55);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Reduced motion: the sticky travel and the clips both go. Every set-piece
+   becomes its own full plate with the caption beneath it — the whole roster
+   still reads, in order, as complete content. */
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    height: auto;
+  }
+
+  .pin {
+    position: static;
+    height: auto;
+    display: block;
+  }
+
+  .shot {
+    position: relative;
+    inset: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .veil {
+    display: none;
+  }
+
+  .caption {
+    padding-block: 2.5rem 5rem;
+  }
+
+  .counter {
+    display: none;
+  }
+}
