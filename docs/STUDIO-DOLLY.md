@@ -60,6 +60,18 @@ No additions. No reordering. No status upgrades.
   existing project data. An earlier note called it "shipped" — SHIPPING stands
   until Kariim says otherwise.
 
+## How the twelve become the dolly
+
+**Decided:** each set-piece is delivered as a still, approved one at a time. The
+fly-through is assembled from the full approved set afterwards, in one pass, via
+the skill built for it. Nothing is animated per-tile in isolation and nothing is
+assembled before all twelve are signed off — a fly-through built from a partial
+set would have to be rebuilt the moment a later tile lands.
+
+So the working order is: shoot one → Kariim keeps or refines → save it to
+`public/experience/set-pieces/` → next. Twelve approved stills, then the
+fly-through.
+
 ## Entry-experience architecture this plugs into
 
 Decided and locked. The dolly is one stage of a larger front door.
