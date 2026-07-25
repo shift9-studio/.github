@@ -276,6 +276,16 @@
       "credits": 8.75,
       "startFrame": "81e13a22-7b12-4725-a1df-e72205ccae61",
       "approved": true
+    },
+    {
+      "id": "opening-01-office-plate",
+      "path": "opening/01-office-arrival.png",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_151834_f7d79c64-9b4c-49c2-8a95-70483199fb13.png",
+      "job": "f7d79c64-9b4c-49c2-8a95-70483199fb13",
+      "model": "nano_banana_pro",
+      "size": "1376x768",
+      "credits": 4,
+      "approved": true
     }
   ]
 }
