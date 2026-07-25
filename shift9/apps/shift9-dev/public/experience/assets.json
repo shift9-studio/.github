@@ -171,6 +171,16 @@
       "credits": 8.75,
       "startFrame": "dec8c910-915c-400d-9c21-6186364332e3",
       "approved": true
+    },
+    {
+      "id": "set-piece-10",
+      "path": "set-pieces/10-automation-systems.png",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_141626_50e5605b-d5d8-4a6e-b598-3406778af92b.png",
+      "job": "50e5605b-d5d8-4a6e-b598-3406778af92b",
+      "model": "nano_banana_pro",
+      "size": "1376x768",
+      "credits": 4,
+      "approved": true
     }
   ]
 }

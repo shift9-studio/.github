@@ -28,6 +28,10 @@ geometry and framing carry over exactly.
 | 06 | Midnight Return | IN DEV | clip `set-pieces/06-midnight-return.mp4` — 5s, a shadowy figure crosses the crypt and climbs to the moonlit hall | `894a6085-89c3-45ea-a1ab-019fad0bcbfd` | 8.75 | **Approved** |
 | 07 | Game Design Forge | R&D | plate `set-pieces/07-game-design-forge.png` | `6857d218-47d7-40f6-873a-e9547855fcc8` | 4 | **Approved** |
 | 07 | Game Design Forge | R&D | clip `set-pieces/07-game-design-forge-v2.mp4` — 5s, code scrolls, node graph pulses, the wireframe object fails to resolve | `696b118b-36a6-47a1-a8c3-c16d0d50b80d` | 8.75 | **Approved** |
+| 08 | Neon Forge → Titanium Forge Pro | V1 SHIPPED · V2 IN DEV | plate `set-pieces/08-titanium-forge.png` | `475c8ab3-02de-4805-9f2f-8f8eb1187fe0` | 4 | **Approved** |
+| 08 | Neon Forge → Titanium Forge Pro | V1 SHIPPED · V2 IN DEV | clip `set-pieces/08-titanium-forge.mp4` — 5s, the press extrudes white-hot titanium, heat shimmer only | `5a3f9997-e4c6-42fe-849e-dec9cd82176a` | 8.75 | **Approved** |
+| 09 | INSTRUMENT | LIVE | plate `set-pieces/09-instrument.png` | `dec8c910-915c-400d-9c21-6186364332e3` | 4 | **Approved** |
+| 09 | INSTRUMENT | LIVE | clip `set-pieces/09-instrument.mp4` — 5s, camera locked, only light moves: keybed slots step like a sequencer, faders fill and drain | `bd510c87-2e8c-4c73-8b5f-94eee0490545` | 8.75 | **Approved** |
 
 **Video settings that produced the clip** (the canary that proved the pipeline):
 `kling3_0`, `mode: pro`, `sound: off`, `duration: 5`, `aspect_ratio: 16:9`,
@@ -48,13 +52,11 @@ Rejected takes, kept so the same mistake is not paid for twice:
 | `6b1a1d3b-d6b0-4e73-a148-b010c9b2a42a` | Game Design Forge clip take 1: the soldering iron burned with an actual flame. It is an electric iron — a faint heat shimmer above the tip is right, fire is not. |
 | `c0236258-5dbd-4dbf-9f84-92f099a6a4cb` | Smoke. The fluid rendered as vapour rather than liquid, and two haze wisps drifted in the black outside the glass. Every later video prompt now forbids smoke/haze/mist/fog by name and asks for sharp-edged liquid ribbons — glowing ink in water, not gas. |
 
-**Still to shoot:** 08 Neon Forge →
-Titanium Forge Pro · 09 INSTRUMENT · 10 Automation Systems · 11 Omni-3D ·
-12 WinFix. **03 Learning App artwork is supplied — never regenerate it.**
+**Still to shoot:** 10 Automation Systems · 11 Omni-3D · 12 WinFix.
+**03 Learning App artwork is supplied — never regenerate it.**
 
-Ten plates left at 4 credits and eleven clips left at 8.75 (more if a set needs
-10s, like Lumen's projection-mapping sequence) = **roughly 136 credits** to
-finish the set.
+Three plates left at 4 credits and four clips left at 8.75 (03 still needs its
+clip once the supplied artwork lands) = **roughly 47 credits** to finish the set.
 
 ## Built in code, not generated
 
