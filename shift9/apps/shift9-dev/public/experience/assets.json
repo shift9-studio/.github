@@ -285,6 +285,21 @@
       "model": "nano_banana_pro",
       "size": "1376x768",
       "credits": 4,
+      "approved": false,
+      "note": "Superseded. Invented office; replaced by the plate built from Kariim's real room and doll photographs."
+    },
+    {
+      "id": "opening-04-desk-plate",
+      "path": "opening/04-desk-sit.png",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_152857_28d0b928-33f2-4aa1-87c7-d8b3c2571e25.png",
+      "job": "28d0b928-33f2-4aa1-87c7-d8b3c2571e25",
+      "model": "nano_banana_pro",
+      "size": "1376x768",
+      "credits": 4,
+      "references": [
+        "8f6346d2-cb39-4293-a97a-8fdcd054dcaa",
+        "6160c4c4-f9d7-441d-b312-883fbc2e8dc1"
+      ],
       "approved": true
     }
   ]
