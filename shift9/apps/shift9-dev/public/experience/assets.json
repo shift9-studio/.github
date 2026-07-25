@@ -381,7 +381,35 @@
       "size": "1920x1080",
       "credits": 17.5,
       "startFrame": "6160c4c4-f9d7-441d-b312-883fbc2e8dc1",
-      "note": "Awaiting Kariim's review. Reshot for a weighted vertical drop into the chair plus a roll-in to the desk, and for five separate crocheted fingers on the mouse. Screen stays featureless by design.",
+      "note": "Rejected: the sit read as a ghost settling into the chair. The sit was dropped entirely after this take - with no visible body, first-person sitting has nothing to anchor to, so the shot became a camera glide down to desk height instead.",
+      "approved": false
+    },
+    {
+      "id": "opening-4-clip-v4",
+      "path": "opening/04-desk-mouse-screen-v4.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_170158_1a44949a-ba2b-4c02-9381-f0bf2d4c33f2.mp4",
+      "job": "1a44949a-ba2b-4c02-9381-f0bf2d4c33f2",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 10,
+      "size": "1920x1080",
+      "credits": 17.5,
+      "startFrame": "6160c4c4-f9d7-441d-b312-883fbc2e8dc1",
+      "note": "Rejected: the forearm rendered as a realistic human arm instead of a black crocheted hoodie sleeve, and it wore a watch - the character wears his watch on the left wrist, not the right.",
+      "approved": false
+    },
+    {
+      "id": "opening-4-clip-v5",
+      "path": "opening/04-desk-mouse-screen-v5.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_171713_c298bf95-90f8-49a6-8e0d-aaab64632b8c.mp4",
+      "job": "c298bf95-90f8-49a6-8e0d-aaab64632b8c",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 10,
+      "size": "1920x1080",
+      "credits": 17.5,
+      "startFrame": "6160c4c4-f9d7-441d-b312-883fbc2e8dc1",
+      "note": "Awaiting Kariim's review. Black crocheted hoodie sleeve into a ribbed cuff into the brown yarn hand, bare right wrist, five separate fingers on the mouse. No sit - camera glides down to desk height. Screen stays featureless by design so the live page takes over.",
       "approved": false
     }
   ]
