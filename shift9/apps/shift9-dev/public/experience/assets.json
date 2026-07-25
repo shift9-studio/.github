@@ -20,6 +20,19 @@
       "size": "1376x768",
       "credits": 4,
       "approved": true
+    },
+    {
+      "id": "set-piece-02-clip",
+      "path": "set-pieces/02-flow-state.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260725_103317_c0236258-5dbd-4dbf-9f84-92f099a6a4cb.mp4",
+      "job": "c0236258-5dbd-4dbf-9f84-92f099a6a4cb",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 8.75,
+      "startFrame": "69320e31-c80f-4624-8004-2c6cf21e76d3",
+      "approved": true
     }
   ]
 }
