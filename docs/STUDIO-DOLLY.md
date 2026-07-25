@@ -40,7 +40,7 @@ No additions. No reordering. No status upgrades.
 | 01 | **Just a Pinch** | LIVE | Stark, surgically lit, brilliant white minimalist kitchen counter against absolute black. A tablet displays the live pinch.shift9.dev interface. |
 | 02 | **Flow State** | SHIPPING | A dark obsidian studio space. A perfectly clear vessel holds a glowing low-viscosity blue fluid in complex laminar flow. Lit to emphasise refraction. |
 | 03 | **Learning App** | SHIPPING | A minimalist floating cubic structure in architectural concrete. Clean sharp internal light reveals a geometric UI projected onto the cube's inner walls. **Artwork is supplied — never regenerate this tile.** |
-| 04 | **Lumen Projection Mapper** | IN DEV | A dark room. A complex abstract wireframe object centred. A sharp powerful light ray projects a live, glitching UI map onto it. Dust motes catch the beam. |
+| 04 | **Lumen Projection Mapper** | IN DEV | A dark room. A large stack of plain white geometric boxes, centred, with a projector beam raking across them and dust motes in the light. **The clip is the point here** — it runs the real projection-mapping sequence you see on stage: calibration grid snapping onto the box faces and locking to the edges, then the mapped show taking over across a few distinct passes (a saturated acid-trip pass, a retro video-game pass, and a hard architectural deconstruction pass where the boxes appear to open, slide and collapse in light). In dev, so the calibration visibly fights before it locks and the map tears at the seams. Needs 10s. |
 | 05 | **Voxel Arcade Basketball** | IN DEV | A retro-futuristic arcade cabinet against a dark brick wall. The screen shows pixel-art C# code. The cabinet flickers with neon electric blue and orange. |
 | 06 | **Midnight Return** | IN DEV | A heavy metallic industrial corridor soundstage. Moody atmospheric lighting dominated by flickering saturated industrial blues and oranges. |
 | 07 | **Game Design Forge** | R&D | A cluttered R&D workbench. Screens show raw C# code and engine schematics. Soldering iron visible. Accent light is deep, hot orange. |
@@ -62,15 +62,47 @@ No additions. No reordering. No status upgrades.
 
 ## How the twelve become the dolly
 
-**Decided:** each set-piece is delivered as a still, approved one at a time. The
-fly-through is assembled from the full approved set afterwards, in one pass, via
-the skill built for it. Nothing is animated per-tile in isolation and nothing is
-assembled before all twelve are signed off — a fly-through built from a partial
-set would have to be rebuilt the moment a later tile lands.
+**All twelve are animated.** Every set-piece is a moving shot, not a still —
+something genuinely happens in each one. The still is only the plate.
 
-So the working order is: shoot one → Kariim keeps or refines → save it to
-`public/experience/set-pieces/` → next. Twelve approved stills, then the
-fly-through.
+Two steps per project, in this order:
+
+1. **The plate.** A 16:9 still, approved by Kariim. This locks the composition,
+   the lighting and the framing so the whole set stays consistent.
+2. **The clip.** The approved plate is the start frame for an image-to-video
+   pass, so the geometry, palette and framing carry over exactly. The camera
+   stays locked or barely pushes — the *subject* moves, not the shot. Silent;
+   audio is handled separately if at all.
+
+The fly-through is assembled from the complete approved set afterwards, in one
+pass, via the skill built for it. Nothing is assembled from a partial set — it
+would only have to be rebuilt when a later tile lands.
+
+Working order: shoot the plate → keep or refine → animate it → keep or refine →
+save both to `public/experience/set-pieces/` → next project.
+
+### What moves, per status
+
+- **LIVE / SHIPPED / SHIPPING** — the motion is smooth, resolved, hypnotic, in
+  control. Nothing stutters. The set is behaving exactly as designed.
+- **IN DEV / R&D** — the motion is unstable: glitch, tear, flicker, geometry
+  resolving and failing, wireframe popping in and out. The set is visibly
+  mid-build.
+
+### Model and cost
+
+`kling3_0`, `mode: pro`, `sound: off`, start frame = the approved plate.
+
+| Item | Credits |
+|---|---|
+| Plate (4K still) | 4 |
+| Clip, 5s | 8.75 |
+| Clip, 10s | 17.5 |
+| **Twelve plates + twelve 5s clips** | **~153** |
+| Same, if every clip runs 10s | ~258 |
+
+Seedance at 1080p costs 45 per clip for the same 5 seconds. It is not worth 5×
+for this material — the plate is already carrying the detail.
 
 ## Entry-experience architecture this plugs into
 
