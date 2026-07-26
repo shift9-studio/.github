@@ -24,6 +24,11 @@
 .root {
   --ink: #000;
   --paper: #fff;
+  /* The one colour on a one-bit page. Everything else here is two values and
+     dithering, which is what makes a single spot colour land: the tape is the
+     only thing on screen that is not black or white, so it reads as a real
+     object dropped onto a printed page rather than as decoration. */
+  --tape: #f2c400;
 
   position: relative;
   min-height: 100vh;
@@ -271,22 +276,47 @@
   overflow: hidden;
   pointer-events: none;
   z-index: 3;
+  background: var(--tape);
+  color: var(--ink);
   border-block: 3px solid var(--ink);
 }
 
 .ribbonA {
   top: 3%;
   transform: rotate(-9deg);
-  background: var(--paper);
-  color: var(--ink);
 }
 
 .ribbonB {
   bottom: 3%;
   transform: rotate(7deg);
-  background: var(--ink);
-  color: var(--paper);
-  border-block-color: var(--paper);
+}
+
+/* The hazard stripes along both edges. Real barricade tape is a yellow field
+   with black raking stripes top and bottom, and it is the stripes rather than
+   the colour that make it unmistakable — a plain yellow band is a highlighter,
+   a striped one is a cordon. 12px bands at 45 degrees, drawn inside the
+   ribbon's own clip so they follow it around its rotation. */
+.ribbon::before,
+.ribbon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 9px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--ink) 0 9px,
+    transparent 9px 18px
+  );
+  pointer-events: none;
+}
+
+.ribbon::before {
+  top: 0;
+}
+
+.ribbon::after {
+  bottom: 0;
 }
 
 .track {
@@ -301,11 +331,16 @@
 }
 
 .track span {
-  padding: 0.5rem 1.25rem;
-  font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: clamp(0.62rem, 1.2vw, 0.82rem);
-  font-weight: 800;
-  letter-spacing: 0.22em;
+  /* Heavy, tight and large enough to fill the band. Caution tape is printed
+     to be read across a car park, so the type is the widest, heaviest thing
+     on it — the previous setting was a small tracked-out mono that read as a
+     label rather than as a warning. Vertical padding clears the hazard
+     stripes so the words never collide with them. */
+  padding: 0.85rem 1.1rem;
+  font-family: var(--s9-font-display, var(--s9-font-mono, sans-serif));
+  font-size: clamp(0.9rem, 1.9vw, 1.35rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -346,5 +381,129 @@
 
   .laptop {
     transform: rotate(-2deg);
+  }
+}
+
+/* ── THE SIGN ──────────────────────────────────────────────────────────────
+   A hazard sign hung off the top run of tape on two wire hooks, swinging.
+
+   The flex is that it hangs from the tape rather than sitting near it: the
+   hooks start inside the ribbon's band, so the sign reads as a physical thing
+   attached to a physical thing, and the whole assembly rotates about the
+   point where the hooks meet the tape.
+
+   The swing is a pendulum, not a wobble. A real one accelerates through the
+   bottom of its arc and decelerates at the extremes, which is a symmetric
+   ease — using the same ease-in-out on a long period is what stops it reading
+   as a CSS oscillation. The plate lags the hooks by a fraction of a second so
+   the assembly has weight rather than moving as one rigid piece.
+
+   Compositor only: two transform animations, nothing that touches layout. */
+
+.sign {
+  position: absolute;
+  /* Anchored to where the tape actually is, not where it starts. The top run
+     is rotated -9deg, so its left end hangs well below its declared `top` —
+     at the sign's x the band sits around 13-20% down the frame, and the first
+     attempt anchored at 4.5% left the hooks floating in clear air above it.
+
+     z-index 2 puts the assembly UNDER the tape (which is 3), so the hooks
+     vanish behind the band exactly as a real hook would and only the plate
+     hangs out below it. Attaching to something means being occluded by it. */
+  top: 12.5%;
+  left: clamp(3%, 8vw, 14%);
+  z-index: 2;
+  transform-origin: 50% 0;
+  animation: swing 6.2s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  pointer-events: none;
+}
+
+.hooks {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 7.5rem;
+  /* Long enough to pass through the band and still clear its lower edge. */
+  height: 3.4rem;
+  margin-inline: auto;
+}
+
+.hooks i {
+  display: block;
+  width: 3px;
+  height: 100%;
+  background: var(--ink);
+  box-shadow: 1px 0 0 var(--paper);
+}
+
+/* The plate: a cut rectangle, black on hazard yellow, hung slightly off-square
+   because nothing on this page is square. */
+.signPlate {
+  position: relative;
+  padding: 0.7rem 1.1rem 0.85rem;
+  background: var(--tape);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  clip-path: polygon(2% 0, 100% 3%, 98% 100%, 0 97%);
+  transform: rotate(-1.5deg);
+  animation: swingPlate 6.2s cubic-bezier(0.45, 0, 0.55, 1) 0.18s infinite alternate;
+}
+
+.signPlate b {
+  display: block;
+  font-family: var(--s9-font-display, sans-serif);
+  font-size: clamp(1rem, 2.2vw, 1.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.signPlate em {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-style: normal;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@keyframes swing {
+  from {
+    transform: rotate(-7deg);
+  }
+  to {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes swingPlate {
+  from {
+    transform: rotate(-3.5deg);
+  }
+  to {
+    transform: rotate(2deg);
+  }
+}
+
+/* Reduced motion: the sign hangs still, slightly off-square, which is what a
+   sign actually does most of the time. */
+@media (prefers-reduced-motion: reduce) {
+  .sign,
+  .signPlate {
+    animation: none;
+  }
+
+  .sign {
+    transform: rotate(-3deg);
+  }
+}
+
+/* The sign crowds the laptop on a phone; the tape and the lid carry it there. */
+@media (max-width: 48rem) {
+  .sign {
+    display: none;
   }
 }

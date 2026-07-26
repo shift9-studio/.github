@@ -103,6 +103,20 @@ export default function SoonPage() {
         </div>
       </div>
 
+      {/* Hung off the top run of tape on two wire hooks, and swinging. Purely
+          decorative: the heading and the line already say everything this
+          says, and a joke announced to a screen reader is just noise. */}
+      <div className={s.sign} aria-hidden="true">
+        <div className={s.hooks}>
+          <i />
+          <i />
+        </div>
+        <div className={s.signPlate}>
+          <b>Wet paint</b>
+          <em>touch it anyway</em>
+        </div>
+      </div>
+
       <Ribbon className={s.ribbonA ?? ""} text={RIBBON_A} />
       <Ribbon className={s.ribbonB ?? ""} text={RIBBON_B} />
     </main>
