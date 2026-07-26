@@ -155,7 +155,12 @@
 
 .tex {
   background-color: var(--ink);
-  background-image: url("/experience/tex/dither-50.png");
+  /* 25% coverage, not 50%. A 50% dither is a mid grey, and white type on mid
+     grey has no contrast at all - the three stickers using this treatment
+     ("semicolon;", "$ rm -rf ./regrets", "ONE MORE COMMIT") rendered as
+     unreadable blobs. At 25% the field stays clearly dithered but reads as
+     dark, so the knocked-out text holds. */
+  background-image: url("/experience/tex/dither-25.png");
   image-rendering: pixelated;
   color: var(--paper);
   box-shadow: inset 0 0 0 2px var(--paper);
