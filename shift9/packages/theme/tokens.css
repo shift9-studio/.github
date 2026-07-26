@@ -10,8 +10,29 @@
   --s9-surface:     #131c31;   /* raised panel                        */
   --s9-signal:      #22d3ee;   /* cyan accent — "signal"              */
   --s9-pulse:       #8b5cf6;   /* violet accent — "pulse"             */
-  --s9-ink:         #e2e8f0;   /* primary text (AA+ on void)          */
-  --s9-ink-dim:     #64748b;   /* secondary / mono data labels        */
+  /* ── Ink: a hierarchy, measured against the Void ────────────────────────
+     Three steps, not two, because a display face, running prose and a mono
+     data label are three different jobs and were all being served by one
+     value or by the one below it.
+
+     Contrast ratios are against --s9-void (#0f172a) and every one of them is
+     a measurement, not a guess:
+       ink     14.48:1   display and primary text
+       ink-2   10.12:1   running prose that should sit under the headline
+       ink-dim  6.96:1   mono labels, metadata, counters
+
+     ink-dim was #64748b, which is 3.75:1 — below the 4.5:1 floor for normal
+     text, and it was the token used for the small mono labels, which is the
+     worst case for it to fail on. */
+  --s9-ink:         #e2e8f0;   /* primary text                        */
+  --s9-ink-2:       #b8c4d6;   /* running prose, one step down        */
+  --s9-ink-dim:     #94a3b8;   /* mono data labels, metadata          */
+
+  /* Pulse as *text*. The accent itself is 4.22:1 on void — fine as a fill, a
+     border or a large-display colour, below the floor for a label. This is
+     the same hue lifted to 6.56:1 so status text can use it and still be
+     read. Fills and strokes keep --s9-pulse. */
+  --s9-pulse-ink:   #a78bfa;
 
   /* derived hairlines & glows (oklab mixes keep hue honest) */
   --s9-line:        color-mix(in oklab, var(--s9-signal) 16%, transparent);
@@ -22,7 +43,12 @@
   /* ── Typography ───────────────────────────────────────────────── */
   /* next/font injects the source families into *-src vars; we wrap
      them with resilient fallbacks so the cascade never collapses.   */
-  --s9-font-display: var(--font-display-src, "Anybody"), "Arial Narrow", system-ui, sans-serif;
+  --s9-font-display: var(--font-display-src, "Bricolage Grotesque"), "Arial Narrow", system-ui, sans-serif;
+  /* The reading face. It did not exist before: running prose was falling
+     through to the monospace, which is a data face and says so. Apps that
+     want a different voice re-point --font-text-src, exactly as they already
+     do for display. */
+  --s9-font-text:    var(--font-text-src, "Instrument Sans"), system-ui, -apple-system, sans-serif;
   --s9-font-mono:    var(--font-mono-src, "Martian Mono"), ui-monospace, "SFMono-Regular", monospace;
 
   /* fluid scale — clamp() everywhere, no fixed px headings */

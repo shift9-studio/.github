@@ -24,6 +24,7 @@
 import { useEffect, useRef, useState } from "react";
 import s from "./StudioDolly.module.css";
 import { SET_PIECES } from "./studio-dolly-data";
+import { PROJECT_FONTS } from "./studio-fonts";
 
 /* The closing artwork Kariim supplied — the chrome SHIFT-9 mark over the fibre
    strands. Referenced through one constant so replacing the artwork is a single
@@ -143,6 +144,7 @@ function Stage({
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const font = PROJECT_FONTS[piece.n];
   /* `live` mounts the clip and never unmounts it again — swapping back to the
      plate on the way out would drop the decoded frames and re-fetch on the way
      back in. `visible` is the play/pause signal. Both are held off the first
@@ -220,10 +222,19 @@ function Stage({
         <div className={s.veil} aria-hidden="true" />
 
         <div className={s.caption}>
-          {/* The card's variant is data, not a choice made here: each project's
-              layout belongs to the project, so it stays with the roster. */}
+          {/* The card's variant AND its typeface pair are data, not choices
+              made here: both belong to the project, so both stay with the
+              roster. The pair arrives as two custom properties the card's own
+              rules read, which is what lets one stylesheet serve twelve
+              voices without twelve copies of it. */}
           <div
             className={`${s.card} ${s[piece.card] ?? ""} ${visible ? s.cardIn : ""}`}
+            style={
+              {
+                "--card-display": font?.display,
+                "--card-text": font?.text,
+              } as React.CSSProperties
+            }
           >
             <div className={s.meta}>
               <span className={s.num}>{piece.n}</span>

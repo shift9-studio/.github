@@ -32,9 +32,38 @@ html.lenis body {
   body {
     background: var(--s9-void);
     color: var(--s9-ink);
-    font-family: var(--s9-font-mono);
+    /* The reading face, not the data face. Every paragraph on this site used
+       to be monospace by default; mono is now opt-in, for the things that are
+       actually readouts. */
+    font-family: var(--s9-font-text);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  /* Headings take the display face. Before this, anything that did not name a
+     family inherited the monospace from body — so the dolly's project titles
+     and the bookend headline were being set in a data face. Naming it once
+     here is what keeps the three roles honest as components get added. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--s9-font-display);
+    font-weight: 700;
+    /* The axes are the point of choosing a variable display face.
+
+       opsz 48 asks for the letterforms drawn FOR display sizes - tighter
+       joins, finer detail - instead of the text-size drawing scaled up, which
+       is what every static face gives you and what makes big type look
+       inflated rather than designed.
+
+       wdth 84 condenses it. BLUEPRINT §2 locks the display voice as
+       Druk-style condensed mega-type; at its default width this face reads
+       like any bold sans, and condensing is what pulls it back toward the
+       direction that was actually agreed. */
+    font-variation-settings: "opsz" 48, "wdth" 84;
+    letter-spacing: -0.025em;
+    line-height: 1.02;
   }
 
   ::selection {

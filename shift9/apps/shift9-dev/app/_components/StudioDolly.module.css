@@ -89,7 +89,9 @@
 }
 
 .volatile .status {
-  color: var(--s9-pulse);
+  /* The text-safe step of Pulse: the accent itself is 4.22:1 on void, which
+     is under the floor for a label this size. */
+  color: var(--s9-pulse-ink);
 }
 
 .title {
@@ -410,15 +412,78 @@
 .card {
   --card-accent: var(--s9-signal);
   position: relative;
-  /* Sized by its container rather than given a width of its own. The caption
-     around it is already the 92vw measure, so `auto` fills exactly that — and,
-     unlike a fixed width, it subtracts any margin a variant adds. Corridor
-     offsets itself by up to 6vw; with a fixed width that margin pushed the
-     card straight off the right edge of a 360px phone, clipping the title and
-     the note. max-width still caps the line length on wide screens, and auto
-     margins still centre the variants that are narrower than the measure. */
+  /* Wider and shorter than it was. The card sits over a shot that is the
+     whole point of the set-piece, so it should be a strip across the bottom
+     of the frame rather than a slab in the middle of it. Wider lines mean the
+     note lands in two lines instead of four, which is where the height goes. */
   max-width: min(1180px, 100%);
-  margin-inline: auto;
+  /* The caption is a grid, and `margin-inline: auto` on a grid item cancels
+     stretch — the item falls back to shrink-to-fit. That is why the cards had
+     content-dependent widths: 381px for the shortest note, 841px for the
+     longest, with no relationship to the design. Stretching them and letting
+     max-width do the capping gives every card the same left edge and the same
+     measure, and still lets a variant's own margin subtract from the width
+     rather than push the card off the frame. */
+  justify-self: stretch;
+
+  /* Glass. Almost see-through, so the shot reads through it and the type
+     still holds: a low-alpha ground plus a real backdrop blur, rather than a
+     dark panel pretending to be glass. The saturate() is what stops blurred
+     video going grey behind it. */
+  background: rgb(8 12 20 / 0.28);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 18px;
+  padding: 1.15rem 1.6rem 1.25rem;
+  box-shadow:
+    0 18px 50px rgb(0 0 0 / 0.45),
+    inset 0 1px 0 rgb(255 255 255 / 0.09);
+
+  /* THE PROJECT'S OWN VOICE. Each set-piece carries its own pair as data and
+     hands it in as these two properties; the fallbacks are the house faces,
+     so a project without a pair is still typeset correctly. */
+  font-family: var(--card-text, var(--s9-font-text));
+}
+
+/* Type inside the card follows the project, not the site. This is the whole
+   point of the per-project pairing: the layout already changes per project,
+   and keeping one voice across all twelve undid half of that. */
+.card .title {
+  font-family: var(--card-display, var(--s9-font-display));
+}
+
+.card .note {
+  font-family: var(--card-text, var(--s9-font-text));
+}
+
+/* The mono roles stay mono everywhere. Numbers, status and stack are readouts
+   about the project rather than the project's own voice, and holding them
+   constant is what keeps twelve different faces from becoming twelve
+   different designs. */
+.card .meta,
+.card .tag,
+.card .link {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+}
+
+/* Glass needs less of everything else. Titles come down, the note is capped
+   wider so it wraps to fewer lines, and the block breathes less vertically. */
+.card .title {
+  font-size: clamp(1.9rem, 4.4vw, 3.4rem);
+  line-height: 1;
+  margin: 0.15rem 0 0;
+}
+
+.card .note {
+  max-width: 72ch;
+  font-size: clamp(0.92rem, 1.25vw, 1.02rem);
+  line-height: 1.5;
+  color: var(--s9-ink-2);
+}
+
+.card .tags {
+  margin-top: 0.7rem;
 }
 
 .volatile .card {
@@ -706,4 +771,117 @@
     transform: none;
     transition: none;
   }
+}
+
+/* ── GLASS NORMALISATION ───────────────────────────────────────────────────
+   The twelve variants were drawn before the card became glass, so several
+   paint their own opaque ground (`rgb(0 0 0 / 0.8)` and friends) and a couple
+   set square or near-square corners. Those declarations come later in the
+   file than .card and would win, which would leave a black slab sitting on
+   top of the frosted one.
+
+   This re-asserts the shell — ground, blur, radius — for every variant, and
+   leaves everything that actually distinguishes them alone: the dashed frame
+   on the schematic, the left rule on the corridor, the dialog's title bar,
+   the crop marks, the specimen strip. The variant keeps its structure and
+   gives up only its background.
+
+   Written as one block rather than edited into twelve rules so that the
+   relationship is stated in one place: the shell belongs to .card, the
+   arrangement belongs to the variant. */
+.card.recipe,
+.card.waveform,
+.card.storybook,
+.card.calibration,
+.card.scoreboard,
+.card.corridor,
+.card.schematic,
+.card.swatch,
+.card.panel,
+.card.terminal,
+.card.wireframe,
+.card.dialog {
+  background: rgb(8 12 20 / 0.28);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-radius: 18px;
+}
+
+/* The dialog clips its children to draw a title bar, so it needs the radius
+   on the clip as well or the corners square themselves off again. */
+.card.dialog {
+  overflow: hidden;
+}
+
+/* Borders that were solid slabs become hairlines in the project's accent, so
+   the variant still reads as itself against the glass instead of stamping a
+   heavy rectangle over the shot. */
+.card.scoreboard,
+.card.wireframe,
+.card.panel {
+  border: 1px solid color-mix(in oklab, var(--card-accent) 55%, transparent);
+}
+
+/* Backdrop blur is expensive and, on a page already decoding video, not worth
+   it where it cannot be seen. Anything that cannot support it falls back to a
+   slightly denser ground, which is the same design one step less subtle. */
+@supports not (backdrop-filter: blur(1px)) {
+  .card,
+  .card.recipe,
+  .card.waveform,
+  .card.storybook,
+  .card.calibration,
+  .card.scoreboard,
+  .card.corridor,
+  .card.schematic,
+  .card.swatch,
+  .card.panel,
+  .card.terminal,
+  .card.wireframe,
+  .card.dialog {
+    background: rgb(8 12 20 / 0.72);
+  }
+}
+
+/* ── THE PROJECT'S VOICE WINS ──────────────────────────────────────────────
+   Some variants set their own family — the scoreboard's title was mono to
+   read as a scoreboard, the terminal's note was mono to read as a terminal.
+   Those rules have the same specificity as the card's own and sit later in
+   the file, so they were quietly beating the per-project pair: Voxel Arcade
+   Basketball and Automation Systems both rendered in Martian Mono instead of
+   Bungee and JetBrains Mono.
+
+   Restating it last is the fix, and it is the correct precedence anyway: the
+   face belongs to the project, the arrangement belongs to the variant. Where
+   a project's own face is a mono — Automation Systems is a terminal, so it
+   is — that is now a decision in the roster rather than an accident here. */
+.card .title {
+  font-family: var(--card-display, var(--s9-font-display));
+}
+
+.card .note {
+  font-family: var(--card-text, var(--s9-font-text));
+}
+
+/* ── WIDER, SHORTER ────────────────────────────────────────────────────────
+   The card sits over the shot, so its height is the thing that costs. Every
+   variant that was capped between 34rem and 46rem is opened up: the same
+   words in a wider measure wrap to fewer lines, and fewer lines is less of
+   the frame covered. The note keeps its own 72ch cap, so the line length
+   stays readable no matter how wide the card gets.
+
+   The dialog keeps its narrow cap. It is a small Windows utility window and
+   the whole point of that card is that it looks like one. */
+.card.recipe,
+.card.waveform,
+.card.storybook,
+.card.calibration,
+.card.scoreboard,
+.card.corridor,
+.card.schematic,
+.card.swatch,
+.card.panel,
+.card.terminal,
+.card.wireframe {
+  max-width: min(62rem, 100%);
 }

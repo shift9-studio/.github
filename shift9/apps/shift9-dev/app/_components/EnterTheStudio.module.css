@@ -5,7 +5,7 @@
    frame. It is deliberately NOT the dark INSTRUMENT look — immersion at the
    seam outranks brand consistency here (decision log §12). All colours are the
    prototype's own local variables so nothing leaks into / from INSTRUMENT.
-   Fraunces comes from the site font pipeline via var(--font-fraunces).
+   Type comes from the three-role stack in @shift9/theme (display / text / mono).
    ──────────────────────────────────────────────────────────────────────── */
 
 .root {
