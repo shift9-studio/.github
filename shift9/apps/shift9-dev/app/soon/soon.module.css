@@ -16,9 +16,20 @@
       edge. Every panel here is clip-path polygons and skew transforms; the
       ribbons cross the composition rather than sitting parallel to it.
 
-   The palette is two values. Contrast does all the work, so nothing depends on
-   colour to be understood — which also happens to make it the most legible
-   page on the site.
+   3. ONE COLOUR, AND ONLY ONE. The page is otherwise two values and dithering,
+      which is exactly what lets a single hazard yellow land: the tape is the
+      only thing on screen that is neither black nor white, so it reads as a
+      real object dropped onto a printed page rather than as decoration.
+
+      The tape and the sign are the only things here with material depth — a
+      curl gradient across the band, a contact shadow and an ambient one. They
+      are physical objects lying on top of the composition; everything else is
+      printed into it and stays flat. That distinction is the whole reason the
+      depth reads instead of muddying the design.
+
+   Nothing depends on colour to be understood — the tape says the same thing
+   the heading says — which also happens to make this the most legible page on
+   the site.
    ──────────────────────────────────────────────────────────────────────── */
 
 .root {
@@ -276,9 +287,28 @@
   overflow: hidden;
   pointer-events: none;
   z-index: 3;
-  background: var(--tape);
+  /* The band is not flat. Tape is a thin plastic ribbon that curls along its
+     length, so it carries a soft highlight through the middle and falls off
+     to darker at both edges - a single vertical gradient over the yellow is
+     enough to read as a curved surface rather than a painted rectangle. */
+  background-color: var(--tape);
+  background-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.3) 0%,
+    rgb(0 0 0 / 0.08) 18%,
+    rgb(255 255 255 / 0.34) 46%,
+    rgb(0 0 0 / 0.1) 78%,
+    rgb(0 0 0 / 0.32) 100%
+  );
   color: var(--ink);
   border-block: 3px solid var(--ink);
+  /* Lifted off the page: a tight contact shadow directly under the band, and
+     a wider ambient one further down. Both rotate with the ribbon, which is
+     correct - the light does not rotate, but the tape's own shadow is cast
+     along its length. */
+  box-shadow:
+    0 3px 0 rgb(0 0 0 / 0.45),
+    0 14px 26px rgb(0 0 0 / 0.55);
 }
 
 .ribbonA {
@@ -433,7 +463,11 @@
   width: 3px;
   height: 100%;
   background: var(--ink);
-  box-shadow: 1px 0 0 var(--paper);
+  /* Lit on one side, shaded on the other: three pixels of wire reading as
+     round rather than as a drawn line. */
+  box-shadow:
+    1px 0 0 rgb(255 255 255 / 0.85),
+    -1px 0 0 rgb(0 0 0 / 0.55);
 }
 
 /* The plate: a cut rectangle, black on hazard yellow, hung slightly off-square
@@ -441,11 +475,29 @@
 .signPlate {
   position: relative;
   padding: 0.7rem 1.1rem 0.85rem;
-  background: var(--tape);
+  background-color: var(--tape);
+  /* The same curl as the tape, because it is the same material. */
+  background-image: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.34) 0%,
+    rgb(0 0 0 / 0.06) 40%,
+    rgb(0 0 0 / 0.26) 100%
+  );
   color: var(--ink);
   border: 3px solid var(--ink);
   clip-path: polygon(2% 0, 100% 3%, 98% 100%, 0 97%);
   transform: rotate(-1.5deg);
+  /* A hard offset and a soft one. The hard shadow is the page's existing
+     language - the laptop lid casts one too - and it is what gives a flat
+     cut-out its thickness. The soft one puts the whole sign in the room.
+
+     Note this is box-shadow rather than filter: drop-shadow. The sign is
+     animating a transform, so a box-shadow is rasterised into its layer once
+     and composited for free, where a filter would be re-evaluated every
+     frame of the swing. */
+  box-shadow:
+    5px 6px 0 rgb(0 0 0 / 0.9),
+    0 18px 30px rgb(0 0 0 / 0.55);
   animation: swingPlate 6.2s cubic-bezier(0.45, 0, 0.55, 1) 0.18s infinite alternate;
 }
 
