@@ -333,9 +333,16 @@ export function EnterTheStudio() {
     return () => os.removeEventListener("change", follow);
   }, []);
 
-  /* Travel to the studio. Opening the shift9.dev icon flies the desktop's own
-     ASCII field through a tunnel and then follows the link. The vanishing point
-     is the icon that was clicked, so the move starts where the eye already is.
+  /* Travel to the studio. Opening any shift9.dev link flies the desktop's own
+     ASCII field through a tunnel and then follows it. The vanishing point is
+     whatever was clicked, so the move starts where the eye already is.
+
+     EVERY door, not just the tile. There are four ways into the studio from
+     this desktop - the header CTA, the door tile, the taskbar pin and a text
+     link in the About window - and for a while only the tile played the
+     tunnel; the other three cut straight through. Two surfaces joined by a
+     transition that appears on one route out of four is not a transition, it
+     is a bug that happens to look intentional.
 
      Only the plain-left-click case is intercepted: modified clicks (new tab,
      new window, download) and reduced motion fall straight through to normal
@@ -346,6 +353,26 @@ export function EnterTheStudio() {
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     e.preventDefault();
+
+    /* Start fetching the studio the moment the tunnel starts, not when it
+       ends. The travel is a fixed 1.1s and the navigation after it was a cold
+       document request on top - roughly half a second of black between the
+       tunnel finishing and the studio painting. Warming the document during
+       the animation puts that fetch inside time the visitor is already
+       spending, so the two overlap instead of queueing.
+
+       A bare <link rel="prefetch"> rather than the router: this hands off with
+       location.href, which discards the React tree, so what needs warming is
+       the document itself. */
+    if (!document.querySelector('link[data-studio-prefetch]')) {
+      const l = document.createElement("link");
+      l.rel = "prefetch";
+      l.as = "document";
+      l.href = STUDIO_HREF;
+      l.setAttribute("data-studio-prefetch", "");
+      document.head.appendChild(l);
+    }
+
     const r = e.currentTarget.getBoundingClientRect();
     setTunnel({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
   }, []);
@@ -652,7 +679,7 @@ export function EnterTheStudio() {
               {dark ? SUN : MOON}
               {dark ? "Light" : "Dark"}
             </button>
-            <a className={s.cta} href={STUDIO_HREF}>
+            <a className={s.cta} href={STUDIO_HREF} onClick={enterStudio}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={SHIFT9_LOGO}
@@ -779,7 +806,12 @@ export function EnterTheStudio() {
         <div className={s.taskbar}>
           <div className={`${s.tb} ${s.start}`} />
           <div className={s.tb}>&#128269;</div>
-          <a className={`${s.tb} ${s.pin}`} href={STUDIO_HREF} title="shift9.dev">
+          <a
+            className={`${s.tb} ${s.pin}`}
+            href={STUDIO_HREF}
+            title="shift9.dev"
+            onClick={enterStudio}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={SHIFT9_LOGO} alt="" />
           </a>
@@ -834,7 +866,10 @@ export function EnterTheStudio() {
                     <br />
                     Email &#8594;{" "}
                     <a href="mailto:shift9.dev@gmail.com">shift9.dev@gmail.com</a>{" "}
-                    &#183; Studio &#8594; <a href={STUDIO_HREF}>shift9.dev</a>
+                    &#183; Studio &#8594;{" "}
+                    <a href={STUDIO_HREF} onClick={enterStudio}>
+                      shift9.dev
+                    </a>
                   </div>
                 </div>
               ) : (

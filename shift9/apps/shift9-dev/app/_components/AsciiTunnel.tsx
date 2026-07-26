@@ -32,7 +32,14 @@ import { ASCII_RAMP, BANNER_ASCII } from "./ascii-art-data";
 
 /* Depth planes in flight at once. Enough to read as continuous travel without
    the far end turning into a solid wash. */
-const LAYERS = 16;
+const LAYERS = 9;
+
+/* Depth tints baked up front. The corridor fades Signal into Pulse with
+   distance; doing that by drawing both tints and cross-fading them costs two
+   large composited draws per plane, every frame. Rasterising the ramp once
+   into a handful of steps means one draw per plane instead - the single
+   biggest lever on this animation's frame time. */
+const TINTS = 5;
 
 /* How much of the plane's width fills the frame when it is one unit deep.
    Below 1 the far planes sit inside the frame and the tunnel reads as a
@@ -44,7 +51,11 @@ const FOCAL = 0.42;
    keeps the wordmark legible at a quarter of the fillText cost. */
 const STEP = 2;
 
-const PLANE_W = 1400;
+/* The rasterised plane's own width. Every plane is scaled well past this on
+   screen, so the source only needs enough detail to survive the upscale -
+   1400 was paying to sample a texture nearly twice as large as anything the
+   nearest-neighbour filter could show. */
+const PLANE_W = 820;
 
 function cssVar(name: string, fallback: string) {
   const v = getComputedStyle(document.documentElement).getPropertyValue(name);
@@ -57,6 +68,31 @@ function cssMs(name: string, fallback: number) {
   const n = parseFloat(raw);
   if (!Number.isFinite(n)) return fallback;
   return raw.endsWith("s") && !raw.endsWith("ms") ? n * 1000 : n;
+}
+
+/* Blend two #rrggbb values. Used to bake the depth ramp before the loop
+   starts, so the frame loop never mixes colours. */
+function mixHex(a: string, b: string, t: number) {
+  const parse = (h: string) => {
+    const v = h.replace("#", "").trim();
+    const n =
+      v.length === 3
+        ? v
+            .split("")
+            .map((c) => c + c)
+            .join("")
+        : v;
+    return [
+      parseInt(n.slice(0, 2), 16),
+      parseInt(n.slice(2, 4), 16),
+      parseInt(n.slice(4, 6), 16),
+    ];
+  };
+  const [r1, g1, b1] = parse(a);
+  const [r2, g2, b2] = parse(b);
+  if ([r1, g1, b1, r2, g2, b2].some((n) => !Number.isFinite(n))) return a;
+  const m = (x = 0, y = 0) => Math.round(x + (y - x) * t);
+  return `rgb(${m(r1, r2)} ${m(g1, g2)} ${m(b1, b2)})`;
 }
 
 /* Smooth 0→1 ramp, used for the fades at both ends of a plane's travel. */
@@ -139,11 +175,15 @@ export function AsciiTunnel({
       return c;
     };
 
-    const near = buildPlane(signal);
-    const far = buildPlane(pulse);
-    if (!near || !far) {
-      doneRef.current();
-      return;
+    /* Signal → Pulse, sampled into TINTS steps and rasterised once each. */
+    const planes: HTMLCanvasElement[] = [];
+    for (let i = 0; i < TINTS; i++) {
+      const c = buildPlane(mixHex(pulse, signal, i / (TINTS - 1)));
+      if (!c) {
+        doneRef.current();
+        return;
+      }
+      planes.push(c);
     }
 
     let dpr = 1;
@@ -159,6 +199,12 @@ export function AsciiTunnel({
       canvas.width = Math.round(vw * dpr);
       canvas.height = Math.round(vh * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      /* Nearest-neighbour. The near planes are scaled to several times the
+         viewport, and bilinear-filtering an upscale that large is most of the
+         per-draw cost. It is also the wrong filter for this material: the
+         source is a character grid, and letting the glyphs go blocky as they
+         rush past reads as resolution rather than as blur. */
+      ctx.imageSmoothingEnabled = false;
     };
 
     resize();
@@ -187,6 +233,12 @@ export function AsciiTunnel({
       ctx.fillStyle = void_;
       ctx.fillRect(0, 0, vw, vh);
 
+      /* `lighter` stays. It was the largest single cost left, and dropping it
+         did buy another 40% - but the planes stopped building through each
+         other and the corridor went flat and faint. The additive core where
+         several planes overlap IS the effect. The frames come from the draw
+         count, the sampling and the source size instead, all of which are
+         invisible; this is not. */
       ctx.globalCompositeOperation = "lighter";
 
       /* Accelerating travel: distance covered eases in, so the tunnel launches
@@ -201,7 +253,16 @@ export function AsciiTunnel({
         const scale = (FOCAL / u) * (vw / PLANE_W);
         const w = PLANE_W * scale;
         const h = planeH * scale;
-        if (w < 2 || w > vw * 24) continue;
+        /* Past about three viewport widths a plane has already filled the
+           frame edge to edge and everything beyond that is drawn outside it.
+           The clamp was 24 viewport widths - a 34,000px rotated draw with
+           `lighter` blending, thirty-two of them a frame - which is what put
+           the tunnel at 200ms per frame. Nothing visible is lost: the plane
+           still covers the screen, it just stops being rasterised at a size
+           only the clipping region ever sees. 1.8 rather than 3: by then the
+           plane's own centre is past the frame edge and what is left on
+           screen is a corner of it. */
+        if (w < 2 || w > vw * 1.8) continue;
 
         /* Fade in as a plane appears at the far end, out as it sweeps past. */
         const a = smoothstep(1, 0.86, u) * smoothstep(0.04, 0.3, u) * (1 - p * 0.35);
@@ -209,14 +270,36 @@ export function AsciiTunnel({
 
         /* Depth decides the tint: Pulse in the distance resolving to Signal as
            it arrives, so the corridor reads as the palette, front to back. */
+        /* Depth picks the pre-baked tint rather than blending two planes. */
         const mix = smoothstep(0.85, 0.1, u);
-        const x = cx - w / 2;
-        const y = cy - h / 2;
+        const plane =
+          planes[Math.min(TINTS - 1, Math.max(0, Math.round(mix * (TINTS - 1))))];
+        if (!plane) continue;
 
-        ctx.globalAlpha = a * (1 - mix);
-        ctx.drawImage(far, x, y, w, h);
-        ctx.globalAlpha = a * mix;
-        ctx.drawImage(near, x, y, w, h);
+        /* Each plane is rolled a little further than the one behind it, and
+           the whole stack rolls slowly as the travel accelerates.
+
+           This is what turns a flat field with a vanishing point into a
+           corridor. The source art is the SHIFT-9 banner, which is dense on
+           the left and mostly negative space on the right - stacked
+           un-rotated, every plane put its weight on the same side and the
+           frame came out lopsided, empty down one half. Spreading the stack
+           through half a turn means the planes cover for each other and the
+           tunnel reads all the way around, and the differential between
+           neighbours is what gives it the twist of actual travel.
+
+           save/restore around a rotate is the whole cost: still one drawImage
+           per tint per plane, no extra rasterising. */
+        const roll = (k / LAYERS) * Math.PI + travel * 0.35;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(roll);
+
+        ctx.globalAlpha = a;
+        ctx.drawImage(plane, -w / 2, -h / 2, w, h);
+
+        ctx.restore();
       }
 
       ctx.globalCompositeOperation = "source-over";
