@@ -29,10 +29,13 @@
 
 /* ── The field ─────────────────────────────────────────────────────────── */
 
+/* The ground. Three blurred blooms in the house accents — the field the plate
+   drifts over, and the whole field when there is no plate. It does not move:
+   the motion is the plate's job, and a gradient that has to rotate to look
+   finished is a gradient that is not finished. */
 .aurora {
   position: absolute;
-  /* Oversized so the corners stay covered through a full rotation. */
-  inset: -45%;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
   background:
@@ -40,12 +43,25 @@
     radial-gradient(38% 36% at 74% 26%, var(--s9-signal-soft) 0%, transparent 72%),
     radial-gradient(46% 44% at 52% 84%, var(--s9-line-2) 0%, transparent 74%);
   filter: blur(40px) saturate(1.15);
-  animation: aurora var(--s9-dur-aurora) linear infinite;
 }
 
-@keyframes aurora {
+/* The rendered plate. Covers the frame, plays once and holds — its own last
+   frame is the page's resting state, so nothing snaps back to the start. */
+.film {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  opacity: 0;
+  animation: filmIn var(--s9-dur-boot) var(--s9-ease-out) forwards;
+}
+
+@keyframes filmIn {
   to {
-    transform: rotate(1turn);
+    opacity: 1;
   }
 }
 
@@ -263,15 +279,12 @@
 }
 
 /* ── Reduced motion ────────────────────────────────────────────────────────
-   The bloom stops where it is — which is a finished three-colour gradient,
-   not a half-state — and the buttons drop their travel while keeping every
-   colour and focus change. Nothing here needed movement to be understood. */
+   The plate is never mounted (see InvitationField), so what remains is the
+   gradient field — finished, not a half-state. The buttons drop their travel
+   while keeping every colour and focus change. Nothing here needed movement
+   to be understood. */
 
 @media (prefers-reduced-motion: reduce) {
-  .aurora {
-    animation: none;
-  }
-
   .primary,
   .ghost,
   .primaryArrow {
