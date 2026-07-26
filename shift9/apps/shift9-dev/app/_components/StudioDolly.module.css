@@ -431,8 +431,6 @@
      dark panel pretending to be glass. The saturate() is what stops blurred
      video going grey behind it. */
   background: rgb(8 12 20 / 0.28);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   border: 1px solid rgb(255 255 255 / 0.14);
   border-radius: 18px;
   padding: 1.15rem 1.6rem 1.25rem;
@@ -802,8 +800,6 @@
 .card.wireframe,
 .card.dialog {
   background: rgb(8 12 20 / 0.28);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   border-radius: 18px;
 }
 
@@ -884,4 +880,35 @@
 .card.terminal,
 .card.wireframe {
   max-width: min(62rem, 100%);
+}
+
+/* ── THE BLUR IS ONLY FOR THE CARD YOU ARE LOOKING AT ──────────────────────
+   All twelve cards exist in the document at once. A backdrop-filter is one of
+   the most expensive things a browser can be asked for — it samples and blurs
+   everything painted behind the element — and behind these it is a playing
+   1080p video. Twelve of them standing by is eleven too many.
+
+   .cardIn is already toggled by the IntersectionObserver that drives
+   playback, so the blur now costs exactly one card: the one locked in front
+   of you. On the way out it drops back to the flat translucent ground, which
+   is the same design without the sampling.
+
+   contain: paint tells the compositor the blur cannot affect anything outside
+   the card's own box, so it does not have to consider the rest of the pinned
+   frame when deciding what to redraw. */
+.card.cardIn {
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  contain: paint;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Reduced motion renders every plate at once rather than one pinned shot,
+     so every card is "in" simultaneously. Blurring twelve at once is exactly
+     what the rule above exists to avoid. */
+  .card.cardIn {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgb(8 12 20 / 0.72);
+  }
 }
