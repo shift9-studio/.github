@@ -25,12 +25,10 @@
 
 import {
   Archivo,
-  Bricolage_Grotesque,
   Bungee,
   Chakra_Petch,
   Fraunces,
   IBM_Plex_Sans,
-  Instrument_Sans,
   JetBrains_Mono,
   Michroma,
   Nunito,
@@ -40,16 +38,18 @@ import {
   Familjen_Grotesk,
   Saira_Condensed,
 } from "next/font/google";
+/* The house display and text faces, reused rather than re-loaded. Every
+   next/font call is another self-hosted file; calling a family twice
+   downloads it twice. */
+import { display as bricolage, text as instrument } from "../fonts";
 
 /* next/font requires literal option objects — the loader reads them at build
    time, so a spread or a shared constant is a build error, not a style choice.
    Hence the repetition below. */
 
 /* ── The reading faces ─────────────────────────────────────────────────── */
-const instrument = Instrument_Sans({ subsets: ["latin"], display: "swap" });
 const plex = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500"], display: "swap" });
 const nunito = Nunito({ subsets: ["latin"], display: "swap" });
-const archivoText = Archivo({ subsets: ["latin"], display: "swap" });
 
 /* ── The display faces, one per project ────────────────────────────────── */
 /* 01 · warm, edible */
@@ -68,13 +68,13 @@ const syne = Syne({ subsets: ["latin"], display: "swap" });
 const chakra = Chakra_Petch({ subsets: ["latin"], weight: ["600", "700"], display: "swap" });
 /* 08 · a design system */
 const familjen = Familjen_Grotesk({ subsets: ["latin"], display: "swap" });
-/* 09 · the house face */
-const bricolage = Bricolage_Grotesque({ subsets: ["latin"], axes: ["opsz", "wdth"], display: "swap" });
 /* 10 · the terminal */
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["700"], display: "swap" });
 /* 11 · 3D viewport chrome */
 const michroma = Michroma({ subsets: ["latin"], weight: "400", display: "swap" });
-/* 12 · plain system utility */
+/* 12 · plain system utility. One instance serves both roles on this card -
+   Archivo is the display face and the reading face, which is the joke: the
+   dialog card only works if the type is honest. */
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], display: "swap" });
 
 export type ProjectFont = { display: string; text: string };
@@ -117,5 +117,5 @@ export const PROJECT_FONTS: Record<string, ProjectFont> = {
   "11": { display: michroma.style.fontFamily, text: instrument.style.fontFamily },
   /* WinFix — a small Windows utility that fixes one bug. Archivo is plain on
      purpose. The joke of the dialog card only works if the type is honest. */
-  "12": { display: archivo.style.fontFamily, text: archivoText.style.fontFamily },
+  "12": { display: archivo.style.fontFamily, text: archivo.style.fontFamily },
 };
