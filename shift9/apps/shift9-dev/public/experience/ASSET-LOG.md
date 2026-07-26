@@ -76,7 +76,20 @@ lifted that on 2026-07-25 and asked for it to be generated — a kids' early-rea
 app with crocheted plush animal characters. The brief above is the one that
 stands.
 
-## The closing banner
+## The closing banner and the invitation
+
+Two plates that close the experience: the banner the dolly lands on, and the
+field behind the invitation it opens. Deliberately the same material — fibre
+strands, luminous dust, deep black — so the two screens read as one place. The
+invitation's plate carries **no wordmark**: the banner already made that
+statement one click earlier, and repeating it would make the second screen a
+poster instead of a room.
+
+| Plate | Job | Model | Spend | Note |
+|---|---|---|---|---|
+| Invitation field | `ee22d192-4637-423d-801a-ac8fc24ba562` | kling3_0 pro, 5s, 1080p | 12.5 | `outro/invitation-field.mp4`. Text-to-video, no start frame. Strands and dust held to the edges so the centre stays clear for the headline. Plays once and holds — a page you sit on to read one sentence should not have perpetual motion behind it. No poster frame was returned, so the gradient beneath covers the load and the plate fades in over it. |
+
+### The banner
 
 `shift-9_new-banner.jpg` — **supplied, not generated.** Kariim's own chrome
 SHIFT-9 artwork, uploaded 2026-07-26. It is the frame the dolly lands on and

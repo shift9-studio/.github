@@ -435,6 +435,19 @@
       "startFrame": "4f1694d0-0bca-4185-a0c6-3288c5be0060",
       "note": "The closing banner, animated from Kariim's own artwork. Start frame only - v1 pinned the still at both ends, which forced net-zero motion and froze the strands and dust. Plays once on arrival and holds its last frame; the cue appears on ended.",
       "approved": true
+    },
+    {
+      "id": "invitation-field",
+      "path": "outro/invitation-field.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260726_011905_ee22d192-4637-423d-801a-ac8fc24ba562.mp4",
+      "job": "ee22d192-4637-423d-801a-ac8fc24ba562",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 12.5,
+      "note": "The ambient field behind the /start invitation. Text-to-video, no start frame - the banner artwork carries the wordmark and the invitation page must not repeat it. Strands and dust held to the edges so the centre stays clear for the headline. Plays once and holds; the gradient underneath is the fallback.",
+      "approved": true
     }
   ]
 }

@@ -20,7 +20,6 @@ import { useEffect, useState } from "react";
 import s from "./start.module.css";
 
 const FIELD_FILM = "/experience/outro/invitation-field.mp4";
-const FIELD_PLATE = "/experience/outro/invitation-field.jpg";
 
 export function InvitationField() {
   const [play, setPlay] = useState(false);
@@ -36,7 +35,6 @@ export function InvitationField() {
     <video
       className={s.film}
       src={FIELD_FILM}
-      poster={FIELD_PLATE}
       autoPlay
       muted
       playsInline
