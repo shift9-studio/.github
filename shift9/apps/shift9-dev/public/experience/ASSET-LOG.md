@@ -92,7 +92,7 @@ frame the visitor sees is the artwork itself.
 | Take | Job | Model | Spend | Outcome |
 |---|---|---|---|---|
 | v1 | `43205595-cba6-4335-b4f7-8a2da776ab58` | kling3_0 std, 5s, 720p | 10 | **Rejected.** Only the wordmark animated; the fibre strands and the dust sat still, and the specular pass across the chrome was a small glint rather than an event. |
-| v2 | `608abe02-9607-46a9-a728-9b9552129ce0` | kling3_0 pro, 5s, 1080p | 12.5 | **Rendering** at time of writing — start frame only, and pro passed explicitly. Outcome to be recorded here before the clip is wired in. |
+| v2 | `608abe02-9607-46a9-a728-9b9552129ce0` | kling3_0 pro, 5s, 1080p | 12.5 | Wired in as `outro/banner-settle.mp4`. Start frame only, pro passed explicitly, prompt rewritten so the strands and dust are the primary continuous motion and the chrome gets a full-width specular rake rather than a glint. **Kariim's eyes are the check** — the approving session has no video decoder and cannot reach the CDN, so it went to the preview to be judged in context. |
 
 **Why v1 failed, written down so it is not repeated.** The still was pinned as
 *both* `start_image` and `end_image`, on the reasoning that a matching end frame

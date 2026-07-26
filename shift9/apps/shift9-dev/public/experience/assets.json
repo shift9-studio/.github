@@ -421,6 +421,20 @@
       "source": "Supplied by Kariim - his own chrome SHIFT-9 banner artwork, uploaded 2026-07-26. Not generated.",
       "note": "The artwork the studio dolly lands on. Full-bleed behind the outro; clicking it opens the contact page.",
       "approved": true
+    },
+    {
+      "id": "outro-banner-film-v2",
+      "path": "outro/banner-settle.mp4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260726_011239_608abe02-9607-46a9-a728-9b9552129ce0.mp4",
+      "job": "608abe02-9607-46a9-a728-9b9552129ce0",
+      "model": "kling3_0",
+      "mode": "pro",
+      "duration": 5,
+      "size": "1920x1080",
+      "credits": 12.5,
+      "startFrame": "4f1694d0-0bca-4185-a0c6-3288c5be0060",
+      "note": "The closing banner, animated from Kariim's own artwork. Start frame only - v1 pinned the still at both ends, which forced net-zero motion and froze the strands and dust. Plays once on arrival and holds its last frame; the cue appears on ended.",
+      "approved": true
     }
   ]
 }
