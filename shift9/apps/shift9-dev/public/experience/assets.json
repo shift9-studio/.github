@@ -310,7 +310,9 @@
       "model": "nano_banana_pro",
       "size": "1376x768",
       "credits": 4,
-      "references": ["6160c4c4-f9d7-441d-b312-883fbc2e8dc1"],
+      "references": [
+        "6160c4c4-f9d7-441d-b312-883fbc2e8dc1"
+      ],
       "approved": true
     },
     {
@@ -410,6 +412,14 @@
       "credits": 17.5,
       "startFrame": "6160c4c4-f9d7-441d-b312-883fbc2e8dc1",
       "note": "Approved. Black crocheted hoodie sleeve into a ribbed cuff into the brown yarn hand, bare right wrist, five separate fingers on the mouse. No sit - camera glides down to desk height. Screen stays featureless by design so the live page takes over.",
+      "approved": true
+    },
+    {
+      "id": "outro-banner",
+      "path": "shift-9_new-banner.jpg",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/4f1694d0-0bca-4185-a0c6-3288c5be0060.jpg",
+      "source": "Supplied by Kariim - his own chrome SHIFT-9 banner artwork, uploaded 2026-07-26. Not generated.",
+      "note": "The artwork the studio dolly lands on. Full-bleed behind the outro; clicking it opens the contact page.",
       "approved": true
     }
   ]
