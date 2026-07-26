@@ -52,6 +52,17 @@ const STUDIO_HREF = "/studio";
    also a change of resolution. */
 const OPENING_POSTER = "/experience/opening/01-exterior-approach-poster.jpg";
 
+/* THE FRONT DOOR. Not a frame of the film — a threshold: black crocheted
+   fabric, the material this whole world is made from, parted along one seam
+   with light coming through it. You press Enter and the film takes you
+   through. Because it is a still, nothing about the entrance depends on
+   autoplay surviving a mobile browser's power-saving rules. */
+const ENTRY_PLATE = "/experience/opening/00-entry-seam.jpg";
+
+/* Stated on the button so pressing it is an informed choice rather than a
+   trapdoor. Two beats, ten seconds each. */
+const INTRO_RUNTIME = "20 sec";
+
 const OPENING: readonly string[] = [
   "/experience/opening/01-03-approach-entry-hall-v4.mp4",
   "/experience/opening/04-desk-mouse-screen-v5.mp4",
@@ -287,7 +298,11 @@ export function EnterTheStudio() {
   const glowRef = useRef<HTMLDivElement>(null);
   const deskRef = useRef<HTMLDivElement>(null);
 
-  const [tapVisible, setTapVisible] = useState(false);
+  /* Three explicit states, because the entrance has three: standing outside,
+     watching the film, and at the desk. Holding this as one flag per concern
+     is what made the old code need an "autoplay was blocked" fallback state
+     that looked like a fourth. */
+  const [mode, setMode] = useState<"gate" | "film" | "desk">("gate");
   const [compact, setCompact] = useState(false);
   const [openWin, setOpenWin] = useState<OpenWin>(null);
 
@@ -361,59 +376,49 @@ export function EnterTheStudio() {
     }
   }, []);
 
+  /* Playback now always follows a click, so the browser has no reason to
+     refuse it and there is no autoplay-blocked state to design for. The one
+     remaining failure — a codec the browser cannot decode — drops straight to
+     the desktop rather than stranding anyone on a black rectangle. */
   const startVid = useCallback(() => {
     const vid = videoRef.current;
     if (!vid) return;
     vid.muted = true;
-    let p: Promise<void> | undefined;
-    try {
-      p = vid.play();
-    } catch {
-      /* ignore — handled by the tap fallback below */
+    vid.setAttribute("muted", "");
+    vid.playsInline = true;
+    vid.play().catch(() => enterDesk());
+  }, [enterDesk]);
+
+  /* Who never sees the front door. Reduced motion: an intro is exactly the
+     kind of thing that setting is asking you not to run. Already arrived this
+     session: coming back from the studio, the banner or the invitation puts
+     you at the desk, not outside the house again.
+
+     This has to live apart from the playback effect below — that one cannot
+     run until a video exists, and now no video exists until it is asked for. */
+  useEffect(() => {
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      introAlreadySeen()
+    ) {
+      setMode("desk");
+      enterDesk();
     }
-    if (p && typeof p.then === "function") {
-      p.then(() => setTapVisible(false)).catch(() => {
-        try {
-          vid.load();
-          vid.play();
-        } catch {
-          /* still blocked — surface the click-to-start lockup */
-        }
-        setTapVisible(true);
-      });
-    } else {
-      setTapVisible(false);
-    }
-  }, []);
+  }, [enterDesk]);
 
   useEffect(() => {
+    if (mode !== "film") return;
     const vid = videoRef.current;
     const stage = stageRef.current;
     const desk = deskRef.current;
     if (!vid || !stage || !desk) return;
 
-    // Reduced motion: skip the intro entirely, land on the desktop.
-    // Already arrived this session: same thing. Coming back from the studio,
-    // the banner or the invitation puts you at the desk, not outside the house.
-    if (
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      introAlreadySeen()
-    ) {
-      enterDesk();
-      return;
-    }
-
-    vid.muted = true;
-    vid.setAttribute("muted", "");
-    vid.playsInline = true;
     startVid();
 
     const onLoaded = () => {
       if (vid.paused) startVid();
     };
-    const onPlay = () => setTapVisible(false);
     vid.addEventListener("loadeddata", onLoaded);
-    vid.addEventListener("play", onPlay);
 
     const timers: ReturnType<typeof setTimeout>[] = [];
     const onEnded = () => {
@@ -466,11 +471,10 @@ export function EnterTheStudio() {
 
     return () => {
       vid.removeEventListener("loadeddata", onLoaded);
-      vid.removeEventListener("play", onPlay);
       vid.removeEventListener("ended", onEnded);
       timers.forEach(clearTimeout);
     };
-  }, [enterDesk, startVid]);
+  }, [mode, enterDesk, startVid]);
 
   // Escape closes the folder window.
   useEffect(() => {
@@ -503,59 +507,83 @@ export function EnterTheStudio() {
         />
       ) : null}
 
+      {/* STAGE 0 — the front door. A still and two controls. Nothing is
+          fetched, decoded or played until the visitor asks for it, which is
+          also why this is real content rather than an overlay on a video. */}
+      {mode === "gate" ? (
+        <div className={s.gate}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className={s.gatePlate} src={ENTRY_PLATE} alt="" />
+          <div className={s.gateVeil} aria-hidden="true" />
+
+          <div className={s.gateBody}>
+            <p className={s.gateMark}>SHIFT-9</p>
+            <p className={s.gateLine}>
+              A studio that builds interfaces, tools and product surfaces.
+            </p>
+
+            <div className={s.gateActions}>
+              {/* The primary control is drawn as framing marks rather than a
+                  filled pill: this site's language is instrumentation, and a
+                  glowing gradient button would belong to a different one. */}
+              <button
+                type="button"
+                className={s.enter}
+                onClick={() => setMode("film")}
+              >
+                <span className={s.enterFrame} aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span className={s.enterLabel}>Enter the studio</span>
+                <span className={s.enterMeta}>{INTRO_RUNTIME}</span>
+              </button>
+
+              {/* Offered up front and at full size. Burying the way past a
+                  twenty-second film in a corner of the film is how you make
+                  someone close the tab instead. */}
+              <button
+                type="button"
+                className={s.skipGate}
+                onClick={() => {
+                  setMode("desk");
+                  enterDesk();
+                }}
+              >
+                Skip the intro <span aria-hidden="true">&#8594;</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {/* STAGE 1 — the film. Decorative overlay; the desktop below is the real
           content, so this is hidden from assistive tech. */}
       <div className={s.stageVideo} ref={stageRef} aria-hidden="true">
-        <video
-          ref={videoRef}
-          src={OPENING[0]}
-          poster={OPENING_POSTER}
-          muted
-          autoPlay
-          playsInline
-          preload="auto"
-        />
-        <div
-          className={`${s.tap} ${tapVisible ? s.show : ""}`}
-          role="button"
-          tabIndex={0}
-          aria-label="Enter the Studio — play intro"
-          onClick={(e) => {
-            e.stopPropagation();
-            startVid();
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") startVid();
-          }}
-        >
-          <div className={s.lockC}>
-            <span className={s.ring}>
-              <span className={s.r1} />
-              <span className={s.r2} />
-              <span className={s.pulse} />
-              <span className={s.pc}>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </span>
-            </span>
-            <span className={s.lk}>
-              <b>Shift&#160;9</b>
-              <strong>Enter the Studio</strong>
-              <em />
-            </span>
-          </div>
-        </div>
-        <button
-          type="button"
-          className={s.skip}
-          onClick={(e) => {
-            e.stopPropagation();
-            enterDesk();
-          }}
-        >
-          SKIP &#8594;
-        </button>
+        {mode === "film" ? (
+          <video
+            ref={videoRef}
+            src={OPENING[0]}
+            poster={OPENING_POSTER}
+            muted
+            playsInline
+            preload="auto"
+          />
+        ) : null}
+        {mode === "film" ? (
+          <button
+            type="button"
+            className={s.skip}
+            onClick={(e) => {
+              e.stopPropagation();
+              enterDesk();
+            }}
+          >
+            SKIP &#8594;
+          </button>
+        ) : null}
       </div>
 
       {/* WAKE — dark screen powers on into the real desktop. Decorative. */}

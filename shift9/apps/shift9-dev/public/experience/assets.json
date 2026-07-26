@@ -448,6 +448,18 @@
       "credits": 12.5,
       "note": "The ambient field behind the /start invitation. Text-to-video, no start frame - the banner artwork carries the wordmark and the invitation page must not repeat it. Strands and dust held to the edges so the centre stays clear for the headline. Plays once and holds; the gradient underneath is the fallback.",
       "approved": true
+    },
+    {
+      "id": "entry-seam-source",
+      "path": "opening/00-entry-seam-source.png",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260726_012905_88579825-1819-49f2-a067-dd60d91871d0.png",
+      "job": "88579825-1819-49f2-a067-dd60d91871d0",
+      "model": "nano_banana_pro",
+      "resolution": "4k",
+      "size": "5504x3072",
+      "credits": 4,
+      "note": "Source for the entry plate. Fetched once, downscaled to 00-entry-seam.jpg, then unapproved and removed - the URL stays here as provenance so it can be pulled again on demand. A 5504px PNG is not worth carrying in the repo for a background.",
+      "approved": true
     }
   ]
 }
