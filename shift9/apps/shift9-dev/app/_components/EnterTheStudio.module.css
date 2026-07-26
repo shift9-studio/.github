@@ -251,7 +251,9 @@
    into twenty seconds you did not agree to. */
 .enterMeta {
   font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: 0.62rem;
+  /* Not below 11px. It is the only place the run time is stated, so it has to
+     survive being read on a phone at arm's length. */
+  font-size: 0.72rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--s9-ink-dim);
@@ -1272,12 +1274,18 @@
     0 0 14px rgb(var(--w-bg-rgb) / var(--w-halo-b));
 }
 
-/* Chrome sits above the wallpaper and keeps its own solid surfaces. */
+/* Chrome sits above the wallpaper and keeps its own solid surfaces.
+
+   .helpdot is deliberately NOT in this list. It was, and because this rule
+   comes later in the file it beat the button's own `position: fixed`, dropped
+   it out of the corner it is anchored to and into normal flow — where it
+   landed at x=-26 and showed a sliver of itself off the left edge of every
+   screen, at every width. It already carries its own z-index (12), which is
+   what this rule was reaching for. */
 .titlerow,
 .searchrow,
 .main,
-.taskbar,
-.helpdot {
+.taskbar {
   position: relative;
   z-index: 1;
 }

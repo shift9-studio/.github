@@ -84,7 +84,8 @@
   border: 1px solid currentColor;
   border-radius: 999px;
   padding: 0.18em 0.7em;
-  font-size: 0.66rem;
+  /* Matches the other mono labels; 0.66rem landed at 10.6px on a phone. */
+  font-size: 0.72rem;
 }
 
 .volatile .status {
@@ -409,7 +410,14 @@
 .card {
   --card-accent: var(--s9-signal);
   position: relative;
-  width: min(1180px, 92vw);
+  /* Sized by its container rather than given a width of its own. The caption
+     around it is already the 92vw measure, so `auto` fills exactly that — and,
+     unlike a fixed width, it subtracts any margin a variant adds. Corridor
+     offsets itself by up to 6vw; with a fixed width that margin pushed the
+     card straight off the right edge of a 360px phone, clipping the title and
+     the note. max-width still caps the line length on wide screens, and auto
+     margins still centre the variants that are narrower than the measure. */
+  max-width: min(1180px, 100%);
   margin-inline: auto;
 }
 
@@ -426,7 +434,9 @@
 
 .tag {
   font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: 0.66rem;
+  /* 0.66rem rendered at 10.6px on a phone - under the floor for a label that
+     carries real information about the project. */
+  font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgb(248 250 252 / 0.7);

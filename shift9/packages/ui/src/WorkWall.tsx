@@ -118,7 +118,13 @@ export function WorkWall({
 
   return (
     <motion.div
-      className={cn("lg:[perspective:1600px]", className)}
+      /* overflow-x clipped at the same breakpoint the rotation starts at.
+         rotateZ(-7deg) makes the plane's bounding box wider than the plane —
+         at 1920 it reached 2012px and the whole page could be dragged
+         sideways into empty space. `clip` rather than `hidden`: hidden would
+         make this a scroll container and trap the sticky/scroll behaviour
+         around it. */
+      className={cn("lg:overflow-x-clip lg:[perspective:1600px]", className)}
       variants={container}
       initial="hidden"
       whileInView="show"

@@ -64,3 +64,82 @@ html.lenis body {
     }
   }
 }
+
+/* ── THE SCROLLBAR ─────────────────────────────────────────────────────────
+   The studio dolly is a scroll-driven page: the scrollbar is the instrument
+   you are playing, not an artefact beside it. So it gets designed rather than
+   left as the operating system's grey slab.
+
+   A capsule floating in an empty tube. The thumb carries the house gradient —
+   Signal into Pulse, the same two accents as everything else — and is inset
+   from the track by a transparent border, which is the trick that makes it
+   read as a separate object rather than a filled channel. Approaching it
+   swells the capsule (the border shrinks, so the body grows into the space)
+   and lights it; dragging swells it further. That swell-and-settle is the
+   liquid part, and it is done with border-width rather than width because a
+   scrollbar cannot change its own track size without reflowing the page.
+
+   Honest limit: a true metaball/gooey scrollbar — one that stretches and
+   snaps back with momentum — cannot be done with native scrollbar pseudo
+   elements. It needs a JavaScript overlay that hides the real scrollbar and
+   draws its own, which is a real dependency and a real accessibility risk on
+   a page that is already scroll-driven. This gets most of the character for
+   none of that, and it degrades to a normal thin scrollbar everywhere the
+   pseudo elements are unsupported. */
+
+/* Firefox, and anything else honouring the standard properties. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--s9-signal) 55%, transparent)
+    transparent;
+}
+
+/* WebKit and Blink get the capsule. */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  /* The transparent border is the inset; background-clip keeps the paint
+     inside it, which is what floats the capsule in the tube. */
+  border: 4px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+  background-image: linear-gradient(
+    180deg,
+    var(--s9-signal) 0%,
+    var(--s9-pulse) 100%
+  );
+  transition:
+    border-width var(--s9-dur-base) var(--s9-ease-premium),
+    filter var(--s9-dur-base) var(--s9-ease-out);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  border-width: 2px;
+  filter: brightness(1.25) saturate(1.15);
+}
+
+::-webkit-scrollbar-thumb:active {
+  border-width: 1px;
+  filter: brightness(1.4) saturate(1.2);
+}
+
+/* The corner where two scrollbars meet, left as void rather than as a grey
+   square nobody designed. */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Reduced motion: the capsule still swells, because that is a state change
+   and not an animation, but it does so instantly. */
+@media (prefers-reduced-motion: reduce) {
+  ::-webkit-scrollbar-thumb {
+    transition: none;
+  }
+}
