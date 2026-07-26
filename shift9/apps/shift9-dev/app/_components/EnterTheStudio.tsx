@@ -63,6 +63,10 @@ const ENTRY_PLATE = "/experience/opening/00-entry-seam.jpg";
    trapdoor. Two beats, ten seconds each. */
 const INTRO_RUNTIME = "20 sec";
 
+/* Held as a constant so the button's accessible name and the glyphs drawn on
+   screen can never drift apart. */
+const ENTER_LABEL = "Enter the studio";
+
 const OPENING: readonly string[] = [
   "/experience/opening/01-03-approach-entry-hall-v4.mp4",
   "/experience/opening/04-desk-mouse-screen-v5.mp4",
@@ -529,6 +533,7 @@ export function EnterTheStudio() {
               <button
                 type="button"
                 className={s.enter}
+                aria-label={ENTER_LABEL}
                 onClick={() => setMode("film")}
               >
                 <span className={s.enterFrame} aria-hidden="true">
@@ -537,7 +542,32 @@ export function EnterTheStudio() {
                   <i />
                   <i />
                 </span>
-                <span className={s.enterLabel}>Enter the studio</span>
+                {/* The label opens its tracking on approach. Animating
+                    letter-spacing does that in one line and forces a layout
+                    pass on every frame of it — the only animation on the site
+                    that was not running on the compositor.
+
+                    Per-character transforms get the same move for free: each
+                    glyph slides right by a little more than the one before, so
+                    the spacing grows without any glyph being redrawn or
+                    re-measured. scaleX would have been the cheap version of
+                    this and is wrong — it stretches the letterforms instead of
+                    spacing them.
+
+                    The characters are decorative because they are a string cut
+                    into pieces; the button carries the real name for anything
+                    that is not looking at it. */}
+                <span className={s.enterLabel} aria-hidden="true">
+                  {ENTER_LABEL.split("").map((ch, i) => (
+                    <span
+                      key={`${ch}-${i}`}
+                      className={s.enterChar}
+                      style={{ "--i": i } as React.CSSProperties}
+                    >
+                      {ch === " " ? " " : ch}
+                    </span>
+                  ))}
+                </span>
                 <span className={s.enterMeta}>{INTRO_RUNTIME}</span>
               </button>
 

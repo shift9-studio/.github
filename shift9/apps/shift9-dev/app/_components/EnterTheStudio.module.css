@@ -229,21 +229,42 @@
 }
 
 .enterLabel {
+  display: inline-flex;
   font-family: var(--s9-font-mono, ui-monospace, monospace);
   font-size: clamp(0.82rem, 1.5vw, 0.95rem);
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  /* The tracking opens as the seam does - the whole control widens by the
-     same few pixels, so the gesture reads as one movement. */
-  transition:
-    letter-spacing var(--s9-dur-slow) var(--s9-ease-premium),
-    transform var(--s9-dur-slow) var(--s9-ease-premium);
+  white-space: pre;
+  /* Only the block moves as a whole; the tracking is done per character
+     below. Both are transforms, so neither touches layout. */
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+/* Each glyph slides right by a little more than the one before it, so the
+   spacing opens without a single character being re-measured or redrawn.
+
+   letter-spacing did the same thing in one declaration and forced a layout
+   pass on every frame of the transition - the one animation on the site that
+   was not running on the compositor. scaleX would have been the cheap way out
+   and is the wrong answer: it stretches the letterforms rather than spacing
+   them, which on a mono face is immediately visible.
+
+   A side effect worth having: the button no longer changes width on hover, so
+   the run time beside it and the seam beneath it both stay put. */
+.enterChar {
+  display: inline-block;
+  transform: translateX(0);
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+.enter:hover .enterChar,
+.enter:focus-visible .enterChar {
+  transform: translateX(calc(var(--i) * 0.055em));
 }
 
 .enter:hover .enterLabel,
 .enter:focus-visible .enterLabel {
-  letter-spacing: 0.26em;
   transform: translateY(-2px);
 }
 
@@ -415,6 +436,18 @@
 
   .enter:hover .enterFrame i,
   .enter:focus-visible .enterFrame i {
+    transform: none;
+  }
+
+  .enterChar,
+  .enterLabel {
+    transition: none;
+  }
+
+  .enter:hover .enterChar,
+  .enter:focus-visible .enterChar,
+  .enter:hover .enterLabel,
+  .enter:focus-visible .enterLabel {
     transform: none;
   }
 }
