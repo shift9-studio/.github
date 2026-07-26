@@ -30,6 +30,108 @@ import { SET_PIECES } from "./studio-dolly-data";
    line and never a hunt through markup. */
 const OUTRO_ART = "/experience/shift-9_new-banner.jpg";
 
+/* The same artwork, animated: the light actually travels across the chrome,
+   the fibre strands actually flow, the dust actually drifts. Rendered from
+   the still, and framed to end on the still, so the last frame it holds is
+   the composition the poster already showed — the film settles rather than
+   stopping. A CSS sheen over a JPEG cannot do any of that; it reads as a
+   gradient sliding over a photograph, because that is what it is. */
+const OUTRO_FILM = "/experience/outro/banner-settle.mp4";
+
+/* ── THE CLOSING BANNER ───────────────────────────────────────────────────
+   Kariim's artwork is the button. Stacking the invitation on top of this
+   composition would put type over the one image on the site that earns a full
+   frame to itself, so the ask lives on its own page and the banner's only job
+   is to make you want to open it.
+
+   The film plays once, when you arrive, and holds. The cue appears when it
+   settles — the invitation arrives after the statement, not over it. */
+function BannerOutro() {
+  const hostRef = useRef<HTMLAnchorElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  /* Held off the first render so SSR emits the still alone: the film is an
+     enhancement and must never be what makes the page correct. */
+  const [live, setLive] = useState(false);
+  /* The film has finished and is holding its last frame. Also the state the
+     page starts in when there is no film to wait for. */
+  const [settled, setSettled] = useState(false);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+
+    /* Reduced motion: the still is the whole thing, and the cue is there
+       immediately. Nothing to wait for, so nothing waits. */
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setSettled(true);
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) setLive(true);
+      },
+      { threshold: 0.35 },
+    );
+    io.observe(host);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!live) return;
+    const vid = videoRef.current;
+    if (!vid) return;
+    vid.play().catch(() => setSettled(true));
+
+    /* The cue is revealed by the film ending — but a codec the browser cannot
+       decode, a blocked autoplay or a backgrounded tab all mean `ended` never
+       fires. This guarantees the invitation appears regardless: the one thing
+       that must not depend on the video is the way forward. */
+    const failsafe = setTimeout(() => setSettled(true), 7000);
+    return () => clearTimeout(failsafe);
+  }, [live]);
+
+  return (
+    <a
+      className={s.banner}
+      href="/start"
+      ref={hostRef}
+      aria-label="Open the invitation — start a project with Shift-9"
+    >
+      {/* The still is real markup, so the frame is complete before any script
+          runs and survives a failed video load. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        className={s.outroArt}
+        src={OUTRO_ART}
+        alt="SHIFT-9 — code execution in motion"
+      />
+
+      {live ? (
+        <video
+          className={s.outroFilm}
+          ref={videoRef}
+          src={OUTRO_FILM}
+          poster={OUTRO_ART}
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          onEnded={() => setSettled(true)}
+        />
+      ) : null}
+
+      <span className={`${s.cue} ${settled ? s.cueIn : ""}`}>
+        <span className={s.cueLabel} aria-hidden="true">
+          // the studio is open
+        </span>
+        <span className={s.cueAction}>Open the invitation &#8594;</span>
+      </span>
+    </a>
+  );
+}
+
 function Stage({
   piece,
   index,
@@ -183,22 +285,14 @@ export function StudioDolly() {
           the line follows, and the actions arrive only once both have settled —
           including the way back out to the desktop the visitor came from. */}
       <footer className={s.outro}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className={s.outroArt} src={OUTRO_ART} alt="" />
-        <div className={s.outroPanel}>
-          <p className={s.outroLede}>
-            Twelve projects, one take. If you want something built like this, the
-            studio is open.
-          </p>
-          <div className={s.outroActions}>
-            <a className={s.cta} href="mailto:shift9.dev@gmail.com">
-              Start a project &#8594;
-            </a>
-            <a className={s.exit} href="/">
-              &#8592; Back to the desktop
-            </a>
-          </div>
-        </div>
+        <BannerOutro />
+
+        {/* The door out, kept outside the banner link — a link inside a link
+            is invalid, and leaving must never be part of the button that
+            takes you further in. */}
+        <a className={s.exit} href="/">
+          &#8592; Back to the desktop
+        </a>
       </footer>
 
       {/* Leaving must never depend on reaching the end of the travel. */}

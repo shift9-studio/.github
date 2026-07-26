@@ -44,6 +44,11 @@
   --s9-dur-tunnel:  1100ms;   /* travel between surfaces — desktop → studio */
   --s9-dur-premium:  300ms;   /* legacy alias (transition-premium)        */
 
+  /* Ambient tempo. Runs far longer than any interaction because it is not a
+     response to the visitor — it is the room breathing. Kept in this scale so
+     nobody reaches for a raw duration to get a slow loop. */
+  --s9-dur-aurora:  24000ms;   /* one rotation of the invitation's bloom  */
+
   /* Easing set — one curve per intent, so motion reads as a system.
      out  : decelerate, for things ARRIVING (the workhorse for entrances)
      in   : accelerate, for things LEAVING

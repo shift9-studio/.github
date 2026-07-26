@@ -1,0 +1,309 @@
+/* ────────────────────────────────────────────────────────────────────────
+   THE INVITATION
+
+   Aether-hero idiom, in the house palette: a dark field, a slow coloured
+   bloom behind a centred column, a gradient pill that lights up as you
+   approach it, and a glass ghost button beside it.
+
+   The bloom is three radial gradients painted onto ONE layer that rotates.
+   A rotating layer is a single composited transform — no per-frame paint, no
+   canvas, no video — and when the rotation stops it is still a finished
+   gradient rather than a half-drawn effect. That property is what makes the
+   reduced-motion path here honest instead of apologetic.
+
+   Every colour is a token or a mix of tokens. Nothing on this page knows a
+   hex value.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: clamp(4rem, 12vh, 8rem) var(--s9-gutter);
+  background: var(--s9-void-2);
+  color: var(--s9-ink);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ── The field ─────────────────────────────────────────────────────────── */
+
+.aurora {
+  position: absolute;
+  /* Oversized so the corners stay covered through a full rotation. */
+  inset: -45%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(34% 40% at 26% 32%, var(--s9-pulse-soft) 0%, transparent 70%),
+    radial-gradient(38% 36% at 74% 26%, var(--s9-signal-soft) 0%, transparent 72%),
+    radial-gradient(46% 44% at 52% 84%, var(--s9-line-2) 0%, transparent 74%);
+  filter: blur(40px) saturate(1.15);
+  animation: aurora var(--s9-dur-aurora) linear infinite;
+}
+
+@keyframes aurora {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* The coordinate frame this site is built on, at the edge of visibility —
+   it places the bloom on a plan rather than letting it float free. */
+.grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--s9-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--s9-line) 1px, transparent 1px);
+  background-size: calc(var(--s9-grid-unit) * 10) calc(var(--s9-grid-unit) * 10);
+  opacity: 0.5;
+  mask-image: radial-gradient(70% 70% at 50% 50%, #000 0%, transparent 78%);
+}
+
+/* Pulls the corners down so the column always has contrast under it, whatever
+   the bloom is doing behind. */
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    72% 68% at 50% 46%,
+    transparent 0%,
+    color-mix(in oklab, var(--s9-void-2) 82%, transparent) 100%
+  );
+}
+
+/* ── The column ────────────────────────────────────────────────────────── */
+
+.column {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: clamp(1rem, 2.4vh, 1.6rem);
+  width: min(52rem, 100%);
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--s9-signal);
+}
+
+.headline {
+  margin: 0;
+  font-family: var(--s9-font-display);
+  font-size: var(--s9-text-h2);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* The gradient sits on the word that carries the sentence, not on the whole
+   line — a headline entirely in gradient stops being a headline. */
+.grad {
+  background: linear-gradient(100deg, var(--s9-signal), var(--s9-pulse));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lede {
+  max-width: 46ch;
+  margin: 0;
+  font-size: var(--s9-text-body);
+  line-height: 1.65;
+  color: color-mix(in oklab, var(--s9-ink) 76%, transparent);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+/* ── The buttons ───────────────────────────────────────────────────────── */
+
+.primary,
+.ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  border-radius: 999px;
+  padding: 1em 2em;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform var(--s9-dur-base) var(--s9-ease-premium),
+    box-shadow var(--s9-dur-base) var(--s9-ease-out),
+    border-color var(--s9-dur-base) var(--s9-ease-out),
+    background-color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.primary {
+  position: relative;
+  background: linear-gradient(120deg, var(--s9-signal), var(--s9-pulse));
+  color: var(--s9-void);
+  /* The lit edge and the bloom under it are what make this read as aether
+     rather than as a plain filled button. */
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--s9-signal) 55%, transparent),
+    0 12px 40px color-mix(in oklab, var(--s9-signal) 26%, transparent),
+    0 4px 14px color-mix(in oklab, var(--s9-pulse) 22%, transparent);
+}
+
+.primary:hover,
+.primary:focus-visible {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--s9-signal) 80%, transparent),
+    0 18px 56px color-mix(in oklab, var(--s9-signal) 40%, transparent),
+    0 6px 20px color-mix(in oklab, var(--s9-pulse) 34%, transparent);
+}
+
+.primaryLabel {
+  position: relative;
+}
+
+.primaryArrow {
+  display: inline-block;
+  transition: transform var(--s9-dur-base) var(--s9-ease-premium);
+}
+
+.primary:hover .primaryArrow,
+.primary:focus-visible .primaryArrow {
+  transform: translateX(0.25em);
+}
+
+.ghost {
+  color: var(--s9-ink);
+  background: color-mix(in oklab, var(--s9-ink) 6%, transparent);
+  border: 1px solid color-mix(in oklab, var(--s9-ink) 22%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.ghost:hover,
+.ghost:focus-visible {
+  border-color: color-mix(in oklab, var(--s9-ink) 48%, transparent);
+  background: color-mix(in oklab, var(--s9-ink) 12%, transparent);
+}
+
+.address {
+  margin: 0;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  color: var(--s9-ink-dim);
+}
+
+.addressLink {
+  color: var(--s9-signal);
+  text-decoration-color: color-mix(in oklab, var(--s9-signal) 45%, transparent);
+  text-underline-offset: 0.25em;
+}
+
+.addressLink:hover,
+.addressLink:focus-visible {
+  text-decoration-color: var(--s9-signal);
+}
+
+/* A way back that does not depend on reaching the buttons — the same door the
+   dolly carries, in the same corner, so it is where the hand already is. */
+.exitPin {
+  position: fixed;
+  top: clamp(0.75rem, 2.5vw, 1.5rem);
+  left: clamp(0.75rem, 2.5vw, 1.5rem);
+  z-index: 2;
+  font-family: var(--s9-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--s9-ink) 60%, transparent);
+  text-decoration: none;
+  padding: 0.55em 0.9em;
+  border: 1px solid color-mix(in oklab, var(--s9-ink) 20%, transparent);
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--s9-void-2) 60%, transparent);
+  backdrop-filter: blur(6px);
+  transition:
+    color var(--s9-dur-fast) var(--s9-ease-out),
+    border-color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.exitPin:hover,
+.exitPin:focus-visible {
+  color: var(--s9-ink);
+  border-color: color-mix(in oklab, var(--s9-ink) 50%, transparent);
+}
+
+/* Focus stays visible on every target, including the two that sit on glass. */
+.primary:focus-visible,
+.ghost:focus-visible,
+.addressLink:focus-visible,
+.exitPin:focus-visible {
+  outline: 2px solid var(--s9-signal);
+  outline-offset: 3px;
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────────
+   The bloom stops where it is — which is a finished three-colour gradient,
+   not a half-state — and the buttons drop their travel while keeping every
+   colour and focus change. Nothing here needed movement to be understood. */
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora {
+    animation: none;
+  }
+
+  .primary,
+  .ghost,
+  .primaryArrow {
+    transition-property: box-shadow, border-color, background-color;
+  }
+
+  .primary:hover,
+  .primary:focus-visible {
+    transform: none;
+  }
+
+  .primary:hover .primaryArrow,
+  .primary:focus-visible .primaryArrow {
+    transform: none;
+  }
+}
+
+/* ── Small screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 34rem) {
+  .actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .primary,
+  .ghost {
+    justify-content: center;
+  }
+
+  /* The grid is noise at this size; the bloom carries the field alone. */
+  .grid {
+    display: none;
+  }
+}

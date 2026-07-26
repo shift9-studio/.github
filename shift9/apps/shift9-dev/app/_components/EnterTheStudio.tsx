@@ -228,6 +228,32 @@ const ABOUT_GLYPH = (
 
 const THEME_KEY = "s9-desk-theme";
 
+/* The opening film is an arrival, and you only arrive once. Every route that
+   comes back here — the studio's door, the banner, the invitation — lands on
+   the desktop already awake, at the exact frame the film hands over on, ready
+   to be clicked. Replaying a 20-second take because someone pressed Back is
+   the difference between a place and a cutscene.
+
+   sessionStorage, not localStorage, deliberately: a new visit in a new tab is
+   a new arrival and should get the film. */
+const INTRO_KEY = "s9-intro-seen";
+
+function introAlreadySeen(): boolean {
+  try {
+    return window.sessionStorage.getItem(INTRO_KEY) === "1";
+  } catch {
+    return false; /* storage blocked — treat it as a first visit */
+  }
+}
+
+function markIntroSeen(): void {
+  try {
+    window.sessionStorage.setItem(INTRO_KEY, "1");
+  } catch {
+    /* storage blocked — the film simply plays again next time */
+  }
+}
+
 const SUN = (
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <circle cx="12" cy="12" r="4.2" />
@@ -320,6 +346,7 @@ export function EnterTheStudio() {
   /* Reveal the interactive desktop and tear down the intro overlay. Used by
      SKIP, by reduced-motion, and as the terminal step of the wake sequence. */
   const enterDesk = useCallback(() => {
+    markIntroSeen();
     const stage = stageRef.current;
     const wake = wakeRef.current;
     const glow = glowRef.current;
@@ -366,7 +393,12 @@ export function EnterTheStudio() {
     if (!vid || !stage || !desk) return;
 
     // Reduced motion: skip the intro entirely, land on the desktop.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    // Already arrived this session: same thing. Coming back from the studio,
+    // the banner or the invitation puts you at the desk, not outside the house.
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      introAlreadySeen()
+    ) {
       enterDesk();
       return;
     }
@@ -417,7 +449,8 @@ export function EnterTheStudio() {
       );
       timers.push(
         setTimeout(() => {
-          // live interactive desktop
+          // live interactive desktop — and the arrival is spent
+          markIntroSeen();
           stage.style.display = "none";
           wake.style.display = "none";
           wake.classList.remove(cls("dim"));

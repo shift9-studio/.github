@@ -209,6 +209,21 @@
   background: var(--s9-black, #000);
 }
 
+/* The whole frame is the target. Nothing is laid over the artwork except the
+   cue in the corner, so the composition Kariim made stays the composition you
+   see. */
+.banner {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* The still. It is the poster the film loads behind and the complete frame
+   whenever the film cannot play — a failed decode, a blocked autoplay or
+   reduced motion all land here, and all of them look finished. */
 .outroArt {
   position: absolute;
   inset: 0;
@@ -216,53 +231,13 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transform: scale(1.08);
   animation: outroArt var(--s9-dur-boot) var(--s9-ease-out) forwards;
 }
 
 @keyframes outroArt {
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* The mark is in the artwork itself, so the panel only carries the words and
-   the actions — no second wordmark competing with the one on screen. */
-.outroPanel {
-  position: relative;
-  display: grid;
-  justify-items: center;
-  gap: 1.25rem;
-  padding: 6vh 6vw;
-  text-align: center;
-}
-
-.outroLede {
-  max-width: 40ch;
-  margin: 0;
-  font-size: clamp(1.05rem, 2.2vw, 1.4rem);
-  line-height: 1.5;
-  color: rgb(248 250 252 / 0.85);
-  text-shadow: 0 1px 24px rgb(0 0 0 / 0.9);
-  opacity: 0;
-  animation: outroRise var(--s9-dur-slow) var(--s9-ease-out) var(--s9-dur-boot) forwards;
-}
-
-.outroActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
-  opacity: 0;
-  /* Held until the artwork and the line have both settled. */
-  animation: outroRise var(--s9-dur-slow) var(--s9-ease-out) calc(var(--s9-dur-boot) + var(--s9-dur-slow)) forwards;
-}
-
-@keyframes outroRise {
   from {
     opacity: 0;
-    transform: translateY(0.6rem);
+    transform: scale(1.04);
   }
   to {
     opacity: 1;
@@ -270,7 +245,88 @@
   }
 }
 
-.cta,
+/* The film sits over the still on identical geometry, using it as its own
+   poster, so there is no cut at the moment it takes over. It is rendered from
+   this artwork and framed to end on it, which is why it can simply stop on
+   its last frame and stay there. */
+.outroFilm {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* The only type over the artwork, parked in the lower right where the frame
+   is quietest — the strands run out of the top right and the mark owns the
+   left. It has to be there: a full-bleed image gives no other signal that it
+   can be clicked. */
+.cue {
+  position: absolute;
+  right: clamp(1rem, 5vw, 4rem);
+  bottom: clamp(1.5rem, 7vh, 5rem);
+  display: grid;
+  justify-items: end;
+  gap: 0.5rem;
+  text-align: right;
+  /* Revealed when the film settles, not on a guessed delay — the invitation
+     arrives after the statement finishes, whatever the statement took. */
+  opacity: 0;
+  transform: translateY(0.6rem);
+  transition:
+    opacity var(--s9-dur-slow) var(--s9-ease-out),
+    transform var(--s9-dur-slow) var(--s9-ease-out);
+}
+
+.cueIn {
+  opacity: 1;
+  transform: none;
+}
+
+.cueLabel {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s9-signal);
+  text-shadow: 0 1px 18px rgb(0 0 0 / 0.9);
+}
+
+.cueAction {
+  font-family: var(--s9-font-display, sans-serif);
+  font-size: clamp(1.15rem, 2.6vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--s9-paper, #f8fafc);
+  text-shadow: 0 2px 28px rgb(0 0 0 / 0.95);
+  /* The underline grows from the right so it tracks back toward the arrow. */
+  background-image: linear-gradient(var(--s9-signal), var(--s9-signal));
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  background-size: 0% 2px;
+  padding-bottom: 0.12em;
+  transition: background-size var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.banner:hover .cueAction,
+.banner:focus-visible .cueAction {
+  background-size: 100% 2px;
+}
+
+/* The frame lifts fractionally toward the visitor on hover — the only reply
+   the artwork gives, because anything louder would be decoration on top of
+   decoration. */
+.banner:hover .outroArt,
+.banner:focus-visible .outroArt {
+  filter: brightness(1.08) contrast(1.02);
+}
+
+.banner:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--s9-signal);
+}
+
 .exit {
   font-family: var(--s9-font-mono, ui-monospace, monospace);
   font-size: 0.78rem;
@@ -282,18 +338,12 @@
   transition:
     background-color var(--s9-dur-fast) var(--s9-ease-out),
     border-color var(--s9-dur-fast) var(--s9-ease-out);
-}
-
-.cta {
-  background: var(--s9-signal);
-  color: var(--s9-void);
-  border: 1px solid var(--s9-signal);
-}
-
-.cta:hover,
-.cta:focus-visible {
-  background: transparent;
-  color: var(--s9-signal);
+  /* Sits above the banner link and anchors to the opposite corner from the
+     cue, so the way in and the way out are never the same gesture. */
+  position: absolute;
+  left: clamp(1rem, 5vw, 4rem);
+  bottom: clamp(1.5rem, 7vh, 5rem);
+  z-index: 2;
 }
 
 /* The way back out. The dolly is a room you walk into, so it needs a door. */
@@ -333,12 +383,15 @@
   border-color: rgb(248 250 252 / 0.5);
 }
 
-/* Reduced motion: everything is present immediately, at rest. */
+/* Reduced motion: the finished frame, immediately. No film is mounted at all
+   (the component returns before the observer is wired), the artwork is fully
+   opaque, and the cue is present and readable from the first paint rather
+   than waiting on an ending that will never come. */
 @media (prefers-reduced-motion: reduce) {
   .outroArt,
-  .outroLede,
-  .outroActions {
+  .cue {
     animation: none;
+    transition: none;
     opacity: 1;
     transform: none;
   }
