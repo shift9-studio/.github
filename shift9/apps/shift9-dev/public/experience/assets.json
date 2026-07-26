@@ -459,7 +459,15 @@
       "size": "5504x3072",
       "credits": 4,
       "note": "Source for the entry plate. Fetched once, downscaled to 00-entry-seam.jpg, then unapproved and removed - the URL stays here as provenance so it can be pulled again on demand. A 5504px PNG is not worth carrying in the repo for a background.",
-      "approved": true
+      "approved": false
+    },
+    {
+      "id": "entry-seam",
+      "path": "opening/00-entry-seam.jpg",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260726_012905_88579825-1819-49f2-a067-dd60d91871d0.png",
+      "job": "88579825-1819-49f2-a067-dd60d91871d0",
+      "note": "The entry plate as shipped: the 4K source downscaled to 1920x1080 and encoded at q82, 256KB. Committed directly rather than fetched - the URL is the PNG source, not this file, so this entry is a record and not a fetch instruction.",
+      "approved": false
     }
   ]
 }

@@ -76,6 +76,30 @@ lifted that on 2026-07-25 and asked for it to be generated — a kids' early-rea
 app with crocheted plush animal characters. The brief above is the one that
 stands.
 
+## The front door
+
+`opening/00-entry-seam.jpg` — the still shift9.dev opens on, so the film is
+never fetched, decoded or played until someone presses Enter. That is the whole
+point of it: autoplay is unreliable on mobile by design, and ~25MB of video
+before anyone has asked for it is not a first paint.
+
+| Take | Job | Model | Spend | Outcome |
+|---|---|---|---|---|
+| v1 | `9a205805-fa17-440a-86b8-d5b3e6b43b14` | nano_banana_pro 4k | 4 | **Superseded, never used.** The film's opening shot recomposed as a title plate — character smaller, frame opened into night sky for type. Kariim's call, and the right one: a recomposed frame of the film is still the film. |
+| v2 | `88579825-1819-49f2-a067-dd60d91871d0` | nano_banana_pro 4k | 4 | **Shipped.** Macro of black crocheted fabric parted along one seam, cyan light through the gap, violet rim, loose fibres in the beam. Right two thirds near-pure black. |
+
+The concept is a **threshold, not a place**: the material this whole world is
+made from, opened just enough to see light behind it. It is also the reason
+the buttons look the way they do — the primary control is the same gesture at
+hand scale, a hairline that parts and lets light out. An earlier version used
+corner framing ticks; they were tasteful and completely generic, the sort of
+thing any dark developer portfolio wears. This one only works on this page.
+
+Source handling: rendered at 5504x3072 and downscaled here to 1920x1080 at q82,
+256KB. The 24MB PNG is not in the repo — its manifest entry is marked
+`approved: false` so the fetch workflow leaves it alone, and the URL stays
+recorded so it can be pulled again on demand.
+
 ## The closing banner and the invitation
 
 Two plates that close the experience: the banner the dolly lands on, and the

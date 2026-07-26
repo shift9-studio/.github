@@ -81,11 +81,21 @@ build on every push to the shared repo. Measured against the 95 commits of the
 entry-experience branch, 94 of them touch only `shift9-dev` — so Pinch was
 rebuilding, identically, 94 times for no reason.
 
-**`shift9-dev` deliberately has no `vercel.json`.** The tempting version excludes
-`public/experience` so that asset-only commits skip the build, but that would
-also let a commit that adds *nothing but a new video or image* skip the
-production deploy — and the asset would 404 on the live site with a green
-checkmark next to it. Not worth the trade.
+`apps/shift9-dev/vercel.json` carries the same command. It watches `public/`
+along with everything else, deliberately: the tempting version excludes
+`public/experience` so asset-only commits skip the build, but that would let a
+commit adding *nothing but a new video or image* skip the production deploy,
+and the asset would 404 on the live site with a green checkmark beside it. As
+written it only skips commits that touch neither this app nor the shared
+packages — Pinch-only changes, `profile/`, `docs/`.
+
+**The cap is real, and it is per day across the whole account.** On the night
+of 2026-07-25 both projects started returning *"Deployment rate limited — retry
+in 24 hours"*: a long working session of small, frequent commits, each firing
+two builds, exhausted the free tier's 100. The `ignoreCommand`s roughly halve
+that, but the other half of the fix is behavioural — batch commits while
+iterating rather than pushing each edit, because every push to this repo is
+two builds until one of them opts out.
 
 > **Monorepo note:** keep the **Root Directory** pointed at the app. Vercel
 > installs the whole workspace from `shift9/` so `workspace:*` packages

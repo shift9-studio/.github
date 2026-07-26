@@ -135,9 +135,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* The light in the plate is on the left, so hold that side in frame when a
-     narrow viewport has to crop. */
-  object-position: 32% 50%;
+  /* The seam sits at the left third of the plate. Hold it in frame when a
+     narrow viewport crops, and push it further left as the screen narrows so
+     it never ends up behind the type. */
+  object-position: 30% 50%;
 }
 
 /* Weights the lower half so the type has ground under it whatever the plate
@@ -145,12 +146,21 @@
 .gateVeil {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    color-mix(in oklab, var(--s9-void-2) 92%, transparent) 0%,
-    color-mix(in oklab, var(--s9-void-2) 55%, transparent) 34%,
-    transparent 72%
-  );
+  /* Two passes: one weighting the foot of the frame so the type has ground
+     under it, one darkening the right so the copy sits on black even where
+     the stitch texture catches a little light. Neither touches the seam. */
+  background:
+    linear-gradient(
+      to top,
+      color-mix(in oklab, var(--s9-void-2) 92%, transparent) 0%,
+      color-mix(in oklab, var(--s9-void-2) 50%, transparent) 34%,
+      transparent 72%
+    ),
+    linear-gradient(
+      to left,
+      color-mix(in oklab, var(--s9-void-2) 78%, transparent) 0%,
+      transparent 58%
+    );
 }
 
 .gateBody {
@@ -160,7 +170,11 @@
   justify-items: start;
   gap: 0.9rem;
   padding: 0 var(--s9-gutter) clamp(2.5rem, 9vh, 5.5rem);
-  width: min(48rem, 100%);
+  /* The right half of the plate is near-pure black and the seam owns the
+     left. The type goes where the picture is empty - which also means the
+     light is what your eye lands on first, and the words second. */
+  width: min(34rem, 100%);
+  margin-left: auto;
 }
 
 .gateMark {
@@ -192,102 +206,45 @@
   margin-top: clamp(0.5rem, 2vh, 1.25rem);
 }
 
-/* ── The primary control: framing marks ──────────────────────────────────
-   Four corner ticks around a mono label, like the framing marks in a
-   viewfinder. On approach the corners close in and a hairline draws itself
-   under the label. Nothing fills, nothing glows. */
+/* ── The primary control: a seam ─────────────────────────────────────────
+   The plate behind is fabric parted along a seam with light coming through.
+   The button is the same gesture at hand scale: a hairline under the label
+   that parts on approach and lets light out. Pressing it opens the film.
+
+   Corner ticks and framing marks were the first attempt. They were tasteful
+   and they were generic - the sort of thing any dark developer portfolio
+   wears. This one only works on this page, which is the point. */
 
 .enter {
   position: relative;
-  display: inline-flex;
+  display: inline-grid;
+  grid-template-columns: auto auto;
   align-items: baseline;
-  gap: 1rem;
-  padding: 1.1em 1.5em;
+  column-gap: 1.25rem;
+  padding: 0 0 0.9rem;
   background: none;
   border: 0;
   cursor: pointer;
   color: var(--s9-paper, #f8fafc);
 }
 
-.enterFrame {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.enterFrame i {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  border: 0 solid var(--s9-signal);
-  transition: transform var(--s9-dur-base) var(--s9-ease-premium);
-}
-
-.enterFrame i:nth-child(1) {
-  top: 0;
-  left: 0;
-  border-top-width: 1px;
-  border-left-width: 1px;
-}
-
-.enterFrame i:nth-child(2) {
-  top: 0;
-  right: 0;
-  border-top-width: 1px;
-  border-right-width: 1px;
-}
-
-.enterFrame i:nth-child(3) {
-  bottom: 0;
-  right: 0;
-  border-bottom-width: 1px;
-  border-right-width: 1px;
-}
-
-.enterFrame i:nth-child(4) {
-  bottom: 0;
-  left: 0;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-}
-
-.enter:hover .enterFrame i:nth-child(1),
-.enter:focus-visible .enterFrame i:nth-child(1) {
-  transform: translate(3px, 3px);
-}
-
-.enter:hover .enterFrame i:nth-child(2),
-.enter:focus-visible .enterFrame i:nth-child(2) {
-  transform: translate(-3px, 3px);
-}
-
-.enter:hover .enterFrame i:nth-child(3),
-.enter:focus-visible .enterFrame i:nth-child(3) {
-  transform: translate(-3px, -3px);
-}
-
-.enter:hover .enterFrame i:nth-child(4),
-.enter:focus-visible .enterFrame i:nth-child(4) {
-  transform: translate(3px, -3px);
-}
-
 .enterLabel {
   font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: 0.82rem;
+  font-size: clamp(0.82rem, 1.5vw, 0.95rem);
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  background-image: linear-gradient(var(--s9-signal), var(--s9-signal));
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0% 1px;
-  padding-bottom: 0.35em;
-  transition: background-size var(--s9-dur-base) var(--s9-ease-out);
+  /* The tracking opens as the seam does - the whole control widens by the
+     same few pixels, so the gesture reads as one movement. */
+  transition:
+    letter-spacing var(--s9-dur-slow) var(--s9-ease-premium),
+    transform var(--s9-dur-slow) var(--s9-ease-premium);
 }
 
 .enter:hover .enterLabel,
 .enter:focus-visible .enterLabel {
-  background-size: 100% 1px;
+  letter-spacing: 0.26em;
+  transform: translateY(-2px);
 }
 
 /* The run time, stated up front. Pressing a button should not be a trapdoor
@@ -298,18 +255,123 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--s9-ink-dim);
+  transition: color var(--s9-dur-base) var(--s9-ease-out);
 }
 
+.enter:hover .enterMeta,
+.enter:focus-visible .enterMeta {
+  color: color-mix(in oklab, var(--s9-signal) 70%, transparent);
+}
+
+/* THE SEAM. Closed it is a dim hairline. Open it is a lit gap with the light
+   bleeding out above and below it, brightest at the left where the plate's
+   own light source is, falling away to the right. */
+.enterFrame {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  grid-column: 1 / -1;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* the closed seam */
+.enterFrame i:nth-child(1) {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--s9-paper, #f8fafc) 32%, transparent);
+  transition: background-color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+/* the light coming through it */
+.enterFrame i:nth-child(2) {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    var(--s9-signal) 0%,
+    color-mix(in oklab, var(--s9-signal) 55%, transparent) 42%,
+    transparent 100%
+  );
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+/* the bleed above and below - what makes it read as light rather than as a
+   coloured line */
+.enterFrame i:nth-child(3) {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 26px;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--s9-signal) 30%, transparent),
+    transparent 70%
+  );
+  filter: blur(8px);
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+/* a violet counter-note at the far edge, the same bounce the plate has */
+.enterFrame i:nth-child(4) {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 10px;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(
+    to right,
+    transparent 30%,
+    color-mix(in oklab, var(--s9-pulse) 45%, transparent) 100%
+  );
+  filter: blur(6px);
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+.enter:hover .enterFrame i:nth-child(1),
+.enter:focus-visible .enterFrame i:nth-child(1) {
+  background-color: transparent;
+}
+
+.enter:hover .enterFrame i:nth-child(2),
+.enter:focus-visible .enterFrame i:nth-child(2),
+.enter:hover .enterFrame i:nth-child(3),
+.enter:focus-visible .enterFrame i:nth-child(3),
+.enter:hover .enterFrame i:nth-child(4),
+.enter:focus-visible .enterFrame i:nth-child(4) {
+  transform: scaleX(1);
+}
+
+.enter:hover .enterFrame i:nth-child(3),
+.enter:focus-visible .enterFrame i:nth-child(3) {
+  transform: translateY(-50%) scaleX(1);
+}
+
+.enter:hover .enterFrame i:nth-child(4),
+.enter:focus-visible .enterFrame i:nth-child(4) {
+  transform: translateY(-50%) scaleX(1);
+}
+
+/* Focus has to be visible without the pointer, and the seam alone is too
+   subtle to carry it on its own. */
 .enter:focus-visible {
-  outline: none;
-}
-
-.enter:focus-visible .enterFrame i {
-  border-color: var(--s9-pulse);
+  outline: 2px solid var(--s9-signal);
+  outline-offset: 0.75rem;
 }
 
 /* ── The secondary control ───────────────────────────────────────────────
-   Quiet, but full size and in the same row. Not a footnote in a corner. */
+   Quiet, but full size and in the same row as the primary. Burying the way
+   past a twenty-second film in a corner of the film is how you get someone
+   to close the tab instead. It is dim rather than small: the hierarchy is
+   carried by contrast, so the target stays easy to hit. */
 
 .skipGate {
   background: none;
@@ -318,9 +380,10 @@
   cursor: pointer;
   font-family: var(--s9-font-mono, ui-monospace, monospace);
   font-size: 0.72rem;
+  font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--s9-paper, #f8fafc) 62%, transparent);
+  color: color-mix(in oklab, var(--s9-paper, #f8fafc) 58%, transparent);
   border-bottom: 1px solid transparent;
   transition:
     color var(--s9-dur-fast) var(--s9-ease-out),
@@ -330,7 +393,12 @@
 .skipGate:hover,
 .skipGate:focus-visible {
   color: var(--s9-paper, #f8fafc);
-  border-bottom-color: color-mix(in oklab, var(--s9-paper, #f8fafc) 45%, transparent);
+  border-bottom-color: color-mix(in oklab, var(--s9-paper, #f8fafc) 40%, transparent);
+}
+
+.skipGate:focus-visible {
+  outline: 2px solid var(--s9-signal);
+  outline-offset: 0.5rem;
 }
 
 /* Reduced motion never reaches this screen - it goes straight to the desk -
@@ -346,6 +414,31 @@
   .enter:hover .enterFrame i,
   .enter:focus-visible .enterFrame i {
     transform: none;
+  }
+}
+
+@media (max-width: 48rem) {
+  /* Portrait crops the plate hard. Pull the seam to the far left so it stays
+     in frame and stays clear of the words. */
+  .gatePlate {
+    object-position: 18% 50%;
+  }
+
+  .gateBody {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  /* Portrait puts the lit seam much closer to the copy than the wide crop
+     does, so the foot of the frame carries more weight here. */
+  .gateVeil {
+    background: linear-gradient(
+      to top,
+      color-mix(in oklab, var(--s9-void-2) 96%, transparent) 0%,
+      color-mix(in oklab, var(--s9-void-2) 78%, transparent) 30%,
+      color-mix(in oklab, var(--s9-void-2) 30%, transparent) 55%,
+      transparent 80%
+    );
   }
 }
 
