@@ -58,6 +58,35 @@ directory to `shift9/pnpm-workspace.yaml`).
 | **Environment variables** | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (from §1) |
 | **Domain** | e.g. `pinch.shift9.dev` or a standalone domain |
 
+### Skipping builds that can't change anything
+
+`apps/just-a-pinch/vercel.json` carries an `ignoreCommand`. Vercel runs it from
+the project's Root Directory and reads the exit code — **0 skips the build**,
+non-zero builds — which is exactly `git diff --quiet`'s contract:
+
+```
+git diff --quiet HEAD^ HEAD -- . ../../packages ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ../../turbo.json
+```
+
+The watched paths are the app itself, the shared packages it imports
+(`@shift9/theme`, `ui`, `motion`, `data`), and the workspace files that decide
+what gets installed and built. Everything else in the repo — all of
+`apps/shift9-dev`, `profile/`, `docs/` — cannot affect this deployment, so it
+shouldn't spend one. On a merge commit `HEAD^` is the first parent, i.e. the
+base branch before the merge, so the comparison still sees every file the merge
+brought in.
+
+It matters because the free tier allows 100 deployments a day and both projects
+build on every push to the shared repo. Measured against the 95 commits of the
+entry-experience branch, 94 of them touch only `shift9-dev` — so Pinch was
+rebuilding, identically, 94 times for no reason.
+
+**`shift9-dev` deliberately has no `vercel.json`.** The tempting version excludes
+`public/experience` so that asset-only commits skip the build, but that would
+also let a commit that adds *nothing but a new video or image* skip the
+production deploy — and the asset would 404 on the live site with a green
+checkmark next to it. Not worth the trade.
+
 > **Monorepo note:** keep the **Root Directory** pointed at the app. Vercel
 > installs the whole workspace from `shift9/` so `workspace:*` packages
 > (`@shift9/ui`, `@shift9/motion`, `@shift9/data`, `@shift9/theme`) resolve.
