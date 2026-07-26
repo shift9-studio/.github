@@ -76,6 +76,38 @@ lifted that on 2026-07-25 and asked for it to be generated — a kids' early-rea
 app with crocheted plush animal characters. The brief above is the one that
 stands.
 
+## The closing banner
+
+`shift-9_new-banner.jpg` — **supplied, not generated.** Kariim's own chrome
+SHIFT-9 artwork, uploaded 2026-07-26. It is the frame the dolly lands on and
+the poster the closing film loads behind. It is a locked reference in the same
+sense the office photograph is: it does not get regenerated, restyled or
+substituted. An earlier session swapped in the repo's `s9-banner-still.jpg`
+when this file was not yet available — that was wrong, and the rule that came
+out of it is *use what you were given or say where to put it.*
+
+The banner is animated by a film rendered **from** that still, so the first
+frame the visitor sees is the artwork itself.
+
+| Take | Job | Model | Spend | Outcome |
+|---|---|---|---|---|
+| v1 | `43205595-cba6-4335-b4f7-8a2da776ab58` | kling3_0 std, 5s, 720p | 10 | **Rejected.** Only the wordmark animated; the fibre strands and the dust sat still, and the specular pass across the chrome was a small glint rather than an event. |
+| v2 | `608abe02-9607-46a9-a728-9b9552129ce0` | kling3_0 pro, 5s, 1080p | 12.5 | **Rendering** at time of writing — start frame only, and pro passed explicitly. Outcome to be recorded here before the clip is wired in. |
+
+**Why v1 failed, written down so it is not repeated.** The still was pinned as
+*both* `start_image` and `end_image`, on the reasoning that a matching end frame
+would guarantee the film settled back onto the composition. Identical first and
+last frames also state that the net motion over the shot must be zero, and the
+cheapest way to satisfy that is to leave anything deformable — strands, dust —
+exactly where it started and spend the entire motion budget on a small reversible
+highlight on the most salient object. Pinning both ends buys frame-matching at
+the cost of the motion itself.
+
+The fix: pin the start frame only. The end frame does not need to match,
+because the poster match matters at the *start* of playback, not the end — the
+film simply holds its last frame and the cue appears. Also pass `mode: "pro"`
+explicitly; omitting it silently renders `std` at 720p.
+
 ## Built in code, not generated
 
 | Asset | Where | Note |
