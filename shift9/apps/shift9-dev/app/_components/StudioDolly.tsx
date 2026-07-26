@@ -267,6 +267,21 @@ function Stage({
                   : `Open ${piece.title} →`}
               </a>
             ) : null}
+            {piece.appHref ? (
+              /* The second door. Some projects ship something you install, and
+                 the site that describes it is not the place that hands it to
+                 you — for Just a Pinch that is the web-app entrance carrying
+                 the Google Play download and the iOS notice. Someone who wants
+                 the app should not have to find it from the marketing page. */
+              <a
+                className={s.link}
+                href={piece.appHref}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {piece.appLabel ?? "Get the app"} ↗
+              </a>
+            ) : null}
           </div>
         </div>
       </div>

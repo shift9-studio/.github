@@ -111,6 +111,12 @@
 }
 
 .link {
+  /* inline-block with a trailing gap: a card can carry two destinations - the
+     site and the thing you install - and they belong on one row. Stacking them
+     would give back the height the card was just widened to save. The trailing
+     margin is harmless on the single-link cards, which are most of them. */
+  display: inline-block;
+  margin-right: 1.4rem;
   justify-self: start;
   margin-top: 0.35rem;
   font-family: var(--s9-font-mono, ui-monospace, monospace);

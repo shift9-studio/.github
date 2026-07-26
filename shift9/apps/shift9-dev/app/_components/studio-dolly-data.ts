@@ -27,6 +27,12 @@ export type SetPiece = {
   clip: string;
   /* Where the project actually lives, when it lives anywhere. */
   href?: string;
+  /* A second destination, for projects that ship something you install rather
+     than only something you visit. Just a Pinch has both: a marketing site and
+     a web-app entrance carrying the Google Play download and the iOS notice.
+     Sending people to the site when they want the app is a dead end. */
+  appHref?: string;
+  appLabel?: string;
   /* Each card is laid out after the thing it describes: a recipe card for the
      cooking app, a scoreboard for the basketball game, a terminal for the
      automation stack. Twelve variants of one system - the type scale, palette
@@ -66,6 +72,8 @@ export const SET_PIECES: SetPiece[] = [
     clip: `${BASE}01-just-a-pinch.mp4`,
     card: "recipe",
     href: "https://pinch.shift9.dev",
+    appHref: "https://kariimc.github.io/Just-a-pinch/",
+    appLabel: "Get the app",
   },
   {
     n: "02",
