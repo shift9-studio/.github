@@ -278,29 +278,34 @@
   text-wrap: balance;
 }
 
-/* ── The icon, where the runtime used to be printed ───────────────────────
-   It sits in the button because it has a job there. At rest it breathes —
-   the tile morphs slowly between a squircle and a circle — which says "this
-   is alive, press it" without competing with the seam behind it.
+/* ── The icon and the runtime, one row ────────────────────────────────────
+   Both sit in the button's second cell, on the same line, centred on each
+   other. The count used to hang off the icon's corner as a badge, which put
+   it on neither the icon's line nor the label's.
 
-   Pressed, it becomes the loading state. The opening film is 24MB and the
-   gate used to vanish the instant it was clicked, leaving whoever pressed it
-   on a black screen with nothing to look at while it downloaded. Now the
-   door stays up, this spins, and it only steps aside once frames are
-   actually arriving.
-
-   The ring is a conic gradient rotated by transform, so the sweep is one
-   composited layer rather than a repaint per frame. */
+   At rest the icon breathes. Under load it MORPHS: the tile runs from
+   rounded square to a full circle and back while it turns, which is a shape
+   change you can see at 22px — the previous 7px-to-11px radius was
+   arithmetically a morph and visually nothing, which is why all anyone saw
+   was the ring. */
 .enterIcon {
   position: relative;
-  display: inline-grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   flex: none;
 }
 
-.enterIcon img {
+.enterIconArt {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+.enterIconArt img {
   width: 22px;
   height: 22px;
   border-radius: 7px;
@@ -314,14 +319,14 @@
     transform: scale(1);
   }
   50% {
-    border-radius: 11px;
-    transform: scale(1.06);
+    border-radius: 10px;
+    transform: scale(1.05);
   }
 }
 
 /* The ring is absent until the film is loading, so the resting state stays a
    still object and only the wait gets a spinner. */
-.enterIcon::before {
+.enterIconArt::before {
   content: "";
   position: absolute;
   inset: -5px;
@@ -339,33 +344,15 @@
   transition: opacity var(--s9-dur-base) var(--s9-ease-out);
 }
 
-/* The runtime, at the smallest size it can still be read. It rides the
-   icon's bottom-right corner rather than sitting beside it, so the button
-   keeps the two-cell rhythm it had when the number was a word. */
-.enterCount {
-  position: absolute;
-  right: -9px;
-  bottom: -7px;
-  padding: 0 3px;
-  border-radius: 4px;
-  font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  line-height: 1.5;
-  color: var(--s9-void-2, #0b1120);
-  background: var(--s9-paper, #f8fafc);
-  /* Above the ring, so the spinner sweeps behind it rather than over it. */
-  z-index: 2;
-}
-
-.enterIconBusy::before {
+.enterIconBusy .enterIconArt::before {
   opacity: 1;
   animation: iconSpin 900ms linear infinite;
 }
 
-.enterIconBusy img {
-  animation: iconPulse 900ms ease-in-out infinite;
+/* Square to circle and back, turning as it goes. The full range, so it is
+   unmistakable at the size it actually renders. */
+.enterIconBusy .enterIconArt img {
+  animation: iconMorph 1400ms ease-in-out infinite;
 }
 
 @keyframes iconSpin {
@@ -374,68 +361,42 @@
   }
 }
 
-@keyframes iconPulse {
+/* Shape and scale only. An earlier pass turned the artwork 180 degrees as
+   well, which put the logo upside down for half of every cycle — that reads
+   as a rendering fault, not as a morph. The ring is what turns; the tile
+   just changes shape. */
+@keyframes iconMorph {
   0%,
   100% {
-    border-radius: 7px;
-    transform: scale(0.94);
+    border-radius: 6px;
+    transform: scale(0.9);
   }
   50% {
-    border-radius: 11px;
-    transform: scale(1.02);
+    border-radius: 50%;
+    transform: scale(1.08);
   }
 }
 
-/* Reduced motion: no breathing, no spin. The busy state still reads, because
-   the ring appears and stays — presence is the signal; movement was only ever
-   the flourish on top of it. */
-@media (prefers-reduced-motion: reduce) {
-  .enterIcon img,
-  .enterIconBusy img,
-  /* The runtime, at the smallest size it can still be read. It rides the
-   icon's bottom-right corner rather than sitting beside it, so the button
-   keeps the two-cell rhythm it had when the number was a word. */
+/* The runtime, on the icon's line. */
 .enterCount {
-  position: absolute;
-  right: -9px;
-  bottom: -7px;
-  padding: 0 3px;
-  border-radius: 4px;
   font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  line-height: 1.5;
-  color: var(--s9-void-2, #0b1120);
-  background: var(--s9-paper, #f8fafc);
-  /* Above the ring, so the spinner sweeps behind it rather than over it. */
-  z-index: 2;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  color: color-mix(in oklab, var(--s9-paper, #f8fafc) 62%, transparent);
 }
 
-.enterIconBusy::before {
+/* Reduced motion: no breathing, no spin, no morph. The busy state still
+   reads, because the ring appears and stays — presence is the signal;
+   movement was only ever the flourish on top of it. */
+@media (prefers-reduced-motion: reduce) {
+  .enterIconArt img,
+  .enterIconBusy .enterIconArt img,
+  .enterIconBusy .enterIconArt::before {
     animation: none;
   }
-  /* The runtime, at the smallest size it can still be read. It rides the
-   icon's bottom-right corner rather than sitting beside it, so the button
-   keeps the two-cell rhythm it had when the number was a word. */
-.enterCount {
-  position: absolute;
-  right: -9px;
-  bottom: -7px;
-  padding: 0 3px;
-  border-radius: 4px;
-  font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: 8.5px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  line-height: 1.5;
-  color: var(--s9-void-2, #0b1120);
-  background: var(--s9-paper, #f8fafc);
-  /* Above the ring, so the spinner sweeps behind it rather than over it. */
-  z-index: 2;
-}
-
-.enterIconBusy::before {
+  .enterIconBusy .enterIconArt::before {
     opacity: 1;
   }
 }
@@ -1881,19 +1842,21 @@
 }
 
 /* ── HOLOGRAPHIC ──────────────────────────────────────────────────────────
-   Two layers doing what real foil does, and neither of them is a rainbow
-   gradient sitting there being a rainbow gradient.
+   Foil, not a colour wheel. Three things separate the two, and the first
+   version had none of them:
 
-   The first is the colour: a conic sweep through the spectrum, blended with
-   `color-dodge` so it can only lift what is already under it. On a grey face
-   that reads as light splitting; on a black one it reads as almost nothing,
-   which is correct — foil needs something to bounce off.
+   1. The spectrum is masked. A conic gradient filling a square is a square
+      of rainbow — the thing that reads as cheap. Masked with a radial
+      falloff it has no edge of its own, so what you see is a tile catching
+      light rather than a coloured rectangle sitting on one.
+   2. It blends with `soft-light`, not `color-dodge`. Dodge on a mid-grey
+      face goes straight to full saturation; soft-light tints. Real foil
+      shifts hue, it does not repaint the object.
+   3. The specular band is feathered and it leaves. A hard white bar parked
+      across a tile is an artefact; a wide soft one that crosses once and
+      exits is a highlight.
 
-   The second is the specular: one hard band of white that travels across the
-   tile on `transform` alone. That band is what sells it as a surface rather
-   than a tint, because it moves independently of the colour underneath.
-
-   Both are off at rest and cost nothing until the pointer arrives. */
+   Both layers are off at rest and cost nothing until the pointer arrives. */
 .holo {
   position: relative;
   isolation: isolate;
@@ -1911,69 +1874,69 @@
   transition: opacity var(--s9-dur-base) var(--s9-ease-out);
 }
 
-/* The spectrum. Above the tile's own artwork, not behind it — foil sits on
-   the surface of a thing, and a layer under an opaque icon is a layer you
-   never see. */
+/* The spectrum, masked to a soft centre so it has no edge of its own. */
 .holo::before {
   z-index: 3;
   background: conic-gradient(
     from 210deg,
-    #ff2d78 0deg,
-    #ffd166 60deg,
-    #3ef07f 120deg,
-    #22d3ee 180deg,
-    #7c5cff 240deg,
-    #ff2d78 360deg
+    #ff5c93 0deg,
+    #ffd88a 70deg,
+    #6ef0a8 140deg,
+    #6fdcf0 200deg,
+    #9a86ff 265deg,
+    #ff5c93 360deg
   );
-  mix-blend-mode: color-dodge;
-  filter: saturate(1.6);
+  mix-blend-mode: soft-light;
+  mask: radial-gradient(72% 72% at 50% 42%, #000 28%, transparent 100%);
+  -webkit-mask: radial-gradient(72% 72% at 50% 42%, #000 28%, transparent 100%);
 }
 
-/* The specular band, above even that. */
+/* The specular band — wide, feathered, gone by the end of the sweep. */
 .holo::after {
   z-index: 4;
   background: linear-gradient(
-    108deg,
-    transparent 38%,
-    rgba(255, 255, 255, 0.72) 50%,
-    transparent 62%
+    102deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 46%,
+    rgba(255, 255, 255, 0.48) 50%,
+    rgba(255, 255, 255, 0.3) 54%,
+    transparent 70%
   );
-  transform: translateX(-120%);
+  filter: blur(1px);
+  transform: translateX(-135%);
 }
 
 .holo:hover::before,
 .holo:focus-visible::before {
-  opacity: 0.55;
-  animation: holoTurn 3.4s linear infinite;
+  opacity: 0.9;
+  animation: holoTurn 6s linear infinite;
 }
 
 .holo:hover::after,
 .holo:focus-visible::after {
   opacity: 1;
-  transform: translateX(120%);
+  transform: translateX(135%);
   transition:
-    opacity var(--s9-dur-fast) var(--s9-ease-out),
-    transform var(--s9-dur-boot) var(--s9-ease-inout);
+    opacity 90ms var(--s9-ease-out),
+    transform 820ms var(--s9-ease-inout);
 }
 
 @keyframes holoTurn {
   to {
-    transform: rotate(1turn) scale(1.6);
+    transform: rotate(1turn) scale(1.35);
   }
 }
 
-/* On a near-black face, `color-dodge` has nothing to lift and the spectrum
-   simply does not appear — which is physically right and visually useless.
-   Dark tiles get `screen` instead, which adds light rather than amplifying
-   it, plus a little more of it since there is no base colour helping. */
+/* On a near-black face `soft-light` has almost nothing to tint, so the dark
+   tile swaps to `screen`, which adds light instead of shifting it. */
 .holoDark::before {
   mix-blend-mode: screen;
-  filter: saturate(1.25);
+  filter: saturate(1.15);
 }
 
 .holoDark:hover::before,
 .holoDark:focus-visible::before {
-  opacity: 0.42;
+  opacity: 0.32;
 }
 
 /* Reduced motion keeps the colour and drops the travel: a still sheet of
@@ -1982,12 +1945,12 @@
   .holo:hover::before,
   .holo:focus-visible::before {
     animation: none;
-    opacity: 0.42;
+    opacity: 0.62;
   }
   .holo:hover::after,
   .holo:focus-visible::after {
     transform: none;
-    opacity: 0.28;
+    opacity: 0.2;
   }
 }
 
@@ -2078,4 +2041,36 @@
   .diconOpening .fico {
     transform: scale(0.96);
   }
+}
+
+/* ── ABOUT TAKES NO CHROME ────────────────────────────────────────────────
+   These sit last on purpose. The desktop gives every icon cell three hover
+   layers — a panel, a border, and a white sheen that crosses the whole cell.
+   The About tile already says it is under the cursor by catching light, and
+   the cell's white sheen stacked on top of that is what was drawing a white
+   box around it.
+
+   My first attempt at this was written 230 lines above `.dicon::after`, at
+   equal specificity, so source order quietly undid half of it and I handed
+   back something still broken. Written here there is nothing after it to
+   lose to. */
+.dicon.about:hover,
+.dicon.about:focus-visible {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.dicon.about:hover::before,
+.dicon.about:focus-visible::before,
+.dicon.about:hover::after,
+.dicon.about:focus-visible::after {
+  opacity: 0;
+}
+
+/* Focus is not decoration and does not get dropped with the rest. */
+.dicon.about:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue);
 }

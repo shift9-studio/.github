@@ -649,8 +649,10 @@ export function EnterTheStudio() {
                   className={`${s.enterIcon} ${loading ? s.enterIconBusy : ""}`}
                   aria-hidden="true"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={SHIFT9_LOGO} alt="" />
+                  <span className={s.enterIconArt}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={SHIFT9_LOGO} alt="" />
+                  </span>
                   {/* The runtime, back on screen. It was printed in full
                       beside the label and moving the icon into that slot took
                       it away, which is the one thing on this button nobody
