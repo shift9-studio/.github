@@ -86,19 +86,19 @@ rather than resolving it by hand.
 
 ## Exact next steps
 
-1. Review, merge, or close PRs #14, #15, #16, #35.
+1. Review, merge, or close PRs #14, #15, #16, #35. **#35 is approved by Kariim
+   pending his own merge click** - the three pre-merge fixes he asked for
+   (favicons, the dead `/#work` link, the hardcoded clock) landed at `6c176e2`.
 2. Fix the repo-wide `lint` script - `next lint` was removed in Next 16 and there
    is no eslint config in the repo, so lint currently exits 1 in both apps.
-3. Give both apps a favicon. `/favicon.ico`, `/icon.svg` and `/apple-icon.png`
-   all 404 today; the mark in `Shift9Mark.tsx` is the obvious source.
-4. Fix `href="/#work"` in `app/work/[slug]/page.tsx` (lines 68, 228) - no
-   `id="work"` exists anywhere, so both links are dead.
-5. Vendor or poster-fallback the ten Higgsfield CloudFront hero videos in
+3. Vendor or poster-fallback the ten Higgsfield CloudFront hero videos in
    `lib/work-data.ts`; today a `/work/[slug]` page shows an empty rectangle if
    the CDN object goes away.
-6. Prune the `claude/*` branches with no open PR.
-7. Resolve the `docs/BLUEPRINT.md` drift below.
-8. Audit every repo-enumerating script (XAVIER ingestion, Relay state sweep, `my-skills`) for the `Kariimc`-scope bug above.
+4. Fix `MonoLabel`'s doubled `//` on the work pages - the component emits its own
+   marker and `app/work/[slug]/page.tsx:66` passes another.
+5. Prune the `claude/*` branches with no open PR.
+6. Resolve the `docs/BLUEPRINT.md` drift below.
+7. Audit every repo-enumerating script (XAVIER ingestion, Relay state sweep, `my-skills`) for the `Kariimc`-scope bug above.
 
 ## Open decisions
 
