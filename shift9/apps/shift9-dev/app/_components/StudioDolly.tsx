@@ -45,8 +45,15 @@ const OUTRO_FILM = "/experience/outro/banner-settle.mp4";
    frame to itself, so the ask lives on its own page and the banner's only job
    is to make you want to open it.
 
-   The film plays once, when you arrive, and holds. The cue appears when it
-   settles — the invitation arrives after the statement, not over it. */
+   The film loops, continuously, for as long as you are looking at it. It used
+   to play once and stop on its last frame, which meant the closing image of
+   the whole reel was a still that had briefly moved — the one place on the
+   site where motion dies while you watch. It is rendered from the artwork and
+   framed to end on it, so the wrap lands back on the frame it started from.
+
+   The cue still arrives after the statement rather than over it: one pass of
+   the film, timed off its own duration. See the effect below for why that
+   cannot be `ended` any more. */
 function BannerOutro() {
   const hostRef = useRef<HTMLAnchorElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -54,8 +61,8 @@ function BannerOutro() {
   /* Held off the first render so SSR emits the still alone: the film is an
      enhancement and must never be what makes the page correct. */
   const [live, setLive] = useState(false);
-  /* The film has finished and is holding its last frame. Also the state the
-     page starts in when there is no film to wait for. */
+  /* One full pass of the film has played. Also the state the page starts in
+     when there is no film to wait for. */
   const [settled, setSettled] = useState(false);
 
   useEffect(() => {
@@ -85,12 +92,29 @@ function BannerOutro() {
     if (!vid) return;
     vid.play().catch(() => setSettled(true));
 
-    /* The cue is revealed by the film ending — but a codec the browser cannot
-       decode, a blocked autoplay or a backgrounded tab all mean `ended` never
-       fires. This guarantees the invitation appears regardless: the one thing
-       that must not depend on the video is the way forward. */
+    /* The cue used to be revealed by `ended`. The film loops now, so `ended`
+       never fires at all and that would have left the invitation permanently
+       hidden — the loop and the reveal cannot share a trigger.
+
+       A timer instead, set to the film's own length once the metadata says
+       what that is, so the invitation still arrives when the statement
+       finishes rather than over the top of it. The 7s fallback covers a codec
+       the browser cannot decode, a refused autoplay, or a backgrounded tab:
+       the one thing that must never depend on the video is the way forward. */
+    const onMeta = () => {
+      const d = vid.duration;
+      if (Number.isFinite(d) && d > 0) {
+        window.setTimeout(() => setSettled(true), d * 1000);
+      }
+    };
+    vid.addEventListener("loadedmetadata", onMeta, { once: true });
+    if (vid.readyState >= 1) onMeta();
+
     const failsafe = setTimeout(() => setSettled(true), 7000);
-    return () => clearTimeout(failsafe);
+    return () => {
+      clearTimeout(failsafe);
+      vid.removeEventListener("loadedmetadata", onMeta);
+    };
   }, [live]);
 
   return (
@@ -116,10 +140,10 @@ function BannerOutro() {
           src={OUTRO_FILM}
           poster={OUTRO_ART}
           muted
+          loop
           playsInline
           preload="auto"
           aria-hidden="true"
-          onEnded={() => setSettled(true)}
         />
       ) : null}
 
@@ -298,6 +322,22 @@ function Stage({
 
 export function StudioDolly() {
   const [at, setAt] = useState(1);
+  /* The counter has counted. Watched rather than inferred from `at`, because
+     12/12 is still the right number while the twelfth set-piece is on screen —
+     it is arriving at the banner that makes it redundant. */
+  const [atBanner, setAtBanner] = useState(false);
+  const outroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = outroRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setAtBanner(Boolean(entry?.isIntersecting)),
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
     <div className={s.root}>
@@ -320,23 +360,26 @@ export function StudioDolly() {
       {/* The take lands on the brand, then invites. The artwork resolves first,
           the line follows, and the actions arrive only once both have settled —
           including the way back out to the desktop the visitor came from. */}
-      <footer className={s.outro}>
+      <footer className={s.outro} ref={outroRef}>
         <BannerOutro />
 
-        {/* The door out, kept outside the banner link — a link inside a link
-            is invalid, and leaving must never be part of the button that
-            takes you further in. */}
-        <a className={s.exit} href="/">
-          &#8592; Back to the desktop
-        </a>
       </footer>
 
-      {/* Leaving must never depend on reaching the end of the travel. */}
-      <a className={s.exitPin} href="/">
-        &#8592; Desktop
+      {/* The only way out, and it is on screen the whole way down — leaving
+          must never depend on reaching the end of the travel. It used to be
+          two: this one plus a full pill laid over the closing banner. One is
+          enough, and an arrow is the smallest thing that still reads as a way
+          back, so it can sit in the corner of every shot without becoming
+          furniture. The word is kept for assistive tech and the tooltip. */}
+      <a className={s.exitPin} href="/" title="Back to the desktop">
+        <span aria-hidden>&#8592;</span>
+        <span className={s.srOnly}>Back to the desktop</span>
       </a>
 
-      <div className={s.counter} aria-hidden="true">
+      <div
+        className={`${s.counter} ${atBanner ? s.counterOut : ""}`}
+        aria-hidden="true"
+      >
         {String(at).padStart(2, "0")} / {String(SET_PIECES.length).padStart(2, "0")}
       </div>
     </div>

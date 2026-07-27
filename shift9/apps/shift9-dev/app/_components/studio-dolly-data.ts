@@ -58,6 +58,20 @@ export type CardVariant =
   | "wireframe"
   | "dialog";
 
+/* ── Where a card sends you ──────────────────────────────────────────────
+   Three real destinations: Just a Pinch is a live product, INSTRUMENT is a
+   live page, and everything else goes to /soon.
+
+   Four cards used to point at /work/<slug> case pages. Measured against Just
+   a Pinch — 406 characters of overview, six features, a live thing to open —
+   the rest ran 216–302 characters with three or four features and, mostly,
+   nowhere to go at the end. They were not case studies, they were stubs with
+   a case study's layout, and a thin page dressed as a real one is worse than
+   an honest "not yet": it invites a click and spends it.
+
+   /soon says the true thing. The pages themselves still exist and still build
+   — nothing is deleted — they are simply not linked until they are worth
+   opening. */
 const BASE = "/experience/set-pieces/";
 
 export const SET_PIECES: SetPiece[] = [
@@ -124,7 +138,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}05-voxel-arcade-v3.png`,
     clip: `${BASE}05-voxel-arcade-v3.mp4`,
     card: "scoreboard",
-    href: "/work/voxel-arcade-basketball",
+    href: "/soon",
   },
   {
     n: "06",
@@ -136,7 +150,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}06-midnight-return.png`,
     clip: `${BASE}06-midnight-return.mp4`,
     card: "corridor",
-    href: "/work/midnight-return",
+    href: "/soon",
   },
   {
     n: "07",
@@ -196,7 +210,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}11-omni-3d.png`,
     clip: `${BASE}11-omni-3d.mp4`,
     card: "wireframe",
-    href: "/work/omni-3d",
+    href: "/soon",
   },
   {
     n: "12",
@@ -208,6 +222,6 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}12-winfix.png`,
     clip: `${BASE}12-winfix.mp4`,
     card: "dialog",
-    href: "/work/whome-diagnostic",
+    href: "/soon",
   },
 ];
