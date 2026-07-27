@@ -1,4 +1,4 @@
-import { InvitationField } from "./InvitationField";
+import { WaveField } from "../_components/WaveField";
 import s from "./start.module.css";
 
 /* ────────────────────────────────────────────────────────────────────────
@@ -6,20 +6,16 @@ import s from "./start.module.css";
 
    The dolly ends on Kariim's artwork and stops there. Putting the ask on top
    of that frame would mean setting type over the one image on the site that
-   earns a full frame to itself, so the ask gets its own room: a dark field,
-   a drifting aurora, one sentence, one button.
+   earns a full frame to itself, so the ask gets its own room.
 
-   Built in the aether-hero idiom — a coloured bloom behind a centred column,
-   a gradient pill that lights up on approach, a glass ghost button beside it.
-   The bloom is three radial gradients, and over it sits a rendered plate of
-   the same fibre strands and dust the closing banner carries, so the two
-   rooms read as one system.
+   The room is black. A field of white lines waves under simplex noise and
+   parts around the cursor, and that is the entire ground — no bloom, no
+   tint, no second accent. The one colour on the page is the button, which
+   is the only thing here anyone is meant to do.
 
-   The gradient is the ground and the fallback: if the plate is missing,
-   blocked or switched off for reduced motion, what is left is a finished
-   field rather than a hole. The page itself is a server component — the only
-   client boundary is the plate, and only so reduced motion can decline to
-   mount it at all.
+   The page is a server component. The field is the only client boundary,
+   and only because it needs a canvas and a pointer; everything that says
+   anything is static markup underneath it.
    ──────────────────────────────────────────────────────────────────────── */
 
 export const metadata = {
@@ -33,12 +29,10 @@ const EMAIL = "shift9.dev@gmail.com";
 export default function StartPage() {
   return (
     <main className={s.root}>
-      {/* The field. Decorative in full: every word is in the column below.
-          The gradient is the ground and the fallback; the plate drifts over
-          it and eases to a rest. */}
-      <div className={s.aurora} aria-hidden="true" />
-      <InvitationField />
-      <div className={s.grid} aria-hidden="true" />
+      {/* The field. Decorative in full — every word on this page is in the
+          column below it, so it is hidden from the accessibility tree and
+          nothing is lost when it does not run. */}
+      <WaveField className={s.field ?? ""} />
       <div className={s.vignette} aria-hidden="true" />
 
       <section className={s.column}>

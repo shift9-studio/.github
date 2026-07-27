@@ -34,6 +34,24 @@
      read. Fills and strokes keep --s9-pulse. */
   --s9-pulse-ink:   #a78bfa;
 
+  /* ── The invitation's palette ────────────────────────────────────────────
+     The one surface that is not built on the Void. The wave field behind the
+     ask is true black with true white lines and no third colour in the
+     ground at all, so the only chromatic thing on the page is the button you
+     are meant to press. Scarcity is what makes it striking; a second accent
+     anywhere on that page would spend it.
+
+     Contrast, measured, not guessed:
+       verdant on obsidian          12.58:1   (and black label on verdant, same)
+       verdant-lift on obsidian     16.32:1   (hover, so it only ever climbs)
+       chalk on obsidian            21.00:1
+     Every one clears the 4.5:1 floor several times over, which is what lets
+     the green carry a label rather than only a fill. */
+  --s9-obsidian:     #000000;   /* true black — the invitation's ground   */
+  --s9-chalk:        #ffffff;   /* true white — the wave field's stroke   */
+  --s9-verdant:      #00e676;   /* the button                             */
+  --s9-verdant-lift: #5cffa8;   /* the button, approached                 */
+
   /* derived hairlines & glows (oklab mixes keep hue honest) */
   --s9-line:        color-mix(in oklab, var(--s9-signal) 16%, transparent);
   --s9-line-2:      color-mix(in oklab, var(--s9-pulse) 13%, transparent);
