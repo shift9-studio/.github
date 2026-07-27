@@ -282,7 +282,12 @@ export function AsciiTunnel({
         g.addColorStop(1, "transparent");
         ctx.save();
         ctx.globalCompositeOperation = "screen";
-        ctx.globalAlpha = 0.28 + 0.5 * smoothstep(0.1, 0.8, p);
+        /* Restrained on purpose. The mouth of the hole is drawn by the closing
+           layer above; this is only the spill of that light onto the field
+           still falling around it. It used to climb to 0.78, which lit the
+           whole plate and left nothing for the mouth itself to be brighter
+           than — the frame went uniformly cyan and the depth disappeared. */
+        ctx.globalAlpha = 0.1 + 0.22 * smoothstep(0.1, 0.8, p);
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(originX, originY, holeR, 0, Math.PI * 2);
@@ -290,19 +295,40 @@ export function AsciiTunnel({
         ctx.restore();
       }
 
-      /* The closing layer sits above the chrome and takes the whole frame in
-         the last beat: the light blooms out and settles to the studio's black,
-         so the handoff is a fade between two blacks and not a cut. Driven from
-         here rather than from a CSS animation so it can never drift out of
-         step with the fall. */
+      /* ── The closing layer ───────────────────────────────────────────────
+         This was a flat cyan fill ramped to near-full opacity, which turned
+         the entire screen cyan for most of a second. A full-frame colour flash
+         is the opposite of immersive: it flattens everything to one plane, it
+         has no direction, and it tells the eye nothing about where you are
+         going. It also blew out the fall still happening underneath it.
+
+         It is a gradient now, and the difference is the whole effect. Black at
+         the edges, closing inward — those are the walls of the shaft, and they
+         are what pulls the eye down the middle instead of spreading it across
+         the frame. Cyan only in the mouth, which is small and gets closer.
+         Nothing is lit except the thing you are falling toward.
+
+         Then the mouth is swallowed: `crush` takes the cyan out from the
+         centre in the last quarter, so the final frame is pure black — which
+         is exactly the studio's ground, so the handoff is not a cut or a fade
+         between two different darks. It is the same black.
+
+         One gradient, restyled per frame on a fixed element. No extra layers,
+         nothing composited that was not already there. */
       if (close) {
-        const bloom = smoothstep(0.5, 0.82, p);
-        const settle = smoothstep(0.74, 1, p);
-        close.style.opacity = String(Math.max(bloom * 0.9, settle));
-        close.style.background =
-          settle > 0.001
-            ? `color-mix(in oklab, #000 ${Math.round(settle * 100)}%, ${signal})`
-            : signal;
+        const walls = smoothstep(0.12, 0.55, p); // the shaft closes in
+        const mouth = maxR * (0.18 + 0.86 * smoothstep(0, 1, p));
+        const crush = smoothstep(0.7, 1, p); // the light is swallowed
+        const core = 0.92 * (1 - crush);
+        const halo = 0.34 * (1 - crush);
+        close.style.opacity = String(walls);
+        close.style.background = [
+          `radial-gradient(circle ${Math.round(mouth)}px`,
+          `at ${Math.round(originX)}px ${Math.round(originY)}px,`,
+          `color-mix(in oklab, ${signal} ${Math.round(core * 100)}%, #000) 0%,`,
+          `color-mix(in oklab, ${signal} ${Math.round(halo * 100)}%, #000) 34%,`,
+          `#000 76%)`,
+        ].join(" ");
       }
 
       if (p >= 1) {

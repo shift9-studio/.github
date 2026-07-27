@@ -152,11 +152,24 @@
   margin: 0;
 }
 
+/* The opening statement, and for a long stretch the only thing on screen.
+   It was 46ch of 400-weight text at 70% opacity on absolute black, which is
+   the thinnest possible setting for the one paragraph that has to carry the
+   whole page before anything else arrives. Numerically the contrast was fine;
+   that was never the problem. Weight was — pale strokes on a large black
+   field read as faint whatever the ratio says, because there is nothing
+   around them to give the eye a reference.
+
+   Up a step in size and weight, and up to 88%. Still clearly secondary to the
+   title above it, no longer something you lean in for. */
 .lede {
   max-width: 46ch;
   margin-inline: auto;
-  color: rgb(248 250 252 / 0.7);
-  line-height: 1.6;
+  color: rgb(248 250 252 / 0.88);
+  font-size: var(--s9-text-lead);
+  font-weight: 500;
+  line-height: 1.5;
+  text-wrap: pretty;
 }
 
 .counter {

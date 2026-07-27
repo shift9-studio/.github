@@ -1,0 +1,466 @@
+/* ────────────────────────────────────────────────────────────────────────
+   INSTRUMENT — the system, documented on the system's own ground.
+
+   The page used to be built in the old chrome: Void navy, Signal cyan on
+   everything, coordinate frames in the gutters, a telemetry rail. That was
+   the site's language when the site was one page. It is not any more — the
+   entrance, the dolly and the invitation all landed on black, and a design
+   system page rendered in a language none of the current surfaces use is the
+   one page on the site that cannot be trusted about the site.
+
+   So: the dolly's ground. Absolute black, the house display face at size,
+   Instrument Sans carrying every sentence, and Martian Mono demoted to what
+   it is for — labels, values, metadata. Signal and Pulse stay, but as
+   accents on specific things rather than as the colour of the page.
+
+   Nothing here hardcodes a palette value. Every swatch, every duration and
+   every easing on this page is read out of the live custom property at
+   runtime, so the page cannot drift from @shift9/theme — if a token moves,
+   this moves with it, and if a token is deleted the swatch goes blank rather
+   than lying.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  position: relative;
+  min-height: 100vh;
+  background: var(--s9-obsidian);
+  color: var(--s9-ink);
+  font-family: var(--s9-font-text);
+}
+
+/* ── Shell ──────────────────────────────────────────────────────────────── */
+
+.wrap {
+  width: min(84rem, 100%);
+  margin-inline: auto;
+  padding-inline: var(--s9-gutter);
+}
+
+.section {
+  padding-block: clamp(4rem, 9vh, 7.5rem);
+  border-top: 1px solid var(--s9-hair);
+}
+
+.section:first-of-type {
+  border-top: 0;
+}
+
+/* One hairline value for the whole page. The old page used --s9-line, which
+   is a cyan mix — on navy that read as structure, on black it reads as a
+   glowing wire around everything. */
+.root {
+  --s9-hair: rgb(255 255 255 / 0.09);
+}
+
+/* ── Type ───────────────────────────────────────────────────────────────── */
+
+.label {
+  display: block;
+  margin-bottom: clamp(1.5rem, 3vh, 2.6rem);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+}
+
+/* The mono marker, at the one job it is good at. `//` is the studio's aside
+   and it belongs on a label, not on a paragraph. */
+.label::before {
+  content: "// ";
+  color: var(--s9-signal);
+}
+
+.hero {
+  min-height: 74vh;
+  display: grid;
+  align-content: center;
+  padding-block: clamp(5rem, 12vh, 9rem);
+}
+
+/* line-height 1.0, not 0.9. Bricolage carries a tall ascender and a real
+   descender, and --s9-text-display clamps up to 9.5rem — at 0.9 the two lines
+   of the lockup collided outright: the f and the y of "Every surface" ran up
+   into "One system" above them. 1.0 was still not enough — Bricolage's f is
+   tall enough that it reached the period on the line above. 1.08 clears it
+   with room to spare. Tight leading on a display face is only free when the
+   face is all-caps or the block is one line; this is neither. */
+.hero h1 {
+  margin: 0;
+  font-family: var(--s9-font-display);
+  font-size: var(--s9-text-display);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  font-variation-settings: "wdth" 96;
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--s9-ink-dim);
+}
+
+.lede {
+  max-width: 54ch;
+  margin-top: clamp(1.5rem, 4vh, 2.5rem);
+  font-size: var(--s9-text-lead);
+  line-height: 1.45;
+  color: var(--s9-ink-2);
+}
+
+.note {
+  max-width: 62ch;
+  margin-top: 1.2rem;
+  font-size: var(--s9-text-body);
+  line-height: 1.65;
+  color: var(--s9-ink-2);
+}
+
+.h2 {
+  margin: 0 0 0.6rem;
+  font-family: var(--s9-font-display);
+  font-size: var(--s9-text-h2);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+
+/* ── Copy affordance ────────────────────────────────────────────────────
+   Everything on this page that highlights under the cursor also does
+   something when you press it. The old page put a hover state on rows that
+   were not interactive at all, which is a promise the page could not keep —
+   and on a page whose whole subject is a system that behaves consistently,
+   that is the worst possible place to make one. */
+
+.copy {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.copy:hover,
+.copy:focus-visible {
+  background: rgb(255 255 255 / 0.045);
+}
+
+.copy:focus-visible {
+  outline: 2px solid var(--s9-signal);
+  outline-offset: -2px;
+}
+
+/* The confirmation. Absolutely positioned and pointer-events: none, so it
+   cannot move the row it belongs to or intercept a second press. */
+.flash {
+  position: absolute;
+  top: 50%;
+  right: 0.9rem;
+  transform: translateY(-50%);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s9-verdant);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.flashOn {
+  opacity: 1;
+}
+
+/* The affordance itself — a mono hint that only appears on approach, so the
+   page is quiet until you reach for it. */
+.hint {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.7rem;
+  font-family: var(--s9-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.copy:hover .hint,
+.copy:focus-visible .hint {
+  opacity: 0.75;
+}
+
+/* ── Colour ─────────────────────────────────────────────────────────────── */
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1px;
+  background: var(--s9-hair);
+  border: 1px solid var(--s9-hair);
+}
+
+.swatch {
+  background: var(--s9-obsidian);
+  padding: 0;
+}
+
+/* The inset hairline is for one swatch in particular: --s9-obsidian is
+   #000000 and the page ground is #000000, so without it that chip is not a
+   black square, it is a hole where a chip should be. Inset rather than a
+   border so it cannot change the size of the colour being shown. */
+.chip {
+  display: block;
+  height: 5.5rem;
+  width: 100%;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+}
+
+.swatchMeta {
+  display: block;
+  padding: 0.85rem 0.9rem 1.5rem;
+}
+
+.tokenName {
+  display: block;
+  font-family: var(--s9-font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--s9-ink);
+  word-break: break-all;
+}
+
+.tokenValue {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--s9-font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  color: var(--s9-ink-dim);
+}
+
+.tokenRole {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--s9-ink-2);
+}
+
+/* ── Type specimens ─────────────────────────────────────────────────────── */
+
+.rows {
+  border: 1px solid var(--s9-hair);
+}
+
+.row {
+  border-top: 1px solid var(--s9-hair);
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.rowInner {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.5rem 1.1rem 2rem;
+}
+
+/* In the three-column layout rowBody IS a column, so the margin that
+   separates it from a specimen above must not also indent it from the top of
+   its own cell. */
+@media (min-width: 56rem) {
+  .rowInner > .rowBody {
+    margin-top: 0;
+  }
+  .rowInner {
+    grid-template-columns: 9rem 1fr 18rem;
+    align-items: baseline;
+    gap: 2rem;
+    padding: 1.75rem 1.1rem 2rem;
+  }
+}
+
+.rowKey {
+  display: block;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s9-signal);
+}
+
+.rowMeta {
+  display: block;
+  font-family: var(--s9-font-mono);
+  font-size: 0.68rem;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  color: var(--s9-ink-dim);
+}
+
+.rowBody {
+  display: block;
+  margin-top: 0.9rem;
+  font-size: var(--s9-text-body);
+  line-height: 1.6;
+  color: var(--s9-ink-2);
+}
+
+/* The specimens themselves. Each one is set in the thing it documents, which
+   is the only honest way to show a typeface. */
+.specDisplay {
+  display: block;
+  font-family: var(--s9-font-display);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--s9-ink);
+}
+
+.specHeading {
+  display: block;
+  font-family: var(--s9-font-display);
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--s9-ink);
+}
+
+.specText {
+  display: block;
+  font-family: var(--s9-font-text);
+  font-size: var(--s9-text-body);
+  line-height: 1.6;
+  color: var(--s9-ink);
+}
+
+.specMono {
+  display: block;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--s9-ink);
+}
+
+/* ── Surfaces ───────────────────────────────────────────────────────────── */
+
+.surfaces {
+  display: grid;
+  gap: 1px;
+  background: var(--s9-hair);
+  border: 1px solid var(--s9-hair);
+}
+
+@media (min-width: 48rem) {
+  .surfaces {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 72rem) {
+  .surfaces {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.surface {
+  background: var(--s9-obsidian);
+  padding: 1.6rem 1.3rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.surfaceRoute {
+  display: block;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.16em;
+  color: var(--s9-signal);
+}
+
+.surfaceName {
+  display: block;
+  font-family: var(--s9-font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+}
+
+.surfaceDesc {
+  display: block;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--s9-ink-2);
+}
+
+/* The strip of colours each surface actually runs on — the fastest way to
+   see that they are one system and where each one deliberately departs. */
+.surfaceBar {
+  margin-top: auto;
+  padding-top: 1.1rem;
+  display: flex;
+  height: 2.4rem;
+  gap: 2px;
+}
+
+.surfaceBar span {
+  flex: 1;
+  border-radius: 1px;
+}
+
+/* ── Foot ───────────────────────────────────────────────────────────────── */
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 3rem 4rem;
+  border-top: 1px solid var(--s9-hair);
+}
+
+.back {
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+  text-decoration: none;
+  transition: color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.back:hover,
+.back:focus-visible {
+  color: var(--s9-ink);
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────
+   There is no entrance animation on this page to disable — every transition
+   here is a hover or focus settle on a control the visitor is already
+   touching. This kills those too, so the page is completely still for anyone
+   who asked for still, and every state remains fully legible because none of
+   them was ever conveyed by movement. */
+@media (prefers-reduced-motion: reduce) {
+  .copy,
+  .flash,
+  .hint,
+  .back {
+    transition: none;
+  }
+}
