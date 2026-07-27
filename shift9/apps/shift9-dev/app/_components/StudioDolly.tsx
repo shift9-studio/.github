@@ -21,7 +21,7 @@
      script runs and the shots survive a failed video load.
    ──────────────────────────────────────────────────────────────────────── */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import s from "./StudioDolly.module.css";
 import { SET_PIECES } from "./studio-dolly-data";
 import { PROJECT_FONTS } from "./studio-fonts";
@@ -157,24 +157,50 @@ function BannerOutro() {
   );
 }
 
+/* ── The handoff between shots ────────────────────────────────────────────
+   Three separate problems lived here, and all three showed up at the joins.
+
+   THE CLIP STOPPED BEFORE IT LEFT. Playback was gated on the same
+   `isIntersecting` at threshold 0.35 that drove everything else, so a shot
+   paused the moment it was less than a third on screen — which is exactly
+   when it is still half the frame during a handoff. Sampled down the reel,
+   eleven of nine sampled positions had a visible shot sitting on a frozen
+   frame. A continuous take with dead beats in it is not a continuous take.
+
+   Playback is its own observer now, deliberately looser than the one that
+   drives the caption: a generous rootMargin and threshold 0 mean a clip
+   starts before it arrives and keeps running until it is properly gone. The
+   two observers answer different questions — "is this the shot you are
+   looking at" and "should this be moving" — and conflating them is what
+   caused the freeze.
+
+   THE DECODE HAPPENED MID-SCROLL. A clip mounted on its own first
+   intersection, so element creation and first decode landed at the exact
+   moment it scrolled into frame. `live` is lifted to the parent now, which
+   warms the next shot one section ahead — the work happens while you are
+   still watching the previous one.
+
+   THE CUT WAS A CUT. `.shot` had no transition at all. It carries an opacity
+   fade now, so the outgoing shot dissolves rather than sliding away as a hard
+   rectangle. Paired with the feather in `.veil`, the join is a dissolve
+   through black instead of two photographs meeting on an edge. */
 function Stage({
   piece,
   index,
+  live,
   onEnter,
+  onWarm,
 }: {
   piece: (typeof SET_PIECES)[number];
   index: number;
+  /* Mounted by the parent, one section ahead of where you are. */
+  live: boolean;
   onEnter: (i: number) => void;
+  onWarm: (i: number) => void;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const font = PROJECT_FONTS[piece.n];
-  /* `live` mounts the clip and never unmounts it again — swapping back to the
-     plate on the way out would drop the decoded frames and re-fetch on the way
-     back in. `visible` is the play/pause signal. Both are held off the first
-     render so SSR emits the plate alone: the clip is an enhancement and must
-     never be what makes the page correct. */
-  const [live, setLive] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -183,21 +209,31 @@ function Stage({
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const io = new IntersectionObserver(
+    /* Which shot you are looking at — drives the counter and the warm-ahead. */
+    const focus = new IntersectionObserver(
       ([entry]) => {
-        if (!entry) return;
-        setVisible(entry.isIntersecting);
-        if (entry.isIntersecting) {
-          setLive(true);
-          onEnter(index);
-        }
+        if (!entry?.isIntersecting) return;
+        onEnter(index);
+        onWarm(index);
       },
       { threshold: 0.35 },
     );
 
-    io.observe(host);
-    return () => io.disconnect();
-  }, [index, onEnter]);
+    /* Whether this shot should be moving. Half a viewport of slack on both
+       sides, so a clip is already running before its shot is the one you are
+       looking at, and does not stop until it is genuinely off screen. */
+    const play = new IntersectionObserver(
+      ([entry]) => setVisible(Boolean(entry?.isIntersecting)),
+      { threshold: 0, rootMargin: "50% 0px 50% 0px" },
+    );
+
+    focus.observe(host);
+    play.observe(host);
+    return () => {
+      focus.disconnect();
+      play.disconnect();
+    };
+  }, [index, onEnter, onWarm]);
 
   /* Playback runs in its own effect rather than inside the observer callback:
      the <video> does not exist until the render that `live` triggers, so
@@ -325,11 +361,38 @@ function Stage({
 
 export function StudioDolly() {
   const [at, setAt] = useState(1);
+  /* Stable, because it is a dependency of the Stage observers — an inline
+     arrow would rebuild both observers on every state change, and this
+     component changes state on every section. */
+  const handleEnter = useCallback((n: number) => setAt(n + 1), []);
   /* The counter has counted. Watched rather than inferred from `at`, because
      12/12 is still the right number while the twelfth set-piece is on screen —
      it is arriving at the banner that makes it redundant. */
   const [atBanner, setAtBanner] = useState(false);
   const outroRef = useRef<HTMLElement>(null);
+
+  /* Which clips are mounted. The first is warmed on mount so the reel opens
+     moving rather than on a poster; after that, arriving at a shot warms the
+     one after it, so the next element is created and its first frames decoded
+     while you are still watching the current one. That work used to land at
+     the moment a shot scrolled into frame, which is precisely where the
+     stutters were.
+
+     A Set that only ever grows: a clip that has been mounted stays mounted.
+     Unmounting on the way out would throw away decoded frames and re-fetch on
+     the way back, which is the expensive half of the problem, not the cheap
+     one. Twelve muted, paused <video> elements cost far less than twelve
+     re-decodes. */
+  const [warm, setWarm] = useState<Set<number>>(() => new Set([0]));
+  const warmAhead = useCallback((i: number) => {
+    setWarm((prev) => {
+      if (prev.has(i) && prev.has(i + 1)) return prev;
+      const next = new Set(prev);
+      next.add(i);
+      next.add(i + 1);
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     const el = outroRef.current;
@@ -357,7 +420,14 @@ export function StudioDolly() {
       </header>
 
       {SET_PIECES.map((piece, i) => (
-        <Stage key={piece.n} piece={piece} index={i} onEnter={(n) => setAt(n + 1)} />
+        <Stage
+          key={piece.n}
+          piece={piece}
+          index={i}
+          live={warm.has(i)}
+          onEnter={handleEnter}
+          onWarm={warmAhead}
+        />
       ))}
 
       {/* The take lands on the brand, then invites. The artwork resolves first,

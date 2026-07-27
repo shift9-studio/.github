@@ -21,6 +21,10 @@
 }
 
 /* ── The seam between set-pieces ─────────────────────────────────────────
+   NOTE: the feather that fixes this now lives in .veil, painted, rather than
+   here as a mask. The reasoning below still explains why it is needed; see
+   .veil for why it moved.
+
    Every stage is exactly 100vh of pinned shot, so consecutive shots meet
    edge to edge: measured live, one pin's bottom and the next pin's top sit
    on the same pixel at every junction (bottom@671 / top@671, and so on all
@@ -44,25 +48,22 @@
   overflow: hidden;
   display: grid;
   place-items: center;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    #000 6%,
-    #000 94%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    #000 6%,
-    #000 94%,
-    transparent 100%
-  );
 }
 
+/* The cut, softened. .shot had `transition: all 0s` — no transition at all —
+   so a shot arrived and left as a hard rectangle. It fades now, which is what
+   makes the join a dissolve rather than one photograph sliding off another.
+   Opacity only: compositor-owned, nothing relayouts. */
 .shot {
   position: absolute;
   inset: 0;
+  transition: opacity var(--s9-dur-slow) var(--s9-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shot {
+    transition: none;
+  }
 }
 
 .shot video,
@@ -74,11 +75,28 @@
 }
 
 /* The vignette keeps type legible over any frame without washing the shot
-   out — the sets are chiaroscuro and the darkness is the point. */
+   out — the sets are chiaroscuro and the darkness is the point — and it now
+   also carries the edge feather that stops consecutive shots meeting on a
+   hard line.
+
+   That feather was a mask-image on .pin: twelve of them, each on a 100vh
+   sticky container wrapping a full-bleed video. A mask forces the whole
+   subtree onto its own composited layer, so the reel was paying for twelve
+   extra layers permanently, and that is a large part of what the stalls at
+   every junction were buying.
+
+   Painting it costs nothing extra. This element already existed, already
+   painted two gradients, and already sat over the shot — adding two more
+   stops to a gradient stack that is being rasterised anyway is free, where
+   masking twelve composited layers is not. The ground is black, so painting
+   black over the shot's top and bottom edges is visually identical to
+   masking them away. Twelve composited layers become zero. */
 .veil {
   position: absolute;
   inset: 0;
   background:
+    linear-gradient(to bottom, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 7%),
+    linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 7%),
     linear-gradient(to top, rgb(0 0 0 / 0.92) 0%, rgb(0 0 0 / 0.35) 38%, rgb(0 0 0 / 0) 62%),
     radial-gradient(120% 90% at 50% 50%, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0.55) 100%);
   pointer-events: none;
