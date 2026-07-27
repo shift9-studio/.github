@@ -581,14 +581,17 @@ export function EnterTheStudio() {
 
           <div className={s.gateBody}>
             {/* The same lockup the desktop carries, so the front door and
-                the room behind it are signed by the same hand. */}
+                the room behind it are signed by the same hand.
+
+                The wordmark only. The icon is on the Enter button further
+                down this same screen, and carrying it here as well put it
+                twice in one view — which is the whole reason it left the
+                desktop header in the first place. */}
             <p className={s.gateMark}>
               <span className={s.gateWord}>
                 Shift-
                 <Shift9Mark className={s.gateMarkGlyph ?? ""} size={22} />
               </span>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className={s.gateIcon} src={SHIFT9_LOGO} alt="" />
             </p>
             <p className={s.gateLine}>
               A studio that builds interfaces, tools and product surfaces.
