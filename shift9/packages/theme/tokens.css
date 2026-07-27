@@ -66,6 +66,19 @@
   --s9-verdant:      #00e676;   /* the button                             */
   --s9-verdant-lift: #5cffa8;   /* the button, approached                 */
 
+  /* ── The button's own grey ──────────────────────────────────────────────
+     The primary control used to be verdant. Kariim's call to take the colour
+     off it and leave it on the email address instead — so the green now marks
+     the thing you can copy and act on in your own time, and the button is
+     just the button.
+
+     A pearl grey, not a flat one: light enough to carry a black label at
+     14.7:1 and to stay the most prominent object on a black page, neutral
+     enough that it adds no chroma to a palette whose whole point is that only
+     one thing has any. */
+  --s9-pearl:        #c9d1dc;   /* the primary control                    */
+  --s9-pearl-lift:   #e6ebf2;   /* the primary control, approached        */
+
   /* derived hairlines & glows (oklab mixes keep hue honest) */
   /* Hairlines. These used to be cyan and violet mixes, which on navy read as
      structure and on black read as a glowing wire around every box — one of

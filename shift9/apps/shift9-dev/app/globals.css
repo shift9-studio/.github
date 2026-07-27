@@ -28,11 +28,33 @@ html.lenis body {
 @layer base {
   html {
     color-scheme: dark;
-    scroll-behavior: smooth;
+    /* No global smooth scroll. It was here for no-JS anchor jumps, but it
+       applies to every programmatic scroll as well — and on a 16,000px
+       scroll-driven reel that turns each one into a long browser-owned drift
+       that cannot be interrupted and fights native momentum. Lenis owns
+       smoothing when it is running; without JS the jump is instant, which is
+       correct behaviour rather than a downgrade. */
+  }
+
+  /* The one case the global rule was actually for. */
+  @media (scripting: none) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
   body {
-    background: var(--s9-void);
+    /* Black, not Void. Every route paints its own black ground — the reel,
+       the invitation, the system page, the case pages — but the document
+       underneath them was still #0f172a navy, so the browser painted one
+       flat navy frame during every route swap, and left a navy band under
+       any route that did not fill the viewport. The ground has to agree with
+       what sits on it or the mismatch shows in exactly the moments nobody
+       screenshots.
+
+       The entrance is unaffected: it paints its own surface over this, and
+       swaps to the desktop's own colour once the desktop exists. */
+    background: var(--s9-obsidian);
     color: var(--s9-ink);
     /* The reading face, not the data face. Every paragraph on this site used
        to be monospace by default; mono is now opt-in, for the things that are

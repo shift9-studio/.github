@@ -102,7 +102,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}02-flow-state.png`,
     clip: `${BASE}02-flow-state-v2.mp4`,
     card: "waveform",
-    href: "/soon",
+    href: "/soon?from=02",
   },
   {
     n: "03",
@@ -114,7 +114,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}03-learning-app.png`,
     clip: `${BASE}03-learning-app.mp4`,
     card: "storybook",
-    href: "/soon",
+    href: "/soon?from=03",
   },
   {
     n: "04",
@@ -126,7 +126,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}04-lumen.png`,
     clip: `${BASE}04-lumen.mp4`,
     card: "calibration",
-    href: "/soon",
+    href: "/soon?from=04",
   },
   {
     n: "05",
@@ -138,7 +138,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}05-voxel-arcade-v3.png`,
     clip: `${BASE}05-voxel-arcade-v3.mp4`,
     card: "scoreboard",
-    href: "/soon",
+    href: "/soon?from=05",
   },
   {
     n: "06",
@@ -150,7 +150,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}06-midnight-return.png`,
     clip: `${BASE}06-midnight-return.mp4`,
     card: "corridor",
-    href: "/soon",
+    href: "/soon?from=06",
   },
   {
     n: "07",
@@ -162,7 +162,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}07-game-design-forge.png`,
     clip: `${BASE}07-game-design-forge-v2.mp4`,
     card: "schematic",
-    href: "/soon",
+    href: "/soon?from=07",
   },
   {
     n: "08",
@@ -174,7 +174,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}08-titanium-forge.png`,
     clip: `${BASE}08-titanium-forge.mp4`,
     card: "swatch",
-    href: "/soon",
+    href: "/soon?from=08",
   },
   {
     n: "09",
@@ -198,7 +198,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}10-automation-systems.png`,
     clip: `${BASE}10-automation-systems.mp4`,
     card: "terminal",
-    href: "/soon",
+    href: "/soon?from=10",
   },
   {
     n: "11",
@@ -210,7 +210,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}11-omni-3d.png`,
     clip: `${BASE}11-omni-3d.mp4`,
     card: "wireframe",
-    href: "/soon",
+    href: "/soon?from=11",
   },
   {
     n: "12",
@@ -222,6 +222,6 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}12-winfix.png`,
     clip: `${BASE}12-winfix.mp4`,
     card: "dialog",
-    href: "/soon",
+    href: "/soon?from=12",
   },
 ];

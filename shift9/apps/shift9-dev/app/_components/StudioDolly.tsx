@@ -219,6 +219,9 @@ function Stage({
   return (
     <section
       ref={hostRef}
+      /* The anchor /soon comes back to. Without it, checking a project meant
+         restarting a 16,000px reel from project 01. */
+      id={`set-${piece.n}`}
       className={`${s.stage} ${piece.resolution === "volatile" ? s.volatile : ""}`}
       aria-labelledby={`set-piece-${piece.n}`}
     >

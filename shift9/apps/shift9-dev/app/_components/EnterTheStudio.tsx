@@ -701,9 +701,15 @@ export function EnterTheStudio() {
                   className={`${s.enterIcon} ${loading ? s.enterIconBusy : ""}`}
                   aria-hidden="true"
                 >
+                  {/* The drawn mark, not the app-icon raster. This slot used
+                      to hold the 96px base64 PNG scaled to 22px: a bright
+                      cyan-on-white rounded square dropped into a monospace
+                      row, which read as a stray asset rather than as part of
+                      the lockup — and it was the last cyan left on the site
+                      after the palette came out. Shift9Mark is currentColor,
+                      so it is simply the colour of the row it sits in. */}
                   <span className={s.enterIconArt}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={SHIFT9_LOGO} alt="" />
+                    <Shift9Mark size={20} />
                   </span>
                   {/* The runtime, back on screen. It was printed in full
                       beside the label and moving the icon into that slot took
@@ -789,10 +795,16 @@ export function EnterTheStudio() {
             </span>
           </span>
           <div className={s.navlinks}>
-            <span>Home</span>
-            <span>About</span>
-            <span>Accounts</span>
-            <span>Log in</span>
+            {/* Set dressing. This is a picture of an operating system, and a
+                browser chrome without a nav row does not read as one — but
+                these have never gone anywhere and never will, so they are
+                hidden from assistive tech (which would otherwise announce
+                four links that do not exist) and demoted visually so they
+                stop looking like the real controls beside them. */}
+            <span className={s.inert} aria-hidden>Home</span>
+            <span className={s.inert} aria-hidden>About</span>
+            <span className={s.inert} aria-hidden>Accounts</span>
+            <span className={s.inert} aria-hidden>Log in</span>
             <button
               type="button"
               className={s.themeBtn}
@@ -811,7 +823,12 @@ export function EnterTheStudio() {
         </div>
 
         <div className={s.searchrow}>
-          <div className={s.search}>
+          {/* Same: dressing, not a control. It was the most prominent thing
+              on the desktop and did nothing at all when typed into — the page
+              contains no input element. Demoted and hidden rather than wired
+              up, because a working search over five folders is a worse answer
+              than not promising one. */}
+          <div className={`${s.search} ${s.inert}`} aria-hidden>
             <span>Search the studio&#8230;</span>
             <span>&#128269;</span>
           </div>
@@ -923,8 +940,11 @@ export function EnterTheStudio() {
           </div>
         </div>
 
-        <a className={s.helpdot} href="mailto:shift9.dev@gmail.com" aria-label="Email the studio">
-          &#128172;
+        {/* It opens a mail client, so it is an envelope. As a speech bubble
+            it read as a live-chat widget — a promise of someone on the other
+            end right now, which is not what this is. */}
+        <a className={s.helpdot} href="mailto:shift9.dev@gmail.com" aria-label="Email the studio" title="Email the studio">
+          &#9993;
         </a>
 
         <div className={s.taskbar}>

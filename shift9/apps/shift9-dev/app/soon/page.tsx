@@ -57,7 +57,25 @@ function Ribbon({ className, text }: { className: string; text: string }) {
   );
 }
 
-export default function SoonPage() {
+/* ── Coming back ─────────────────────────────────────────────────────────
+   The reel is 16,000px long. Checking one project used to mean returning to
+   scroll 0 and travelling the whole thing again to get back to where you were
+   — so looking at a second project cost more than looking at the first, which
+   is exactly backwards.
+
+   Every card that lands here stamps its own number on the URL, and the way
+   back carries it as a fragment. The stages have matching ids, so the browser
+   restores the position itself: no script, no scroll maths, and it still
+   works if JavaScript never runs. Falls back to the top of the reel when
+   there is no number, which is what a direct visit deserves. */
+export default async function SoonPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string }>;
+}) {
+  const { from } = await searchParams;
+  const back = /^\d{2}$/.test(from ?? "") ? `/studio#set-${from}` : "/studio";
+
   return (
     <main className={s.root}>
       <div className={s.ground} aria-hidden="true" />
@@ -94,7 +112,7 @@ export default function SoonPage() {
         </p>
 
         <div className={s.actions}>
-          <a className="s9-pearl-dark" href="/studio">
+          <a className="s9-pearl-dark" href={back}>
             <span>← Back to the studio</span>
           </a>
           <a className="s9-pearl-dark" href="/">

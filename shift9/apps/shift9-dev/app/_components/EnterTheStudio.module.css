@@ -333,21 +333,19 @@
   flex: none;
 }
 
-.enterIconArt img {
-  width: 22px;
-  height: 22px;
-  border-radius: 7px;
-  animation: iconBreathe 4.4s ease-in-out infinite;
+/* The mark breathes; it no longer morphs its corners, because a numeral does
+   not have corners to round. Scale alone, and slight — this sits next to a
+   countdown and it is signalling "working", not asking to be watched. */
+.enterIconArt svg {
+  animation: iconBreathe 4.4s var(--s9-ease-inout) infinite;
 }
 
 @keyframes iconBreathe {
   0%,
   100% {
-    border-radius: 7px;
     transform: scale(1);
   }
   50% {
-    border-radius: 10px;
     transform: scale(1.05);
   }
 }
@@ -2157,4 +2155,64 @@
   box-shadow:
     0 0 0 2px var(--w-bg),
     0 0 0 4px var(--blue);
+}
+
+
+/* ── Dressing, not controls ──────────────────────────────────────────────
+   The nav row and the search field are part of the picture of an operating
+   system; neither has ever done anything. They were styled exactly like the
+   real controls next to them — same contrast, same weight — so the search
+   field in particular read as the most important thing on the page and then
+   swallowed everything typed into it.
+
+   Held back rather than removed: without them the chrome stops reading as a
+   desktop. They just no longer claim to be interactive. Paired with
+   aria-hidden in the markup so nothing announces four links to nowhere. */
+.inert {
+  opacity: 0.55;
+  cursor: default;
+  user-select: none;
+}
+
+/* ── The theme switch ────────────────────────────────────────────────────
+   Light and dark swapped instantly across the whole surface, which on a page
+   this large reads as a glitch rather than as a setting. The ground and the
+   ink cross over --s9-dur-base instead.
+
+   Only colour transitions, and only on the surfaces that carry it — putting
+   this on * would animate every hover on the page through the same curve and
+   drop frames on a desktop with this many panels. */
+.root,
+.desktop,
+.taskbar,
+.side,
+.win,
+.wtBar,
+.note,
+.aboutBody {
+  transition:
+    background-color var(--s9-dur-base) var(--s9-ease-out),
+    color var(--s9-dur-base) var(--s9-ease-out),
+    border-color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root,
+  .desktop,
+  .taskbar,
+  .side,
+  .win,
+  .wtBar,
+  .note,
+  .aboutBody {
+    transition: none;
+  }
+}
+
+/* A tile kept a visible focus ring after the tab had moved on, because the
+   ring was drawn on :focus rather than :focus-visible — so a mouse click left
+   it lit until something else took focus. */
+.dicon:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
 }

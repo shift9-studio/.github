@@ -10,7 +10,7 @@
 
    Two roles, and the role decides the colour:
 
-     .s9-pearl        the thing you came to do — verdant, black label
+     .s9-pearl        the thing you came to do — pearl grey, black label
      .s9-pearl-dark   the way back — black, white label
 
    The green is the invitation's, and only the invitation's. It is the
@@ -101,16 +101,23 @@
     opacity var(--s9-dur-slow) var(--s9-ease-out);
 }
 
-/* ── The green one ───────────────────────────────────────────────────── */
+/* ── The primary one ─────────────────────────────────────────────────────
+   Was verdant. It is grey now and the green lives on the email address
+   instead — see --s9-pearl in tokens.css for why.
+
+   Every mix below moved with it. The bloom and the inner lower glow were
+   built from --s9-verdant and --s9-verdant-lift, so changing only the
+   background would have left a green halo under a grey button, which is
+   worse than either colour on its own. */
 
 .s9-pearl {
-  background-color: var(--s9-verdant);
+  background-color: var(--s9-pearl);
   color: var(--s9-obsidian);
   box-shadow:
     inset 0 0.3rem 0.9rem color-mix(in oklab, var(--s9-chalk) 42%, transparent),
     inset 0 -0.1rem 0.3rem color-mix(in oklab, var(--s9-obsidian) 42%, transparent),
-    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-verdant-lift) 55%, transparent),
-    0 1.4rem 2.4rem color-mix(in oklab, var(--s9-verdant) 22%, transparent),
+    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-pearl-lift) 55%, transparent),
+    0 1.4rem 2.4rem color-mix(in oklab, var(--s9-pearl) 22%, transparent),
     0 0.6rem 1rem -0.4rem color-mix(in oklab, var(--s9-obsidian) 70%, transparent);
 }
 
@@ -131,12 +138,12 @@
 
 .s9-pearl:hover,
 .s9-pearl:focus-visible {
-  background-color: var(--s9-verdant-lift);
+  background-color: var(--s9-pearl-lift);
   box-shadow:
     inset 0 0.3rem 0.5rem color-mix(in oklab, var(--s9-chalk) 52%, transparent),
     inset 0 -0.1rem 0.3rem color-mix(in oklab, var(--s9-obsidian) 46%, transparent),
-    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-verdant-lift) 75%, transparent),
-    0 1.8rem 3rem color-mix(in oklab, var(--s9-verdant) 40%, transparent),
+    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-pearl-lift) 75%, transparent),
+    0 1.8rem 3rem color-mix(in oklab, var(--s9-pearl) 40%, transparent),
     0 0.6rem 1rem -0.4rem color-mix(in oklab, var(--s9-obsidian) 70%, transparent);
 }
 
@@ -216,8 +223,8 @@
   box-shadow:
     inset 0 0.3rem 0.5rem color-mix(in oklab, var(--s9-chalk) 30%, transparent),
     inset 0 -0.1rem 0.3rem color-mix(in oklab, var(--s9-obsidian) 55%, transparent),
-    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-verdant-lift) 45%, transparent),
-    0 0.5rem 1rem color-mix(in oklab, var(--s9-verdant) 26%, transparent);
+    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-pearl-lift) 45%, transparent),
+    0 0.5rem 1rem color-mix(in oklab, var(--s9-pearl) 26%, transparent);
 }
 
 .s9-pearl-dark:active {
@@ -242,7 +249,12 @@
   transform: translateX(0.25em);
 }
 
-/* ── Focus ───────────────────────────────────────────────────────────── */
+/* ── Focus ─────────────────────────────────────────────────────────────
+   Still verdant, deliberately. The button's own colour moved to grey, but
+   focus is the site-wide affordance — the same ring appears on every control
+   on every surface — and it is the one place the green is doing a job that a
+   neutral could not: saying "this is what the keyboard is on" loudly enough
+   to find at a glance. */
 
 .s9-pearl:focus-visible,
 .s9-pearl-dark:focus-visible {
