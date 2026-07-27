@@ -73,9 +73,12 @@ const OPENING: readonly string[] = [
 ];
 
 type Status = "live" | "ship" | "dev" | "rnd";
-/* `h` is the real destination, and only present when one genuinely exists —
-   a live site, the design system, or a case page that is actually built. Items
-   without a destination stay unlinked rather than pointing at a placeholder. */
+/* `h` is the destination. Where a project has a real one — a live site, the
+   design system, a case page that is actually built — that is what it points
+   at. Where it does not, it points at /soon, which says plainly that the page
+   doesn't exist yet rather than leaving the title dead under the cursor. A
+   dead title reads as a broken site; /soon reads as a studio mid-build, which
+   is the true thing. Kept optional so a future item can be added unlinked. */
 type Item = { n: string; s: string; sc: Status; d: string; tags: string[]; h?: string };
 type Folder = { t: string; n: string; items: Item[] };
 
@@ -84,7 +87,7 @@ type Folder = { t: string; n: string; items: Item[] };
 const DATA: Record<"apps" | "games" | "tools", Folder> = {
   apps: {
     t: "Apps",
-    n: "live links where a destination exists; unlinked items are not shipped yet",
+    n: "every title is a link; the ones without a project page yet say so when you get there",
     items: [
       {
         n: "Just a Pinch",
@@ -100,6 +103,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "ship",
         d: "Local voice-to-text dictation for Windows. Profiles, custom vocabulary, selected-text commands, history, crash recovery — dictation that stays on your machine.",
         tags: ["Python", "Whisper", "Windows", "Local-first"],
+        h: "/soon",
       },
       {
         n: "Learning App",
@@ -107,6 +111,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "ship",
         d: "A children’s reading tool that turns practice into play. Built for real kids, tested by real kids.",
         tags: ["Python", "Education", "Kids"],
+        h: "/soon",
       },
       {
         n: "Lumen Projection Mapper",
@@ -114,6 +119,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "Point a projector at anything, drag corners on your phone, and the image warps to fit. Projection mapping with zero jargon.",
         tags: ["JavaScript", "WebSockets", "Projection"],
+        h: "/soon",
       },
     ],
   },
@@ -143,6 +149,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "rnd",
         d: "UE5 plugin suite letting non-programmers assemble games LEGO-style: socket-matched auto-tiling, one-click destruction, and a tutorial overlay that watches what you do. Blueprint complete; build phase next.",
         tags: ["Unreal 5", "C++", "R&D"],
+        h: "/soon",
       },
     ],
   },
@@ -156,6 +163,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "A UI/UX component workbench — a dark-mode React component library with live demos and copyable snippets you can lift straight into a project. In active development.",
         tags: ["React", "TypeScript", "Design System", "Cloudflare"],
+        h: "/soon",
       },
       {
         n: "INSTRUMENT",
@@ -171,6 +179,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "live",
         d: "The infrastructure behind the studio: Relay (cross-machine state handoff), a 400+ skill control plane governing AI-assisted builds, and claude-eyes (a screen-capture toolkit that gives coding agents vision). How one person ships like a team.",
         tags: ["Automation", "AI Agents", "Git", "Windows"],
+        h: "/soon",
       },
       {
         n: "Omni-3D",

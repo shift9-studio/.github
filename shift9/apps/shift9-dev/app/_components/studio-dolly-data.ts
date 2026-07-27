@@ -25,7 +25,10 @@ export type SetPiece = {
   tags: string[];
   plate: string;
   clip: string;
-  /* Where the project actually lives, when it lives anywhere. */
+  /* Where the project actually lives. Where it doesn't live anywhere yet, this
+     is /soon — a page that says so — rather than nothing. Every card in the
+     travel then has a door, and the roster here is the one place the twelve
+     destinations are decided, so this list and the desktop's cannot drift. */
   href?: string;
   /* A second destination, for projects that ship something you install rather
      than only something you visit. Just a Pinch has both: a marketing site and
@@ -85,6 +88,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}02-flow-state.png`,
     clip: `${BASE}02-flow-state-v2.mp4`,
     card: "waveform",
+    href: "/soon",
   },
   {
     n: "03",
@@ -96,6 +100,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}03-learning-app.png`,
     clip: `${BASE}03-learning-app.mp4`,
     card: "storybook",
+    href: "/soon",
   },
   {
     n: "04",
@@ -107,6 +112,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}04-lumen.png`,
     clip: `${BASE}04-lumen.mp4`,
     card: "calibration",
+    href: "/soon",
   },
   {
     n: "05",
@@ -130,6 +136,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}06-midnight-return.png`,
     clip: `${BASE}06-midnight-return.mp4`,
     card: "corridor",
+    href: "/work/midnight-return",
   },
   {
     n: "07",
@@ -141,6 +148,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}07-game-design-forge.png`,
     clip: `${BASE}07-game-design-forge-v2.mp4`,
     card: "schematic",
+    href: "/soon",
   },
   {
     n: "08",
@@ -152,6 +160,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}08-titanium-forge.png`,
     clip: `${BASE}08-titanium-forge.mp4`,
     card: "swatch",
+    href: "/soon",
   },
   {
     n: "09",
@@ -175,6 +184,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}10-automation-systems.png`,
     clip: `${BASE}10-automation-systems.mp4`,
     card: "terminal",
+    href: "/soon",
   },
   {
     n: "11",
@@ -186,6 +196,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}11-omni-3d.png`,
     clip: `${BASE}11-omni-3d.mp4`,
     card: "wireframe",
+    href: "/work/omni-3d",
   },
   {
     n: "12",
@@ -197,5 +208,6 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}12-winfix.png`,
     clip: `${BASE}12-winfix.mp4`,
     card: "dialog",
+    href: "/work/whome-diagnostic",
   },
 ];

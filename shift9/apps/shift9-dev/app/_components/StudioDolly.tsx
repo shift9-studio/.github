@@ -264,7 +264,14 @@ function Stage({
               >
                 {piece.href.startsWith("http")
                   ? `Open the live ${piece.title} ↗`
-                  : `Open ${piece.title} →`}
+                  : /* /soon is not a project page, so it must not be labelled
+                       like one. "Open Flow State →" promises a page about the
+                       project and delivers a construction sign; the visitor
+                       reads that as a broken link rather than an honest one.
+                       Say what is actually behind the door. */
+                    piece.href === "/soon"
+                    ? "Project page coming soon →"
+                    : `Open ${piece.title} →`}
               </a>
             ) : null}
             {piece.appHref ? (
