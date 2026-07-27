@@ -8,8 +8,23 @@
   --s9-void:        #0f172a;   /* base background — "the void"        */
   --s9-void-2:      #0b1120;   /* deeper well                         */
   --s9-surface:     #131c31;   /* raised panel                        */
-  --s9-signal:      #22d3ee;   /* cyan accent — "signal"              */
-  --s9-pulse:       #8b5cf6;   /* violet accent — "pulse"             */
+  /* ── The accents, after the neon came out ───────────────────────────────
+     These were #22d3ee cyan and #8b5cf6 violet. Together, on a dark ground,
+     with glows on them, they are the single most recognisable colour scheme
+     on the web right now — and being instantly recognisable as "a dark site
+     an AI helped build" is the exact opposite of what a studio site is for.
+
+     They are neutrals now. Not greyed-out versions of the old accents:
+     genuinely zero-chroma, so the only colour anywhere on the site is the
+     one thing you are meant to press.
+
+     signal  the marker and the emphasis. Brighter than the label it sits on,
+             which is what makes a // read as a marker rather than as part of
+             the word.
+     pulse   the secondary, for work that is unresolved. Dimmer than the
+             prose, deliberately: "in development" should not shout. */
+  --s9-signal:      #e8edf5;   /* emphasis — near-white, no chroma     */
+  --s9-pulse:       #6f7b8f;   /* secondary — cool grey, no chroma     */
   /* ── Ink: a hierarchy, measured against the Void ────────────────────────
      Three steps, not two, because a display face, running prose and a mono
      data label are three different jobs and were all being served by one
@@ -28,11 +43,10 @@
   --s9-ink-2:       #b8c4d6;   /* running prose, one step down        */
   --s9-ink-dim:     #94a3b8;   /* mono data labels, metadata          */
 
-  /* Pulse as *text*. The accent itself is 4.22:1 on void — fine as a fill, a
-     border or a large-display colour, below the floor for a label. This is
-     the same hue lifted to 6.56:1 so status text can use it and still be
-     read. Fills and strokes keep --s9-pulse. */
-  --s9-pulse-ink:   #a78bfa;
+  /* Pulse as *text*. The fill value is too dark to carry a word on black, so
+     status text uses this instead — same neutral, lifted to 7.4:1. Fills and
+     strokes keep --s9-pulse. */
+  --s9-pulse-ink:   #a9b4c4;
 
   /* ── The invitation's palette ────────────────────────────────────────────
      The one surface that is not built on the Void. The wave field behind the
@@ -53,10 +67,14 @@
   --s9-verdant-lift: #5cffa8;   /* the button, approached                 */
 
   /* derived hairlines & glows (oklab mixes keep hue honest) */
-  --s9-line:        color-mix(in oklab, var(--s9-signal) 16%, transparent);
-  --s9-line-2:      color-mix(in oklab, var(--s9-pulse) 13%, transparent);
-  --s9-signal-soft: color-mix(in oklab, var(--s9-signal) 22%, transparent);
-  --s9-pulse-soft:  color-mix(in oklab, var(--s9-pulse) 22%, transparent);
+  /* Hairlines. These used to be cyan and violet mixes, which on navy read as
+     structure and on black read as a glowing wire around every box — one of
+     the loudest tells in the old look. Plain white at low alpha: a hairline
+     should describe an edge, not light one. */
+  --s9-line:        rgb(255 255 255 / 0.10);
+  --s9-line-2:      rgb(255 255 255 / 0.07);
+  --s9-signal-soft: rgb(255 255 255 / 0.16);
+  --s9-pulse-soft:  rgb(255 255 255 / 0.10);
 
   /* ── Typography ───────────────────────────────────────────────── */
   /* next/font injects the source families into *-src vars; we wrap
@@ -85,7 +103,7 @@
   --s9-dur-base:     240ms;   /* default: color/border/opacity settles   */
   --s9-dur-slow:     480ms;   /* entrances, reveals, larger displacements */
   --s9-dur-boot:     720ms;   /* power-on / page-transition choreography  */
-  --s9-dur-tunnel:   560ms;   /* the wipe — desktop → studio             */
+  --s9-dur-tunnel:   420ms;   /* the dissolve — desktop ↔ studio         */
   --s9-dur-premium:  300ms;   /* legacy alias (transition-premium)        */
 
   /* Easing set — one curve per intent, so motion reads as a system.
@@ -109,5 +127,9 @@
   --s9-maxw:      84rem;
 
   /* ── Focus ─ high-contrast, never removed ─────────────────────── */
-  --s9-ring: 0 0 0 2px var(--s9-void), 0 0 0 4px var(--s9-signal);
+  /* Focus takes the verdant. Focus is an action affordance — it says "this is
+     the thing you are about to press" — so it is the one piece of chrome that
+     earns the site's only colour, and it stays unmistakable now that nothing
+     else on the page is chromatic. */
+  --s9-ring: 0 0 0 2px var(--s9-obsidian), 0 0 0 4px var(--s9-verdant);
 }

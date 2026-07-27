@@ -125,7 +125,9 @@
   text-transform: uppercase;
   color: var(--s9-signal);
   text-decoration: none;
-  border-bottom: 1px solid rgb(34 211 238 / 0.35);
+  /* Was rgb(34 211 238 / 0.35) — the cyan written out longhand, which is why
+     it survived a grep for the hex. Follows the accent now. */
+  border-bottom: 1px solid color-mix(in oklab, var(--s9-signal) 32%, transparent);
   padding-bottom: 0.15em;
   transition: border-color var(--s9-dur-fast) var(--s9-ease-out);
 }
@@ -946,5 +948,50 @@
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: rgb(8 12 20 / 0.72);
+  }
+}
+
+
+/* ── The other half of the dissolve ──────────────────────────────────────
+   The desktop fades down to black on the way out (FadeToBlack); this is the
+   studio coming back up out of the same black. Two halves of one cross-fade
+   rather than two separate effects, which is why both are driven by
+   --s9-dur-tunnel and why the colour on both sides is plain #000 — the reel's
+   own ground — so there is no moment where the visitor can see a join.
+
+   It plays on every arrival, not only the one from the desktop. Landing on
+   the reel from a cold URL and having the lights come up is the same gesture,
+   and it costs nothing to be consistent about it.
+
+   Pure CSS, no JavaScript and no state: an element that starts opaque and
+   animates to nothing, with forwards fill so it stays gone. There is no code
+   path where this can get stuck holding a black screen over the page.
+
+   pointer-events: none throughout, so it never eats the first click. */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #000;
+  pointer-events: none;
+  opacity: 0;
+  animation: liftCurtain var(--s9-dur-tunnel, 420ms) var(--s9-ease-out) backwards;
+}
+
+@keyframes liftCurtain {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Reduced motion gets the reel immediately, with no curtain at all — the
+   arrival is a cut, which is a finished state rather than a paused one. */
+@media (prefers-reduced-motion: reduce) {
+  .curtain {
+    display: none;
+    animation: none;
   }
 }

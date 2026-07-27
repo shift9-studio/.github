@@ -21,7 +21,15 @@ This repo is `shift9-studio/.github`. It is three products in one repository:
 - **Tokens only.** Colors, type scale, spacing, springs come from `@shift9/theme`
   (`tokens.css` / `theme.css`). Never hardcode a hex, duration, or easing in an app
   or component. If a value doesn't exist as a token, add the token first, then use it.
-  Canonical palette: Void `#0f172a`/`#0a0e1a`, Signal `#22d3ee`, Pulse `#8b5cf6`.
+  **Canonical palette (changed 2026-07-27 on Kariim's instruction — do not
+  reintroduce the old one).** The site is monochrome plus one colour: black
+  ground, a three-step ink hierarchy, and Verdant `#00e676` reserved for
+  actions and focus. Signal `#e8edf5` and Pulse `#6f7b8f` are now zero-chroma
+  neutrals. They were cyan `#22d3ee` and violet `#8b5cf6`, and that pair on a
+  dark ground is the most recognisable "an AI helped build this" signature on
+  the web — which is why it went. Nothing on the site carries chroma except
+  the thing you are meant to press. Old Void tokens are kept for the surfaces
+  still built on them.
 - **Two voices, never mixed.** `shift9-dev` is cyber-brutalist: mono labels, `//`
   asides, coordinate frames. `just-a-pinch` is warm and appetite-driven: **no** `//`
   labels, no techy chrome, warm accent palette. History has already had to strip

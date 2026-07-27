@@ -29,7 +29,13 @@
 | **Studio DNA** | Design **+** Engineering studio | We design *and* ship. Work-wall = case studies. Just a Pinch = proof we build our own. |
 | **Just a Pinch** | Smart Recipes & Cooking app | Warm, appetite-driven product page; cyber-minimalist chrome around food warmth. |
 
-**Palette evolution:** current `#00f0ff` → refined **Signal** `#22d3ee` + new **Pulse** `#8b5cf6` on **Void** `#0f172a`.
+**Palette evolution:** `#00f0ff` → **Signal** `#22d3ee` + **Pulse** `#8b5cf6` on **Void** `#0f172a`
+→ **superseded 2026-07-27.** The neon pair is retired. The site is monochrome
+plus one colour: black ground, three inks, and **Verdant** `#00e676` for
+actions and focus only. Signal `#e8edf5` and Pulse `#6f7b8f` survive as
+zero-chroma neutrals so existing consumers keep working. Kariim's call, and
+the reason is that cyan-and-violet-on-dark now reads instantly as generated
+work rather than as a studio's own.
 
 ---
 
@@ -73,8 +79,9 @@ Single source of truth: **`@shift9/theme`**. CSS-variable primitives → semanti
   /* ── Primitives ───────────────────────────── */
   --s9-void:      #0f172a;   /* base / background      */
   --s9-void-2:    #0b1120;   /* deeper panel surface   */
-  --s9-signal:    #22d3ee;   /* cyan accent            */
-  --s9-pulse:     #8b5cf6;   /* violet accent          */
+  --s9-signal:    #e8edf5;   /* emphasis — no chroma   */
+  --s9-pulse:     #6f7b8f;   /* secondary — no chroma  */
+  --s9-verdant:   #00e676;   /* the only colour        */
   --s9-ink:       #e2e8f0;   /* primary text (AA+)     */
   --s9-ink-dim:   #64748b;   /* mono labels, secondary */
   --s9-line:      color-mix(in oklch, var(--s9-signal) 14%, transparent);

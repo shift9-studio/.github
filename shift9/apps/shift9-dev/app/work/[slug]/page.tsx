@@ -1,15 +1,30 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  CustomCursor,
-  EdgeReticle,
-  GridFrame,
-  MagneticButton,
-  MonoLabel,
-  ProximityText,
-} from "@shift9/ui";
-import { Reveal, RevealGroup, RevealItem } from "@/app/_components/Reveal";
 import { getProject, projectSlugs } from "@/lib/work-details";
+import s from "./work.module.css";
+
+/* ────────────────────────────────────────────────────────────────────────
+   A PROJECT PAGE.
+
+   The last ten pages carrying the old chrome — CustomCursor, EdgeReticle,
+   GridFrame, a telemetry rail, Signal cyan on every label, Void navy ground.
+   That was the site's language when the site was one page. Everything else
+   moved to black; these did not, so the pages meant to *be* the work read as
+   the part of the site nobody had got to yet.
+
+   Rebuilt on the same ground as /studio and /instrument. The one thing kept
+   from the old version is the per-project accent, and it is now used far more
+   sparingly: the number, the status word, the rule under the title, the
+   feature numerals. Nothing else on the page carries colour, which is what
+   makes it read as the project's own rather than as decoration.
+
+   Deliberately gone, and not coming back here: the custom cursor (it replaced
+   the visitor's own pointer on a page that is mostly reading), the reticle
+   and grid frame (instrument chrome around content that is not an
+   instrument), and the decode-scramble labels (a case study's section heads
+   should be readable the instant they arrive).
+   ──────────────────────────────────────────────────────────────────────── */
 
 /* Prerender one static page per known project; 404 anything else. */
 export function generateStaticParams() {
@@ -47,211 +62,131 @@ export default async function ProjectPage({
   if (!resolved) notFound();
   const { project, detail, index } = resolved;
   const num = String(index + 1).padStart(2, "0");
-  const accent = project.accent === "pulse" ? "text-pulse" : "text-signal";
+  const accent = project.accent === "pulse" ? s.pulse : s.signal;
 
   return (
-    <>
-      <CustomCursor />
-      <EdgeReticle />
-      <main className="relative">
-        <GridFrame coord={`X:WORK · Y:${num}`} live boot />
+    <main className={`${s.root} ${accent}`}>
+      {/* ─────────────────────────────── HEAD ─────────────────────────── */}
+      <section className={`${s.wrap} ${s.head}`}>
+        <div className={s.topRow}>
+          <span className={s.num}>project file — {num}</span>
+          {/* /studio, not /#work. There has never been an element with
+              id="work" to land on, and / is the entrance now. */}
+          <Link href="/studio" className={s.back}>
+            ← all work
+          </Link>
+        </div>
 
-        {/* ─────────────────────────── HEADER ───────────────────────── */}
-        <section
-          data-tele-section="PROJECT"
-          className="border-b border-line px-6 pb-20 pt-28 sm:px-10"
-        >
-          <div className="mx-auto max-w-[84rem]">
-            <div className="mb-8 flex items-center justify-between gap-4">
-              <MonoLabel decode>{`// project file — ${num}`}</MonoLabel>
-              {/* /studio, not /#work. There has never been an element with
-                  id="work" on the root, so the old anchor resolved to nothing
-                  — and now that / is the entrance, following it dropped a
-                  deep-linked visitor at the front door. /studio is the work:
-                  all twelve projects as one continuous take. No fragment,
-                  because the dolly maps scroll position to frame and an
-                  anchor jump would land mid-take with no context. */}
-              <a
-                href="/studio"
-                className="font-mono text-mono uppercase tracking-[0.18em] text-signal opacity-60 transition-premium hover:opacity-100 hover:[filter:drop-shadow(0_0_6px_#22d3ee)]"
-              >
-                ← all work
-              </a>
-            </div>
+        <h1 className={s.title}>{project.title}</h1>
+        <p className={s.tagline}>{detail.tagline}</p>
+        <div className={s.rule} aria-hidden />
 
-            <ProximityText
-              as="h1"
-              className="text-display uppercase tracking-[-0.02em] text-ink"
-            >
-              {project.title}
-            </ProximityText>
-
-            <p className="mt-6 max-w-2xl text-lead leading-relaxed text-ink">
-              {detail.tagline}
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-mono uppercase tracking-[0.18em] text-muted">
-              <span>{project.role}</span>
-              <span aria-hidden className="text-line">
+        <div className={s.meta}>
+          <span>{project.role}</span>
+          <span className={s.metaSep} aria-hidden>
+            /
+          </span>
+          <span>{project.year}</span>
+          {project.status && (
+            <>
+              <span className={s.metaSep} aria-hidden>
                 /
               </span>
-              <span>{project.year}</span>
-              {project.status && (
-                <>
-                  <span aria-hidden className="text-line">
-                    /
-                  </span>
-                  <span className={accent}>{project.status}</span>
-                </>
-              )}
-            </div>
+              <span className={s.status}>{project.status}</span>
+            </>
+          )}
+        </div>
 
-            <ul className="mt-6 flex flex-wrap gap-1.5">
-              {project.tags.map((t) => (
-                <li
-                  key={t}
-                  className="border border-line px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted"
-                >
-                  {t}
-                </li>
-              ))}
-            </ul>
+        <ul className={s.tags}>
+          {project.tags.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
 
-            {detail.external && (
-              <div className="mt-10">
-                <MagneticButton href={detail.external.href}>
-                  {detail.external.label}
-                </MagneticButton>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* ─────────────────────────── TEASER ───────────────────────── */}
-        {project.videoUrl && (
-          <section className="border-b border-line px-6 py-20 sm:px-10">
-            <div className="mx-auto max-w-[84rem]">
-              <div className="relative aspect-[16/9] w-full overflow-hidden border border-line bg-well">
-                <video
-                  className="h-full w-full object-cover opacity-80 motion-reduce:hidden"
-                  src={project.videoUrl}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  aria-hidden
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void/70 via-transparent to-transparent" />
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ────────────────────────── OVERVIEW ──────────────────────── */}
-        <section
-          data-tele-section="OVERVIEW"
-          className="border-b border-line px-6 py-24 sm:px-10"
-        >
-          <div className="mx-auto grid max-w-[84rem] gap-10 lg:grid-cols-[1fr_2fr]">
-            <MonoLabel decode className="lg:pt-2">
-              // overview
-            </MonoLabel>
-            <div className="space-y-6">
-              {detail.overview.map((para, i) => (
-                <Reveal key={i} delay={i * 0.06}>
-                  <p
-                    className={
-                      i === 0
-                        ? "text-lead leading-relaxed text-ink"
-                        : "text-body leading-relaxed text-muted"
-                    }
-                  >
-                    {para}
-                  </p>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ──────────────────── FUNCTIONS & FEATURES ────────────────── */}
-        <section
-          data-tele-section="FEATURES"
-          className="border-b border-line px-6 py-24 sm:px-10"
-        >
-          <div className="mx-auto max-w-[84rem]">
-            <MonoLabel decode className="mb-14">
-              // functions & features
-            </MonoLabel>
-            <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
-              {detail.features.map((f, i) => (
-                <RevealItem key={f.title} variant="scan" className="bg-void">
-                  <article className="flex h-full flex-col gap-4 p-8 transition-premium hover:bg-well">
-                    <span className="font-mono text-mono text-signal">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <h3
-                      className="font-display text-2xl text-ink"
-                      style={{ fontVariationSettings: '"wght" 640, "wdth" 110' }}
-                    >
-                      {f.title}
-                    </h3>
-                    <p className="text-body leading-relaxed text-muted">
-                      {f.body}
-                    </p>
-                  </article>
-                </RevealItem>
-              ))}
-            </RevealGroup>
-          </div>
-        </section>
-
-        {/* ───────────────────────── STACK + CTA ────────────────────── */}
-        <section
-          data-tele-section="STACK"
-          className="px-6 py-24 sm:px-10"
-        >
-          <div className="mx-auto max-w-[84rem]">
-            <MonoLabel decode className="mb-8">
-              // stack
-            </MonoLabel>
-            <ul className="flex flex-wrap gap-2">
-              {detail.tech.map((t) => (
-                <li
-                  key={t}
-                  className="border border-line px-3 py-1 font-mono text-mono uppercase tracking-[0.16em] text-muted"
-                >
-                  {t}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-12 flex flex-wrap items-center gap-4">
-              {detail.external && (
-                <MagneticButton href={detail.external.href}>
-                  {detail.external.label}
-                </MagneticButton>
-              )}
-              <MagneticButton href="/studio" variant="ghost">
-                Back to the studio
-              </MagneticButton>
-            </div>
-          </div>
-        </section>
-
-        {/* ─────────────────────────── FOOTER ───────────────────────── */}
-        <footer className="border-t border-line px-6 py-10 sm:px-10">
-          <div className="mx-auto flex max-w-[84rem] flex-wrap items-center justify-between gap-4">
-            <MonoLabel marker={false}>© 2026 SHIFT-9 — built in motion</MonoLabel>
-            <a
-              href="/"
-              className="font-mono text-mono uppercase tracking-[0.18em] text-signal opacity-60 transition-premium hover:opacity-100 hover:[filter:drop-shadow(0_0_6px_#22d3ee)]"
-            >
-              ← back to studio
+        {detail.external && (
+          <div className={s.actions}>
+            <a className="s9-pearl-dark" href={detail.external.href}>
+              {detail.external.label}
             </a>
           </div>
-        </footer>
-      </main>
-    </>
+        )}
+      </section>
+
+      {/* ─────────────────────────────── FILM ─────────────────────────── */}
+      {project.videoUrl && (
+        <section className={`${s.wrap} ${s.section}`}>
+          <div className={s.film}>
+            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+            <video
+              src={project.videoUrl}
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-hidden
+            />
+          </div>
+        </section>
+      )}
+
+      {/* ───────────────────────────── OVERVIEW ───────────────────────── */}
+      <section className={`${s.wrap} ${s.section}`}>
+        <div className={s.split}>
+          <span className={s.label}>overview</span>
+          <div className={s.prose}>
+            {detail.overview.map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────────────────────────── FEATURES ───────────────────────── */}
+      <section className={`${s.wrap} ${s.section}`}>
+        <span className={s.label}>what it does</span>
+        <div className={s.features}>
+          {detail.features.map((f, i) => (
+            <article key={f.title} className={s.feature}>
+              <span className={s.featureNum}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <h2 className={s.featureTitle}>{f.title}</h2>
+              <p className={s.featureBody}>{f.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* ────────────────────────────── STACK ─────────────────────────── */}
+      <section className={`${s.wrap} ${s.section}`}>
+        <span className={s.label}>built with</span>
+        <ul className={s.tags}>
+          {detail.tech.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+
+        <div className={s.actions}>
+          {detail.external && (
+            <a className="s9-pearl-dark" href={detail.external.href}>
+              {detail.external.label}
+            </a>
+          )}
+          <Link className="s9-pearl-dark" href="/studio">
+            ← Back to the studio
+          </Link>
+          <Link className="s9-pearl" href="/start">
+            Start a project →
+          </Link>
+        </div>
+      </section>
+
+      <footer className={`${s.wrap} ${s.foot}`}>
+        <span>© 2026 Shift-9</span>
+        <Link href="/" className={s.back}>
+          the desktop →
+        </Link>
+      </footer>
+    </main>
   );
 }

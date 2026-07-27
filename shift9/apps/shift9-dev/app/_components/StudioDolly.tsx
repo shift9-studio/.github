@@ -301,6 +301,9 @@ export function StudioDolly() {
 
   return (
     <div className={s.root}>
+      {/* The lights coming up. See .curtain — the other half of the fade the
+          desktop starts on its way out. */}
+      <div className={s.curtain} aria-hidden />
       <header className={s.bookend}>
         <h1>The Studio</h1>
         <p className={s.lede}>

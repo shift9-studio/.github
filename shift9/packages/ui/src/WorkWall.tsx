@@ -209,7 +209,7 @@ function WorkTile({ project, index }: { project: Project; index: number }) {
           {project.href && (
             <span
               aria-hidden
-              className="pointer-events-none text-base leading-none text-signal opacity-60 transition-premium group-hover:opacity-100 group-hover:[filter:drop-shadow(0_0_6px_#22d3ee)]"
+              className="pointer-events-none text-base leading-none text-signal opacity-50 transition-premium group-hover:opacity-100"
             >
               ↗
             </span>

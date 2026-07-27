@@ -1,0 +1,323 @@
+/* ────────────────────────────────────────────────────────────────────────
+   A PROJECT PAGE — on the same ground as everything else.
+
+   These ten pages were the last of the old chrome: Void navy, Signal cyan on
+   every label, a coordinate frame in the gutters, a telemetry rail reading
+   out the cursor, a custom cursor replacing the OS one. That was the site's
+   language when the site was one page. The entrance, the reel, the
+   invitation and the system page are all on black now, and a case study in
+   the old language reads as a page that got left behind — which is the worst
+   possible impression for the pages that are supposed to be the work.
+
+   Same ground as /studio and /instrument. The one thing these pages keep
+   that the others do not is the accent: a project carries its own, and the
+   number, the status and the rule under the title all take it. That is the
+   only colour on the page, so it lands.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  --hair: rgb(255 255 255 / 0.09);
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--s9-obsidian);
+  color: var(--s9-ink);
+  font-family: var(--s9-font-text);
+}
+
+/* Set per project from the roster, so one declaration drives the number, the
+   status, the rule and the tag borders. */
+.signal {
+  --accent: var(--s9-signal);
+}
+.pulse {
+  /* The text-safe violet. --s9-pulse is 4.22:1 on a dark ground — fine as a
+     fill, under the floor as a label, and on this page the accent is carrying
+     the status word. */
+  --accent: var(--s9-pulse-ink);
+}
+
+.wrap {
+  width: min(78rem, 100%);
+  margin-inline: auto;
+  padding-inline: var(--s9-gutter);
+}
+
+.section {
+  padding-block: clamp(3.5rem, 8vh, 6.5rem);
+  border-top: 1px solid var(--hair);
+}
+
+.label {
+  display: block;
+  margin-bottom: clamp(1.4rem, 3vh, 2.4rem);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+}
+
+.label::before {
+  content: "// ";
+  color: var(--accent);
+}
+
+/* ── Head ───────────────────────────────────────────────────────────────── */
+
+.head {
+  padding-block: clamp(4rem, 11vh, 8rem) clamp(2.5rem, 6vh, 4rem);
+}
+
+.topRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: clamp(1.6rem, 4vh, 2.8rem);
+}
+
+.num {
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.back {
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+  text-decoration: none;
+  transition: color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.back:hover,
+.back:focus-visible {
+  color: var(--s9-ink);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--s9-font-display);
+  /* One step below the system page's display size: a project title is long
+     and often two or three words, and at the full display scale the longest
+     of them wrapped to three lines and stopped being a title. */
+  font-size: clamp(2.4rem, 1rem + 6vw, 6.2rem);
+  font-weight: 700;
+  /* 1.04, for the same reason the system page needed 1.08: Bricolage's
+     ascenders and descenders will touch across lines at anything tighter,
+     and several of these titles wrap. */
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.tagline {
+  max-width: 46ch;
+  margin-top: clamp(1.1rem, 3vh, 1.8rem);
+  font-size: var(--s9-text-lead);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--s9-ink-2);
+  text-wrap: pretty;
+}
+
+/* The rule carries the accent — the one place the project's colour is a
+   graphic element rather than a word. */
+.rule {
+  margin-top: clamp(1.6rem, 4vh, 2.4rem);
+  height: 2px;
+  width: 4.5rem;
+  background: var(--accent);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.1rem;
+  margin-top: clamp(1.4rem, 3vh, 2rem);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+}
+
+.metaSep {
+  color: rgb(255 255 255 / 0.22);
+}
+
+.status {
+  color: var(--accent);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: clamp(1.2rem, 3vh, 1.8rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  border: 1px solid var(--hair);
+  padding: 0.25rem 0.6rem;
+  font-family: var(--s9-font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+}
+
+/* ── The film ───────────────────────────────────────────────────────────── */
+
+.film {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--hair);
+  /* The teaser is hot-linked to a CDN outside this repo and can fail. The
+     plate underneath is what is left when it does, so the frame is a
+     deliberate dark panel rather than a white rectangle of nothing. */
+  background: #08090c;
+}
+
+.film video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+}
+
+/* Weights the foot of the frame so the film sits into the page instead of
+   ending on a hard edge. */
+.film::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.66), transparent 46%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film video {
+    display: none;
+  }
+}
+
+/* ── Overview ───────────────────────────────────────────────────────────── */
+
+.split {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 60rem) {
+  .split {
+    grid-template-columns: 12rem 1fr;
+    gap: 3rem;
+  }
+  .split .label {
+    margin-bottom: 0;
+  }
+}
+
+.prose p {
+  max-width: 62ch;
+  font-size: var(--s9-text-body);
+  line-height: 1.65;
+  color: var(--s9-ink-2);
+}
+
+.prose p:first-child {
+  font-size: var(--s9-text-lead);
+  line-height: 1.45;
+  color: var(--s9-ink);
+}
+
+.prose p + p {
+  margin-top: 1.1rem;
+}
+
+/* ── Features ───────────────────────────────────────────────────────────── */
+
+.features {
+  display: grid;
+  gap: 1px;
+  background: var(--hair);
+  border: 1px solid var(--hair);
+}
+
+@media (min-width: 44rem) {
+  .features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 68rem) {
+  .features {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.feature {
+  background: var(--s9-obsidian);
+  padding: 1.7rem 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.featureNum {
+  font-family: var(--s9-font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+
+.featureTitle {
+  margin: 0;
+  font-family: var(--s9-font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--s9-ink);
+}
+
+.featureBody {
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--s9-ink-2);
+}
+
+/* ── Foot ───────────────────────────────────────────────────────────────── */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: clamp(2rem, 5vh, 3rem);
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 2.5rem 3.5rem;
+  border-top: 1px solid var(--hair);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+}

@@ -56,11 +56,11 @@ const palette: { group: string; note: string; tokens: Swatch[] }[] = [
   {
     group: "Accent",
     note:
-      "Signal and Pulse are fills, borders and large display colour. Pulse is 4.22:1 on the void — fine as a fill, under the floor as a label — so text that needs the violet uses the lifted value at 6.56:1 instead.",
+      "These were cyan and violet. Together on a dark ground they are the most recognisable colour scheme on the web right now, and reading as \u201ca dark site an AI helped build\u201d is the opposite of what a studio site is for. They are zero-chroma neutrals now: signal is the marker and the emphasis, brighter than the label it sits on; pulse is the secondary, for work that is unresolved, and it is dimmer than the prose on purpose.",
     tokens: [
-      { name: "--s9-signal", value: "#22d3ee", role: "Cyan accent" },
-      { name: "--s9-pulse", value: "#8b5cf6", role: "Violet accent" },
-      { name: "--s9-pulse-ink", value: "#a78bfa", role: "Violet as text · 6.56:1" },
+      { name: "--s9-signal", value: "#e8edf5", role: "Emphasis, markers" },
+      { name: "--s9-pulse", value: "#6f7b8f", role: "Secondary, unresolved" },
+      { name: "--s9-pulse-ink", value: "#a9b4c4", role: "Secondary as text · 7.4:1" },
     ],
   },
   {
@@ -70,7 +70,7 @@ const palette: { group: string; note: string; tokens: Swatch[] }[] = [
     tokens: [
       { name: "--s9-obsidian", value: "#000000", role: "True black — the ground" },
       { name: "--s9-chalk", value: "#ffffff", role: "True white · 21.00:1" },
-      { name: "--s9-verdant", value: "#00e676", role: "The button · 12.58:1" },
+      { name: "--s9-verdant", value: "#00e676", role: "The button, and focus · 12.58:1" },
       { name: "--s9-verdant-lift", value: "#5cffa8", role: "Approached · 16.32:1" },
     ],
   },

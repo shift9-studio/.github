@@ -27,7 +27,7 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { WipeToBlack } from "./WipeToBlack";
+import { FadeToBlack } from "./FadeToBlack";
 import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { Shift9Mark } from "./Shift9Mark";
@@ -611,7 +611,7 @@ export function EnterTheStudio() {
   return (
     <div className={`${s.root} ${dark ? s.dark : ""}`}>
       {tunnel ? (
-        <WipeToBlack
+        <FadeToBlack
           onDone={() => {
             router.push(STUDIO_HREF);
           }}

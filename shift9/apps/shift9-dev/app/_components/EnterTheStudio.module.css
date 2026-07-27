@@ -35,10 +35,17 @@
   --blue-hover: #0a5cb8;
   --folder: #f6c445;
   --folder-tab: #e8b02e;
-  --acc: #3ddc84;
-  --nine: #20c0e0;
-  --pulse: #8b5cf6;
-  --pulse-deep: #6d3ee0;
+  /* The desktop keeps its own local palette because it is a picture of an
+     operating system, not a Shift-9 surface — the Windows blue and the yellow
+     folders are the point. What it does not keep is the neon pair: --nine was
+     #20c0e0 cyan and sat next to a #3ddc84 green, which is the tell whatever
+     surface it is on. The glyph tint is the OS blue it already had, and the
+     green is muted to something a file manager would actually use.
+
+     --pulse and --pulse-deep were declared here and referenced by nothing.
+     Dead violet, carried for however long. Gone. */
+  --acc: #4b9e6b;
+  --nine: var(--blue);
   --mono: "Courier New", ui-monospace, monospace;
   --ui: "Segoe UI", system-ui, Arial, sans-serif;
 
