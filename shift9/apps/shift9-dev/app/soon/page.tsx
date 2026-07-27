@@ -94,10 +94,10 @@ export default function SoonPage() {
         </p>
 
         <div className={s.actions}>
-          <a className={s.btn} href="/studio">
+          <a className="s9-pearl-dark" href="/studio">
             <span>← Back to the studio</span>
           </a>
-          <a className={s.btnGhost} href="/">
+          <a className="s9-pearl-dark" href="/">
             <span>The desktop</span>
           </a>
         </div>

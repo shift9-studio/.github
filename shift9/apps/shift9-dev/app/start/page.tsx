@@ -49,15 +49,17 @@ export default function StartPage() {
         </p>
 
         <div className={s.actions}>
-          <a className={s.primary} href={`mailto:${EMAIL}`}>
-            <span className={s.primaryLabel}>Start a project</span>
-            <span className={s.primaryArrow} aria-hidden="true">
+          <a className="s9-pearl" href={`mailto:${EMAIL}`}>
+            <span>Start a project</span>
+            <span className="s9-pearlArrow" aria-hidden="true">
               &#8594;
             </span>
           </a>
 
-          <a className={s.ghost} href="/">
-            <span aria-hidden="true">&#8592;</span> Back to the desktop
+          <a className="s9-pearl-dark" href="/">
+            <span>
+              <span aria-hidden="true">&#8592;</span> Back to the desktop
+            </span>
           </a>
         </div>
 

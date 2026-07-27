@@ -122,131 +122,10 @@
   margin-top: clamp(0.5rem, 1.5vh, 1rem);
 }
 
-/* ── The buttons ───────────────────────────────────────────────────────── */
-
-.primary,
-.ghost {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6em;
-  border-radius: 999px;
-  padding: 1em 2em;
-  font-family: var(--s9-font-mono);
-  font-size: var(--s9-text-mono);
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-  white-space: nowrap;
-  /* The clip is what the sheen below runs inside. */
-  overflow: hidden;
-  isolation: isolate;
-  transition:
-    transform var(--s9-dur-base) var(--s9-ease-premium),
-    box-shadow var(--s9-dur-base) var(--s9-ease-out),
-    border-color var(--s9-dur-base) var(--s9-ease-out),
-    background-color var(--s9-dur-base) var(--s9-ease-out),
-    color var(--s9-dur-base) var(--s9-ease-out);
-}
-
-.primary {
-  background: var(--s9-verdant);
-  color: var(--s9-obsidian);
-  /* The bloom. Green light on black, sized so it reads as the button
-     lighting the field rather than as a drop shadow under it. */
-  box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--s9-verdant) 70%, transparent),
-    0 10px 34px color-mix(in oklab, var(--s9-verdant) 34%, transparent),
-    0 2px 10px color-mix(in oklab, var(--s9-verdant) 28%, transparent);
-}
-
-/* The sheen. A band of light that crosses the pill once on approach.
-
-   It moves on `transform` alone — no background-position, no width, no left
-   — so it runs on the compositor and costs the same at any size. It passes
-   above the label on purpose: under it would read as a loading bar, over it
-   reads as a surface catching light. The band is held at a third of white
-   rather than half — at half it briefly washed the label out as it crossed,
-   and a button whose text disappears when you approach it is a worse button
-   however good the sweep looks. */
-.primary::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(
-    105deg,
-    transparent 34%,
-    color-mix(in oklab, var(--s9-chalk) 34%, transparent) 50%,
-    transparent 66%
-  );
-  transform: translateX(-130%);
-  transition: transform var(--s9-dur-boot) var(--s9-ease-inout);
-}
-
-.primary:hover,
-.primary:focus-visible {
-  background: var(--s9-verdant-lift);
-  transform: translateY(-2px) scale(1.02);
-  box-shadow:
-    0 0 0 1px var(--s9-verdant-lift),
-    0 16px 48px color-mix(in oklab, var(--s9-verdant) 52%, transparent),
-    0 4px 16px color-mix(in oklab, var(--s9-verdant) 40%, transparent);
-}
-
-.primary:hover::after,
-.primary:focus-visible::after {
-  transform: translateX(130%);
-}
-
-/* The press. A button that lifts on approach has to give when it is pushed,
-   or the click has no bottom to it. */
-.primary:active {
-  transform: translateY(0) scale(0.985);
-  transition-duration: var(--s9-dur-fast);
-}
-
-.primaryLabel {
-  position: relative;
-  z-index: 1;
-}
-
-.primaryArrow {
-  position: relative;
-  z-index: 1;
-  display: inline-block;
-  transition: transform var(--s9-dur-base) var(--s9-ease-premium);
-}
-
-.primary:hover .primaryArrow,
-.primary:focus-visible .primaryArrow {
-  transform: translateX(0.25em);
-}
-
-/* The way back. White until you approach it, then it borrows the accent,
-   which is how the page says the two are the same kind of thing without
-   giving them the same weight at rest. */
-.ghost {
-  color: var(--s9-chalk);
-  background: color-mix(in oklab, var(--s9-chalk) 5%, transparent);
-  border: 1px solid color-mix(in oklab, var(--s9-chalk) 26%, transparent);
-  backdrop-filter: blur(10px);
-}
-
-.ghost:hover,
-.ghost:focus-visible {
-  color: var(--s9-verdant);
-  border-color: color-mix(in oklab, var(--s9-verdant) 65%, transparent);
-  background: color-mix(in oklab, var(--s9-verdant) 10%, transparent);
-  transform: translateY(-2px);
-}
-
-.ghost:active {
-  transform: translateY(0) scale(0.985);
-  transition-duration: var(--s9-dur-fast);
-}
+/* The two buttons are .s9-pearl and .s9-pearl-dark from @shift9/theme —
+   the shared glossy pill, green for the thing you came to do and black for
+   the way back. They used to be defined here; they are on three pages now,
+   so they live in one file instead of three. */
 
 .address {
   margin: 0;
@@ -299,45 +178,10 @@
 /* Focus stays visible on every target. The ring is the accent rather than the
    house cyan: cyan appears nowhere else on this page and would read as a
    rendering fault rather than as focus. */
-.primary:focus-visible,
-.ghost:focus-visible,
 .addressLink:focus-visible,
 .exitPin:focus-visible {
   outline: 2px solid var(--s9-verdant);
   outline-offset: 3px;
-}
-
-/* ── Reduced motion ────────────────────────────────────────────────────────
-   The field draws one frame and stops (see WaveField), so what remains
-   behind the column is a finished still of the same picture rather than a
-   blank. The buttons drop their travel and the sheen does not run, while
-   every colour, border and focus change stays — none of them needed
-   movement to be understood. */
-
-@media (prefers-reduced-motion: reduce) {
-  .primary,
-  .ghost,
-  .primaryArrow {
-    transition-property: box-shadow, border-color, background-color, color;
-  }
-
-  .primary:hover,
-  .primary:focus-visible,
-  .primary:active,
-  .ghost:hover,
-  .ghost:focus-visible,
-  .ghost:active {
-    transform: none;
-  }
-
-  .primary::after {
-    display: none;
-  }
-
-  .primary:hover .primaryArrow,
-  .primary:focus-visible .primaryArrow {
-    transform: none;
-  }
 }
 
 /* ── Small screens ─────────────────────────────────────────────────────── */
@@ -346,10 +190,5 @@
   .actions {
     width: 100%;
     flex-direction: column;
-  }
-
-  .primary,
-  .ghost {
-    justify-content: center;
   }
 }

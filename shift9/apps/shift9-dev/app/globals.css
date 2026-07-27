@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "@shift9/theme/theme.css";
+/* The shared button. Global class names by design — see pearl.css. */
+@import "@shift9/theme/pearl.css";
 
 /* Tailwind v4 auto-detects sources in this app; also scan the shared UI
    package so its utility classes are generated. */
