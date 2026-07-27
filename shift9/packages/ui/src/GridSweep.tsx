@@ -70,7 +70,7 @@ export interface SweepPalette {
   pulse: string;
 }
 
-const DEFAULT_PALETTE: SweepPalette = { signal: "#22d3ee", pulse: "#8b5cf6" };
+const DEFAULT_PALETTE: SweepPalette = { signal: "#e8edf5", pulse: "#6f7b8f" };
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "");

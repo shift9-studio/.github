@@ -1,0 +1,537 @@
+/* ────────────────────────────────────────────────────────────────────────
+   COMING SOON — Persona 5 menu, in one bit.
+
+   Two ideas doing the work:
+
+   1. BLACK AND WHITE ONLY, with dithering as the only mid-tone. The textures
+      in /experience/tex are genuine 8x8 ordered (Bayer) dither — a threshold
+      matrix applied to a ramp, rendered to 1-bit PNGs of 77 to 269 bytes.
+      Not a halftone lookalike built from radial gradients: the regularity of a
+      real dither matrix is exactly what the eye reads as "dithered", and
+      image-rendering: pixelated keeps it crisp instead of letting the browser
+      smooth it back into grey.
+
+   2. NOTHING IS SQUARE. Persona 5's menus are built from skewed slabs and
+      torn cut-outs on hard diagonals, with type large enough to run off the
+      edge. Every panel here is clip-path polygons and skew transforms; the
+      ribbons cross the composition rather than sitting parallel to it.
+
+   3. ONE COLOUR, AND ONLY ONE. The page is otherwise two values and dithering,
+      which is exactly what lets a single hazard yellow land: the tape is the
+      only thing on screen that is neither black nor white, so it reads as a
+      real object dropped onto a printed page rather than as decoration.
+
+      The tape and the sign are the only things here with material depth — a
+      curl gradient across the band, a contact shadow and an ambient one. They
+      are physical objects lying on top of the composition; everything else is
+      printed into it and stays flat. That distinction is the whole reason the
+      depth reads instead of muddying the design.
+
+   Nothing depends on colour to be understood — the tape says the same thing
+   the heading says — which also happens to make this the most legible page on
+   the site.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  --ink: #000;
+  --paper: #fff;
+  /* The one colour on a one-bit page. Everything else here is two values and
+     dithering, which is what makes a single spot colour land: the tape is the
+     only thing on screen that is not black or white, so it reads as a real
+     object dropped onto a printed page rather than as decoration. */
+  --tape: #f2c400;
+
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  /* The vertical padding reserves the bands the ribbons occupy. */
+  padding: clamp(7rem, 16vh, 10rem) 1.25rem;
+  background: var(--ink);
+  color: var(--paper);
+  /* Clip sideways only. The ribbons are wider than the viewport and must not
+     create a horizontal scrollbar, but `overflow: hidden` would also cut off
+     anything taller than the viewport - on a short window that silently
+     removed the buttons rather than letting the page scroll to them. */
+  overflow-x: clip;
+  isolation: isolate;
+}
+
+/* The dithered ground: a ramp climbing out of the bottom-left, so the frame
+   has weight where the composition leans. */
+.ground {
+  position: absolute;
+  inset: 0;
+  background-image: url("/experience/tex/dither-ramp.png");
+  background-size: 100% 100%;
+  image-rendering: pixelated;
+  opacity: 0.32;
+  transform: scaleY(-1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* A hard diagonal slab of 50% dither cutting the frame — the single biggest
+   Persona-5 move: a shape that is clearly a cut piece of paper, not a box. */
+.slab {
+  position: absolute;
+  inset: -10% -20%;
+  background-image: url("/experience/tex/dither-50.png");
+  background-repeat: repeat;
+  image-rendering: pixelated;
+  clip-path: polygon(0 22%, 100% 4%, 100% 62%, 0 84%);
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.stage {
+  position: relative;
+  /* Deliberately no z-index. `position: relative` alone keeps the stage
+     painting above .ground and .slab (both z-index 0, both earlier in the
+     tree) without opening a stacking context — and a stacking context here
+     is what trapped the buttons underneath the tape. See .actions. */
+  display: grid;
+  justify-items: center;
+  gap: clamp(1rem, 3vh, 2rem);
+  width: min(72rem, 100%);
+}
+
+/* ── The laptop, as a cut-out ──────────────────────────────────────────── */
+
+.laptop {
+  width: min(42rem, 88vw);
+  transform: rotate(-3deg) skewX(-2deg);
+}
+
+.lid {
+  position: relative;
+  aspect-ratio: 16 / 10.2;
+  background: var(--ink);
+  border: 4px solid var(--paper);
+  /* Corners knocked off so it reads as cut, not drawn. */
+  clip-path: polygon(3% 0, 100% 2%, 97% 100%, 0 96%);
+  box-shadow: 14px 16px 0 0 var(--paper);
+}
+
+/* The lid's own dither fill, kept inside the cut edge. */
+.lidTex {
+  position: absolute;
+  inset: 0;
+  background-image: url("/experience/tex/dither-25.png");
+  image-rendering: pixelated;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.badge {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.badgeMark {
+  font-family: var(--s9-font-display, inherit);
+  font-size: clamp(5rem, 17vw, 12rem);
+  font-weight: 900;
+  line-height: 0.8;
+  color: var(--paper);
+  transform: skewX(-6deg);
+  /* A hard offset shadow instead of a glow: ink on paper, no softness. */
+  text-shadow: 8px 8px 0 var(--ink), 12px 12px 0 var(--paper);
+}
+
+/* ── Stickers, die-cut ─────────────────────────────────────────────────── */
+
+.sticker {
+  position: absolute;
+  transform: rotate(var(--r, 0deg)) skewX(-4deg);
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: clamp(0.52rem, 1.05vw, 0.74rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0.5em 0.85em;
+  clip-path: polygon(4% 0, 100% 6%, 96% 100%, 0 92%);
+  z-index: 1;
+}
+
+/* Two treatments only: knocked out, or solid. The alternation is what keeps a
+   one-bit palette from going flat. */
+.solid {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.knock {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: inset 0 0 0 2px var(--paper);
+}
+
+.tex {
+  background-color: var(--ink);
+  /* 25% coverage, not 50%. A 50% dither is a mid grey, and white type on mid
+     grey has no contrast at all - the three stickers using this treatment
+     ("semicolon;", "$ rm -rf ./regrets", "ONE MORE COMMIT") rendered as
+     unreadable blobs. At 25% the field stays clearly dithered but reads as
+     dark, so the knocked-out text holds. */
+  background-image: url("/experience/tex/dither-25.png");
+  image-rendering: pixelated;
+  color: var(--paper);
+  box-shadow: inset 0 0 0 2px var(--paper);
+}
+
+/* ── The type ──────────────────────────────────────────────────────────── */
+
+.headline {
+  position: relative;
+  margin: 0;
+  font-family: var(--s9-font-display, var(--s9-font-mono, sans-serif));
+  font-size: clamp(2.1rem, 9.5vw, 7rem);
+  font-weight: 900;
+  line-height: 0.84;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-align: center;
+  /* Runs slightly past the measure and tilts against the laptop's lean. */
+  transform: rotate(-2deg) skewX(-5deg);
+}
+
+.headline em {
+  font-style: normal;
+  display: inline-block;
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0 0.18em;
+  clip-path: polygon(2% 0, 100% 4%, 98% 100%, 0 96%);
+}
+
+.line {
+  max-width: 46ch;
+  margin: 0;
+  text-align: center;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: clamp(0.85rem, 1.7vw, 1rem);
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--paper);
+}
+
+/* The tape crosses the scenery — the laptop, the headline, the sign — because
+   it is a physical object lying on top of a printed page, and that is the
+   whole conceit. It must not cross the controls. The lower ribbon was cutting
+   the bottom-right corner off "BACK TO THE STUDIO", which reads as a defect
+   rather than as depth: tape over a picture is staging, tape over a button is
+   a bug. (Only ever a visual one — the ribbons are pointer-events: none, so
+   the button always still took the click.)
+
+   Three layers, in order: scenery, then tape at 3, then controls at 4. This
+   only works because .stage no longer declares a z-index; with one it formed
+   a stacking context and nothing inside it could rise past the ribbons no
+   matter what number it was given. */
+.actions {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+}
+
+/* Both buttons are .s9-pearl-dark from @shift9/theme. The green one is
+   the invitation's alone — it means "this is the thing to press", and a
+   page that is telling you a project has no page yet has nothing to press
+   in that sense. Two ways back, neither of them urgent. */
+
+/* ── The crossing ribbons ──────────────────────────────────────────────────
+   Two bands laid across the composition on opposing diagonals, each carrying
+   an endless run of text. The track holds the message twice and translates by
+   exactly -50%, so the moment it completes it is pixel-identical to where it
+   started and the loop is seamless.
+
+   They sit above the artwork and below nothing — pointer-events off, hidden
+   from assistive tech, because they repeat what the page already says. */
+
+.ribbon {
+  position: absolute;
+  left: -25%;
+  width: 150%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 3;
+  /* The band is not flat. Tape is a thin plastic ribbon that curls along its
+     length, so it carries a soft highlight through the middle and falls off
+     to darker at both edges - a single vertical gradient over the yellow is
+     enough to read as a curved surface rather than a painted rectangle. */
+  background-color: var(--tape);
+  background-image: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.3) 0%,
+    rgb(0 0 0 / 0.08) 18%,
+    rgb(255 255 255 / 0.34) 46%,
+    rgb(0 0 0 / 0.1) 78%,
+    rgb(0 0 0 / 0.32) 100%
+  );
+  color: var(--ink);
+  border-block: 3px solid var(--ink);
+  /* Lifted off the page: a tight contact shadow directly under the band, and
+     a wider ambient one further down. Both rotate with the ribbon, which is
+     correct - the light does not rotate, but the tape's own shadow is cast
+     along its length. */
+  box-shadow:
+    0 3px 0 rgb(0 0 0 / 0.45),
+    0 14px 26px rgb(0 0 0 / 0.55);
+}
+
+.ribbonA {
+  top: 3%;
+  transform: rotate(-9deg);
+}
+
+.ribbonB {
+  bottom: 3%;
+  transform: rotate(7deg);
+}
+
+/* The hazard stripes along both edges. Real barricade tape is a yellow field
+   with black raking stripes top and bottom, and it is the stripes rather than
+   the colour that make it unmistakable — a plain yellow band is a highlighter,
+   a striped one is a cordon. 12px bands at 45 degrees, drawn inside the
+   ribbon's own clip so they follow it around its rotation. */
+.ribbon::before,
+.ribbon::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 9px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--ink) 0 9px,
+    transparent 9px 18px
+  );
+  pointer-events: none;
+}
+
+.ribbon::before {
+  top: 0;
+}
+
+.ribbon::after {
+  bottom: 0;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: run 22s linear infinite;
+}
+
+.ribbonB .track {
+  animation-duration: 28s;
+  animation-direction: reverse;
+}
+
+.track span {
+  /* Heavy, tight and large enough to fill the band. Caution tape is printed
+     to be read across a car park, so the type is the widest, heaviest thing
+     on it — the previous setting was a small tracked-out mono that read as a
+     label rather than as a warning. Vertical padding clears the hazard
+     stripes so the words never collide with them. */
+  padding: 0.85rem 1.1rem;
+  font-family: var(--s9-font-display, var(--s9-font-mono, sans-serif));
+  font-size: clamp(0.9rem, 1.9vw, 1.35rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@keyframes run {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────────
+   The ribbons park. Everything else on this page is static by construction —
+   there is no blink and no colour cycling to disable, because the design is
+   carried by contrast and geometry rather than by movement. */
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}
+
+/* ── Small screens ─────────────────────────────────────────────────────────
+   The stickers go: ten cut-outs on a phone is noise. The ribbons stay, at a
+   shallower angle so they read as bands rather than as diagonal clutter. */
+
+@media (max-width: 34rem) {
+  .sticker {
+    display: none;
+  }
+
+  .ribbonA {
+    transform: rotate(-5deg);
+  }
+
+  .ribbonB {
+    transform: rotate(4deg);
+  }
+
+  .laptop {
+    transform: rotate(-2deg);
+  }
+}
+
+/* ── THE SIGN ──────────────────────────────────────────────────────────────
+   A hazard sign hung off the top run of tape on two wire hooks, swinging.
+
+   The flex is that it hangs from the tape rather than sitting near it: the
+   hooks start inside the ribbon's band, so the sign reads as a physical thing
+   attached to a physical thing, and the whole assembly rotates about the
+   point where the hooks meet the tape.
+
+   The swing is a pendulum, not a wobble. A real one accelerates through the
+   bottom of its arc and decelerates at the extremes, which is a symmetric
+   ease — using the same ease-in-out on a long period is what stops it reading
+   as a CSS oscillation. The plate lags the hooks by a fraction of a second so
+   the assembly has weight rather than moving as one rigid piece.
+
+   Compositor only: two transform animations, nothing that touches layout. */
+
+.sign {
+  position: absolute;
+  /* Anchored to where the tape actually is, not where it starts. The top run
+     is rotated -9deg, so its left end hangs well below its declared `top` —
+     at the sign's x the band sits around 13-20% down the frame, and the first
+     attempt anchored at 4.5% left the hooks floating in clear air above it.
+
+     z-index 2 puts the assembly UNDER the tape (which is 3), so the hooks
+     vanish behind the band exactly as a real hook would and only the plate
+     hangs out below it. Attaching to something means being occluded by it. */
+  top: 12.5%;
+  left: clamp(3%, 8vw, 14%);
+  z-index: 2;
+  transform-origin: 50% 0;
+  animation: swing 6.2s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  pointer-events: none;
+}
+
+.hooks {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 7.5rem;
+  /* Long enough to pass through the band and still clear its lower edge. */
+  height: 3.4rem;
+  margin-inline: auto;
+}
+
+.hooks i {
+  display: block;
+  width: 3px;
+  height: 100%;
+  background: var(--ink);
+  /* Lit on one side, shaded on the other: three pixels of wire reading as
+     round rather than as a drawn line. */
+  box-shadow:
+    1px 0 0 rgb(255 255 255 / 0.85),
+    -1px 0 0 rgb(0 0 0 / 0.55);
+}
+
+/* The plate: a cut rectangle, black on hazard yellow, hung slightly off-square
+   because nothing on this page is square. */
+.signPlate {
+  position: relative;
+  padding: 0.7rem 1.1rem 0.85rem;
+  background-color: var(--tape);
+  /* The same curl as the tape, because it is the same material. */
+  background-image: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.34) 0%,
+    rgb(0 0 0 / 0.06) 40%,
+    rgb(0 0 0 / 0.26) 100%
+  );
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  clip-path: polygon(2% 0, 100% 3%, 98% 100%, 0 97%);
+  transform: rotate(-1.5deg);
+  /* A hard offset and a soft one. The hard shadow is the page's existing
+     language - the laptop lid casts one too - and it is what gives a flat
+     cut-out its thickness. The soft one puts the whole sign in the room.
+
+     Note this is box-shadow rather than filter: drop-shadow. The sign is
+     animating a transform, so a box-shadow is rasterised into its layer once
+     and composited for free, where a filter would be re-evaluated every
+     frame of the swing. */
+  box-shadow:
+    5px 6px 0 rgb(0 0 0 / 0.9),
+    0 18px 30px rgb(0 0 0 / 0.55);
+  animation: swingPlate 6.2s cubic-bezier(0.45, 0, 0.55, 1) 0.18s infinite alternate;
+}
+
+.signPlate b {
+  display: block;
+  font-family: var(--s9-font-display, sans-serif);
+  font-size: clamp(1rem, 2.2vw, 1.5rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.signPlate em {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-style: normal;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@keyframes swing {
+  from {
+    transform: rotate(-7deg);
+  }
+  to {
+    transform: rotate(7deg);
+  }
+}
+
+@keyframes swingPlate {
+  from {
+    transform: rotate(-3.5deg);
+  }
+  to {
+    transform: rotate(2deg);
+  }
+}
+
+/* Reduced motion: the sign hangs still, slightly off-square, which is what a
+   sign actually does most of the time. */
+@media (prefers-reduced-motion: reduce) {
+  .sign,
+  .signPlate {
+    animation: none;
+  }
+
+  .sign {
+    transform: rotate(-3deg);
+  }
+}
+
+/* The sign crowds the laptop on a phone; the tape and the lid carry it there. */
+@media (max-width: 48rem) {
+  .sign {
+    display: none;
+  }
+}

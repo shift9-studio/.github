@@ -8,21 +8,96 @@
   --s9-void:        #0f172a;   /* base background — "the void"        */
   --s9-void-2:      #0b1120;   /* deeper well                         */
   --s9-surface:     #131c31;   /* raised panel                        */
-  --s9-signal:      #22d3ee;   /* cyan accent — "signal"              */
-  --s9-pulse:       #8b5cf6;   /* violet accent — "pulse"             */
-  --s9-ink:         #e2e8f0;   /* primary text (AA+ on void)          */
-  --s9-ink-dim:     #64748b;   /* secondary / mono data labels        */
+  /* ── The accents, after the neon came out ───────────────────────────────
+     These were #22d3ee cyan and #8b5cf6 violet. Together, on a dark ground,
+     with glows on them, they are the single most recognisable colour scheme
+     on the web right now — and being instantly recognisable as "a dark site
+     an AI helped build" is the exact opposite of what a studio site is for.
+
+     They are neutrals now. Not greyed-out versions of the old accents:
+     genuinely zero-chroma, so the only colour anywhere on the site is the
+     one thing you are meant to press.
+
+     signal  the marker and the emphasis. Brighter than the label it sits on,
+             which is what makes a // read as a marker rather than as part of
+             the word.
+     pulse   the secondary, for work that is unresolved. Dimmer than the
+             prose, deliberately: "in development" should not shout. */
+  --s9-signal:      #e8edf5;   /* emphasis — near-white, no chroma     */
+  --s9-pulse:       #6f7b8f;   /* secondary — cool grey, no chroma     */
+  /* ── Ink: a hierarchy, measured against the Void ────────────────────────
+     Three steps, not two, because a display face, running prose and a mono
+     data label are three different jobs and were all being served by one
+     value or by the one below it.
+
+     Contrast ratios are against --s9-void (#0f172a) and every one of them is
+     a measurement, not a guess:
+       ink     14.48:1   display and primary text
+       ink-2   10.12:1   running prose that should sit under the headline
+       ink-dim  6.96:1   mono labels, metadata, counters
+
+     ink-dim was #64748b, which is 3.75:1 — below the 4.5:1 floor for normal
+     text, and it was the token used for the small mono labels, which is the
+     worst case for it to fail on. */
+  --s9-ink:         #e2e8f0;   /* primary text                        */
+  --s9-ink-2:       #b8c4d6;   /* running prose, one step down        */
+  --s9-ink-dim:     #94a3b8;   /* mono data labels, metadata          */
+
+  /* Pulse as *text*. The fill value is too dark to carry a word on black, so
+     status text uses this instead — same neutral, lifted to 7.4:1. Fills and
+     strokes keep --s9-pulse. */
+  --s9-pulse-ink:   #a9b4c4;
+
+  /* ── The invitation's palette ────────────────────────────────────────────
+     The one surface that is not built on the Void. The wave field behind the
+     ask is true black with true white lines and no third colour in the
+     ground at all, so the only chromatic thing on the page is the button you
+     are meant to press. Scarcity is what makes it striking; a second accent
+     anywhere on that page would spend it.
+
+     Contrast, measured, not guessed:
+       verdant on obsidian          12.58:1   (and black label on verdant, same)
+       verdant-lift on obsidian     16.32:1   (hover, so it only ever climbs)
+       chalk on obsidian            21.00:1
+     Every one clears the 4.5:1 floor several times over, which is what lets
+     the green carry a label rather than only a fill. */
+  --s9-obsidian:     #000000;   /* true black — the invitation's ground   */
+  --s9-chalk:        #ffffff;   /* true white — the wave field's stroke   */
+  --s9-verdant:      #00e676;   /* the button                             */
+  --s9-verdant-lift: #5cffa8;   /* the button, approached                 */
+
+  /* ── The button's own grey ──────────────────────────────────────────────
+     The primary control used to be verdant. Kariim's call to take the colour
+     off it and leave it on the email address instead — so the green now marks
+     the thing you can copy and act on in your own time, and the button is
+     just the button.
+
+     A pearl grey, not a flat one: light enough to carry a black label at
+     14.7:1 and to stay the most prominent object on a black page, neutral
+     enough that it adds no chroma to a palette whose whole point is that only
+     one thing has any. */
+  --s9-pearl:        #c9d1dc;   /* the primary control                    */
+  --s9-pearl-lift:   #e6ebf2;   /* the primary control, approached        */
 
   /* derived hairlines & glows (oklab mixes keep hue honest) */
-  --s9-line:        color-mix(in oklab, var(--s9-signal) 16%, transparent);
-  --s9-line-2:      color-mix(in oklab, var(--s9-pulse) 13%, transparent);
-  --s9-signal-soft: color-mix(in oklab, var(--s9-signal) 22%, transparent);
-  --s9-pulse-soft:  color-mix(in oklab, var(--s9-pulse) 22%, transparent);
+  /* Hairlines. These used to be cyan and violet mixes, which on navy read as
+     structure and on black read as a glowing wire around every box — one of
+     the loudest tells in the old look. Plain white at low alpha: a hairline
+     should describe an edge, not light one. */
+  --s9-line:        rgb(255 255 255 / 0.10);
+  --s9-line-2:      rgb(255 255 255 / 0.07);
+  --s9-signal-soft: rgb(255 255 255 / 0.16);
+  --s9-pulse-soft:  rgb(255 255 255 / 0.10);
 
   /* ── Typography ───────────────────────────────────────────────── */
   /* next/font injects the source families into *-src vars; we wrap
      them with resilient fallbacks so the cascade never collapses.   */
-  --s9-font-display: var(--font-display-src, "Anybody"), "Arial Narrow", system-ui, sans-serif;
+  --s9-font-display: var(--font-display-src, "Bricolage Grotesque"), "Arial Narrow", system-ui, sans-serif;
+  /* The reading face. It did not exist before: running prose was falling
+     through to the monospace, which is a data face and says so. Apps that
+     want a different voice re-point --font-text-src, exactly as they already
+     do for display. */
+  --s9-font-text:    var(--font-text-src, "Instrument Sans"), system-ui, -apple-system, sans-serif;
   --s9-font-mono:    var(--font-mono-src, "Martian Mono"), ui-monospace, "SFMono-Regular", monospace;
 
   /* fluid scale — clamp() everywhere, no fixed px headings */
@@ -41,6 +116,7 @@
   --s9-dur-base:     240ms;   /* default: color/border/opacity settles   */
   --s9-dur-slow:     480ms;   /* entrances, reveals, larger displacements */
   --s9-dur-boot:     720ms;   /* power-on / page-transition choreography  */
+  --s9-dur-tunnel:   420ms;   /* the dissolve — desktop ↔ studio         */
   --s9-dur-premium:  300ms;   /* legacy alias (transition-premium)        */
 
   /* Easing set — one curve per intent, so motion reads as a system.
@@ -64,5 +140,9 @@
   --s9-maxw:      84rem;
 
   /* ── Focus ─ high-contrast, never removed ─────────────────────── */
-  --s9-ring: 0 0 0 2px var(--s9-void), 0 0 0 4px var(--s9-signal);
+  /* Focus takes the verdant. Focus is an action affordance — it says "this is
+     the thing you are about to press" — so it is the one piece of chrome that
+     earns the site's only colour, and it stays unmistakable now that nothing
+     else on the page is chromatic. */
+  --s9-ring: 0 0 0 2px var(--s9-obsidian), 0 0 0 4px var(--s9-verdant);
 }

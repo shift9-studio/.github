@@ -5,21 +5,47 @@
    frame. It is deliberately NOT the dark INSTRUMENT look — immersion at the
    seam outranks brand consistency here (decision log §12). All colours are the
    prototype's own local variables so nothing leaks into / from INSTRUMENT.
-   Fraunces comes from the site font pipeline via var(--font-fraunces).
+   Type comes from the three-role stack in @shift9/theme (display / text / mono).
    ──────────────────────────────────────────────────────────────────────── */
 
 .root {
+  /* Light — the Windows-11 daylight desktop. Channels are kept as raw triples
+     alongside the hex so translucent surfaces (veil, taskbar, glass tiles) can
+     be written once and follow the theme. */
   --w-bg: #eceadf;
+  --w-bg-rgb: 236 234 223;
   --w-panel: #f7f6f1;
+  --w-panel-rgb: 247 246 241;
   --w-side: #f0efe8;
   --w-line: #d8d6cc;
   --w-txt: #1f2328;
   --w-dim: #6b7078;
+  --w-sel: #e3ecf9;
+  --w-mark: #fdf3d3;
+  --w-chrome: #9a9a92;
+  /* The quiet strips — breadcrumb bar and the note foot — and the signature
+     green. Both used to be written as raw hex inline, which meant they were
+     light-mode values with no dark counterpart. See the dark block. */
+  --w-quiet: #fbfaf6;
+  --w-sig: #0a6e52;
+  --w-shadow: 15 23 42;
+  --w-halo-a: 0.9;
+  --w-halo-b: 0.85;
   --blue: #0b6bd6;
+  --blue-hover: #0a5cb8;
   --folder: #f6c445;
   --folder-tab: #e8b02e;
-  --acc: #3ddc84;
-  --nine: #20c0e0;
+  /* The desktop keeps its own local palette because it is a picture of an
+     operating system, not a Shift-9 surface — the Windows blue and the yellow
+     folders are the point. What it does not keep is the neon pair: --nine was
+     #20c0e0 cyan and sat next to a #3ddc84 green, which is the tell whatever
+     surface it is on. The glyph tint is the OS blue it already had, and the
+     green is muted to something a file manager would actually use.
+
+     --pulse and --pulse-deep were declared here and referenced by nothing.
+     Dead violet, carried for however long. Gone. */
+  --acc: #4b9e6b;
+  --nine: var(--blue);
   --mono: "Courier New", ui-monospace, monospace;
   --ui: "Segoe UI", system-ui, Arial, sans-serif;
 
@@ -28,6 +54,36 @@
   background: #000;
   font-family: var(--ui);
   overflow: hidden;
+}
+
+/* Dark — the same desktop after hours. Only the surface tokens move; every
+   rule below reads them, so nothing needs a second copy. The wallpaper flips
+   with it: AsciiWallpaper drops `ink`, so the artwork draws light-on-dark
+   instead of dark-on-light. */
+.root.dark {
+  --w-bg: #12151c;
+  --w-bg-rgb: 18 21 28;
+  --w-panel: #1b1f28;
+  --w-panel-rgb: 27 31 40;
+  --w-side: #171b23;
+  --w-line: #2b3140;
+  --w-txt: #e8eaf0;
+  --w-dim: #98a1b3;
+  --w-sel: #16304e;
+  --w-mark: #2e2a16;
+  --w-chrome: #6d7484;
+  /* The dark counterparts that did not exist. The About window's body was
+     `color: #2a2e33` — a near-black written for the paper desktop — and it
+     never flipped, so on the dark panel (#1b1f28) it measured 1.20:1. The
+     floor is 4.5:1. It was not dim, it was invisible; --w-txt gives 13.4:1.
+     The signature green was 2.61:1 for the same reason and is lifted here. */
+  --w-quiet: #161a22;
+  --w-sig: #5fd6a4;
+  --w-shadow: 0 0 0;
+  --w-halo-a: 0.72;
+  --w-halo-b: 0.55;
+  --blue: #3b93f0;
+  --blue-hover: #5aa6f5;
 }
 .root *,
 .root *::before,
@@ -73,117 +129,591 @@
   background: rgba(10, 14, 22, 0.72);
 }
 
-/* Enter-the-Studio film-title lockup (autoplay-block fallback) */
-.tap {
-  position: absolute;
-  inset: 0;
+/* ── THE FRONT DOOR ───────────────────────────────────────────────────────
+   A still, a line, and two controls. The plate is a threshold rather than a
+   frame of the film, and because it is a still there is no autoplay to be
+   refused and no video fetched before anyone has asked for one.
+
+   The controls are drawn in this site's own language - framing marks, mono
+   labels, hairlines - not as a filled gradient pill. A button that glows is
+   a button from a different system. */
+
+/* The return visit never sees this. The attribute is stamped on <html> by a
+   blocking script in the layout, before the first paint, so the plate is
+   hidden from frame zero rather than being un-rendered a few frames later by
+   React. `display: none` and not opacity: the plate is a full-screen JPEG and
+   there is no reason to decode it for someone who is not going to see it.
+
+   The React state still moves to "desk" on mount, so this is belt and braces
+   rather than the only thing holding it — if the script is blocked by a CSP
+   the component still corrects itself, just with the flash it always had. */
+:global(html[data-s9-seen="1"]) .gate {
   display: none;
-  align-items: flex-end;
-  justify-content: flex-start;
-  padding: 0 0 52px 46px;
-  cursor: pointer;
-  background: radial-gradient(75% 65% at 22% 82%, rgba(4, 7, 14, 0.5), transparent 72%);
 }
-.tap.show {
-  display: flex;
+
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 31;
+  display: grid;
+  align-content: end;
+  overflow: hidden;
+  background: var(--s9-void-2, #0b1120);
 }
-.lockC {
-  display: inline-flex;
-  align-items: center;
-  gap: 22px;
-}
-.ring {
-  width: 76px;
-  height: 76px;
-  position: relative;
-  flex: 0 0 auto;
-}
-.ring .r1 {
+
+.gatePlate {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.28);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The seam sits at the left third of the plate. Hold it in frame when a
+     narrow viewport crops, and push it further left as the screen narrows so
+     it never ends up behind the type. */
+  object-position: 30% 50%;
 }
-.ring .r2 {
+
+/* Weights the lower half so the type has ground under it whatever the plate
+   is doing behind, without flattening the light. */
+.gateVeil {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  border: 2px solid #e8b955;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  animation: tapspin 5.5s linear infinite;
+  /* Two passes: one weighting the foot of the frame so the type has ground
+     under it, one darkening the right so the copy sits on black even where
+     the stitch texture catches a little light. Neither touches the seam. */
+  background:
+    linear-gradient(
+      to top,
+      color-mix(in oklab, var(--s9-void-2) 92%, transparent) 0%,
+      color-mix(in oklab, var(--s9-void-2) 50%, transparent) 34%,
+      transparent 72%
+    ),
+    linear-gradient(
+      to left,
+      color-mix(in oklab, var(--s9-void-2) 78%, transparent) 0%,
+      transparent 58%
+    );
 }
-.ring .pc {
-  position: absolute;
-  inset: 14px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
-  transition: background 0.2s;
-}
-.ring .pc svg {
-  width: 20px;
-  height: 20px;
-  fill: #fff;
-  margin-left: 3px;
-}
-.ring .pulse {
+
+/* ── The seam breathes ────────────────────────────────────────────────────
+   The plate is fabric parted along a seam with light behind it, and until now
+   that light was painted on: the front door appeared fully formed and then sat
+   perfectly still until you touched something. Measured on a cold load, five
+   consecutive frames across a second and a half were byte-for-byte identical.
+   Static and dead are not the same thing, and this was the second one.
+
+   So the gap gets a pulse, and only the gap. The plate does not move, the type
+   does not move, the controls do not move — the light in the seam rises and
+   falls on a cycle slow enough (5.6s) that it registers as the room being lit
+   rather than as the page doing something. One composited layer over the
+   photograph: no repaint of the image, no canvas, no second asset.
+
+   It is deliberately the only thing on this screen with a heartbeat. The plate
+   holding still is exactly what makes the seam read as a light source instead
+   of an effect. */
+.gateGlow {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  border: 1px solid #e8b955;
-  opacity: 0;
-  animation: tappulse 2.4s ease-out infinite;
+  z-index: 0;
+  pointer-events: none;
+  /* Screen blending can only ADD light. It cannot darken the plate or shift
+     its colour, so the photograph underneath is never touched — the gap just
+     gets brighter. */
+  mix-blend-mode: screen;
+  filter: blur(18px);
+  /* Sited on the seam, which sits at the left third of the frame; the stops
+     track the same 30% object-position the plate is held at. */
+  background: linear-gradient(
+    90deg,
+    transparent 21%,
+    color-mix(in oklab, var(--s9-signal) 26%, transparent) 30%,
+    color-mix(in oklab, var(--s9-signal) 60%, transparent) 36%,
+    color-mix(in oklab, var(--s9-signal) 22%, transparent) 43%,
+    transparent 52%
+  );
+  opacity: 0.08;
+  animation: gateSeam 5.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
-.lk b {
-  display: block;
-  font-family: var(--font-fraunces), serif;
-  font-weight: 500;
-  font-size: 12px;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: #e8b955;
-}
-.lk strong {
-  display: block;
-  font-family: var(--font-fraunces), serif;
-  font-weight: 600;
-  font-size: 28px;
-  letter-spacing: 0.005em;
-  color: #fff;
-  margin-top: 7px;
-}
-.lk em {
-  display: block;
-  width: 0;
-  height: 1px;
-  background: #e8b955;
-  margin-top: 11px;
-  transition: width 0.5s ease;
-}
-.tap:hover .lk em {
-  width: 200px;
-}
-.tap:hover .ring .pc {
-  background: rgba(232, 185, 85, 0.14);
-}
-@keyframes tapspin {
-  to {
-    transform: rotate(360deg);
+
+@keyframes gateSeam {
+  0%,
+  100% {
+    opacity: 0.08;
   }
-}
-@keyframes tappulse {
-  0% {
-    transform: scale(1);
+  50% {
     opacity: 0.6;
   }
+}
+
+/* Reduced motion holds it near the top of the breath rather than the bottom.
+   Stopping at 0.08 would be the page with its light switched off; stopping lit
+   is the finished picture — degrade to a complete state, never a paused one. */
+@media (prefers-reduced-motion: reduce) {
+  .gateGlow {
+    animation: none;
+    opacity: 0.45;
+  }
+}
+
+.gateBody {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: start;
+  gap: 0.9rem;
+  padding: 0 var(--s9-gutter) clamp(2.5rem, 9vh, 5.5rem);
+  /* The right half of the plate is near-pure black and the seam owns the
+     left. The type goes where the picture is empty - which also means the
+     light is what your eye lands on first, and the words second. */
+  width: min(34rem, 100%);
+  margin-left: auto;
+}
+
+/* The front door signs itself with the same lockup the desktop carries.
+   It used to be the string SHIFT-9 in letterspaced mono, which said the
+   name but was not the mark — and the first thing anyone sees should be
+   the identity itself. */
+.gateMark {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0;
+  font-family: var(--s9-font-display, sans-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--s9-paper, #f8fafc);
+}
+.gateWord {
+  display: inline-flex;
+  align-items: center;
+}
+.gateMarkGlyph {
+  margin-left: 1px;
+  transform: translateY(1px);
+}
+
+
+.gateLine {
+  max-width: 34ch;
+  margin: 0;
+  font-family: var(--s9-font-display, sans-serif);
+  font-size: clamp(1.35rem, 3.4vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--s9-paper, #f8fafc);
+  text-wrap: balance;
+}
+
+/* ── The icon and the runtime, one row ────────────────────────────────────
+   Both sit in the button's second cell, on the same line, centred on each
+   other. The count used to hang off the icon's corner as a badge, which put
+   it on neither the icon's line nor the label's.
+
+   At rest the icon breathes. Under load it MORPHS: the tile runs from
+   rounded square to a full circle and back while it turns, which is a shape
+   change you can see at 22px — the previous 7px-to-11px radius was
+   arithmetically a morph and visually nothing, which is why all anyone saw
+   was the ring. */
+.enterIcon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.enterIconArt {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+/* The mark breathes; it no longer morphs its corners, because a numeral does
+   not have corners to round. Scale alone, and slight — this sits next to a
+   countdown and it is signalling "working", not asking to be watched. */
+.enterIconArt svg {
+  animation: iconBreathe 4.4s var(--s9-ease-inout) infinite;
+}
+
+@keyframes iconBreathe {
+  0%,
   100% {
-    transform: scale(1.5);
-    opacity: 0;
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* The ring is absent until the film is loading, so the resting state stays a
+   still object and only the wait gets a spinner. */
+.enterIconArt::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  opacity: 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    color-mix(in oklab, var(--s9-signal) 85%, transparent) 90deg,
+    var(--s9-paper, #f8fafc) 150deg,
+    transparent 220deg
+  );
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 0);
+  transition: opacity var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.enterIconBusy .enterIconArt::before {
+  opacity: 1;
+  animation: iconSpin 900ms linear infinite;
+}
+
+/* Square to circle and back, turning as it goes. The full range, so it is
+   unmistakable at the size it actually renders. */
+.enterIconBusy .enterIconArt img {
+  animation: iconMorph 1400ms ease-in-out infinite;
+}
+
+@keyframes iconSpin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Shape and scale only. An earlier pass turned the artwork 180 degrees as
+   well, which put the logo upside down for half of every cycle — that reads
+   as a rendering fault, not as a morph. The ring is what turns; the tile
+   just changes shape. */
+@keyframes iconMorph {
+  0%,
+  100% {
+    border-radius: 6px;
+    transform: scale(0.9);
+  }
+  50% {
+    border-radius: 50%;
+    transform: scale(1.08);
+  }
+}
+
+/* The runtime, on the icon's line. */
+.enterCount {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  color: color-mix(in oklab, var(--s9-paper, #f8fafc) 62%, transparent);
+}
+
+/* Reduced motion: no breathing, no spin, no morph. The busy state still
+   reads, because the ring appears and stays — presence is the signal;
+   movement was only ever the flourish on top of it. */
+@media (prefers-reduced-motion: reduce) {
+  .enterIconArt img,
+  .enterIconBusy .enterIconArt img,
+  .enterIconBusy .enterIconArt::before {
+    animation: none;
+  }
+  .enterIconBusy .enterIconArt::before {
+    opacity: 1;
+  }
+}
+
+.gateActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-top: clamp(0.5rem, 2vh, 1.25rem);
+}
+
+/* ── The primary control: a seam ─────────────────────────────────────────
+   The plate behind is fabric parted along a seam with light coming through.
+   The button is the same gesture at hand scale: a hairline under the label
+   that parts on approach and lets light out. Pressing it opens the film.
+
+   Corner ticks and framing marks were the first attempt. They were tasteful
+   and they were generic - the sort of thing any dark developer portfolio
+   wears. This one only works on this page, which is the point. */
+
+.enter {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  /* Baseline alignment was right when both cells were text. The second cell
+     is now an icon, which has no baseline of its own, so it was being hung
+     by its bottom edge off the label's. Centre them on each other. */
+  align-items: center;
+  column-gap: 1.25rem;
+  padding: 0 0 0.9rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--s9-paper, #f8fafc);
+}
+
+.enterLabel {
+  display: inline-flex;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: clamp(0.82rem, 1.5vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: pre;
+  /* Only the block moves as a whole; the tracking is done per character
+     below. Both are transforms, so neither touches layout. */
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+/* Each glyph slides right by a little more than the one before it, so the
+   spacing opens without a single character being re-measured or redrawn.
+
+   letter-spacing did the same thing in one declaration and forced a layout
+   pass on every frame of the transition - the one animation on the site that
+   was not running on the compositor. scaleX would have been the cheap way out
+   and is the wrong answer: it stretches the letterforms rather than spacing
+   them, which on a mono face is immediately visible.
+
+   A side effect worth having: the button no longer changes width on hover, so
+   the run time beside it and the seam beneath it both stay put. */
+.enterChar {
+  display: inline-block;
+  transform: translateX(0);
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+.enter:hover .enterChar,
+.enter:focus-visible .enterChar {
+  transform: translateX(calc(var(--i) * 0.055em));
+}
+
+.enter:hover .enterLabel,
+.enter:focus-visible .enterLabel {
+  transform: translateY(-2px);
+}
+
+/* The run time, stated up front. Pressing a button should not be a trapdoor
+   into twenty seconds you did not agree to. */
+.enterMeta {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  /* Not below 11px. It is the only place the run time is stated, so it has to
+     survive being read on a phone at arm's length. */
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+  transition: color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.enter:hover .enterMeta,
+.enter:focus-visible .enterMeta {
+  color: color-mix(in oklab, var(--s9-signal) 70%, transparent);
+}
+
+/* THE SEAM. Closed it is a dim hairline. Open it is a lit gap with the light
+   bleeding out above and below it, brightest at the left where the plate's
+   own light source is, falling away to the right. */
+.enterFrame {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  grid-column: 1 / -1;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* the closed seam */
+.enterFrame i:nth-child(1) {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--s9-paper, #f8fafc) 32%, transparent);
+  transition: background-color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+/* the light coming through it */
+.enterFrame i:nth-child(2) {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    var(--s9-signal) 0%,
+    color-mix(in oklab, var(--s9-signal) 55%, transparent) 42%,
+    transparent 100%
+  );
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+/* the bleed above and below - what makes it read as light rather than as a
+   coloured line */
+.enterFrame i:nth-child(3) {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 26px;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(
+    to right,
+    color-mix(in oklab, var(--s9-signal) 30%, transparent),
+    transparent 70%
+  );
+  filter: blur(8px);
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+/* a violet counter-note at the far edge, the same bounce the plate has */
+.enterFrame i:nth-child(4) {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 10px;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(
+    to right,
+    transparent 30%,
+    color-mix(in oklab, var(--s9-pulse) 45%, transparent) 100%
+  );
+  filter: blur(6px);
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+.enter:hover .enterFrame i:nth-child(1),
+.enter:focus-visible .enterFrame i:nth-child(1) {
+  background-color: transparent;
+}
+
+.enter:hover .enterFrame i:nth-child(2),
+.enter:focus-visible .enterFrame i:nth-child(2),
+.enter:hover .enterFrame i:nth-child(3),
+.enter:focus-visible .enterFrame i:nth-child(3),
+.enter:hover .enterFrame i:nth-child(4),
+.enter:focus-visible .enterFrame i:nth-child(4) {
+  transform: scaleX(1);
+}
+
+.enter:hover .enterFrame i:nth-child(3),
+.enter:focus-visible .enterFrame i:nth-child(3) {
+  transform: translateY(-50%) scaleX(1);
+}
+
+.enter:hover .enterFrame i:nth-child(4),
+.enter:focus-visible .enterFrame i:nth-child(4) {
+  transform: translateY(-50%) scaleX(1);
+}
+
+/* Focus has to be visible without the pointer, and the seam alone is too
+   subtle to carry it on its own. */
+.enter:focus-visible {
+  outline: 2px solid var(--s9-signal);
+  outline-offset: 0.75rem;
+}
+
+/* ── The secondary control ───────────────────────────────────────────────
+   Quiet, but full size and in the same row as the primary. Burying the way
+   past a twenty-second film in a corner of the film is how you get someone
+   to close the tab instead. It is dim rather than small: the hierarchy is
+   carried by contrast, so the target stays easy to hit. */
+
+.skipGate {
+  background: none;
+  border: 0;
+  padding: 0.4em 0;
+  cursor: pointer;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--s9-paper, #f8fafc) 58%, transparent);
+  border-bottom: 1px solid transparent;
+  transition:
+    color var(--s9-dur-fast) var(--s9-ease-out),
+    border-color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.skipGate:hover,
+.skipGate:focus-visible {
+  color: var(--s9-paper, #f8fafc);
+  border-bottom-color: color-mix(in oklab, var(--s9-paper, #f8fafc) 40%, transparent);
+}
+
+.skipGate:focus-visible {
+  outline: 2px solid var(--s9-signal);
+  outline-offset: 0.5rem;
+}
+
+/* Reduced motion never reaches this screen - it goes straight to the desk -
+   but the corner ticks and the underline are still transitions, so they are
+   stilled here rather than left as an exception waiting to be found. */
+@media (prefers-reduced-motion: reduce) {
+  .enterFrame i,
+  .enterLabel,
+  .skipGate {
+    transition: none;
+  }
+
+  .enter:hover .enterFrame i,
+  .enter:focus-visible .enterFrame i {
+    transform: none;
+  }
+
+  .enterChar,
+  .enterLabel {
+    transition: none;
+  }
+
+  .enter:hover .enterChar,
+  .enter:focus-visible .enterChar,
+  .enter:hover .enterLabel,
+  .enter:focus-visible .enterLabel {
+    transform: none;
+  }
+}
+
+@media (max-width: 48rem) {
+  /* Portrait crops the plate hard. Pull the seam to the far left so it stays
+     in frame and stays clear of the words. */
+  .gatePlate {
+    object-position: 18% 50%;
+  }
+
+  .gateBody {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  /* Portrait puts the lit seam much closer to the copy than the wide crop
+     does, so the foot of the frame carries more weight here. */
+  .gateVeil {
+    background: linear-gradient(
+      to top,
+      color-mix(in oklab, var(--s9-void-2) 96%, transparent) 0%,
+      color-mix(in oklab, var(--s9-void-2) 78%, transparent) 30%,
+      color-mix(in oklab, var(--s9-void-2) 30%, transparent) 55%,
+      transparent 80%
+    );
+  }
+}
+
+@media (max-width: 34rem) {
+  .gateActions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1.1rem;
   }
 }
 
@@ -245,7 +775,9 @@
   z-index: 10;
   display: none;
   flex-direction: column;
-  background: var(--w-bg);
+  /* The live ASCII wallpaper sits behind everything; the veil below supplies
+     the desktop tint, so this stays transparent. */
+  background: transparent;
   color: var(--w-txt);
   opacity: 0;
   transform-origin: 50% 46%;
@@ -260,6 +792,31 @@
   z-index: 42;
   transform-origin: 50% 47%;
   animation: boot 1s cubic-bezier(0.2, 0.62, 0.32, 1) forwards;
+}
+
+/* ── The seam at the handoff ──────────────────────────────────────────────
+   `boot` scales the desktop from 0.74 up to 1. The desktop is `inset: 0`, so
+   it is exactly the size of the viewport — which means at any scale below 1
+   its own rectangle is smaller than the screen and whatever is behind it
+   shows through around all four sides.
+
+   Behind it is `.root`, which is #000 because the film needs black under it.
+   The desktop's ground is --w-bg: #eceadf in light. So for the whole second
+   the boot runs, a near-white rectangle sat on pure black and its edge swept
+   inward as a hard line on all four sides. Measured mid-animation at 350ms:
+   scale 0.968, a 12-20px black frame with a crisp step at the boundary.
+
+   The line is a contrast problem, not a geometry one — the edge is always
+   there, it is only visible because of what it is against. So the ground
+   behind the desktop becomes the desktop's own ground the moment the desktop
+   exists, and the revealed margin has nothing to contrast with. It reads as
+   the screen powering on rather than as a white card growing on black.
+
+   Keyed off the desktop being present rather than a new class, so it cannot
+   drift out of sync with the state that actually mounts it, and it follows
+   the theme for free: --w-bg is redefined on .root.dark. */
+.root:has(.desktop.show) {
+  background: var(--w-bg);
 }
 @keyframes boot {
   0% {
@@ -284,21 +841,28 @@
   gap: 10px;
   padding: 12px 22px 6px;
 }
+/* The lockup: wordmark first, icon after it. The 9 is the drawn mark, and
+   it inherits the wordmark's colour rather than carrying an accent of its
+   own — it is a character in a word, so it is the colour of the word. */
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 11px;
   font-weight: 600;
   font-size: 18px;
 }
-.brand img {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
+.brandWord {
+  display: inline-flex;
+  align-items: center;
+  color: var(--w-txt);
+  letter-spacing: -0.01em;
 }
-.brand b {
-  color: var(--nine);
-  font-weight: 800;
+/* Nudged down so the bowl sits on the wordmark's own centre rather than on
+   the box the glyph is drawn in — the dropped half adds room underneath
+   that would otherwise read as the mark floating high. */
+.brandMark {
+  margin-left: 1px;
+  transform: translateY(1px);
 }
 .navlinks {
   margin-left: auto;
@@ -325,13 +889,13 @@
   box-shadow: 0 2px 8px rgba(11, 107, 214, 0.35);
 }
 .navlinks a.cta:hover {
-  background: #0a5cb8;
+  background: var(--blue-hover);
 }
 .winbtns {
   display: flex;
   gap: 14px;
   margin-left: 20px;
-  color: #9a9a92;
+  color: var(--w-chrome);
   font-size: 13px;
 }
 
@@ -391,7 +955,7 @@
   align-items: center;
 }
 .side .it.on {
-  background: #e3ecf9;
+  background: var(--w-sel);
   color: var(--blue);
   font-weight: 600;
 }
@@ -436,7 +1000,7 @@
   background: rgba(11, 107, 214, 0.08);
 }
 .dicon.sel {
-  background: #fdf3d3;
+  background: var(--w-mark);
   outline: 1px solid var(--folder-tab);
 }
 .fico {
@@ -444,6 +1008,9 @@
   height: 76px;
   margin: 0 auto 10px;
   position: relative;
+  /* The lid hinges on rotateX, and without a perspective that is not a
+     hinge — it is the lid getting shorter. */
+  perspective: 320px;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
   transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, border-radius 0.3s ease;
 }
@@ -474,14 +1041,40 @@
   background: #fbe19a;
   border-radius: 6px 6px 0 0;
 }
+/* ── Labels over the wallpaper ────────────────────────────────────────────
+   These sit directly on the ASCII field, which is a high-frequency texture at
+   0.62 opacity — the worst possible ground for small type. At 14px/400 the
+   folder names were legible only where the artwork happened to be sparse, and
+   the counts at 11px in --w-dim were losing to the glyphs outright.
+
+   Weight first, then a ground. Semibold at 14.5px gives the strokes enough
+   mass to hold their own shape against the character grid, and the counts go
+   up a step and off --w-dim onto real text colour at 82%, which is still
+   clearly secondary but no longer competing on equal terms with the noise.
+
+   The halo is the part that actually does the work: a tight ring of the
+   desktop's own background painted around every glyph, so each letter carries
+   a sliver of quiet with it wherever the artwork is busy. It is the page's own
+   --w-bg, so it follows the theme and reads as the label sitting on the
+   surface rather than as an outline drawn around it. Cheap — text-shadow, no
+   extra element, no blend mode, nothing to repaint. */
 .fname {
-  font-size: 14px;
+  font-size: 14.5px;
+  font-weight: 600;
   color: var(--w-txt);
+  text-shadow:
+    0 0 3px var(--w-bg),
+    0 0 3px var(--w-bg),
+    0 1px 2px var(--w-bg);
 }
 .fcount {
-  font-size: 11px;
-  color: var(--w-dim);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: color-mix(in oklab, var(--w-txt) 82%, transparent);
   margin-top: 2px;
+  text-shadow:
+    0 0 3px var(--w-bg),
+    0 0 3px var(--w-bg);
 }
 
 /* the shift9.dev app icon — the door out */
@@ -495,6 +1088,8 @@
   transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
 }
 .appico img {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
   display: block;
@@ -663,7 +1258,7 @@
 
 .taskbar {
   height: 46px;
-  background: rgba(247, 246, 241, 0.92);
+  background: rgb(var(--w-panel-rgb) / 0.92);
   border-top: 1px solid var(--w-line);
   display: flex;
   align-items: center;
@@ -707,6 +1302,11 @@
   color: var(--w-dim);
   text-align: right;
   line-height: 1.3;
+  /* Tabular figures so the minute rolling over cannot reflow the taskbar,
+     and a reserved width so the first paint and the mounted value occupy the
+     same box even when the hour goes from one digit to two. */
+  font-variant-numeric: tabular-nums;
+  min-width: 8ch;
 }
 
 /* ---------- FOLDER WINDOW ---------- */
@@ -750,7 +1350,7 @@
   align-items: center;
   padding: 12px 18px;
   border-bottom: 1px solid var(--w-line);
-  background: #fbfaf6;
+  background: var(--w-quiet);
 }
 .wtBar .path {
   font-size: 13px;
@@ -806,6 +1406,18 @@
   font-weight: 650;
   margin-bottom: 3px;
 }
+/* A linked title is the only affordance in the row, so it has to look like one
+   without turning the list into a wall of blue. */
+.item h3 a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--w-line);
+  transition: border-color var(--s9-dur-fast) var(--s9-ease-out);
+}
+.item h3 a:hover,
+.item h3 a:focus-visible {
+  border-bottom-color: currentColor;
+}
 .item p {
   font-size: 13px;
   color: #4a4f57;
@@ -855,14 +1467,14 @@
   padding: 26px 32px;
   font-size: 14.5px;
   line-height: 1.75;
-  color: #2a2e33;
+  color: var(--w-txt);
 }
 .aboutBody p {
   margin-bottom: 15px;
 }
 .aboutBody .sig {
   font-family: var(--mono);
-  color: #0a6e52;
+  color: var(--w-sig);
   font-size: 12px;
   letter-spacing: 0.14em;
   margin-top: 20px;
@@ -885,7 +1497,7 @@
   color: var(--w-dim);
   padding: 10px 22px;
   border-top: 1px solid var(--w-line);
-  background: #fbfaf6;
+  background: var(--w-quiet);
   letter-spacing: 0.05em;
 }
 
@@ -941,4 +1553,666 @@
     max-height: 100%;
     border-radius: 0;
   }
+}
+
+/* ---------- LIVE ASCII WALLPAPER ----------
+   The desktop background is the real Shift-9 banner, resampled to a 170x57
+   character grid by scripts/build-ascii-art.py and animated on a canvas
+   (AsciiWallpaper.tsx). The veil above it supplies the Windows tint and keeps
+   every existing dark-on-light contrast pair exactly as it was — it is thinnest
+   over the icon grid, where the artwork is meant to read, and thickest under
+   the chrome, where text has to stay crisp. */
+.wallLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--w-bg);
+  overflow: hidden;
+}
+.wallCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.62;
+}
+.wallVeil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      82% 66% at 52% 50%,
+      rgb(var(--w-bg-rgb) / 0) 0%,
+      rgb(var(--w-bg-rgb) / 0.18) 52%,
+      rgb(var(--w-bg-rgb) / 0.62) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(var(--w-bg-rgb) / 0.86) 0%,
+      rgb(var(--w-bg-rgb) / 0.06) 18%,
+      rgb(var(--w-bg-rgb) / 0.06) 82%,
+      rgb(var(--w-bg-rgb) / 0.88) 100%
+    );
+}
+
+/* Icon labels sit directly on the artwork, so they carry their own halo — the
+   same trick Windows uses for desktop icon text over a busy wallpaper. */
+.grid .fname,
+.grid .fcount {
+  text-shadow:
+    0 1px 0 rgb(var(--w-bg-rgb) / var(--w-halo-a)),
+    0 0 6px rgb(var(--w-bg-rgb) / var(--w-halo-b)),
+    0 0 14px rgb(var(--w-bg-rgb) / var(--w-halo-b));
+}
+
+/* Chrome sits above the wallpaper and keeps its own solid surfaces.
+
+   .helpdot is deliberately NOT in this list. It was, and because this rule
+   comes later in the file it beat the button's own `position: fixed`, dropped
+   it out of the corner it is anchored to and into normal flow — where it
+   landed at x=-26 and showed a sliver of itself off the left edge of every
+   screen, at every width. It already carries its own z-index (12), which is
+   what this rule was reaching for. */
+.titlerow,
+.searchrow,
+.main,
+.taskbar {
+  position: relative;
+  z-index: 1;
+}
+.titlerow,
+.searchrow {
+  background: rgb(var(--w-bg-rgb) / 0.82);
+  backdrop-filter: blur(9px) saturate(1.05);
+}
+.side {
+  backdrop-filter: blur(9px) saturate(1.05);
+}
+.taskbar {
+  backdrop-filter: blur(14px) saturate(1.1);
+}
+
+/* ---------- DESKTOP ICON HOVER ----------
+   Pointer and keyboard land on the same state; nothing is hover-only. Every
+   transform is inside a no-preference block, so reduced motion keeps the full
+   colour/contrast response and drops only the movement. */
+.dicon {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid transparent;
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.28s ease,
+    width 0.3s ease,
+    padding 0.3s ease;
+}
+.dicon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgb(var(--w-panel-rgb) / 0.72);
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+.dicon:hover,
+.dicon:focus-visible {
+  background: rgba(11, 107, 214, 0.1);
+  border-color: rgba(11, 107, 214, 0.34);
+  box-shadow: 0 14px 30px -14px rgb(var(--w-shadow) / 0.5);
+  outline: none;
+}
+.dicon:hover::before,
+.dicon:focus-visible::before {
+  opacity: 1;
+}
+
+.dicon:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue),
+    0 14px 30px -14px rgb(var(--w-shadow) / 0.5);
+}
+.dicon .fname {
+  transition: color 0.22s ease;
+}
+.dicon:hover .fname,
+.dicon:focus-visible .fname {
+  color: var(--blue);
+}
+.dicon .fcount {
+  transition: color 0.22s ease, opacity 0.22s ease;
+  opacity: 0.85;
+}
+.dicon:hover .fcount,
+.dicon:focus-visible .fcount {
+  opacity: 1;
+}
+
+/* The folder icon reacts as an object: tab lifts, lip swings open, the glyph
+   rises out of the shadow. */
+.fico .tab,
+.fico .lip,
+.fico .body2,
+.fico .gly {
+  transition:
+    transform 0.34s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.24s ease,
+    filter 0.24s ease;
+}
+.fico .gly {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dicon {
+    transition:
+      background 0.22s ease,
+      border-color 0.22s ease,
+      box-shadow 0.28s ease,
+      transform 0.34s cubic-bezier(0.2, 0.7, 0.2, 1),
+      width 0.3s ease,
+      padding 0.3s ease;
+  }
+  .dicon:hover,
+  .dicon:focus-visible {
+    transform: translateY(-6px);
+  }
+  .dicon:active {
+    transform: translateY(-2px) scale(0.985);
+  }
+  .dicon:hover .fico .tab,
+  .dicon:focus-visible .fico .tab {
+    transform: translate(2px, -3px);
+  }
+  .dicon:hover .fico .gly,
+  .dicon:focus-visible .fico .gly {
+    transform: translateY(-5px) scale(1.08);
+    filter: drop-shadow(0 4px 6px rgb(var(--w-shadow) / 0.35));
+  }
+
+  /* A single sheen crosses the tile on hover — one pass, not a loop. */
+  .dicon::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    overflow: hidden;
+    background: linear-gradient(
+      105deg,
+      transparent 38%,
+      rgba(255, 255, 255, 0.62) 50%,
+      transparent 62%
+    );
+    background-size: 260% 100%;
+    background-position: 130% 0;
+    opacity: 0;
+    transition: background-position 0.62s ease, opacity 0.2s ease;
+  }
+  .dicon:hover::after,
+  .dicon:focus-visible::after {
+    opacity: 1;
+    background-position: -30% 0;
+  }
+}
+
+/* The lip swinging forward is a 3D effect — desktop pointers only. Touch and
+   coarse pointers keep the flat layout, which loses nothing. */
+@media (hover: hover) and (pointer: fine) and (min-width: 900px) {
+  .fico {
+    perspective: 420px;
+  }
+  .fico .lip {
+    transform-origin: 50% 0;
+  }
+  .dicon:hover .fico .lip,
+  .dicon:focus-visible .fico .lip {
+    transform: rotateX(-26deg) translateY(1px);
+  }
+  .dicon:hover .fico .body2,
+  .dicon:focus-visible .fico .body2 {
+    transform: translateY(2px);
+  }
+}
+
+/* The shift9.dev door tile keeps its own accent treatment on top. */
+.dicon.site:hover,
+.dicon.site:focus-visible {
+  border-color: rgba(11, 107, 214, 0.55);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dicon.site:hover .appico,
+  .dicon.site:focus-visible .appico {
+    transform: translateY(-2px) scale(1.07);
+  }
+}
+
+
+/* ---------- THEME TOGGLE ----------
+   A real Windows-style segmented switch in the title row. It carries its state
+   in aria-pressed, so it announces correctly and is reachable by keyboard; the
+   sun/moon pair is aria-hidden because the label already says which way it
+   goes. */
+.themeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--w-line);
+  background: var(--w-panel);
+  color: var(--w-dim);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.themeBtn:hover {
+  color: var(--w-txt);
+  border-color: var(--blue);
+}
+.themeBtn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue);
+}
+.themeBtn svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .themeBtn svg {
+    transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .themeBtn:hover svg {
+    transform: rotate(-22deg);
+  }
+}
+
+/* ---------- ABOUT — a real app icon, not a folder ----------
+   About is a person, not a directory. It gets the same rounded-tile treatment
+   as the shift9.dev door so the grid reads as apps-and-folders rather than a
+   wall of identical yellow. */
+.aboutico {
+  /* Same 76px block height as .fico so the App tile's label sits on the same
+     baseline as the folders' — a taller icon would break the grid's rows. */
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 10px;
+  border-radius: 19px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* Grey, not violet. It is the one tile on the desktop that is not a
+     product, and giving it an accent made it compete with the door out.
+     A machined graphite face, and the colour arrives only on approach —
+     see the holographic sheen below. */
+  background: linear-gradient(155deg, #7c848f 0%, #4a5158 58%, #2f353c 100%);
+  box-shadow:
+    0 6px 18px rgb(var(--w-shadow) / 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s ease;
+}
+.aboutico::after {
+  /* Glass highlight across the top-left, the way a real tile catches light. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.3), transparent 52%);
+  pointer-events: none;
+}
+.aboutico svg {
+  position: relative;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 3px rgba(24, 12, 60, 0.45));
+}
+.dicon.about .fname {
+  font-weight: 650;
+}
+/* About takes no panel and no border on approach. Every other icon gets one
+   because a folder needs to say it is under the cursor; this tile says it by
+   catching light, and drawing a box around something already doing that is
+   two answers to one question. The violet went with it — it was the old
+   tile's colour, and on a grey face it was the only violet left on screen. */
+.dicon.about:hover,
+.dicon.about:focus-visible {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+.dicon.about:hover::before,
+.dicon.about:focus-visible::before {
+  opacity: 0;
+}
+/* Focus still has to be unmistakable — that ring is not decoration. */
+.dicon.about:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue);
+}
+.dicon.about:hover .fname,
+.dicon.about:focus-visible .fname {
+  color: var(--blue);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dicon.about:hover .aboutico,
+  .dicon.about:focus-visible .aboutico {
+    transform: translateY(-3px) scale(1.06);
+    box-shadow:
+      0 14px 30px rgb(var(--w-shadow) / 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* ── HOLOGRAPHIC ──────────────────────────────────────────────────────────
+   Foil, not a colour wheel. Three things separate the two, and the first
+   version had none of them:
+
+   1. The spectrum is masked. A conic gradient filling a square is a square
+      of rainbow — the thing that reads as cheap. Masked with a radial
+      falloff it has no edge of its own, so what you see is a tile catching
+      light rather than a coloured rectangle sitting on one.
+   2. It blends with `soft-light`, not `color-dodge`. Dodge on a mid-grey
+      face goes straight to full saturation; soft-light tints. Real foil
+      shifts hue, it does not repaint the object.
+   3. The specular band is feathered and it leaves. A hard white bar parked
+      across a tile is an artefact; a wide soft one that crosses once and
+      exits is a highlight.
+
+   Both layers are off at rest and cost nothing until the pointer arrives. */
+.holo {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.holo::before,
+.holo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--s9-dur-base) var(--s9-ease-out);
+}
+
+/* The spectrum, masked to a soft centre so it has no edge of its own. */
+.holo::before {
+  z-index: 3;
+  background: conic-gradient(
+    from 210deg,
+    #ff5c93 0deg,
+    #ffd88a 70deg,
+    #6ef0a8 140deg,
+    #6fdcf0 200deg,
+    #9a86ff 265deg,
+    #ff5c93 360deg
+  );
+  mix-blend-mode: soft-light;
+  mask: radial-gradient(72% 72% at 50% 42%, #000 28%, transparent 100%);
+  -webkit-mask: radial-gradient(72% 72% at 50% 42%, #000 28%, transparent 100%);
+}
+
+/* The specular band — wide, feathered, gone by the end of the sweep. */
+.holo::after {
+  z-index: 4;
+  background: linear-gradient(
+    102deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 46%,
+    rgba(255, 255, 255, 0.48) 50%,
+    rgba(255, 255, 255, 0.3) 54%,
+    transparent 70%
+  );
+  filter: blur(1px);
+  transform: translateX(-135%);
+}
+
+.holo:hover::before,
+.holo:focus-visible::before {
+  opacity: 0.9;
+  animation: holoTurn 6s linear infinite;
+}
+
+.holo:hover::after,
+.holo:focus-visible::after {
+  opacity: 1;
+  transform: translateX(135%);
+  transition:
+    opacity 90ms var(--s9-ease-out),
+    transform 820ms var(--s9-ease-inout);
+}
+
+@keyframes holoTurn {
+  to {
+    transform: rotate(1turn) scale(1.35);
+  }
+}
+
+/* On a near-black face `soft-light` has almost nothing to tint, so the dark
+   tile swaps to `screen`, which adds light instead of shifting it. */
+.holoDark::before {
+  mix-blend-mode: screen;
+  filter: saturate(1.15);
+}
+
+.holoDark:hover::before,
+.holoDark:focus-visible::before {
+  opacity: 0.32;
+}
+
+/* Reduced motion keeps the colour and drops the travel: a still sheet of
+   foil is still foil. */
+@media (prefers-reduced-motion: reduce) {
+  .holo:hover::before,
+  .holo:focus-visible::before {
+    animation: none;
+    opacity: 0.62;
+  }
+  .holo:hover::after,
+  .holo:focus-visible::after {
+    transform: none;
+    opacity: 0.2;
+  }
+}
+
+/* ── THE FOLDER OPENS ─────────────────────────────────────────────────────
+   Clicking a folder used to do nothing at all for the 200ms before a window
+   appeared somewhere else on screen. Now the thing you clicked answers: the
+   lid swings back on its bottom edge, the body settles down and forward, and
+   a wedge of light comes up out of the gap. Then the window arrives.
+
+   260ms, which is the delay before the window opens — the animation is not
+   decoration laid over a wait, it IS the wait. */
+.diconOpening .fico {
+  animation: folderPop 260ms var(--s9-ease-out) both;
+}
+
+.diconOpening .fico .lip {
+  transform-origin: 50% 100%;
+  animation: folderLid 260ms var(--s9-ease-out) both;
+}
+
+.diconOpening .fico .tab {
+  transform-origin: 50% 100%;
+  animation: folderLid 260ms var(--s9-ease-out) both;
+}
+
+/* The light out of the gap. */
+.diconOpening .fico::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 6px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(50% 100% at 50% 100%, #fff6d8, transparent 72%);
+  animation: folderSpill 260ms var(--s9-ease-out) both;
+  pointer-events: none;
+}
+
+@keyframes folderPop {
+  0% {
+    transform: none;
+  }
+  45% {
+    transform: translateY(-3px) scale(1.06);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes folderLid {
+  0% {
+    transform: rotateX(0deg);
+  }
+  45% {
+    transform: rotateX(-68deg);
+  }
+  100% {
+    transform: rotateX(-52deg);
+  }
+}
+
+@keyframes folderSpill {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.2);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(1.1);
+  }
+}
+
+/* Reduced motion: the folder still acknowledges the click, with a flat press
+   instead of a hinge. */
+@media (prefers-reduced-motion: reduce) {
+  .diconOpening .fico,
+  .diconOpening .fico .lip,
+  .diconOpening .fico .tab,
+  .diconOpening .fico::after {
+    animation: none;
+  }
+  .diconOpening .fico {
+    transform: scale(0.96);
+  }
+}
+
+/* ── ABOUT TAKES NO CHROME ────────────────────────────────────────────────
+   These sit last on purpose. The desktop gives every icon cell three hover
+   layers — a panel, a border, and a white sheen that crosses the whole cell.
+   The About tile already says it is under the cursor by catching light, and
+   the cell's white sheen stacked on top of that is what was drawing a white
+   box around it.
+
+   My first attempt at this was written 230 lines above `.dicon::after`, at
+   equal specificity, so source order quietly undid half of it and I handed
+   back something still broken. Written here there is nothing after it to
+   lose to. */
+.dicon.about:hover,
+.dicon.about:focus-visible {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.dicon.about:hover::before,
+.dicon.about:focus-visible::before,
+.dicon.about:hover::after,
+.dicon.about:focus-visible::after {
+  opacity: 0;
+}
+
+/* Focus is not decoration and does not get dropped with the rest. */
+.dicon.about:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue);
+}
+
+
+/* ── Dressing, not controls ──────────────────────────────────────────────
+   The nav row and the search field are part of the picture of an operating
+   system; neither has ever done anything. They were styled exactly like the
+   real controls next to them — same contrast, same weight — so the search
+   field in particular read as the most important thing on the page and then
+   swallowed everything typed into it.
+
+   Held back rather than removed: without them the chrome stops reading as a
+   desktop. They just no longer claim to be interactive. Paired with
+   aria-hidden in the markup so nothing announces four links to nowhere. */
+.inert {
+  opacity: 0.55;
+  cursor: default;
+  user-select: none;
+}
+
+/* ── The theme switch ────────────────────────────────────────────────────
+   Light and dark swapped instantly across the whole surface, which on a page
+   this large reads as a glitch rather than as a setting. The ground and the
+   ink cross over --s9-dur-base instead.
+
+   Only colour transitions, and only on the surfaces that carry it — putting
+   this on * would animate every hover on the page through the same curve and
+   drop frames on a desktop with this many panels. */
+.root,
+.desktop,
+.taskbar,
+.side,
+.win,
+.wtBar,
+.note,
+.aboutBody {
+  transition:
+    background-color var(--s9-dur-base) var(--s9-ease-out),
+    color var(--s9-dur-base) var(--s9-ease-out),
+    border-color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root,
+  .desktop,
+  .taskbar,
+  .side,
+  .win,
+  .wtBar,
+  .note,
+  .aboutBody {
+    transition: none;
+  }
+}
+
+/* A tile kept a visible focus ring after the tab had moved on, because the
+   ring was drawn on :focus rather than :focus-visible — so a mouse click left
+   it lit until something else took focus. */
+.dicon:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
 }

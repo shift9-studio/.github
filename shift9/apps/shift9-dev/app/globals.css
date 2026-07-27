@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "@shift9/theme/theme.css";
+/* The shared button. Global class names by design — see pearl.css. */
+@import "@shift9/theme/pearl.css";
 
 /* Tailwind v4 auto-detects sources in this app; also scan the shared UI
    package so its utility classes are generated. */
@@ -26,15 +28,66 @@ html.lenis body {
 @layer base {
   html {
     color-scheme: dark;
-    scroll-behavior: smooth;
+    /* No global smooth scroll. It was here for no-JS anchor jumps, but it
+       applies to every programmatic scroll as well — and on a 16,000px
+       scroll-driven reel that turns each one into a long browser-owned drift
+       that cannot be interrupted and fights native momentum. Lenis owns
+       smoothing when it is running; without JS the jump is instant, which is
+       correct behaviour rather than a downgrade. */
+  }
+
+  /* The one case the global rule was actually for. */
+  @media (scripting: none) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
   body {
-    background: var(--s9-void);
+    /* Black, not Void. Every route paints its own black ground — the reel,
+       the invitation, the system page, the case pages — but the document
+       underneath them was still #0f172a navy, so the browser painted one
+       flat navy frame during every route swap, and left a navy band under
+       any route that did not fill the viewport. The ground has to agree with
+       what sits on it or the mismatch shows in exactly the moments nobody
+       screenshots.
+
+       The entrance is unaffected: it paints its own surface over this, and
+       swaps to the desktop's own colour once the desktop exists. */
+    background: var(--s9-obsidian);
     color: var(--s9-ink);
-    font-family: var(--s9-font-mono);
+    /* The reading face, not the data face. Every paragraph on this site used
+       to be monospace by default; mono is now opt-in, for the things that are
+       actually readouts. */
+    font-family: var(--s9-font-text);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+
+  /* Headings take the display face. Before this, anything that did not name a
+     family inherited the monospace from body — so the dolly's project titles
+     and the bookend headline were being set in a data face. Naming it once
+     here is what keeps the three roles honest as components get added. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--s9-font-display);
+    font-weight: 700;
+    /* The axes are the point of choosing a variable display face.
+
+       opsz 48 asks for the letterforms drawn FOR display sizes - tighter
+       joins, finer detail - instead of the text-size drawing scaled up, which
+       is what every static face gives you and what makes big type look
+       inflated rather than designed.
+
+       wdth 84 condenses it. BLUEPRINT §2 locks the display voice as
+       Druk-style condensed mega-type; at its default width this face reads
+       like any bold sans, and condensing is what pulls it back toward the
+       direction that was actually agreed. */
+    font-variation-settings: "opsz" 48, "wdth" 84;
+    letter-spacing: -0.025em;
+    line-height: 1.02;
   }
 
   ::selection {
@@ -49,10 +102,31 @@ html.lenis body {
      clamp caps and reflowing. Below 80rem (1280px) the standard fluid /
      responsive design applies, so laptops, tablets, and phones stay
      readable. Anchored to a 1440px reference: 100vw / 90 = 16px at 1440px,
-     clamped so it never balloons on ultrawide or shrinks on a small laptop. */
+     clamped so it never balloons on ultrawide or shrinks on a small laptop.
+
+     Two things about the bounds, both measured rather than guessed.
+
+     The ceiling was 1.9rem, which the ramp reaches at 2736px. Past that the
+     whole design froze while the frame kept growing, so a 4K desktop got
+     1440px-worth of page in a 3840px window: the hero fell from 3.78% of the
+     viewport width to 2.69%, and from 40% of its height to 31%. That is the
+     "small thing in a large void" failure this rule exists to prevent — it
+     was just happening past the width anyone had looked at. 3.4rem holds the
+     ramp out to 4896px, which covers 4K and 5K.
+
+     The second term is new. Scaling on width alone is only safe while the
+     screen is about 16:9 or taller; on a wide, short display it drives the
+     page taller than the window. A 3840x1080 ultrawide is fine at today's frozen
+     30.4px, but the raised ceiling would push it to 42.7px and overflow the
+     window. Taking the smaller of the two ramps lets height veto width. The
+     divisor is 35 rather than something tighter on purpose: on 16:9 the
+     height term works out to 100vw / 62, comfortably above the width term,
+     so width governs and nothing at 16:9 or taller changes by a pixel. It
+     only binds past roughly 2.57:1 — a 32:9 panel, not a 21:9 one — and
+     lands those at about the size they already have. */
   @media (min-width: 80rem) {
     :root {
-      font-size: clamp(0.85rem, calc(100vw / 90), 1.9rem);
+      font-size: clamp(0.85rem, min(100vw / 90, 100vh / 35), 3.4rem);
 
       /* Pure-rem type scale → sizing comes solely from the root above (no
          double viewport scaling). Values = the intended look at 1440px. */
@@ -62,5 +136,84 @@ html.lenis body {
       --s9-text-h2: 3.4rem;
       --s9-text-display: 8.5rem;
     }
+  }
+}
+
+/* ── THE SCROLLBAR ─────────────────────────────────────────────────────────
+   The studio dolly is a scroll-driven page: the scrollbar is the instrument
+   you are playing, not an artefact beside it. So it gets designed rather than
+   left as the operating system's grey slab.
+
+   A capsule floating in an empty tube. The thumb carries the house gradient —
+   Signal into Pulse, the same two accents as everything else — and is inset
+   from the track by a transparent border, which is the trick that makes it
+   read as a separate object rather than a filled channel. Approaching it
+   swells the capsule (the border shrinks, so the body grows into the space)
+   and lights it; dragging swells it further. That swell-and-settle is the
+   liquid part, and it is done with border-width rather than width because a
+   scrollbar cannot change its own track size without reflowing the page.
+
+   Honest limit: a true metaball/gooey scrollbar — one that stretches and
+   snaps back with momentum — cannot be done with native scrollbar pseudo
+   elements. It needs a JavaScript overlay that hides the real scrollbar and
+   draws its own, which is a real dependency and a real accessibility risk on
+   a page that is already scroll-driven. This gets most of the character for
+   none of that, and it degrades to a normal thin scrollbar everywhere the
+   pseudo elements are unsupported. */
+
+/* Firefox, and anything else honouring the standard properties. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--s9-signal) 55%, transparent)
+    transparent;
+}
+
+/* WebKit and Blink get the capsule. */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  /* The transparent border is the inset; background-clip keeps the paint
+     inside it, which is what floats the capsule in the tube. */
+  border: 4px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+  background-image: linear-gradient(
+    180deg,
+    var(--s9-signal) 0%,
+    var(--s9-pulse) 100%
+  );
+  transition:
+    border-width var(--s9-dur-base) var(--s9-ease-premium),
+    filter var(--s9-dur-base) var(--s9-ease-out);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  border-width: 2px;
+  filter: brightness(1.25) saturate(1.15);
+}
+
+::-webkit-scrollbar-thumb:active {
+  border-width: 1px;
+  filter: brightness(1.4) saturate(1.2);
+}
+
+/* The corner where two scrollbars meet, left as void rather than as a grey
+   square nobody designed. */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Reduced motion: the capsule still swells, because that is a state change
+   and not an animation, but it does so instantly. */
+@media (prefers-reduced-motion: reduce) {
+  ::-webkit-scrollbar-thumb {
+    transition: none;
   }
 }

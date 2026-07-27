@@ -4,3 +4,4 @@ package.json
 *.js.map
 .DS_Store
 .shift9-entry/
+__pycache__/

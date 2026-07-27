@@ -1,0 +1,1068 @@
+/* ────────────────────────────────────────────────────────────────────────
+   UNCUT SOUNDSTAGE DOLLY — the twelve set-pieces as one continuous travel.
+
+   Absolute black holds the frame; each set-piece is a full-bleed shot and the
+   type sits over it. Scroll drives the travel, so the visitor controls the
+   pace of the take rather than waiting out a fixed runtime.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  position: relative;
+  background: var(--s9-black, #000);
+  color: var(--s9-paper, #f8fafc);
+}
+
+/* Each set-piece owns a tall scroll region; the shot inside is pinned to the
+   viewport for its duration, which is what makes the travel read as one take
+   instead of twelve stacked cards. */
+.stage {
+  position: relative;
+  height: 220vh;
+}
+
+/* ── The seam between set-pieces ─────────────────────────────────────────
+   NOTE: the feather that fixes this now lives in .veil, painted, rather than
+   here as a mask. The reasoning below still explains why it is needed; see
+   .veil for why it moved.
+
+   Every stage is exactly 100vh of pinned shot, so consecutive shots meet
+   edge to edge: measured live, one pin's bottom and the next pin's top sit
+   on the same pixel at every junction (bottom@671 / top@671, and so on all
+   the way down). Two different opaque photographs butting against each other
+   is a hard horizontal line, and it was visible at every one of the eleven
+   joins.
+
+   The fix is to stop them being opaque at the join. A mask feathers the top
+   and bottom of each shot into nothing, so what meets at the junction is
+   black against black and the two frames cross-dissolve through the ground
+   instead of colliding on it.
+
+   6% top and bottom, which is ~48px at 800: enough to read as a dissolve,
+   short enough that the shot is at full strength through the whole middle of
+   its stage — and the veil already carries a heavy vignette there, so the
+   feather costs nothing that was visible anyway. */
+.pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+/* The cut, softened. .shot had `transition: all 0s` — no transition at all —
+   so a shot arrived and left as a hard rectangle. It fades now, which is what
+   makes the join a dissolve rather than one photograph sliding off another.
+   Opacity only: compositor-owned, nothing relayouts. */
+.shot {
+  position: absolute;
+  inset: 0;
+  transition: opacity var(--s9-dur-slow) var(--s9-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shot {
+    transition: none;
+  }
+}
+
+.shot video,
+.shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The vignette keeps type legible over any frame without washing the shot
+   out — the sets are chiaroscuro and the darkness is the point — and it now
+   also carries the edge feather that stops consecutive shots meeting on a
+   hard line.
+
+   That feather was a mask-image on .pin: twelve of them, each on a 100vh
+   sticky container wrapping a full-bleed video. A mask forces the whole
+   subtree onto its own composited layer, so the reel was paying for twelve
+   extra layers permanently, and that is a large part of what the stalls at
+   every junction were buying.
+
+   Painting it costs nothing extra. This element already existed, already
+   painted two gradients, and already sat over the shot — adding two more
+   stops to a gradient stack that is being rasterised anyway is free, where
+   masking twelve composited layers is not. The ground is black, so painting
+   black over the shot's top and bottom edges is visually identical to
+   masking them away. Twelve composited layers become zero. */
+.veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 7%),
+    linear-gradient(to top, rgb(0 0 0 / 1) 0%, rgb(0 0 0 / 0) 7%),
+    linear-gradient(to top, rgb(0 0 0 / 0.92) 0%, rgb(0 0 0 / 0.35) 38%, rgb(0 0 0 / 0) 62%),
+    radial-gradient(120% 90% at 50% 50%, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0.55) 100%);
+  pointer-events: none;
+}
+
+.caption {
+  position: relative;
+  width: min(1180px, 92vw);
+  margin-inline: auto;
+  align-self: end;
+  padding-bottom: clamp(3rem, 9vh, 6rem);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s9-signal);
+}
+
+.num {
+  opacity: 0.7;
+}
+
+/* Status is the contract from STUDIO-DOLLY.md made visible: resolved sets read
+   settled, volatile ones read mid-build. */
+.status {
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.18em 0.7em;
+  /* Matches the other mono labels; 0.66rem landed at 10.6px on a phone. */
+  font-size: 0.72rem;
+}
+
+.volatile .status {
+  /* The text-safe step of Pulse: the accent itself is 4.22:1 on void, which
+     is under the floor for a label this size. */
+  color: var(--s9-pulse-ink);
+}
+
+.title {
+  font-size: clamp(2.1rem, 6vw, 4.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.note {
+  max-width: 54ch;
+  margin: 0;
+  font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+  line-height: 1.5;
+  color: rgb(248 250 252 / 0.72);
+}
+
+.link {
+  /* inline-block with a trailing gap: a card can carry two destinations - the
+     site and the thing you install - and they belong on one row. Stacking them
+     would give back the height the card was just widened to save. The trailing
+     margin is harmless on the single-link cards, which are most of them. */
+  display: inline-block;
+  margin-right: 1.4rem;
+  justify-self: start;
+  margin-top: 0.35rem;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--s9-signal);
+  text-decoration: none;
+  /* Was rgb(34 211 238 / 0.35) — the cyan written out longhand, which is why
+     it survived a grep for the hex. Follows the accent now. */
+  border-bottom: 1px solid color-mix(in oklab, var(--s9-signal) 32%, transparent);
+  padding-bottom: 0.15em;
+  transition: border-color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.link:hover,
+.link:focus-visible {
+  border-bottom-color: currentColor;
+}
+
+/* Opening and closing plates — the take has to start and end somewhere. */
+.bookend {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  gap: 1.1rem;
+  padding: 12vh 6vw;
+  text-align: center;
+}
+
+.bookend h1 {
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+/* The opening statement, and for a long stretch the only thing on screen.
+   It was 46ch of 400-weight text at 70% opacity on absolute black, which is
+   the thinnest possible setting for the one paragraph that has to carry the
+   whole page before anything else arrives. Numerically the contrast was fine;
+   that was never the problem. Weight was — pale strokes on a large black
+   field read as faint whatever the ratio says, because there is nothing
+   around them to give the eye a reference.
+
+   Up a step in size and weight, and up to 88%. Still clearly secondary to the
+   title above it, no longer something you lean in for. */
+.lede {
+  max-width: 46ch;
+  margin-inline: auto;
+  color: rgb(248 250 252 / 0.88);
+  font-size: var(--s9-text-lead);
+  font-weight: 500;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* It reads 12/12 and then has nothing left to count, so it goes. The banner
+   is the one full-frame image on the site and a hard mono figure parked in
+   its corner is the same mistake the exit pill was making. Driven by the
+   outro coming into view rather than by the index, because the count is
+   correct at 12 — it is the arrival that makes it redundant. */
+.counterOut {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.counter {
+  transition:
+    opacity var(--s9-dur-slow) var(--s9-ease-out),
+    transform var(--s9-dur-slow) var(--s9-ease-out);
+  position: fixed;
+  right: clamp(1rem, 3vw, 2.5rem);
+  bottom: clamp(1rem, 3vw, 2.5rem);
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: rgb(248 250 252 / 0.55);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Reduced motion: the sticky travel and the clips both go. Every set-piece
+   becomes its own full plate with the caption beneath it — the whole roster
+   still reads, in order, as complete content. */
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    height: auto;
+  }
+
+  .pin {
+    position: static;
+    height: auto;
+    display: block;
+  }
+
+  .shot {
+    position: relative;
+    inset: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .veil {
+    display: none;
+  }
+
+  .caption {
+    padding-block: 2.5rem 5rem;
+  }
+
+  .counter {
+    display: none;
+  }
+}
+
+/* ── OUTRO ───────────────────────────────────────────────────────────────
+   The take lands on the brand. The mark resolves out of black, the tagline
+   follows, and only once the motion has settled does the call to action
+   appear — so the invitation arrives after the statement, not over it. */
+
+.outro {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--s9-black, #000);
+}
+
+/* The whole frame is the target. Nothing is laid over the artwork except the
+   cue in the corner, so the composition Kariim made stays the composition you
+   see. */
+.banner {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* The still. It is the poster the film loads behind and the complete frame
+   whenever the film cannot play — a failed decode, a blocked autoplay or
+   reduced motion all land here, and all of them look finished. */
+/* contain, not cover. The artwork is 1377x768 (1.79:1) and a 1280x800 window
+   is 1.60:1, so cover scaled it to fill the height and cropped ~13% off the
+   width — which is exactly where "code execution in motion" sits. The tagline
+   was being cut off the side of the frame on any window taller than 1.79:1.
+
+   Letterboxing is free here: the bars are the same black as the page, so
+   containing the image costs nothing visible and guarantees the composition
+   arrives whole on every window. */
+.outroArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  animation: outroArt var(--s9-dur-boot) var(--s9-ease-out) forwards;
+}
+
+@keyframes outroArt {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The film sits over the still on identical geometry, using it as its own
+   poster, so there is no cut at the moment it takes over. It is rendered from
+   this artwork and framed to end on it, which is why it can simply stop on
+   its last frame and stay there. */
+/* Matches the still exactly, or the handoff between them is a jump cut in
+   scale. See .outroArt. */
+.outroFilm {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* The only type over the artwork, parked in the lower right where the frame
+   is quietest — the strands run out of the top right and the mark owns the
+   left. It has to be there: a full-bleed image gives no other signal that it
+   can be clicked. */
+.cue {
+  position: absolute;
+  right: clamp(1rem, 5vw, 4rem);
+  bottom: clamp(1.5rem, 7vh, 5rem);
+  display: grid;
+  justify-items: end;
+  gap: 0.5rem;
+  text-align: right;
+  /* Revealed when the film settles, not on a guessed delay — the invitation
+     arrives after the statement finishes, whatever the statement took. */
+  opacity: 0;
+  transform: translateY(0.6rem);
+  transition:
+    opacity var(--s9-dur-slow) var(--s9-ease-out),
+    transform var(--s9-dur-slow) var(--s9-ease-out);
+}
+
+.cueIn {
+  opacity: 1;
+  transform: none;
+}
+
+.cueLabel {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--s9-signal);
+  text-shadow: 0 1px 18px rgb(0 0 0 / 0.9);
+}
+
+.cueAction {
+  font-family: var(--s9-font-display, sans-serif);
+  font-size: clamp(1.15rem, 2.6vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--s9-paper, #f8fafc);
+  text-shadow: 0 2px 28px rgb(0 0 0 / 0.95);
+  /* The underline grows from the right so it tracks back toward the arrow. */
+  background-image: linear-gradient(var(--s9-signal), var(--s9-signal));
+  background-repeat: no-repeat;
+  background-position: 100% 100%;
+  background-size: 0% 2px;
+  padding-bottom: 0.12em;
+  transition: background-size var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.banner:hover .cueAction,
+.banner:focus-visible .cueAction {
+  background-size: 100% 2px;
+}
+
+/* The frame lifts fractionally toward the visitor on hover — the only reply
+   the artwork gives, because anything louder would be decoration on top of
+   decoration. */
+.banner:hover .outroArt,
+.banner:focus-visible .outroArt {
+  filter: brightness(1.08) contrast(1.02);
+}
+
+.banner:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--s9-signal);
+}
+
+/* The exit that used to sit here — a full BACK TO THE DESKTOP pill anchored
+   over the closing banner — is gone. There were two ways out and only one is
+   needed, and that one was laid across the single image on the site that
+   earns a whole frame to itself. See .exitPin, which is now an arrow in the
+   corner and stays out of the artwork's way. */
+
+/* A persistent way back, so leaving never depends on reaching the end. */
+/* An arrow, not a label. It is on screen for the entire reel including the
+   closing banner, so it has to be the smallest thing that still reads as a
+   way out — a word-and-border pill in the corner of every shot is a piece of
+   furniture you cannot put down. Square, quiet, and it only names itself to
+   assistive tech and on hover.
+
+   It keeps a real hit area (40px) even though it draws smaller, because a
+   34px target is under the floor for a thumb. */
+.exitPin {
+  position: fixed;
+  top: clamp(0.75rem, 2.5vw, 1.5rem);
+  left: clamp(0.75rem, 2.5vw, 1.5rem);
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: rgb(248 250 252 / 0.62);
+  text-decoration: none;
+  border: 1px solid rgb(248 250 252 / 0.16);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.34);
+  backdrop-filter: blur(6px);
+}
+
+.exitPin:hover,
+.exitPin:focus-visible {
+  color: var(--s9-paper, #f8fafc);
+  border-color: rgb(248 250 252 / 0.5);
+}
+
+/* Reduced motion: the finished frame, immediately. No film is mounted at all
+   (the component returns before the observer is wired), the artwork is fully
+   opaque, and the cue is present and readable from the first paint rather
+   than waiting on an ending that will never come. */
+@media (prefers-reduced-motion: reduce) {
+  .outroArt,
+  .cue {
+    animation: none;
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── THE TWELVE CARDS ────────────────────────────────────────────────────
+   One card per project, each laid out after the thing it describes. The type
+   scale, palette and spacing are shared; only the arrangement changes, so the
+   set reads as a designed series rather than twelve unrelated slides.
+
+   Every variant keeps the same contract: the caption sits over a chiaroscuro
+   frame, so it needs its own ground to stay legible, and nothing may depend on
+   colour alone to carry meaning. */
+
+.card {
+  --card-accent: var(--s9-signal);
+  position: relative;
+  /* Wider and shorter than it was. The card sits over a shot that is the
+     whole point of the set-piece, so it should be a strip across the bottom
+     of the frame rather than a slab in the middle of it. Wider lines mean the
+     note lands in two lines instead of four, which is where the height goes. */
+  max-width: min(1180px, 100%);
+  /* The caption is a grid, and `margin-inline: auto` on a grid item cancels
+     stretch — the item falls back to shrink-to-fit. That is why the cards had
+     content-dependent widths: 381px for the shortest note, 841px for the
+     longest, with no relationship to the design. Stretching them and letting
+     max-width do the capping gives every card the same left edge and the same
+     measure, and still lets a variant's own margin subtract from the width
+     rather than push the card off the frame. */
+  justify-self: stretch;
+
+  /* Glass. Almost see-through, so the shot reads through it and the type
+     still holds: a low-alpha ground plus a real backdrop blur, rather than a
+     dark panel pretending to be glass. The saturate() is what stops blurred
+     video going grey behind it. */
+  background: rgb(8 12 20 / 0.28);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 18px;
+  padding: 1.15rem 1.6rem 1.25rem;
+  box-shadow:
+    0 18px 50px rgb(0 0 0 / 0.45),
+    inset 0 1px 0 rgb(255 255 255 / 0.09);
+
+  /* THE PROJECT'S OWN VOICE. Each set-piece carries its own pair as data and
+     hands it in as these two properties; the fallbacks are the house faces,
+     so a project without a pair is still typeset correctly. */
+  font-family: var(--card-text, var(--s9-font-text));
+}
+
+/* Type inside the card follows the project, not the site. This is the whole
+   point of the per-project pairing: the layout already changes per project,
+   and keeping one voice across all twelve undid half of that. */
+.card .title {
+  font-family: var(--card-display, var(--s9-font-display));
+}
+
+.card .note {
+  font-family: var(--card-text, var(--s9-font-text));
+}
+
+/* The mono roles stay mono everywhere. Numbers, status and stack are readouts
+   about the project rather than the project's own voice, and holding them
+   constant is what keeps twelve different faces from becoming twelve
+   different designs. */
+.card .meta,
+.card .tag,
+.card .link {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+}
+
+/* Glass needs less of everything else. Titles come down, the note is capped
+   wider so it wraps to fewer lines, and the block breathes less vertically. */
+.card .title {
+  font-size: clamp(1.9rem, 4.4vw, 3.4rem);
+  line-height: 1;
+  margin: 0.15rem 0 0;
+}
+
+.card .note {
+  max-width: 72ch;
+  font-size: clamp(0.92rem, 1.25vw, 1.02rem);
+  line-height: 1.5;
+  color: var(--s9-ink-2);
+}
+
+.card .tags {
+  margin-top: 0.7rem;
+}
+
+.volatile .card {
+  --card-accent: var(--s9-pulse);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+
+.tag {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  /* 0.66rem rendered at 10.6px on a phone - under the floor for a label that
+     carries real information about the project. */
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(248 250 252 / 0.7);
+  border: 1px solid rgb(248 250 252 / 0.22);
+  border-radius: 2px;
+  padding: 0.28em 0.6em;
+  white-space: nowrap;
+}
+
+/* 01 · RECIPE — an index card. Ruled, squared off, the stack read as a list of
+   ingredients rather than a badge row. */
+.recipe {
+  max-width: 40rem;
+  background: rgb(0 0 0 / 0.62);
+  border: 1px solid rgb(248 250 252 / 0.18);
+  border-left: 3px solid var(--card-accent);
+  padding: 1.5rem 1.75rem;
+  backdrop-filter: blur(3px);
+}
+.recipe .tags {
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid rgb(248 250 252 / 0.14);
+  padding-top: 0.6rem;
+}
+.recipe .tag {
+  border: 0;
+  border-bottom: 1px dotted rgb(248 250 252 / 0.16);
+  border-radius: 0;
+  padding: 0.4em 0;
+  width: 100%;
+}
+
+/* 02 · WAVEFORM — dictation. The text sits on a baseline the way a signal sits
+   on an axis, low in frame and running left to right. */
+.waveform {
+  max-width: 46rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid var(--card-accent);
+}
+.waveform .title {
+  font-size: clamp(2rem, 5.5vw, 3.8rem);
+}
+
+/* 03 · STORYBOOK — a kids' reading tool. Soft, rounded, warm, oversized. */
+.storybook {
+  max-width: 38rem;
+  background: rgb(0 0 0 / 0.55);
+  border-radius: 18px;
+  padding: 1.9rem 2.1rem;
+  text-align: left;
+}
+.storybook .title {
+  font-size: clamp(2.4rem, 7vw, 4.8rem);
+  letter-spacing: -0.03em;
+}
+.storybook .tag {
+  border-radius: 999px;
+}
+
+/* 04 · CALIBRATION — projection mapping. Crop marks at the corners, the way a
+   calibration grid frames a surface before it locks.
+
+   Four corners, not two. The first pass drew only top-left and bottom-right,
+   in 2px of full-strength --card-accent, flush against the card at 0,0. Every
+   one of those three choices worked against the idea: two opposite corners is
+   not a frame, it is two stray brackets, so it read as a rendering artifact
+   rather than a mark — which is exactly how it was reported. Sitting flush on
+   the corner made them look like a border that had failed to draw rather than
+   something placed on the surface. And on card 04 the accent is --s9-pulse,
+   the loudest value on the page, so the eye went to the corner instead of the
+   work.
+
+   Now: all four, inset so they read as placed, one hairline rather than two
+   pixels, and mixed back to a little over half strength. A registration mark
+   is a quiet instruction to the eye about where the edges are. If you notice
+   it before you notice the project, it has failed.
+
+   Eight gradients on one pseudo-element — two bars per corner — because four
+   corners from ::before and ::after alone would need a second element and
+   this needs none. */
+.calibration {
+  max-width: 42rem;
+  padding: 1.6rem 1.8rem;
+  background: rgb(0 0 0 / 0.5);
+}
+.calibration::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  pointer-events: none;
+  --mark: color-mix(in oklab, var(--card-accent) 58%, transparent);
+  --len: 18px;
+  --hair: 1px;
+  background:
+    linear-gradient(var(--mark), var(--mark)) left top / var(--len) var(--hair) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) left top / var(--hair) var(--len) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) right top / var(--len) var(--hair) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) right top / var(--hair) var(--len) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) left bottom / var(--len) var(--hair) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) left bottom / var(--hair) var(--len) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) right bottom / var(--len) var(--hair) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) right bottom / var(--hair) var(--len) no-repeat;
+}
+
+/* 05 · SCOREBOARD — arcade basketball. A segmented display block. */
+.scoreboard {
+  max-width: 44rem;
+  background: rgb(0 0 0 / 0.72);
+  border: 2px solid var(--card-accent);
+  padding: 1.4rem 1.7rem;
+}
+.scoreboard .title {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: clamp(1.6rem, 4.4vw, 3rem);
+  letter-spacing: 0.02em;
+}
+.scoreboard .tag {
+  background: rgb(248 250 252 / 0.06);
+}
+
+/* 06 · CORRIDOR — a metroidvania. A tall rule on the left and the text set
+   away from it, like a passage opening off a wall. */
+.corridor {
+  max-width: 40rem;
+  padding-left: 1.6rem;
+  border-left: 2px solid var(--card-accent);
+  margin-left: clamp(0rem, 6vw, 5rem);
+}
+
+/* 07 · SCHEMATIC — an R&D plugin suite. A dashed technical frame. */
+.schematic {
+  max-width: 44rem;
+  border: 1px dashed rgb(248 250 252 / 0.4);
+  padding: 1.6rem 1.8rem;
+  background: rgb(0 0 0 / 0.5);
+}
+.schematic .meta {
+  border-bottom: 1px dashed rgb(248 250 252 / 0.28);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+/* 08 · SWATCH — a component workbench. A specimen strip: the stack reads as a
+   row of components lined up for inspection, which is what the tool is for. */
+.swatch {
+  max-width: 46rem;
+  background: rgb(0 0 0 / 0.6);
+  border: 1px solid rgb(248 250 252 / 0.2);
+  border-top: 3px solid var(--card-accent);
+  padding: 1.5rem 1.7rem;
+}
+.swatch .tags {
+  gap: 0;
+  margin-top: 1.1rem;
+  border: 1px solid rgb(248 250 252 / 0.18);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.swatch .tag {
+  flex: 1 1 auto;
+  text-align: center;
+  border: 0;
+  border-right: 1px solid rgb(248 250 252 / 0.18);
+  border-radius: 0;
+  padding: 0.55em 0.7em;
+  background: rgb(248 250 252 / 0.04);
+}
+.swatch .tag:last-child {
+  border-right: 0;
+}
+
+/* 09 · PANEL — the design system itself. Centred, measured, symmetrical. */
+.panel {
+  max-width: 46rem;
+  margin-inline: auto;
+  text-align: center;
+  border-top: 1px solid rgb(248 250 252 / 0.28);
+  border-bottom: 1px solid rgb(248 250 252 / 0.28);
+  padding: 1.7rem 1.5rem;
+}
+.panel .meta,
+.panel .tags {
+  justify-content: center;
+}
+.panel .note {
+  margin-inline: auto;
+}
+.panel .title {
+  letter-spacing: 0.02em;
+}
+
+/* 10 · TERMINAL — the automation stack. A log block with a prompt marker. */
+.terminal {
+  max-width: 46rem;
+  background: rgb(0 0 0 / 0.78);
+  border: 1px solid rgb(248 250 252 / 0.2);
+  border-radius: 4px;
+  padding: 1.5rem 1.7rem;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+}
+.terminal .title {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: clamp(1.5rem, 4vw, 2.6rem);
+}
+.terminal .note::before {
+  content: "$ ";
+  color: var(--card-accent);
+}
+.terminal .note {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.92rem;
+}
+
+/* 11 · WIREFRAME — unfinished 3D. A doubled, offset edge: geometry that has
+   not resolved onto itself yet. */
+.wireframe {
+  max-width: 42rem;
+  padding: 1.6rem 1.8rem;
+  border: 1px solid var(--card-accent);
+  background: rgb(0 0 0 / 0.5);
+}
+.wireframe::before {
+  content: "";
+  position: absolute;
+  inset: -7px -7px 7px 7px;
+  border: 1px solid rgb(248 250 252 / 0.22);
+  pointer-events: none;
+}
+
+/* 12 · DIALOG — a small Windows utility. A system dialog: title bar, body,
+   clinical edges. */
+.dialog {
+  max-width: 34rem;
+  background: rgb(0 0 0 / 0.8);
+  border: 1px solid rgb(248 250 252 / 0.35);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.dialog .meta {
+  background: rgb(248 250 252 / 0.1);
+  border-bottom: 1px solid rgb(248 250 252 / 0.25);
+  padding: 0.6rem 1rem;
+  margin: 0;
+}
+.dialog .title,
+.dialog .note,
+.dialog .tags,
+.dialog .link {
+  margin-inline: 1.2rem;
+}
+.dialog .title {
+  margin-top: 1rem;
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+}
+.dialog .tags {
+  padding-bottom: 1.3rem;
+}
+
+/* ── FOCUS FADE ──────────────────────────────────────────────────────────
+   A card belongs to the shot behind it, so it is only present while that
+   set-piece is the one you are looking at: it fades up as the project takes
+   focus and fades back out as the travel moves on. */
+
+.card {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition:
+    opacity var(--s9-dur-slow) var(--s9-ease-out),
+    transform var(--s9-dur-slow) var(--s9-ease-out);
+}
+
+.cardIn {
+  opacity: 1;
+  transform: none;
+}
+
+/* Reduced motion never runs the observer that sets the focus state, so the
+   fade has to be disabled rather than merely shortened — otherwise every card
+   would sit at zero opacity and the roster would be invisible. */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── GLASS NORMALISATION ───────────────────────────────────────────────────
+   The twelve variants were drawn before the card became glass, so several
+   paint their own opaque ground (`rgb(0 0 0 / 0.8)` and friends) and a couple
+   set square or near-square corners. Those declarations come later in the
+   file than .card and would win, which would leave a black slab sitting on
+   top of the frosted one.
+
+   This re-asserts the shell — ground, blur, radius — for every variant, and
+   leaves everything that actually distinguishes them alone: the dashed frame
+   on the schematic, the left rule on the corridor, the dialog's title bar,
+   the crop marks, the specimen strip. The variant keeps its structure and
+   gives up only its background.
+
+   Written as one block rather than edited into twelve rules so that the
+   relationship is stated in one place: the shell belongs to .card, the
+   arrangement belongs to the variant. */
+.card.recipe,
+.card.waveform,
+.card.storybook,
+.card.calibration,
+.card.scoreboard,
+.card.corridor,
+.card.schematic,
+.card.swatch,
+.card.panel,
+.card.terminal,
+.card.wireframe,
+.card.dialog {
+  background: rgb(8 12 20 / 0.28);
+  border-radius: 18px;
+}
+
+/* The dialog clips its children to draw a title bar, so it needs the radius
+   on the clip as well or the corners square themselves off again. */
+.card.dialog {
+  overflow: hidden;
+}
+
+/* Borders that were solid slabs become hairlines in the project's accent, so
+   the variant still reads as itself against the glass instead of stamping a
+   heavy rectangle over the shot. */
+.card.scoreboard,
+.card.wireframe,
+.card.panel {
+  border: 1px solid color-mix(in oklab, var(--card-accent) 55%, transparent);
+}
+
+/* Backdrop blur is expensive and, on a page already decoding video, not worth
+   it where it cannot be seen. Anything that cannot support it falls back to a
+   slightly denser ground, which is the same design one step less subtle. */
+@supports not (backdrop-filter: blur(1px)) {
+  .card,
+  .card.recipe,
+  .card.waveform,
+  .card.storybook,
+  .card.calibration,
+  .card.scoreboard,
+  .card.corridor,
+  .card.schematic,
+  .card.swatch,
+  .card.panel,
+  .card.terminal,
+  .card.wireframe,
+  .card.dialog {
+    background: rgb(8 12 20 / 0.72);
+  }
+}
+
+/* ── THE PROJECT'S VOICE WINS ──────────────────────────────────────────────
+   Some variants set their own family — the scoreboard's title was mono to
+   read as a scoreboard, the terminal's note was mono to read as a terminal.
+   Those rules have the same specificity as the card's own and sit later in
+   the file, so they were quietly beating the per-project pair: Voxel Arcade
+   Basketball and Automation Systems both rendered in Martian Mono instead of
+   Bungee and JetBrains Mono.
+
+   Restating it last is the fix, and it is the correct precedence anyway: the
+   face belongs to the project, the arrangement belongs to the variant. Where
+   a project's own face is a mono — Automation Systems is a terminal, so it
+   is — that is now a decision in the roster rather than an accident here. */
+.card .title {
+  font-family: var(--card-display, var(--s9-font-display));
+}
+
+.card .note {
+  font-family: var(--card-text, var(--s9-font-text));
+}
+
+/* ── WIDER, SHORTER ────────────────────────────────────────────────────────
+   The card sits over the shot, so its height is the thing that costs. Every
+   variant that was capped between 34rem and 46rem is opened up: the same
+   words in a wider measure wrap to fewer lines, and fewer lines is less of
+   the frame covered. The note keeps its own 72ch cap, so the line length
+   stays readable no matter how wide the card gets.
+
+   The dialog keeps its narrow cap. It is a small Windows utility window and
+   the whole point of that card is that it looks like one. */
+.card.recipe,
+.card.waveform,
+.card.storybook,
+.card.calibration,
+.card.scoreboard,
+.card.corridor,
+.card.schematic,
+.card.swatch,
+.card.panel,
+.card.terminal,
+.card.wireframe {
+  max-width: min(62rem, 100%);
+}
+
+/* ── THE BLUR IS ONLY FOR THE CARD YOU ARE LOOKING AT ──────────────────────
+   All twelve cards exist in the document at once. A backdrop-filter is one of
+   the most expensive things a browser can be asked for — it samples and blurs
+   everything painted behind the element — and behind these it is a playing
+   1080p video. Twelve of them standing by is eleven too many.
+
+   .cardIn is already toggled by the IntersectionObserver that drives
+   playback, so the blur now costs exactly one card: the one locked in front
+   of you. On the way out it drops back to the flat translucent ground, which
+   is the same design without the sampling.
+
+   contain: paint tells the compositor the blur cannot affect anything outside
+   the card's own box, so it does not have to consider the rest of the pinned
+   frame when deciding what to redraw. */
+.card.cardIn {
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  contain: paint;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Reduced motion renders every plate at once rather than one pinned shot,
+     so every card is "in" simultaneously. Blurring twelve at once is exactly
+     what the rule above exists to avoid. */
+  .card.cardIn {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgb(8 12 20 / 0.72);
+  }
+}
+
+
+/* ── The other half of the dissolve ──────────────────────────────────────
+   The desktop fades down to black on the way out (FadeToBlack); this is the
+   studio coming back up out of the same black. Two halves of one cross-fade
+   rather than two separate effects, which is why both are driven by
+   --s9-dur-tunnel and why the colour on both sides is plain #000 — the reel's
+   own ground — so there is no moment where the visitor can see a join.
+
+   It plays on every arrival, not only the one from the desktop. Landing on
+   the reel from a cold URL and having the lights come up is the same gesture,
+   and it costs nothing to be consistent about it.
+
+   Pure CSS, no JavaScript and no state: an element that starts opaque and
+   animates to nothing, with forwards fill so it stays gone. There is no code
+   path where this can get stuck holding a black screen over the page.
+
+   pointer-events: none throughout, so it never eats the first click. */
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #000;
+  pointer-events: none;
+  opacity: 0;
+  animation: liftCurtain var(--s9-dur-tunnel, 420ms) var(--s9-ease-out) backwards;
+}
+
+@keyframes liftCurtain {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Reduced motion gets the reel immediately, with no curtain at all — the
+   arrival is a cut, which is a finished state rather than a paused one. */
+@media (prefers-reduced-motion: reduce) {
+  .curtain {
+    display: none;
+    animation: none;
+  }
+}
+
+
+/* The arrow's name. Visually gone, still announced — an unlabelled arrow is a
+   guess for anyone who cannot see which corner it points out of. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

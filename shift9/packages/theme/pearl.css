@@ -1,0 +1,310 @@
+/* =====================================================================
+   @shift9/theme — THE PEARL BUTTON
+   Import after tokens:  @import "@shift9/theme/pearl.css";
+
+   One button, two colours, every surface. A glossy pill lit from above:
+   a bright inset along the top edge, a dark line under the bottom edge, a
+   soft inner glow rising from the base, and a wide shadow cast beneath it.
+   Those four together are what make it read as a solid object with a
+   surface rather than a filled rectangle with rounded corners.
+
+   Two roles, and the role decides the colour:
+
+     .s9-pearl        the thing you came to do — pearl grey, black label
+     .s9-pearl-dark   the way back — black, white label
+
+   The green is the invitation's, and only the invitation's. It is the
+   answer to "what am I supposed to press here", so it appears once on the
+   one page that has such an answer; everywhere else both buttons are dark,
+   because two greens on a page is no answer at all and a green on a page
+   with nothing to do is a promise the page cannot keep.
+
+   These are global class names rather than a CSS module on purpose: the
+   buttons appear on pages that share no stylesheet, and the alternative is
+   the same eighty lines copied into each one, drifting apart the first
+   time somebody adjusts a shadow.
+
+   Everything is a token or a mix of tokens. No hex values live here.
+   ===================================================================== */
+
+.s9-pearl,
+.s9-pearl-dark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6em;
+  /* The gloss layers below are pseudo-elements, and this is what keeps them
+     inside the pill. An element's own box-shadow is not clipped by its
+     overflow, so the cast shadow still reaches outside. */
+  overflow: hidden;
+  isolation: isolate;
+  border: 0;
+  border-radius: 999px;
+  padding: 1.15em 2.2em;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform var(--s9-dur-base) var(--s9-ease-premium),
+    box-shadow var(--s9-dur-base) var(--s9-ease-out),
+    background-color var(--s9-dur-base) var(--s9-ease-out);
+}
+
+/* The label rides above both gloss layers. Without this it sits under the
+   top sheen and goes milky. */
+.s9-pearl > *,
+.s9-pearl-dark > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Layer 1: the bloom ───────────────────────────────────────────────
+   A wide soft ellipse hanging over the top of the pill. It is what gives
+   the surface its curve — the light falls off toward the bottom edge
+   instead of ending at one. */
+.s9-pearl::before,
+.s9-pearl-dark::before {
+  content: "";
+  position: absolute;
+  left: -15%;
+  right: -15%;
+  top: -100%;
+  bottom: 25%;
+  z-index: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: transform var(--s9-dur-slow) var(--s9-ease-premium);
+}
+
+/* ── Layer 2: the top sheen ───────────────────────────────────────────
+   A hard-edged gloss panel across the upper half, the highlight you would
+   see on something moulded rather than printed. */
+.s9-pearl::after,
+.s9-pearl-dark::after {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 12%;
+  bottom: 40%;
+  z-index: 1;
+  border-radius: 22px 22px 0 0;
+  pointer-events: none;
+  transition:
+    transform var(--s9-dur-slow) var(--s9-ease-premium),
+    opacity var(--s9-dur-slow) var(--s9-ease-out);
+}
+
+/* ── The primary one ─────────────────────────────────────────────────────
+   Was verdant. It is grey now and the green lives on the email address
+   instead — see --s9-pearl in tokens.css for why.
+
+   Every mix below moved with it. The bloom and the inner lower glow were
+   built from --s9-verdant and --s9-verdant-lift, so changing only the
+   background would have left a green halo under a grey button, which is
+   worse than either colour on its own. */
+
+.s9-pearl {
+  background-color: var(--s9-pearl);
+  color: var(--s9-obsidian);
+  box-shadow:
+    inset 0 0.3rem 0.9rem color-mix(in oklab, var(--s9-chalk) 42%, transparent),
+    inset 0 -0.1rem 0.3rem color-mix(in oklab, var(--s9-obsidian) 42%, transparent),
+    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-pearl-lift) 55%, transparent),
+    0 1.4rem 2.4rem color-mix(in oklab, var(--s9-pearl) 22%, transparent),
+    0 0.6rem 1rem -0.4rem color-mix(in oklab, var(--s9-obsidian) 70%, transparent);
+}
+
+.s9-pearl::before {
+  background-color: color-mix(in oklab, var(--s9-chalk) 22%, transparent);
+}
+
+.s9-pearl::after {
+  box-shadow: inset 0 10px 8px -10px
+    color-mix(in oklab, var(--s9-chalk) 65%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--s9-chalk) 30%, transparent) 0%,
+    transparent 50%,
+    transparent 100%
+  );
+}
+
+.s9-pearl:hover,
+.s9-pearl:focus-visible {
+  background-color: var(--s9-pearl-lift);
+  box-shadow:
+    inset 0 0.3rem 0.5rem color-mix(in oklab, var(--s9-chalk) 52%, transparent),
+    inset 0 -0.1rem 0.3rem color-mix(in oklab, var(--s9-obsidian) 46%, transparent),
+    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-pearl-lift) 75%, transparent),
+    0 1.8rem 3rem color-mix(in oklab, var(--s9-pearl) 40%, transparent),
+    0 0.6rem 1rem -0.4rem color-mix(in oklab, var(--s9-obsidian) 70%, transparent);
+}
+
+/* ── The dark one ────────────────────────────────────────────────────── */
+
+.s9-pearl-dark {
+  background-color: var(--s9-obsidian);
+  color: var(--s9-chalk);
+  box-shadow:
+    inset 0 0.3rem 0.9rem color-mix(in oklab, var(--s9-chalk) 22%, transparent),
+    inset 0 -0.1rem 0.3rem color-mix(in oklab, var(--s9-obsidian) 80%, transparent),
+    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-chalk) 14%, transparent),
+    0 1.4rem 2.4rem color-mix(in oklab, var(--s9-obsidian) 55%, transparent),
+    0 0.6rem 1rem -0.4rem color-mix(in oklab, var(--s9-obsidian) 80%, transparent);
+}
+
+.s9-pearl-dark::before {
+  background-color: color-mix(in oklab, var(--s9-chalk) 9%, transparent);
+}
+
+.s9-pearl-dark::after {
+  box-shadow: inset 0 10px 8px -10px
+    color-mix(in oklab, var(--s9-chalk) 34%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--s9-chalk) 14%, transparent) 0%,
+    transparent 50%,
+    transparent 100%
+  );
+}
+
+.s9-pearl-dark:hover,
+.s9-pearl-dark:focus-visible {
+  box-shadow:
+    inset 0 0.3rem 0.6rem color-mix(in oklab, var(--s9-chalk) 34%, transparent),
+    inset 0 -0.1rem 0.3rem color-mix(in oklab, var(--s9-obsidian) 80%, transparent),
+    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-chalk) 22%, transparent),
+    0 1.8rem 3rem color-mix(in oklab, var(--s9-obsidian) 65%, transparent),
+    0 0.6rem 1rem -0.4rem color-mix(in oklab, var(--s9-obsidian) 80%, transparent);
+}
+
+/* ── Approach and press, shared ──────────────────────────────────────── */
+
+.s9-pearl:hover,
+.s9-pearl:focus-visible,
+.s9-pearl-dark:hover,
+.s9-pearl-dark:focus-visible {
+  transform: translateY(-2px);
+}
+
+/* The light moves with the object rather than staying painted on it: the
+   bloom rises, the sheen drops and thins. */
+.s9-pearl:hover::before,
+.s9-pearl:focus-visible::before,
+.s9-pearl-dark:hover::before,
+.s9-pearl-dark:focus-visible::before {
+  transform: translateY(-5%);
+}
+
+.s9-pearl:hover::after,
+.s9-pearl:focus-visible::after,
+.s9-pearl-dark:hover::after,
+.s9-pearl-dark:focus-visible::after {
+  opacity: 0.4;
+  transform: translateY(5%);
+}
+
+/* Pressed, it goes below its resting line and the cast shadow collapses —
+   the object is closer to the surface, so there is less shadow to throw. */
+.s9-pearl:active,
+.s9-pearl-dark:active {
+  transform: translateY(2px);
+  transition-duration: var(--s9-dur-fast);
+}
+
+.s9-pearl:active {
+  box-shadow:
+    inset 0 0.3rem 0.5rem color-mix(in oklab, var(--s9-chalk) 30%, transparent),
+    inset 0 -0.1rem 0.3rem color-mix(in oklab, var(--s9-obsidian) 55%, transparent),
+    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-pearl-lift) 45%, transparent),
+    0 0.5rem 1rem color-mix(in oklab, var(--s9-pearl) 26%, transparent);
+}
+
+.s9-pearl-dark:active {
+  box-shadow:
+    inset 0 0.3rem 0.5rem color-mix(in oklab, var(--s9-chalk) 18%, transparent),
+    inset 0 -0.1rem 0.3rem color-mix(in oklab, var(--s9-obsidian) 80%, transparent),
+    inset 0 -0.4rem 0.9rem color-mix(in oklab, var(--s9-chalk) 12%, transparent),
+    0 0.5rem 1rem color-mix(in oklab, var(--s9-obsidian) 60%, transparent);
+}
+
+/* An arrow inside either button travels on approach. Optional — a button
+   without one is unaffected. */
+.s9-pearlArrow {
+  display: inline-block;
+  transition: transform var(--s9-dur-base) var(--s9-ease-premium);
+}
+
+.s9-pearl:hover .s9-pearlArrow,
+.s9-pearl:focus-visible .s9-pearlArrow,
+.s9-pearl-dark:hover .s9-pearlArrow,
+.s9-pearl-dark:focus-visible .s9-pearlArrow {
+  transform: translateX(0.25em);
+}
+
+/* ── Focus ─────────────────────────────────────────────────────────────
+   Still verdant, deliberately. The button's own colour moved to grey, but
+   focus is the site-wide affordance — the same ring appears on every control
+   on every surface — and it is the one place the green is doing a job that a
+   neutral could not: saying "this is what the keyboard is on" loudly enough
+   to find at a glance. */
+
+.s9-pearl:focus-visible,
+.s9-pearl-dark:focus-visible {
+  outline: 2px solid var(--s9-verdant);
+  outline-offset: 3px;
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────
+   Nothing travels. Every colour and every shadow change stays, so the
+   button still answers when you approach it and still answers when you
+   press it — it just answers without moving. */
+
+@media (prefers-reduced-motion: reduce) {
+  .s9-pearl,
+  .s9-pearl-dark,
+  .s9-pearl::before,
+  .s9-pearl::after,
+  .s9-pearl-dark::before,
+  .s9-pearl-dark::after,
+  .s9-pearlArrow {
+    transition-property: box-shadow, background-color, opacity;
+  }
+
+  .s9-pearl:hover,
+  .s9-pearl:focus-visible,
+  .s9-pearl:active,
+  .s9-pearl-dark:hover,
+  .s9-pearl-dark:focus-visible,
+  .s9-pearl-dark:active,
+  .s9-pearl:hover::before,
+  .s9-pearl:focus-visible::before,
+  .s9-pearl-dark:hover::before,
+  .s9-pearl-dark:focus-visible::before,
+  .s9-pearl:hover::after,
+  .s9-pearl:focus-visible::after,
+  .s9-pearl-dark:hover::after,
+  .s9-pearl-dark:focus-visible::after,
+  .s9-pearl:hover .s9-pearlArrow,
+  .s9-pearl:focus-visible .s9-pearlArrow,
+  .s9-pearl-dark:hover .s9-pearlArrow,
+  .s9-pearl-dark:focus-visible .s9-pearlArrow {
+    transform: none;
+  }
+}
+
+/* ── Small screens ───────────────────────────────────────────────────── */
+
+@media (max-width: 34rem) {
+  .s9-pearl,
+  .s9-pearl-dark {
+    width: 100%;
+  }
+}

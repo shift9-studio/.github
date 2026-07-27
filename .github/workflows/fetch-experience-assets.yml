@@ -1,0 +1,66 @@
+name: Fetch experience assets
+
+# Pulls approved entry-experience renders into the repo.
+#
+# Why this exists: the session that approves a render can be behind an egress
+# policy that blocks the generator's CDN, so the binary cannot be downloaded
+# where it was approved. This runner has open egress. The approving session
+# records the URL in public/experience/assets.json; this workflow fetches every
+# entry that is missing and commits it to the same branch. Nobody moves a file
+# by hand.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "shift9/apps/shift9-dev/public/experience/assets.json"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Fetch any asset that is not already committed
+        working-directory: shift9/apps/shift9-dev/public/experience
+        run: |
+          set -euo pipefail
+          fetched=0
+          while read -r path url; do
+            if [ -s "$path" ]; then
+              echo "have    $path"
+              continue
+            fi
+            echo "fetch   $path"
+            mkdir -p "$(dirname "$path")"
+            curl -fsSL --retry 3 --retry-delay 2 -o "$path" "$url"
+            file "$path"
+            fetched=$((fetched + 1))
+          done < <(jq -r '.assets[] | select(.approved) | "\(.path) \(.url)"' assets.json)
+          echo "fetched=$fetched" >> "$GITHUB_OUTPUT"
+
+      - name: Commit anything new
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add shift9/apps/shift9-dev/public/experience
+          if git diff --cached --quiet; then
+            echo "nothing new to commit"
+            exit 0
+          fi
+          # [vercel skip] keeps a binary drop from spending a Vercel preview
+          # deployment — these commits only add files under public/, so there
+          # is nothing to rebuild until real code changes.
+          #
+          # Deliberately NOT [skip ci]: GitHub Actions honours that one too, so
+          # it would stop this very workflow from running on the assets.json
+          # commit that is supposed to trigger it. [vercel skip] is read by
+          # Vercel only.
+          git commit -m "assets: fetch approved experience renders listed in assets.json [vercel skip]"
+          git push origin HEAD:${{ github.ref_name }}

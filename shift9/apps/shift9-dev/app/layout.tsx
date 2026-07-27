@@ -1,36 +1,20 @@
 import type { Metadata } from "next";
-import { Anybody, Martian_Mono } from "next/font/google";
-import localFont from "next/font/local";
+import { display, mono, text } from "./fonts";
 import "./globals.css";
 import { SmoothScroll } from "./_components/SmoothScroll";
 
-/* Free variable stack (no licence needed): Anybody carries the condensed,
-   width-flexing display voice; Martian Mono is the terminal data face.
-   next/font injects each as a CSS variable consumed by @shift9/theme. */
-const display = Anybody({
-  subsets: ["latin"],
-  axes: ["wdth"],
-  variable: "--font-display-src",
-  display: "swap",
-});
+/* ────────────────────────────────────────────────────────────────────────
+   THREE ROLES, THREE FACES. The stack itself lives in ./fonts so the studio's
+   per-project map can reuse the same instances instead of loading the same
+   families a second time.
 
-const mono = Martian_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono-src",
-  display: "swap",
-});
-
-/* Fraunces (variable, wght 500–600, latin) — the "Enter the Studio" film-title
-   lockup face on the entry front door. Self-hosted through the site font
-   pipeline (was base64-inlined in the prototype); exposed as a CSS variable the
-   entry component consumes, so it makes no runtime network request. */
-const fraunces = localFont({
-  src: "./_fonts/Fraunces-var.woff2",
-  weight: "500 600",
-  style: "normal",
-  variable: "--font-fraunces",
-  display: "swap",
-});
+   DISPLAY - Bricolage Grotesque, variable on optical size and width, which is
+   what the Proximity Weight interaction in BLUEPRINT §1.2 animates against.
+   TEXT - Instrument Sans. This role did not exist: running prose was falling
+   through to the monospace, and a dark studio site typeset entirely in mono is
+   the most templated look on the web.
+   DATA - Martian Mono, doing only its job: labels, status, the // asides.
+   ──────────────────────────────────────────────────────────────────────── */
 
 export const metadata: Metadata = {
   title: "Shift-9 — Design + Engineering Studio",
@@ -53,8 +37,39 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${mono.variable} ${fraunces.variable}`}
+      className={`${display.variable} ${text.variable} ${mono.variable}`}
     >
+      <head>
+        {/* ── No flash of the front door on the way back ──────────────────
+            Coming back to / from the studio used to show a few frames of the
+            entrance plate before the desktop appeared, which made the return
+            read as a stutter rather than as arriving somewhere.
+
+            The cause is ordering, and it is why this has to be a blocking
+            script in <head> rather than anything in React. The entrance
+            initialises to the gate, so the gate is in the server-rendered
+            HTML — the browser paints it before hydration has even begun. By
+            the time an effect (or a layout effect) could set the state to the
+            desktop, the plate has already been on screen for several frames.
+            Nothing that runs after hydration can win a race that is over
+            before hydration starts.
+
+            So the flag is read before the first paint and stamped on <html>,
+            and CSS keyed off that attribute keeps the gate hidden from the
+            very first frame. Same shape as the classic theme-flash fix, for
+            the same reason.
+
+            sessionStorage, matching the entrance: a new tab is a new arrival
+            and still gets the film. Wrapped, because storage can be blocked —
+            in which case nothing is stamped and the gate behaves exactly as
+            it always did. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{if(sessionStorage.getItem("s9-intro-seen")==="1")document.documentElement.setAttribute("data-s9-seen","1")}catch(e){}',
+          }}
+        />
+      </head>
       <body>
         <SmoothScroll />
         {children}

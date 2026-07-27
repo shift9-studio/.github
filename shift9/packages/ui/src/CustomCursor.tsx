@@ -103,7 +103,7 @@ export function CustomCursor() {
       'a, button, [role="button"], input, textarea, select, label, summary, [data-cursor-target]';
     let interactive = false;
     let pressed = false;
-    let accent = "#22d3ee";
+    let accent = "#e8edf5";
 
     const applyRingScale = () => {
       // Dock to a measured 1.95× on targets; a gentle inward press at 0.84×.
@@ -146,7 +146,7 @@ export function CustomCursor() {
       const next = closest?.getAttribute("data-cursor") === "pulse";
       if (next !== isPulse.current) {
         isPulse.current = next;
-        accent = next ? "#8b5cf6" : "#22d3ee";
+        accent = next ? "#6f7b8f" : "#e8edf5";
         if (dotRef.current) dotRef.current.style.backgroundColor = accent;
         if (bloomRef.current)
           bloomRef.current.style.background = next ? PULSE_BLOOM : SIGNAL_BLOOM;

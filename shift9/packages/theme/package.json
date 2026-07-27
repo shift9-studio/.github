@@ -5,7 +5,12 @@
   "description": "Shift-9 design tokens — the single source of truth (CSS variables + Tailwind v4 @theme).",
   "exports": {
     "./tokens.css": "./tokens.css",
-    "./theme.css": "./theme.css"
+    "./theme.css": "./theme.css",
+    "./pearl.css": "./pearl.css"
   },
-  "files": ["tokens.css", "theme.css"]
+  "files": [
+    "tokens.css",
+    "theme.css",
+    "pearl.css"
+  ]
 }

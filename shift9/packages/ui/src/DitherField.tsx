@@ -85,8 +85,8 @@ export interface DitherPalette {
 /** The default cool palette — keeps `shift9.dev` cyan/violet with no props. */
 const DEFAULT_PALETTE: DitherPalette = {
   base: "#0f172a",
-  signal: "#22d3ee",
-  pulse: "#8b5cf6",
+  signal: "#e8edf5",
+  pulse: "#6f7b8f",
 };
 
 function hexToRgb(hex: string): [number, number, number] {
