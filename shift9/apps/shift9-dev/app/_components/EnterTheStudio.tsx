@@ -63,6 +63,8 @@ const ENTRY_PLATE = "/experience/opening/00-entry-seam.jpg";
 /* Stated on the button so pressing it is an informed choice rather than a
    trapdoor. Two beats, ten seconds each. */
 const INTRO_RUNTIME = "20 sec";
+/* The same number, small enough to sit on a 26px icon. */
+const INTRO_RUNTIME_SHORT = "20s";
 
 /* Held as a constant so the button's accessible name and the glyphs drawn on
    screen can never drift apart. */
@@ -649,6 +651,11 @@ export function EnterTheStudio() {
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={SHIFT9_LOGO} alt="" />
+                  {/* The runtime, back on screen. It was printed in full
+                      beside the label and moving the icon into that slot took
+                      it away, which is the one thing on this button nobody
+                      should have to guess at. */}
+                  <span className={s.enterCount}>{INTRO_RUNTIME_SHORT}</span>
                 </span>
               </button>
 
@@ -738,12 +745,6 @@ export function EnterTheStudio() {
               {dark ? "Light" : "Dark"}
             </button>
             <a className={s.cta} href={STUDIO_HREF} onClick={enterStudio}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={SHIFT9_LOGO}
-                style={{ width: 16, height: 16, borderRadius: 4 }}
-                alt=""
-              />{" "}
               Enter shift9.dev &#8594;
             </a>
             <span className={s.winbtns}>&#8212; &#9634; &#10005;</span>

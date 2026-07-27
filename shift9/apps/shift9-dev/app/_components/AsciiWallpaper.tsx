@@ -35,8 +35,12 @@ const TAU = Math.PI * 2;
 const SWEEP_PERIOD_MS = 9000; // one full pass of the light across the field
 const BREATH_PERIOD_MS = 5200; // slow idle shimmer so it is alive at rest
 const BAND_WIDTH = 0.16; // width of the travelling pulse, in field widths
-const FRAME_MS_FINE = 1000 / 30;
-const FRAME_MS_COARSE = 1000 / 20;
+/* The field only repaints cells whose glyph or tone actually changed, so the
+   steady-state cost is the moving band and not the grid — which means the
+   30fps cap was a ceiling on smoothness rather than a saving. Raised to 60,
+   with touch devices at 30 rather than 20. */
+const FRAME_MS_FINE = 1000 / 60;
+const FRAME_MS_COARSE = 1000 / 30;
 
 type Cell = { char: number; tone: number };
 
@@ -89,6 +93,8 @@ export function AsciiWallpaper({
        rendered once. The loop then only ever does drawImage. */
     let atlas: HTMLCanvasElement | null = null;
     let cellW = 0;
+    let offX = 0;
+    let offY = 0;
     let cellH = 0;
     let dpr = 1;
     let prev: Cell[] = [];
@@ -121,8 +127,18 @@ export function AsciiWallpaper({
       const rect = canvas.getBoundingClientRect();
       if (rect.width < 1 || rect.height < 1) return;
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cellW = rect.width / cols;
-      cellH = rect.height / rows;
+      /* The grid used to be stretched to the container on both axes
+         independently. The artwork is 170x57 — nearly 3:1 — and the desktop
+         it sits behind is closer to 1.6:1, so every glyph was being pulled to
+         roughly twice its height and the wordmark read as a crop of itself
+         rather than as the banner. One cell size for both axes fixes the
+         proportions; the field is then centred in whatever space is left, so
+         the whole banner is on screen with its own aspect intact. */
+      const cell = Math.min(rect.width / cols, rect.height / rows);
+      cellW = cell;
+      cellH = cell;
+      offX = (rect.width - cell * cols) / 2;
+      offY = (rect.height - cell * rows) / 2;
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
       atlas = buildAtlas();
@@ -174,8 +190,8 @@ export function AsciiWallpaper({
           if (!full && was && was.char === char && was.tone === tone) continue;
           prev[i] = { char, tone };
 
-          const dx = Math.round(x * cellW * dpr);
-          const dy = Math.round(y * cellH * dpr);
+          const dx = Math.round((offX + x * cellW) * dpr);
+          const dy = Math.round((offY + y * cellH) * dpr);
           ctx.clearRect(dx, dy, aw, ah);
           if (char === 0) continue; // space — leave it cleared
           ctx.drawImage(atlas, char * aw, tone * ah, aw, ah, dx, dy, aw, ah);

@@ -339,6 +339,26 @@
   transition: opacity var(--s9-dur-base) var(--s9-ease-out);
 }
 
+/* The runtime, at the smallest size it can still be read. It rides the
+   icon's bottom-right corner rather than sitting beside it, so the button
+   keeps the two-cell rhythm it had when the number was a word. */
+.enterCount {
+  position: absolute;
+  right: -9px;
+  bottom: -7px;
+  padding: 0 3px;
+  border-radius: 4px;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: var(--s9-void-2, #0b1120);
+  background: var(--s9-paper, #f8fafc);
+  /* Above the ring, so the spinner sweeps behind it rather than over it. */
+  z-index: 2;
+}
+
 .enterIconBusy::before {
   opacity: 1;
   animation: iconSpin 900ms linear infinite;
@@ -372,10 +392,50 @@
 @media (prefers-reduced-motion: reduce) {
   .enterIcon img,
   .enterIconBusy img,
-  .enterIconBusy::before {
+  /* The runtime, at the smallest size it can still be read. It rides the
+   icon's bottom-right corner rather than sitting beside it, so the button
+   keeps the two-cell rhythm it had when the number was a word. */
+.enterCount {
+  position: absolute;
+  right: -9px;
+  bottom: -7px;
+  padding: 0 3px;
+  border-radius: 4px;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: var(--s9-void-2, #0b1120);
+  background: var(--s9-paper, #f8fafc);
+  /* Above the ring, so the spinner sweeps behind it rather than over it. */
+  z-index: 2;
+}
+
+.enterIconBusy::before {
     animation: none;
   }
-  .enterIconBusy::before {
+  /* The runtime, at the smallest size it can still be read. It rides the
+   icon's bottom-right corner rather than sitting beside it, so the button
+   keeps the two-cell rhythm it had when the number was a word. */
+.enterCount {
+  position: absolute;
+  right: -9px;
+  bottom: -7px;
+  padding: 0 3px;
+  border-radius: 4px;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: var(--s9-void-2, #0b1120);
+  background: var(--s9-paper, #f8fafc);
+  /* Above the ring, so the spinner sweeps behind it rather than over it. */
+  z-index: 2;
+}
+
+.enterIconBusy::before {
     opacity: 1;
   }
 }
@@ -401,7 +461,10 @@
   position: relative;
   display: inline-grid;
   grid-template-columns: auto auto;
-  align-items: baseline;
+  /* Baseline alignment was right when both cells were text. The second cell
+     is now an icon, which has no baseline of its own, so it was being hung
+     by its bottom edge off the label's. Centre them on each other. */
+  align-items: center;
   column-gap: 1.25rem;
   padding: 0 0 0.9rem;
   background: none;
@@ -1564,6 +1627,7 @@
 .dicon:focus-visible::before {
   opacity: 1;
 }
+
 .dicon:focus-visible {
   box-shadow:
     0 0 0 2px var(--w-bg),
@@ -1781,14 +1845,30 @@
 .dicon.about .fname {
   font-weight: 650;
 }
+/* About takes no panel and no border on approach. Every other icon gets one
+   because a folder needs to say it is under the cursor; this tile says it by
+   catching light, and drawing a box around something already doing that is
+   two answers to one question. The violet went with it — it was the old
+   tile's colour, and on a grey face it was the only violet left on screen. */
 .dicon.about:hover,
 .dicon.about:focus-visible {
-  border-color: rgba(139, 92, 246, 0.55);
-  background: rgba(139, 92, 246, 0.1);
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+.dicon.about:hover::before,
+.dicon.about:focus-visible::before {
+  opacity: 0;
+}
+/* Focus still has to be unmistakable — that ring is not decoration. */
+.dicon.about:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue);
 }
 .dicon.about:hover .fname,
 .dicon.about:focus-visible .fname {
-  color: var(--pulse);
+  color: var(--blue);
 }
 @media (prefers-reduced-motion: no-preference) {
   .dicon.about:hover .aboutico,
