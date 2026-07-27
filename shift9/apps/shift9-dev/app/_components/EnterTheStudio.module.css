@@ -1221,6 +1221,11 @@
   color: var(--w-dim);
   text-align: right;
   line-height: 1.3;
+  /* Tabular figures so the minute rolling over cannot reflow the taskbar,
+     and a reserved width so the first paint and the mounted value occupy the
+     same box even when the hour goes from one digit to two. */
+  font-variant-numeric: tabular-nums;
+  min-width: 8ch;
 }
 
 /* ---------- FOLDER WINDOW ---------- */

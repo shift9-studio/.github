@@ -64,8 +64,15 @@ export default async function ProjectPage({
           <div className="mx-auto max-w-[84rem]">
             <div className="mb-8 flex items-center justify-between gap-4">
               <MonoLabel decode>{`// project file — ${num}`}</MonoLabel>
+              {/* /studio, not /#work. There has never been an element with
+                  id="work" on the root, so the old anchor resolved to nothing
+                  — and now that / is the entrance, following it dropped a
+                  deep-linked visitor at the front door. /studio is the work:
+                  all twelve projects as one continuous take. No fragment,
+                  because the dolly maps scroll position to frame and an
+                  anchor jump would land mid-take with no context. */}
               <a
-                href="/#work"
+                href="/studio"
                 className="font-mono text-mono uppercase tracking-[0.18em] text-signal opacity-60 transition-premium hover:opacity-100 hover:[filter:drop-shadow(0_0_6px_#22d3ee)]"
               >
                 ← all work
@@ -225,8 +232,8 @@ export default async function ProjectPage({
                   {detail.external.label}
                 </MagneticButton>
               )}
-              <MagneticButton href="/#work" variant="ghost">
-                Back to the work wall
+              <MagneticButton href="/studio" variant="ghost">
+                Back to the studio
               </MagneticButton>
             </div>
           </div>

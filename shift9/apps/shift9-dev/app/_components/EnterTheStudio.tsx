@@ -70,6 +70,57 @@ const INTRO_RUNTIME_SHORT = "20s";
    screen can never drift apart. */
 const ENTER_LABEL = "Enter the studio";
 
+/* ── The taskbar clock ───────────────────────────────────────────────────
+   It used to read "9:41 AM / 7/14/2026", hardcoded. 9:41 is the deliberate
+   keynote convention and nobody reads a screenshot clock — but a *date* that
+   sits still is different. On a portfolio it stops being set dressing and
+   starts being evidence the site was abandoned, and it gets worse every day
+   it ships.
+
+   Live, and hydration-safe. The value is seeded in the state initialiser, so
+   the server renders a real time rather than a blank that pops in — but
+   server and client necessarily disagree by the round trip, which is exactly
+   what `suppressHydrationWarning` is for. The effect then re-reads the
+   visitor's own clock on mount and ticks it on the minute boundary rather
+   than every 60s from an arbitrary phase, so the display never lags the real
+   minute by up to a minute. `.clock` reserves its width in tabular figures,
+   so none of this can shift the taskbar.
+
+   `aria-hidden`: it is chrome on a picture of an operating system, not
+   information the page is offering. */
+function Clock({ className }: { className?: string }) {
+  const read = () => {
+    const d = new Date();
+    return {
+      time: d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+      date: d.toLocaleDateString(),
+    };
+  };
+  const [now, setNow] = useState(read);
+
+  useEffect(() => {
+    setNow(read());
+    let timer: ReturnType<typeof setTimeout>;
+    const schedule = () => {
+      const ms = 60_000 - (Date.now() % 60_000);
+      timer = setTimeout(() => {
+        setNow(read());
+        schedule();
+      }, ms);
+    };
+    schedule();
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className={className} aria-hidden suppressHydrationWarning>
+      {now.time}
+      <br />
+      {now.date}
+    </div>
+  );
+}
+
 const OPENING: readonly string[] = [
   "/experience/opening/01-03-approach-entry-hall-v4.mp4",
   "/experience/opening/04-desk-mouse-screen-v5.mp4",
@@ -887,11 +938,7 @@ export function EnterTheStudio() {
           </a>
           <div className={s.tb}>&#127760;</div>
           <div className={s.tb}>&#9993;</div>
-          <div className={s.clock}>
-            9:41 AM
-            <br />
-            7/14/2026
-          </div>
+          <Clock className={s.clock} />
         </div>
       </div>
 
