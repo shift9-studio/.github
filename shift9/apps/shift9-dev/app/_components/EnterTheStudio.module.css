@@ -278,6 +278,108 @@
   text-wrap: balance;
 }
 
+/* ── The icon, where the runtime used to be printed ───────────────────────
+   It sits in the button because it has a job there. At rest it breathes —
+   the tile morphs slowly between a squircle and a circle — which says "this
+   is alive, press it" without competing with the seam behind it.
+
+   Pressed, it becomes the loading state. The opening film is 24MB and the
+   gate used to vanish the instant it was clicked, leaving whoever pressed it
+   on a black screen with nothing to look at while it downloaded. Now the
+   door stays up, this spins, and it only steps aside once frames are
+   actually arriving.
+
+   The ring is a conic gradient rotated by transform, so the sweep is one
+   composited layer rather than a repaint per frame. */
+.enterIcon {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+
+.enterIcon img {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  animation: iconBreathe 4.4s ease-in-out infinite;
+}
+
+@keyframes iconBreathe {
+  0%,
+  100% {
+    border-radius: 7px;
+    transform: scale(1);
+  }
+  50% {
+    border-radius: 11px;
+    transform: scale(1.06);
+  }
+}
+
+/* The ring is absent until the film is loading, so the resting state stays a
+   still object and only the wait gets a spinner. */
+.enterIcon::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  opacity: 0;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    color-mix(in oklab, var(--s9-signal) 85%, transparent) 90deg,
+    var(--s9-paper, #f8fafc) 150deg,
+    transparent 220deg
+  );
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 0);
+  transition: opacity var(--s9-dur-base) var(--s9-ease-out);
+}
+
+.enterIconBusy::before {
+  opacity: 1;
+  animation: iconSpin 900ms linear infinite;
+}
+
+.enterIconBusy img {
+  animation: iconPulse 900ms ease-in-out infinite;
+}
+
+@keyframes iconSpin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes iconPulse {
+  0%,
+  100% {
+    border-radius: 7px;
+    transform: scale(0.94);
+  }
+  50% {
+    border-radius: 11px;
+    transform: scale(1.02);
+  }
+}
+
+/* Reduced motion: no breathing, no spin. The busy state still reads, because
+   the ring appears and stays — presence is the signal; movement was only ever
+   the flourish on top of it. */
+@media (prefers-reduced-motion: reduce) {
+  .enterIcon img,
+  .enterIconBusy img,
+  .enterIconBusy::before {
+    animation: none;
+  }
+  .enterIconBusy::before {
+    opacity: 1;
+  }
+}
+
 .gateActions {
   display: flex;
   flex-wrap: wrap;
@@ -687,11 +789,6 @@
   margin-left: 1px;
   transform: translateY(1px);
 }
-.brand img {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-}
 .navlinks {
   margin-left: auto;
   display: flex;
@@ -836,6 +933,9 @@
   height: 76px;
   margin: 0 auto 10px;
   position: relative;
+  /* The lid hinges on rotateX, and without a perspective that is not a
+     hinge — it is the lid getting shorter. */
+  perspective: 320px;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
   transition: width 0.3s ease, height 0.3s ease, background 0.3s ease, border-radius 0.3s ease;
 }
@@ -887,6 +987,8 @@
   transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
 }
 .appico img {
+  position: relative;
+  z-index: 2;
   width: 100%;
   height: 100%;
   display: block;
@@ -1645,7 +1747,11 @@
   position: relative;
   display: grid;
   place-items: center;
-  background: linear-gradient(155deg, var(--pulse) 0%, var(--pulse-deep) 62%, #3f2a9e 100%);
+  /* Grey, not violet. It is the one tile on the desktop that is not a
+     product, and giving it an accent made it compete with the door out.
+     A machined graphite face, and the colour arrives only on approach —
+     see the holographic sheen below. */
+  background: linear-gradient(155deg, #7c848f 0%, #4a5158 58%, #2f353c 100%);
   box-shadow:
     0 6px 18px rgb(var(--w-shadow) / 0.34),
     inset 0 1px 0 rgba(255, 255, 255, 0.34);
@@ -1661,6 +1767,8 @@
   pointer-events: none;
 }
 .aboutico svg {
+  position: relative;
+  z-index: 2;
   width: 38px;
   height: 38px;
   fill: none;
@@ -1689,5 +1797,205 @@
     box-shadow:
       0 14px 30px rgb(var(--w-shadow) / 0.42),
       inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* ── HOLOGRAPHIC ──────────────────────────────────────────────────────────
+   Two layers doing what real foil does, and neither of them is a rainbow
+   gradient sitting there being a rainbow gradient.
+
+   The first is the colour: a conic sweep through the spectrum, blended with
+   `color-dodge` so it can only lift what is already under it. On a grey face
+   that reads as light splitting; on a black one it reads as almost nothing,
+   which is correct — foil needs something to bounce off.
+
+   The second is the specular: one hard band of white that travels across the
+   tile on `transform` alone. That band is what sells it as a surface rather
+   than a tint, because it moves independently of the colour underneath.
+
+   Both are off at rest and cost nothing until the pointer arrives. */
+.holo {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.holo::before,
+.holo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--s9-dur-base) var(--s9-ease-out);
+}
+
+/* The spectrum. Above the tile's own artwork, not behind it — foil sits on
+   the surface of a thing, and a layer under an opaque icon is a layer you
+   never see. */
+.holo::before {
+  z-index: 3;
+  background: conic-gradient(
+    from 210deg,
+    #ff2d78 0deg,
+    #ffd166 60deg,
+    #3ef07f 120deg,
+    #22d3ee 180deg,
+    #7c5cff 240deg,
+    #ff2d78 360deg
+  );
+  mix-blend-mode: color-dodge;
+  filter: saturate(1.6);
+}
+
+/* The specular band, above even that. */
+.holo::after {
+  z-index: 4;
+  background: linear-gradient(
+    108deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.72) 50%,
+    transparent 62%
+  );
+  transform: translateX(-120%);
+}
+
+.holo:hover::before,
+.holo:focus-visible::before {
+  opacity: 0.55;
+  animation: holoTurn 3.4s linear infinite;
+}
+
+.holo:hover::after,
+.holo:focus-visible::after {
+  opacity: 1;
+  transform: translateX(120%);
+  transition:
+    opacity var(--s9-dur-fast) var(--s9-ease-out),
+    transform var(--s9-dur-boot) var(--s9-ease-inout);
+}
+
+@keyframes holoTurn {
+  to {
+    transform: rotate(1turn) scale(1.6);
+  }
+}
+
+/* On a near-black face, `color-dodge` has nothing to lift and the spectrum
+   simply does not appear — which is physically right and visually useless.
+   Dark tiles get `screen` instead, which adds light rather than amplifying
+   it, plus a little more of it since there is no base colour helping. */
+.holoDark::before {
+  mix-blend-mode: screen;
+  filter: saturate(1.25);
+}
+
+.holoDark:hover::before,
+.holoDark:focus-visible::before {
+  opacity: 0.42;
+}
+
+/* Reduced motion keeps the colour and drops the travel: a still sheet of
+   foil is still foil. */
+@media (prefers-reduced-motion: reduce) {
+  .holo:hover::before,
+  .holo:focus-visible::before {
+    animation: none;
+    opacity: 0.42;
+  }
+  .holo:hover::after,
+  .holo:focus-visible::after {
+    transform: none;
+    opacity: 0.28;
+  }
+}
+
+/* ── THE FOLDER OPENS ─────────────────────────────────────────────────────
+   Clicking a folder used to do nothing at all for the 200ms before a window
+   appeared somewhere else on screen. Now the thing you clicked answers: the
+   lid swings back on its bottom edge, the body settles down and forward, and
+   a wedge of light comes up out of the gap. Then the window arrives.
+
+   260ms, which is the delay before the window opens — the animation is not
+   decoration laid over a wait, it IS the wait. */
+.diconOpening .fico {
+  animation: folderPop 260ms var(--s9-ease-out) both;
+}
+
+.diconOpening .fico .lip {
+  transform-origin: 50% 100%;
+  animation: folderLid 260ms var(--s9-ease-out) both;
+}
+
+.diconOpening .fico .tab {
+  transform-origin: 50% 100%;
+  animation: folderLid 260ms var(--s9-ease-out) both;
+}
+
+/* The light out of the gap. */
+.diconOpening .fico::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 6px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(50% 100% at 50% 100%, #fff6d8, transparent 72%);
+  animation: folderSpill 260ms var(--s9-ease-out) both;
+  pointer-events: none;
+}
+
+@keyframes folderPop {
+  0% {
+    transform: none;
+  }
+  45% {
+    transform: translateY(-3px) scale(1.06);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes folderLid {
+  0% {
+    transform: rotateX(0deg);
+  }
+  45% {
+    transform: rotateX(-68deg);
+  }
+  100% {
+    transform: rotateX(-52deg);
+  }
+}
+
+@keyframes folderSpill {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.2);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(1.1);
+  }
+}
+
+/* Reduced motion: the folder still acknowledges the click, with a flat press
+   instead of a hinge. */
+@media (prefers-reduced-motion: reduce) {
+  .diconOpening .fico,
+  .diconOpening .fico .lip,
+  .diconOpening .fico .tab,
+  .diconOpening .fico::after {
+    animation: none;
+  }
+  .diconOpening .fico {
+    transform: scale(0.96);
   }
 }

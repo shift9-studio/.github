@@ -319,6 +319,12 @@ export function EnterTheStudio() {
   const [mode, setMode] = useState<"gate" | "film" | "desk">("gate");
   const [compact, setCompact] = useState(false);
   const [openWin, setOpenWin] = useState<OpenWin>(null);
+  /* True from the moment Enter is pressed until the film can actually play.
+     The opening is 24MB; on anything but a fast line there is a real wait
+     there, and it used to be a dead screen. */
+  const [loading, setLoading] = useState(false);
+  /* Which folder is mid-open, so its lid can lift before the window arrives. */
+  const [opening, setOpening] = useState<string | null>(null);
 
   /* Theme. SSR renders light so the server and first client paint agree; the
      stored choice (or the OS preference) is applied on mount. The desktop is
@@ -459,7 +465,17 @@ export function EnterTheStudio() {
     const onLoaded = () => {
       if (vid.paused) startVid();
     };
+    /* The gate stays up, loader spinning, until frames are actually coming.
+       `playing` rather than `loadeddata`: data arriving is not the same as
+       the picture moving, and dropping the gate a beat early is how you get
+       a flash of black between the door and the film. */
+    const onPlaying = () => setLoading(false);
     vid.addEventListener("loadeddata", onLoaded);
+    vid.addEventListener("playing", onPlaying);
+    /* If it cannot play at all, do not strand anyone on a spinner. */
+    const onFail = () => setLoading(false);
+    vid.addEventListener("error", onFail);
+    const bail = setTimeout(onFail, 12000);
 
     const timers: ReturnType<typeof setTimeout>[] = [];
     const onEnded = () => {
@@ -511,7 +527,10 @@ export function EnterTheStudio() {
     vid.addEventListener("ended", onEnded);
 
     return () => {
+      clearTimeout(bail);
       vid.removeEventListener("loadeddata", onLoaded);
+      vid.removeEventListener("playing", onPlaying);
+      vid.removeEventListener("error", onFail);
       vid.removeEventListener("ended", onEnded);
       timers.forEach(clearTimeout);
     };
@@ -551,7 +570,7 @@ export function EnterTheStudio() {
       {/* STAGE 0 — the front door. A still and two controls. Nothing is
           fetched, decoded or played until the visitor asks for it, which is
           also why this is real content rather than an overlay on a video. */}
-      {mode === "gate" ? (
+      {mode === "gate" || loading ? (
         <div className={s.gate}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={s.gatePlate} src={ENTRY_PLATE} alt="" />
@@ -580,8 +599,11 @@ export function EnterTheStudio() {
               <button
                 type="button"
                 className={s.enter}
-                aria-label={ENTER_LABEL}
-                onClick={() => setMode("film")}
+                aria-label={`${ENTER_LABEL} — ${INTRO_RUNTIME}`}
+                onClick={() => {
+                  setLoading(true);
+                  setMode("film");
+                }}
               >
                 <span className={s.enterFrame} aria-hidden="true">
                   <i />
@@ -615,7 +637,19 @@ export function EnterTheStudio() {
                     </span>
                   ))}
                 </span>
-                <span className={s.enterMeta}>{INTRO_RUNTIME}</span>
+                {/* Where the runtime used to be printed. The icon idles
+                    with a slow morph and, once Enter is pressed, spins up
+                    into a real progress state — the film is 24MB and the
+                    wait for it was previously a dead screen. The runtime is
+                    still spoken by the button's accessible name below, so
+                    nothing was lost, only moved. */}
+                <span
+                  className={`${s.enterIcon} ${loading ? s.enterIconBusy : ""}`}
+                  aria-hidden="true"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={SHIFT9_LOGO} alt="" />
+                </span>
               </button>
 
               {/* Offered up front and at full size. Burying the way past a
@@ -679,17 +713,14 @@ export function EnterTheStudio() {
         </div>
 
         <div className={s.titlerow}>
-          {/* The wordmark, then the icon. The 9 is the drawn mark rather
-              than a numeral, so the lockup reads Shift-9 once — the icon
-              used to sit on the left and, with the mark in place, that was
-              two logos in the same breath. */}
+          {/* Just the wordmark. The icon used to sit here too, which with a
+              drawn 9 in the word was the same mark twice in one lockup; it
+              earns its keep on the front door instead, where it has a job. */}
           <span className={s.brand}>
             <span className={s.brandWord}>
               Shift-
               <Shift9Mark className={s.brandMark ?? ""} size={26} />
             </span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={SHIFT9_LOGO} alt="Shift-9" />
           </span>
           <div className={s.navlinks}>
             <span>Home</span>
@@ -777,7 +808,7 @@ export function EnterTheStudio() {
               style={{ textDecoration: "none" }}
               onClick={enterStudio}
             >
-              <div className={s.appico}>
+              <div className={`${s.appico} ${s.holo} ${s.holoDark}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={SHIFT9_LOGO} alt="shift9.dev" />
               </div>
@@ -788,11 +819,17 @@ export function EnterTheStudio() {
             {FOLDERS.map((f) => (
               <div
                 key={f.key}
-                className={s.dicon}
+                className={`${s.dicon} ${opening === f.key ? s.diconOpening : ""}`}
                 data-f={f.key}
                 role="button"
                 tabIndex={0}
-                onClick={() => setOpenWin(f.key)}
+                onClick={() => {
+                  setOpening(f.key);
+                  window.setTimeout(() => {
+                    setOpening(null);
+                    setOpenWin(f.key);
+                  }, 260);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") setOpenWin(f.key);
                 }}
@@ -819,7 +856,7 @@ export function EnterTheStudio() {
                 if (e.key === "Enter" || e.key === " ") setOpenWin("about");
               }}
             >
-              <div className={s.aboutico}>{ABOUT_GLYPH}</div>
+              <div className={`${s.aboutico} ${s.holo}`}>{ABOUT_GLYPH}</div>
               <div className={s.fname}>About</div>
               <div className={s.fcount}>Kariim &#183; Shift-9</div>
             </div>
