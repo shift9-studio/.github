@@ -78,10 +78,31 @@ html.lenis body {
      clamp caps and reflowing. Below 80rem (1280px) the standard fluid /
      responsive design applies, so laptops, tablets, and phones stay
      readable. Anchored to a 1440px reference: 100vw / 90 = 16px at 1440px,
-     clamped so it never balloons on ultrawide or shrinks on a small laptop. */
+     clamped so it never balloons on ultrawide or shrinks on a small laptop.
+
+     Two things about the bounds, both measured rather than guessed.
+
+     The ceiling was 1.9rem, which the ramp reaches at 2736px. Past that the
+     whole design froze while the frame kept growing, so a 4K desktop got
+     1440px-worth of page in a 3840px window: the hero fell from 3.78% of the
+     viewport width to 2.69%, and from 40% of its height to 31%. That is the
+     "small thing in a large void" failure this rule exists to prevent — it
+     was just happening past the width anyone had looked at. 3.4rem holds the
+     ramp out to 4896px, which covers 4K and 5K.
+
+     The second term is new. Scaling on width alone is only safe while the
+     screen is about 16:9 or taller; on a wide, short display it drives the
+     page taller than the window. A 3840x1080 ultrawide is fine at today's frozen
+     30.4px, but the raised ceiling would push it to 42.7px and overflow the
+     window. Taking the smaller of the two ramps lets height veto width. The
+     divisor is 35 rather than something tighter on purpose: on 16:9 the
+     height term works out to 100vw / 62, comfortably above the width term,
+     so width governs and nothing at 16:9 or taller changes by a pixel. It
+     only binds past roughly 2.57:1 — a 32:9 panel, not a 21:9 one — and
+     lands those at about the size they already have. */
   @media (min-width: 80rem) {
     :root {
-      font-size: clamp(0.85rem, calc(100vw / 90), 1.9rem);
+      font-size: clamp(0.85rem, min(100vw / 90, 100vh / 35), 3.4rem);
 
       /* Pure-rem type scale → sizing comes solely from the root above (no
          double viewport scaling). Values = the intended look at 1440px. */
