@@ -87,7 +87,10 @@
 
 .stage {
   position: relative;
-  z-index: 2;
+  /* Deliberately no z-index. `position: relative` alone keeps the stage
+     painting above .ground and .slab (both z-index 0, both earlier in the
+     tree) without opening a stacking context — and a stacking context here
+     is what trapped the buttons underneath the tape. See .actions. */
   display: grid;
   justify-items: center;
   gap: clamp(1rem, 3vh, 2rem);
@@ -218,7 +221,21 @@
   color: var(--paper);
 }
 
+/* The tape crosses the scenery — the laptop, the headline, the sign — because
+   it is a physical object lying on top of a printed page, and that is the
+   whole conceit. It must not cross the controls. The lower ribbon was cutting
+   the bottom-right corner off "BACK TO THE STUDIO", which reads as a defect
+   rather than as depth: tape over a picture is staging, tape over a button is
+   a bug. (Only ever a visual one — the ribbons are pointer-events: none, so
+   the button always still took the click.)
+
+   Three layers, in order: scenery, then tape at 3, then controls at 4. This
+   only works because .stage no longer declares a z-index; with one it formed
+   a stacking context and nothing inside it could rise past the ribbons no
+   matter what number it was given. */
 .actions {
+  position: relative;
+  z-index: 4;
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;

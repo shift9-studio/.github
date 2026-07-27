@@ -1,60 +1,66 @@
 "use client";
 
 /* ────────────────────────────────────────────────────────────────────────
-   ASCII TUNNEL — travel from the desktop into the studio.
+   THE SINKHOLE — travel from the desktop into the studio.
 
-   Fires when the shift9.dev icon is opened. The desktop's own wallpaper art
-   (the SHIFT-9 banner resampled to a character grid by
-   scripts/build-ascii-art.py) is rebuilt as a flat plane and then flown
-   through: copies of that plane recede to a vanishing point on the icon and
-   rush outward past the viewer, tinted Signal → Pulse by depth, settling into
-   the void as the studio takes over.
+   Fires when the shift9.dev icon is opened. A hole opens where the icon is
+   and the desktop's own wallpaper — the SHIFT-9 banner resampled to a
+   character grid by scripts/build-ascii-art.py — falls into it. Cyan light
+   comes up through the hole as it widens, the same light that sits behind the
+   seam on the front door, so the way out of the studio rhymes with the way
+   in. When the hole has the frame, the studio is already there.
 
-   This is code rather than a pre-rendered clip on purpose. It starts from the
-   live desktop, so it has to inherit whatever is actually on screen — the
-   active theme, the viewport size, the vanishing point of the icon that was
-   clicked. A fixed video could match none of those and the seam would show.
+   ── What replaced what, and why ──────────────────────────────────────────
+   The first version flew stacked copies of the plane past the camera toward a
+   vanishing point. It was a corridor, and a corridor is a thing you travel
+   along — but nothing on the desktop was travelling. The icon was a door in
+   the floor, and the honest gesture for a door in the floor is falling
+   through it.
 
-   Contract:
+   Not a whirlpool. A gravity well: rings accelerate straight in with no
+   rotation, the near ones going first and fastest, so the field stretches as
+   it drains rather than swirling. A spiral would have read as a screensaver.
+
+   ── How it is drawn ──────────────────────────────────────────────────────
+   The plane is rasterised once. Each frame, the field is cut into concentric
+   bands around the hole; a band whose content started at radius r is drawn
+   scaled about the hole by s, which puts it at r·s, and clipped to the annulus
+   it now occupies. s falls faster for the inner bands, so the gaps between
+   bands compress as they approach — which is the stretch. One clipped
+   drawImage per band, and the bands are the only thing in the loop.
+
+   ── Contract ─────────────────────────────────────────────────────────────
    - Decorative. aria-hidden, pointer-events: none. Navigation is the real
      event; this only covers the time it takes.
    - prefers-reduced-motion never mounts this at all. The caller navigates
-     immediately instead, so the reduced path is a clean cut, not a paused
-     half-state.
+     immediately instead — a clean cut, not a paused half-state.
+   - It draws in the wallpaper's slot, under the desktop chrome, because only
+     the wallpaper falls. The folders and the taskbar stay where they are and
+     are taken by the closing layer at the end.
    - Colours and duration come from @shift9/theme custom properties read off
-     the document, so the tunnel follows the palette and never hardcodes it.
-   - Two tinted planes are rasterised once on mount; each frame is a handful of
-     drawImage calls, not a per-cell repaint.
+     the document, so it follows the palette and hardcodes nothing.
    ──────────────────────────────────────────────────────────────────────── */
 
 import { useEffect, useRef } from "react";
 import { ASCII_RAMP, BANNER_ASCII } from "./ascii-art-data";
 
-/* Depth planes in flight at once. Enough to read as continuous travel without
-   the far end turning into a solid wash. */
-const LAYERS = 9;
+/* Concentric bands the field is cut into. Enough that the compression between
+   neighbours reads as a continuous stretch rather than as steps; past about
+   twenty the extra bands are narrower than the glyphs they carry and buy
+   nothing but draw calls. */
+const BANDS = 18;
 
-/* Depth tints baked up front. The corridor fades Signal into Pulse with
-   distance; doing that by drawing both tints and cross-fading them costs two
-   large composited draws per plane, every frame. Rasterising the ramp once
-   into a handful of steps means one draw per plane instead - the single
-   biggest lever on this animation's frame time. */
-const TINTS = 5;
+/* How much later the outermost band starts falling than the innermost, as a
+   fraction of the run. This is the whole gravity read: everything releasing at
+   once is a zoom, and the edge lagging the centre is a well. */
+const STAGGER = 0.55;
 
-/* How much of the plane's width fills the frame when it is one unit deep.
-   Below 1 the far planes sit inside the frame and the tunnel reads as a
-   corridor rather than a wall rushing at you. */
-const FOCAL = 0.42;
-
-/* Cell sampling for the rasterised plane. The tunnel is in motion and scaled,
-   so the full 170-column grid is more detail than survives; every other cell
-   keeps the wordmark legible at a quarter of the fillText cost. */
+/* Cell sampling for the rasterised plane. Every other cell keeps the wordmark
+   legible at a fraction of the fillText cost. */
 const STEP = 2;
 
-/* The rasterised plane's own width. Every plane is scaled well past this on
-   screen, so the source only needs enough detail to survive the upscale -
-   1400 was paying to sample a texture nearly twice as large as anything the
-   nearest-neighbour filter could show. */
+/* The rasterised plane's own width. It is only ever drawn at viewport scale or
+   smaller, so this is all the detail the upscale can show. */
 const PLANE_W = 820;
 
 function cssVar(name: string, fallback: string) {
@@ -70,32 +76,7 @@ function cssMs(name: string, fallback: number) {
   return raw.endsWith("s") && !raw.endsWith("ms") ? n * 1000 : n;
 }
 
-/* Blend two #rrggbb values. Used to bake the depth ramp before the loop
-   starts, so the frame loop never mixes colours. */
-function mixHex(a: string, b: string, t: number) {
-  const parse = (h: string) => {
-    const v = h.replace("#", "").trim();
-    const n =
-      v.length === 3
-        ? v
-            .split("")
-            .map((c) => c + c)
-            .join("")
-        : v;
-    return [
-      parseInt(n.slice(0, 2), 16),
-      parseInt(n.slice(2, 4), 16),
-      parseInt(n.slice(4, 6), 16),
-    ];
-  };
-  const [r1, g1, b1] = parse(a);
-  const [r2, g2, b2] = parse(b);
-  if ([r1, g1, b1, r2, g2, b2].some((n) => !Number.isFinite(n))) return a;
-  const m = (x = 0, y = 0) => Math.round(x + (y - x) * t);
-  return `rgb(${m(r1, r2)} ${m(g1, g2)} ${m(b1, b2)})`;
-}
-
-/* Smooth 0→1 ramp, used for the fades at both ends of a plane's travel. */
+/* Smooth 0→1 ramp. */
 function smoothstep(a: number, b: number, x: number) {
   const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
   return t * t * (3 - 2 * t);
@@ -105,22 +86,27 @@ export function AsciiTunnel({
   originX,
   originY,
   onDone,
+  className,
 }: {
-  /* Viewport coordinates of the icon that was opened — the vanishing point the
-     tunnel departs from, before drifting to centre for the studio. */
+  /* Viewport coordinates of the icon that was opened — where the hole opens.
+     The desktop is `position: fixed; inset: 0`, so viewport coordinates and
+     desktop-local coordinates are the same number. */
   originX: number;
   originY: number;
   onDone: () => void;
+  /* Placed in the wallpaper's slot by the caller. */
+  className?: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const closeRef = useRef<HTMLDivElement>(null);
   /* Held in a ref so a re-render can never fire the navigation twice. */
   const doneRef = useRef(onDone);
   doneRef.current = onDone;
 
   useEffect(() => {
-    /* The click that opened this has already been cancelled, so every exit from
-       here must still hand navigation on. Bailing silently would strand the
-       visitor on the desktop with a dead icon. */
+    /* The click that opened this has already been cancelled, so every exit
+       from here must still hand navigation on. Bailing silently would strand
+       the visitor on the desktop with a dead icon. */
     const canvas = canvasRef.current;
     if (!canvas) {
       doneRef.current();
@@ -139,14 +125,16 @@ export function AsciiTunnel({
     const maxChar = ASCII_RAMP.length - 1;
 
     const signal = cssVar("--s9-signal", "#22d3ee");
-    const pulse = cssVar("--s9-pulse", "#8b5cf6");
-    const void_ = cssVar("--s9-void", "#0f172a");
-    const duration = cssMs("--s9-dur-tunnel", 1100);
+    const duration = cssMs("--s9-dur-tunnel", 1800);
 
-    /* Rasterise the character field once per tint. Cell alpha tracks glyph
-       density so the wordmark keeps its shape at speed, exactly as it does in
-       the wallpaper — dense glyph is solid, sparse glyph is faint. */
-    const buildPlane = (colour: string) => {
+    /* The falling field is drawn in the desktop's own text colour, at the
+       wallpaper's own opacity, so the first frame of the fall is the wallpaper
+       the visitor was already looking at. Anything else and the artwork
+       changes colour at the moment it starts moving, which reads as a swap
+       rather than as the same thing falling. */
+    const ink = cssVar("--w-txt", "#1f2328");
+
+    const plane = (() => {
       const c = document.createElement("canvas");
       c.width = PLANE_W;
       c.height = planeH;
@@ -160,35 +148,38 @@ export function AsciiTunnel({
          Same constraint the wallpaper atlas hit. */
       const fontPx = Math.max(4, Math.min(ch * 0.98, cw / 0.6));
       g.font = `${fontPx}px ui-monospace, "SF Mono", Menlo, "Courier New", monospace`;
-      g.fillStyle = colour;
+      g.fillStyle = ink;
       for (let y = 0; y < rows; y++) {
         const row = src.grid[y * STEP] ?? "";
         for (let x = 0; x < cols; x++) {
-          const ch_ = row[x * STEP] ?? " ";
-          const idx = Math.max(0, ASCII_RAMP.indexOf(ch_));
-          if (idx === 0) continue; // empty cell — the artwork's negative space
+          const glyph = row[x * STEP] ?? " ";
+          const idx = Math.max(0, ASCII_RAMP.indexOf(glyph));
+          if (idx === 0) continue; // the artwork's negative space
           g.globalAlpha = 0.25 + (idx / maxChar) * 0.75;
-          g.fillText(ch_, x * cw + cw / 2, y * ch + ch / 2);
+          g.fillText(glyph, x * cw + cw / 2, y * ch + ch / 2);
         }
       }
       g.globalAlpha = 1;
       return c;
-    };
+    })();
 
-    /* Signal → Pulse, sampled into TINTS steps and rasterised once each. */
-    const planes: HTMLCanvasElement[] = [];
-    for (let i = 0; i < TINTS; i++) {
-      const c = buildPlane(mixHex(pulse, signal, i / (TINTS - 1)));
-      if (!c) {
-        doneRef.current();
-        return;
-      }
-      planes.push(c);
+    if (!plane) {
+      doneRef.current();
+      return;
     }
 
     let dpr = 1;
     let vw = 0;
     let vh = 0;
+    /* Where the plane sits on screen, matching the wallpaper's own placement:
+       contained and centred, so the artwork the visitor sees is the artwork
+       that falls. */
+    let pw = 0;
+    let ph = 0;
+    let px = 0;
+    let py = 0;
+    /* Distance from the hole to the farthest corner — the outermost band. */
+    let maxR = 0;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -199,12 +190,22 @@ export function AsciiTunnel({
       canvas.width = Math.round(vw * dpr);
       canvas.height = Math.round(vh * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      /* Nearest-neighbour. The near planes are scaled to several times the
-         viewport, and bilinear-filtering an upscale that large is most of the
-         per-draw cost. It is also the wrong filter for this material: the
-         source is a character grid, and letting the glyphs go blocky as they
-         rush past reads as resolution rather than as blur. */
+      /* Nearest-neighbour: the source is a character grid, and letting the
+         glyphs go blocky as they compress reads as resolution, not as blur. */
       ctx.imageSmoothingEnabled = false;
+
+      const fit = Math.min(vw / PLANE_W, vh / planeH);
+      pw = PLANE_W * fit;
+      ph = planeH * fit;
+      px = (vw - pw) / 2;
+      py = (vh - ph) / 2;
+
+      maxR = Math.max(
+        Math.hypot(originX, originY),
+        Math.hypot(vw - originX, originY),
+        Math.hypot(originX, vh - originY),
+        Math.hypot(vw - originX, vh - originY),
+      );
     };
 
     resize();
@@ -214,96 +215,95 @@ export function AsciiTunnel({
     let raf = 0;
     let start = 0;
     let finished = false;
+    const close = closeRef.current;
 
     const frame = (now: number) => {
       if (!start) start = now;
       const p = Math.min(1, (now - start) / duration);
 
-      /* The vanishing point starts on the icon and eases to centre, so the
-         travel begins where the click was and lands square for the studio. */
-      const ease = smoothstep(0, 1, p);
-      const cx = originX + (vw / 2 - originX) * ease;
-      const cy = originY + (vh / 2 - originY) * ease;
-
       ctx.clearRect(0, 0, vw, vh);
 
-      /* The void closes in over the whole move, so the tunnel arrives dark
-         rather than cutting from a bright frame. */
-      ctx.globalAlpha = smoothstep(0.15, 1, p);
-      ctx.fillStyle = void_;
-      ctx.fillRect(0, 0, vw, vh);
+      /* ── The bands fall ──────────────────────────────────────────────────
+         Outer bands release later; every band accelerates once released. A
+         band's scale runs 1 → 0, and when it reaches 0 its content has been
+         swallowed. */
+      for (let k = BANDS - 1; k >= 0; k--) {
+        const r0 = (k / BANDS) * maxR;
+        const r1 = ((k + 1) / BANDS) * maxR;
+        const q = (k + 0.5) / BANDS; // how far out this band sits, 0→1
 
-      /* `lighter` stays. It was the largest single cost left, and dropping it
-         did buy another 40% - but the planes stopped building through each
-         other and the corridor went flat and faint. The additive core where
-         several planes overlap IS the effect. The frames come from the draw
-         count, the sampling and the source size instead, all of which are
-         invisible; this is not. */
-      ctx.globalCompositeOperation = "lighter";
+        const released = (p - q * STAGGER) / Math.max(0.001, 1 - q * STAGGER);
+        const lp = Math.max(0, Math.min(1, released));
+        /* Squared, so it starts slowly and is moving hard by the time it
+           reaches the hole. This is the "gravity" — nothing else about the
+           motion is doing that job. */
+        const s = 1 - lp * lp;
+        if (s <= 0.004) continue;
 
-      /* Accelerating travel: distance covered eases in, so the tunnel launches
-         off the click rather than starting at full speed. */
-      const travel = p * p * (3 - 2 * p) * 1.6;
-
-      for (let k = 0; k < LAYERS; k++) {
-        /* u is depth: 1 is far down the corridor, 0 is passing the camera. */
-        const u = 1 - (((k / LAYERS + travel) % 1) + 1) % 1;
-        if (u <= 0.02) continue;
-
-        const scale = (FOCAL / u) * (vw / PLANE_W);
-        const w = PLANE_W * scale;
-        const h = planeH * scale;
-        /* Past about three viewport widths a plane has already filled the
-           frame edge to edge and everything beyond that is drawn outside it.
-           The clamp was 24 viewport widths - a 34,000px rotated draw with
-           `lighter` blending, thirty-two of them a frame - which is what put
-           the tunnel at 200ms per frame. Nothing visible is lost: the plane
-           still covers the screen, it just stops being rasterised at a size
-           only the clipping region ever sees. 1.8 rather than 3: by then the
-           plane's own centre is past the frame edge and what is left on
-           screen is a corner of it. */
-        if (w < 2 || w > vw * 1.8) continue;
-
-        /* Fade in as a plane appears at the far end, out as it sweeps past. */
-        const a = smoothstep(1, 0.86, u) * smoothstep(0.04, 0.3, u) * (1 - p * 0.35);
+        /* Dim as it is consumed, so bands vanish into the hole rather than
+           shrinking to a hard point and popping out. */
+        const a = smoothstep(0, 0.34, s);
         if (a <= 0.01) continue;
 
-        /* Depth decides the tint: Pulse in the distance resolving to Signal as
-           it arrives, so the corridor reads as the palette, front to back. */
-        /* Depth picks the pre-baked tint rather than blending two planes. */
-        const mix = smoothstep(0.85, 0.1, u);
-        const plane =
-          planes[Math.min(TINTS - 1, Math.max(0, Math.round(mix * (TINTS - 1))))];
-        if (!plane) continue;
-
-        /* Each plane is rolled a little further than the one behind it, and
-           the whole stack rolls slowly as the travel accelerates.
-
-           This is what turns a flat field with a vanishing point into a
-           corridor. The source art is the SHIFT-9 banner, which is dense on
-           the left and mostly negative space on the right - stacked
-           un-rotated, every plane put its weight on the same side and the
-           frame came out lopsided, empty down one half. Spreading the stack
-           through half a turn means the planes cover for each other and the
-           tunnel reads all the way around, and the differential between
-           neighbours is what gives it the twist of actual travel.
-
-           save/restore around a rotate is the whole cost: still one drawImage
-           per tint per plane, no extra rasterising. */
-        const roll = (k / LAYERS) * Math.PI + travel * 0.35;
-
         ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(roll);
+        /* Clip to where this band's content now is. */
+        ctx.beginPath();
+        ctx.arc(originX, originY, Math.max(0, r1 * s), 0, Math.PI * 2);
+        if (r0 > 0) {
+          ctx.arc(originX, originY, r0 * s, 0, Math.PI * 2, true);
+        }
+        ctx.clip("evenodd");
 
         ctx.globalAlpha = a;
-        ctx.drawImage(plane, -w / 2, -h / 2, w, h);
-
+        ctx.translate(originX, originY);
+        ctx.scale(s, s);
+        ctx.translate(-originX, -originY);
+        ctx.drawImage(plane, px, py, pw, ph);
         ctx.restore();
       }
 
-      ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = 1;
+      /* ── The light through the hole ──────────────────────────────────────
+         The innermost band has left by the time this is worth seeing, so the
+         glow tracks the fall rather than the clock: it is the radius that has
+         already been emptied. Screen-blended, so it only ever adds light and
+         cannot muddy the artwork still falling around it. */
+      const holeR = maxR * smoothstep(0, 0.86, p) * 0.92;
+      if (holeR > 2) {
+        const g = ctx.createRadialGradient(
+          originX,
+          originY,
+          0,
+          originX,
+          originY,
+          holeR,
+        );
+        g.addColorStop(0, signal);
+        g.addColorStop(0.42, `color-mix(in oklab, ${signal} 42%, transparent)`);
+        g.addColorStop(1, "transparent");
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        ctx.globalAlpha = 0.28 + 0.5 * smoothstep(0.1, 0.8, p);
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(originX, originY, holeR, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      /* The closing layer sits above the chrome and takes the whole frame in
+         the last beat: the light blooms out and settles to the studio's black,
+         so the handoff is a fade between two blacks and not a cut. Driven from
+         here rather than from a CSS animation so it can never drift out of
+         step with the fall. */
+      if (close) {
+        const bloom = smoothstep(0.5, 0.82, p);
+        const settle = smoothstep(0.74, 1, p);
+        close.style.opacity = String(Math.max(bloom * 0.9, settle));
+        close.style.background =
+          settle > 0.001
+            ? `color-mix(in oklab, #000 ${Math.round(settle * 100)}%, ${signal})`
+            : signal;
+      }
 
       if (p >= 1) {
         if (!finished) {
@@ -317,9 +317,9 @@ export function AsciiTunnel({
 
     raf = requestAnimationFrame(frame);
 
-    /* rAF stops in a backgrounded tab. If someone opens the studio and switches
-       away, the animation pauses and the frame loop never reaches the end — so
-       a timer, which keeps running, guarantees the navigation still happens. */
+    /* rAF stops in a backgrounded tab. If someone opens the studio and
+       switches away, the animation pauses and the loop never reaches the end —
+       so a timer, which keeps running, guarantees navigation still happens. */
     const watchdog = window.setTimeout(() => {
       if (!finished) {
         finished = true;
@@ -335,17 +335,24 @@ export function AsciiTunnel({
   }, [originX, originY]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      style={{
-        position: "fixed",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 9999,
-      }}
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        className={className}
+        aria-hidden="true"
+        style={{ pointerEvents: "none" }}
+      />
+      <div
+        ref={closeRef}
+        aria-hidden="true"
+        style={{
+          position: "fixed",
+          inset: 0,
+          pointerEvents: "none",
+          zIndex: 9999,
+          opacity: 0,
+        }}
+      />
+    </>
   );
 }

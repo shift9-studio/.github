@@ -23,6 +23,11 @@
   --w-sel: #e3ecf9;
   --w-mark: #fdf3d3;
   --w-chrome: #9a9a92;
+  /* The quiet strips — breadcrumb bar and the note foot — and the signature
+     green. Both used to be written as raw hex inline, which meant they were
+     light-mode values with no dark counterpart. See the dark block. */
+  --w-quiet: #fbfaf6;
+  --w-sig: #0a6e52;
   --w-shadow: 15 23 42;
   --w-halo-a: 0.9;
   --w-halo-b: 0.85;
@@ -60,6 +65,13 @@
   --w-sel: #16304e;
   --w-mark: #2e2a16;
   --w-chrome: #6d7484;
+  /* The dark counterparts that did not exist. The About window's body was
+     `color: #2a2e33` — a near-black written for the paper desktop — and it
+     never flipped, so on the dark panel (#1b1f28) it measured 1.20:1. The
+     floor is 4.5:1. It was not dim, it was invisible; --w-txt gives 13.4:1.
+     The signature green was 2.61:1 for the same reason and is lifted here. */
+  --w-quiet: #161a22;
+  --w-sig: #5fd6a4;
   --w-shadow: 0 0 0;
   --w-halo-a: 0.72;
   --w-halo-b: 0.55;
@@ -763,6 +775,31 @@
   transform-origin: 50% 47%;
   animation: boot 1s cubic-bezier(0.2, 0.62, 0.32, 1) forwards;
 }
+
+/* ── The seam at the handoff ──────────────────────────────────────────────
+   `boot` scales the desktop from 0.74 up to 1. The desktop is `inset: 0`, so
+   it is exactly the size of the viewport — which means at any scale below 1
+   its own rectangle is smaller than the screen and whatever is behind it
+   shows through around all four sides.
+
+   Behind it is `.root`, which is #000 because the film needs black under it.
+   The desktop's ground is --w-bg: #eceadf in light. So for the whole second
+   the boot runs, a near-white rectangle sat on pure black and its edge swept
+   inward as a hard line on all four sides. Measured mid-animation at 350ms:
+   scale 0.968, a 12-20px black frame with a crisp step at the boundary.
+
+   The line is a contrast problem, not a geometry one — the edge is always
+   there, it is only visible because of what it is against. So the ground
+   behind the desktop becomes the desktop's own ground the moment the desktop
+   exists, and the revealed margin has nothing to contrast with. It reads as
+   the screen powering on rather than as a white card growing on black.
+
+   Keyed off the desktop being present rather than a new class, so it cannot
+   drift out of sync with the state that actually mounts it, and it follows
+   the theme for free: --w-bg is redefined on .root.dark. */
+.root:has(.desktop.show) {
+  background: var(--w-bg);
+}
 @keyframes boot {
   0% {
     transform: scale(0.74);
@@ -986,14 +1023,40 @@
   background: #fbe19a;
   border-radius: 6px 6px 0 0;
 }
+/* ── Labels over the wallpaper ────────────────────────────────────────────
+   These sit directly on the ASCII field, which is a high-frequency texture at
+   0.62 opacity — the worst possible ground for small type. At 14px/400 the
+   folder names were legible only where the artwork happened to be sparse, and
+   the counts at 11px in --w-dim were losing to the glyphs outright.
+
+   Weight first, then a ground. Semibold at 14.5px gives the strokes enough
+   mass to hold their own shape against the character grid, and the counts go
+   up a step and off --w-dim onto real text colour at 82%, which is still
+   clearly secondary but no longer competing on equal terms with the noise.
+
+   The halo is the part that actually does the work: a tight ring of the
+   desktop's own background painted around every glyph, so each letter carries
+   a sliver of quiet with it wherever the artwork is busy. It is the page's own
+   --w-bg, so it follows the theme and reads as the label sitting on the
+   surface rather than as an outline drawn around it. Cheap — text-shadow, no
+   extra element, no blend mode, nothing to repaint. */
 .fname {
-  font-size: 14px;
+  font-size: 14.5px;
+  font-weight: 600;
   color: var(--w-txt);
+  text-shadow:
+    0 0 3px var(--w-bg),
+    0 0 3px var(--w-bg),
+    0 1px 2px var(--w-bg);
 }
 .fcount {
-  font-size: 11px;
-  color: var(--w-dim);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: color-mix(in oklab, var(--w-txt) 82%, transparent);
   margin-top: 2px;
+  text-shadow:
+    0 0 3px var(--w-bg),
+    0 0 3px var(--w-bg);
 }
 
 /* the shift9.dev app icon — the door out */
@@ -1269,7 +1332,7 @@
   align-items: center;
   padding: 12px 18px;
   border-bottom: 1px solid var(--w-line);
-  background: #fbfaf6;
+  background: var(--w-quiet);
 }
 .wtBar .path {
   font-size: 13px;
@@ -1386,14 +1449,14 @@
   padding: 26px 32px;
   font-size: 14.5px;
   line-height: 1.75;
-  color: #2a2e33;
+  color: var(--w-txt);
 }
 .aboutBody p {
   margin-bottom: 15px;
 }
 .aboutBody .sig {
   font-family: var(--mono);
-  color: #0a6e52;
+  color: var(--w-sig);
   font-size: 12px;
   letter-spacing: 0.14em;
   margin-top: 20px;
@@ -1416,7 +1479,7 @@
   color: var(--w-dim);
   padding: 10px 22px;
   border-top: 1px solid var(--w-line);
-  background: #fbfaf6;
+  background: var(--w-quiet);
   letter-spacing: 0.05em;
 }
 

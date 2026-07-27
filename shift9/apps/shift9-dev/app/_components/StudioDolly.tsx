@@ -304,9 +304,9 @@ export function StudioDolly() {
       <header className={s.bookend}>
         <h1>The Studio</h1>
         <p className={s.lede}>
-          Twelve projects, one continuous take. Scroll to travel through them. Live
-          work is resolved and settled; work still in development is raw and
-          unstable, which is what it actually looks like.
+          Twelve projects, one continuous take. Scroll to move through them. The
+          finished ones look finished. The ones still in development don&apos;t
+          &mdash; and I left them that way on purpose.
         </p>
       </header>
 

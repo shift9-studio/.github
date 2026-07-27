@@ -25,6 +25,7 @@
    same-site /studio route (the INSTRUMENT content), per HANDOFF §8.1.
    ──────────────────────────────────────────────────────────────────────── */
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AsciiTunnel } from "./AsciiTunnel";
 import { AsciiWallpaper } from "./AsciiWallpaper";
@@ -417,6 +418,7 @@ export function EnterTheStudio() {
      new window, download) and reduced motion fall straight through to normal
      link behaviour, so nothing about the link is taken away. */
   const [tunnel, setTunnel] = useState<{ x: number; y: number } | null>(null);
+  const router = useRouter();
 
   const enterStudio = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -430,21 +432,20 @@ export function EnterTheStudio() {
        the animation puts that fetch inside time the visitor is already
        spending, so the two overlap instead of queueing.
 
-       A bare <link rel="prefetch"> rather than the router: this hands off with
-       location.href, which discards the React tree, so what needs warming is
-       the document itself. */
-    if (!document.querySelector('link[data-studio-prefetch]')) {
-      const l = document.createElement("link");
-      l.rel = "prefetch";
-      l.as = "document";
-      l.href = STUDIO_HREF;
-      l.setAttribute("data-studio-prefetch", "");
-      document.head.appendChild(l);
-    }
+       The prefetch alone was not enough, and this is the split second of hang
+       before the studio appears. It was warming the *document*, because the
+       handoff used location.href — which throws away the React tree, reparses
+       a document and repaints from nothing no matter how warm the cache is.
+       The fall would finish, and then the browser would go and do all of that.
+
+       router.prefetch + router.push instead: a client-side transition into an
+       already-fetched static route, so when the hole takes the frame the
+       studio is mounted behind it rather than being asked for. */
+    router.prefetch(STUDIO_HREF);
 
     const r = e.currentTarget.getBoundingClientRect();
     setTunnel({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
-  }, []);
+  }, [router]);
 
   const toggleTheme = useCallback(() => {
     setDark((d) => {
@@ -610,16 +611,6 @@ export function EnterTheStudio() {
 
   return (
     <div className={`${s.root} ${dark ? s.dark : ""}`}>
-      {tunnel ? (
-        <AsciiTunnel
-          originX={tunnel.x}
-          originY={tunnel.y}
-          onDone={() => {
-            window.location.href = STUDIO_HREF;
-          }}
-        />
-      ) : null}
-
       {/* STAGE 0 — the front door. A still and two controls. Nothing is
           fetched, decoded or played until the visitor asks for it, which is
           also why this is real content rather than an overlay on a video. */}
@@ -770,8 +761,24 @@ export function EnterTheStudio() {
         {/* Live wallpaper — the real banner as an animated ASCII field, with
             the Windows tint veiled over it. Decorative; the chrome above is
             the content. */}
+        {/* The live wallpaper stands down the moment the sinkhole starts and
+            the tunnel draws in its place, in this same slot and under the same
+            veil. Both at once would be the artwork twice — one copy falling
+            and an identical one sitting perfectly still behind it. The veil
+            stays either way, so the tint over the field never blinks. */}
         <div className={s.wallLayer} aria-hidden="true">
-          <AsciiWallpaper className={s.wallCanvas} ink={!dark} />
+          {tunnel ? (
+            <AsciiTunnel
+              className={s.wallCanvas}
+              originX={tunnel.x}
+              originY={tunnel.y}
+              onDone={() => {
+                router.push(STUDIO_HREF);
+              }}
+            />
+          ) : (
+            <AsciiWallpaper className={s.wallCanvas} ink={!dark} />
+          )}
           <div className={s.wallVeil} />
         </div>
 

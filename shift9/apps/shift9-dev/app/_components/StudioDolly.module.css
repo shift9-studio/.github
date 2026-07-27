@@ -567,31 +567,48 @@
 }
 
 /* 04 · CALIBRATION — projection mapping. Crop marks at the corners, the way a
-   calibration grid frames a surface before it locks. */
+   calibration grid frames a surface before it locks.
+
+   Four corners, not two. The first pass drew only top-left and bottom-right,
+   in 2px of full-strength --card-accent, flush against the card at 0,0. Every
+   one of those three choices worked against the idea: two opposite corners is
+   not a frame, it is two stray brackets, so it read as a rendering artifact
+   rather than a mark — which is exactly how it was reported. Sitting flush on
+   the corner made them look like a border that had failed to draw rather than
+   something placed on the surface. And on card 04 the accent is --s9-pulse,
+   the loudest value on the page, so the eye went to the corner instead of the
+   work.
+
+   Now: all four, inset so they read as placed, one hairline rather than two
+   pixels, and mixed back to a little over half strength. A registration mark
+   is a quiet instruction to the eye about where the edges are. If you notice
+   it before you notice the project, it has failed.
+
+   Eight gradients on one pseudo-element — two bars per corner — because four
+   corners from ::before and ::after alone would need a second element and
+   this needs none. */
 .calibration {
   max-width: 42rem;
   padding: 1.6rem 1.8rem;
   background: rgb(0 0 0 / 0.5);
 }
-.calibration::before,
-.calibration::after {
+.calibration::before {
   content: "";
   position: absolute;
-  width: 22px;
-  height: 22px;
-  border: 2px solid var(--card-accent);
-}
-.calibration::before {
-  top: 0;
-  left: 0;
-  border-right: 0;
-  border-bottom: 0;
-}
-.calibration::after {
-  right: 0;
-  bottom: 0;
-  border-left: 0;
-  border-top: 0;
+  inset: 10px;
+  pointer-events: none;
+  --mark: color-mix(in oklab, var(--card-accent) 58%, transparent);
+  --len: 18px;
+  --hair: 1px;
+  background:
+    linear-gradient(var(--mark), var(--mark)) left top / var(--len) var(--hair) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) left top / var(--hair) var(--len) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) right top / var(--len) var(--hair) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) right top / var(--hair) var(--len) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) left bottom / var(--len) var(--hair) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) left bottom / var(--hair) var(--len) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) right bottom / var(--len) var(--hair) no-repeat,
+    linear-gradient(var(--mark), var(--mark)) right bottom / var(--hair) var(--len) no-repeat;
 }
 
 /* 05 · SCOREBOARD — arcade basketball. A segmented display block. */
