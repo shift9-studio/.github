@@ -128,12 +128,18 @@ const OPENING: readonly string[] = [
 ];
 
 type Status = "live" | "ship" | "dev" | "rnd";
-/* `h` is the destination. Where a project has a real one — a live site, the
-   design system, a case page that is actually built — that is what it points
-   at. Where it does not, it points at /soon, which says plainly that the page
-   doesn't exist yet rather than leaving the title dead under the cursor. A
-   dead title reads as a broken site; /soon reads as a studio mid-build, which
-   is the true thing. Kept optional so a future item can be added unlinked. */
+/* `h` is the destination. Where a project has a real one — a live site or the
+   design system — that is what it points at. Where it does not, it points at
+   /soon, which says plainly that the page doesn't exist yet rather than
+   leaving the title dead under the cursor. A dead title reads as a broken
+   site; /soon reads as a studio mid-build, which is the true thing.
+
+   Four of these used to point at /work/<slug>. Those pages were stubs wearing
+   a case study's layout — a couple of hundred characters and nowhere to go at
+   the end — so they have been deleted rather than left to be found. An honest
+   "not yet" costs a click; a thin page dressed as a real one costs trust.
+
+   Kept optional so a future item can be added unlinked. */
 type Item = { n: string; s: string; sc: Status; d: string; tags: string[]; h?: string };
 type Folder = { t: string; n: string; items: Item[] };
 
@@ -188,7 +194,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "Arcade basketball in Godot — arena, broadcast camera, crowd shader bowl, and player movement live; ball physics and box score next.",
         tags: ["Godot", "GDScript", "3D"],
-        h: "/work/voxel-arcade-basketball",
+        h: "/soon",
       },
       {
         n: "Midnight Return",
@@ -196,7 +202,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "A metroidvania platformer in C#. Exploration-first design.",
         tags: ["C#", "Metroidvania"],
-        h: "/work/midnight-return",
+        h: "/soon",
       },
       {
         n: "Game Design Forge",
@@ -242,7 +248,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "A game-development toolkit in TypeScript.",
         tags: ["TypeScript", "3D", "Tooling"],
-        h: "/work/omni-3d",
+        h: "/soon",
       },
       {
         n: "WinFix",
@@ -250,7 +256,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "ship",
         d: "A Windows utility that repairs the Windows 10 Home upgrade bug. Small tool, real problem, done. Windows 11 support on the roadmap.",
         tags: ["Python", "Windows", "Utility"],
-        h: "/work/whome-diagnostic",
+        h: "/soon",
       },
     ],
   },

@@ -1,7 +1,7 @@
 import s from "./soon.module.css";
 
 /* ────────────────────────────────────────────────────────────────────────
-   UNDER CONSTRUCTION — the landing place for work that has no page yet.
+   COMING SOON — the landing place for work that has no page yet.
 
    Persona 5's menu language in one bit: pure black and white, every panel a
    skewed cut-out rather than a box, type large enough to run past the measure,
@@ -21,7 +21,7 @@ import s from "./soon.module.css";
    ──────────────────────────────────────────────────────────────────────── */
 
 export const metadata = {
-  title: "Shift-9 — Under construction",
+  title: "Shift-9 — Coming soon",
   description: "This one does not have a page yet.",
 };
 
@@ -40,7 +40,7 @@ const STICKERS: { t: string; x: string; y: string; r: string; k: string }[] = [
   { t: "ONE MORE COMMIT", x: "22%", y: "31%", r: "-5deg", k: "tex" },
 ];
 
-const RIBBON_A = "UNDER CONSTRUCTION ✦ NOT FINISHED ✦ COME BACK ✦ SHIFT-9 ✦ ";
+const RIBBON_A = "COMING SOON ✦ NOT FINISHED ✦ COME BACK ✦ SHIFT-9 ✦ ";
 const RIBBON_B = "BUILDING ✦ IN PROGRESS ✦ WORK IN MOTION ✦ SHIFT-9 ✦ ";
 
 /* The track carries the message twice and translates by exactly -50%, so the
@@ -103,7 +103,7 @@ export default async function SoonPage({
         </div>
 
         <h1 className={s.headline}>
-          Under <em>construction</em>
+          Coming <em>soon</em>
         </h1>
 
         <p className={s.line}>

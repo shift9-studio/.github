@@ -69,9 +69,11 @@ export type CardVariant =
    a case study's layout, and a thin page dressed as a real one is worse than
    an honest "not yet": it invites a click and spends it.
 
-   /soon says the true thing. The pages themselves still exist and still build
-   — nothing is deleted — they are simply not linked until they are worth
-   opening. */
+   /soon says the true thing. The pages were left unlinked for a while, then
+   deleted outright: an unlinked route is still a route, findable by URL and
+   indexable, and the site should not contain a page nobody is meant to open.
+   The desktop's four links to them moved to /soon at the same time, so the
+   two rosters still cannot drift. */
 const BASE = "/experience/set-pieces/";
 
 export const SET_PIECES: SetPiece[] = [

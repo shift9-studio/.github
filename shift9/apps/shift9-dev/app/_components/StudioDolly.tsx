@@ -45,15 +45,14 @@ const OUTRO_FILM = "/experience/outro/banner-settle.mp4";
    frame to itself, so the ask lives on its own page and the banner's only job
    is to make you want to open it.
 
-   The film loops, continuously, for as long as you are looking at it. It used
-   to play once and stop on its last frame, which meant the closing image of
-   the whole reel was a still that had briefly moved — the one place on the
-   site where motion dies while you watch. It is rendered from the artwork and
-   framed to end on it, so the wrap lands back on the frame it started from.
+   The film plays once and settles on its last frame, which is the still the
+   poster already showed — the composition resolves rather than restarting. It
+   was briefly set to loop; a banner that keeps re-animating under a stationary
+   reader pulls attention back to itself at the exact moment the page is asking
+   for a decision, so it plays its one pass and holds.
 
-   The cue still arrives after the statement rather than over it: one pass of
-   the film, timed off its own duration. See the effect below for why that
-   cannot be `ended` any more. */
+   The cue arrives after the statement rather than over it: `ended` reveals the
+   invitation, with a failsafe for the cases where it never fires. */
 function BannerOutro() {
   const hostRef = useRef<HTMLAnchorElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -92,28 +91,20 @@ function BannerOutro() {
     if (!vid) return;
     vid.play().catch(() => setSettled(true));
 
-    /* The cue used to be revealed by `ended`. The film loops now, so `ended`
-       never fires at all and that would have left the invitation permanently
-       hidden — the loop and the reveal cannot share a trigger.
+    /* The film runs once, so its own `ended` is the honest signal that the
+       statement has finished and the invitation can arrive.
 
-       A timer instead, set to the film's own length once the metadata says
-       what that is, so the invitation still arrives when the statement
-       finishes rather than over the top of it. The 7s fallback covers a codec
-       the browser cannot decode, a refused autoplay, or a backgrounded tab:
-       the one thing that must never depend on the video is the way forward. */
-    const onMeta = () => {
-      const d = vid.duration;
-      if (Number.isFinite(d) && d > 0) {
-        window.setTimeout(() => setSettled(true), d * 1000);
-      }
-    };
-    vid.addEventListener("loadedmetadata", onMeta, { once: true });
-    if (vid.readyState >= 1) onMeta();
+       The 7s failsafe covers everything that stops `ended` from firing at all:
+       a codec the browser cannot decode, a refused autoplay, a backgrounded
+       tab. The one thing that must never depend on the video is the way
+       forward. */
+    const onEnded = () => setSettled(true);
+    vid.addEventListener("ended", onEnded, { once: true });
 
     const failsafe = setTimeout(() => setSettled(true), 7000);
     return () => {
       clearTimeout(failsafe);
-      vid.removeEventListener("loadedmetadata", onMeta);
+      vid.removeEventListener("ended", onEnded);
     };
   }, [live]);
 
@@ -140,7 +131,6 @@ function BannerOutro() {
           src={OUTRO_FILM}
           poster={OUTRO_ART}
           muted
-          loop
           playsInline
           preload="auto"
           aria-hidden="true"
@@ -329,10 +319,17 @@ function Stage({
                   ? `Open the live ${piece.title} ↗`
                   : /* /soon is not a project page, so it must not be labelled
                        like one. "Open Flow State →" promises a page about the
-                       project and delivers a construction sign; the visitor
+                       project and delivers a coming-soon sign; the visitor
                        reads that as a broken link rather than an honest one.
-                       Say what is actually behind the door. */
-                    piece.href === "/soon"
+                       Say what is actually behind the door.
+
+                       Matched on the prefix, not on equality: every card
+                       stamps its own number on the URL (/soon?from=05) so the
+                       way back can restore the reader's position, which meant
+                       an `=== "/soon"` test matched none of the nine cards it
+                       was written for and they all shipped the label it
+                       exists to prevent. */
+                    piece.href.startsWith("/soon")
                     ? "Project page coming soon →"
                     : `Open ${piece.title} →`}
               </a>
