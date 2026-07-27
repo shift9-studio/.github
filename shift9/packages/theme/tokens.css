@@ -85,7 +85,7 @@
   --s9-dur-base:     240ms;   /* default: color/border/opacity settles   */
   --s9-dur-slow:     480ms;   /* entrances, reveals, larger displacements */
   --s9-dur-boot:     720ms;   /* power-on / page-transition choreography  */
-  --s9-dur-tunnel:  1800ms;   /* the sinkhole — desktop → studio           */
+  --s9-dur-tunnel:   560ms;   /* the wipe — desktop → studio             */
   --s9-dur-premium:  300ms;   /* legacy alias (transition-premium)        */
 
   /* Easing set — one curve per intent, so motion reads as a system.

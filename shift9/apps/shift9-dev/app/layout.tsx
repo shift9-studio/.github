@@ -39,6 +39,37 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${text.variable} ${mono.variable}`}
     >
+      <head>
+        {/* ── No flash of the front door on the way back ──────────────────
+            Coming back to / from the studio used to show a few frames of the
+            entrance plate before the desktop appeared, which made the return
+            read as a stutter rather than as arriving somewhere.
+
+            The cause is ordering, and it is why this has to be a blocking
+            script in <head> rather than anything in React. The entrance
+            initialises to the gate, so the gate is in the server-rendered
+            HTML — the browser paints it before hydration has even begun. By
+            the time an effect (or a layout effect) could set the state to the
+            desktop, the plate has already been on screen for several frames.
+            Nothing that runs after hydration can win a race that is over
+            before hydration starts.
+
+            So the flag is read before the first paint and stamped on <html>,
+            and CSS keyed off that attribute keeps the gate hidden from the
+            very first frame. Same shape as the classic theme-flash fix, for
+            the same reason.
+
+            sessionStorage, matching the entrance: a new tab is a new arrival
+            and still gets the film. Wrapped, because storage can be blocked —
+            in which case nothing is stamped and the gate behaves exactly as
+            it always did. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{if(sessionStorage.getItem("s9-intro-seen")==="1")document.documentElement.setAttribute("data-s9-seen","1")}catch(e){}',
+          }}
+        />
+      </head>
       <body>
         <SmoothScroll />
         {children}

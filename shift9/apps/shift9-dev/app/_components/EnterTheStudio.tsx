@@ -27,7 +27,7 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AsciiTunnel } from "./AsciiTunnel";
+import { WipeToBlack } from "./WipeToBlack";
 import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { Shift9Mark } from "./Shift9Mark";
@@ -417,7 +417,7 @@ export function EnterTheStudio() {
      Only the plain-left-click case is intercepted: modified clicks (new tab,
      new window, download) and reduced motion fall straight through to normal
      link behaviour, so nothing about the link is taken away. */
-  const [tunnel, setTunnel] = useState<{ x: number; y: number } | null>(null);
+  const [tunnel, setTunnel] = useState(false);
   const router = useRouter();
 
   const enterStudio = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -443,8 +443,7 @@ export function EnterTheStudio() {
        studio is mounted behind it rather than being asked for. */
     router.prefetch(STUDIO_HREF);
 
-    const r = e.currentTarget.getBoundingClientRect();
-    setTunnel({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+    setTunnel(true);
   }, [router]);
 
   const toggleTheme = useCallback(() => {
@@ -611,6 +610,14 @@ export function EnterTheStudio() {
 
   return (
     <div className={`${s.root} ${dark ? s.dark : ""}`}>
+      {tunnel ? (
+        <WipeToBlack
+          onDone={() => {
+            router.push(STUDIO_HREF);
+          }}
+        />
+      ) : null}
+
       {/* STAGE 0 — the front door. A still and two controls. Nothing is
           fetched, decoded or played until the visitor asks for it, which is
           also why this is real content rather than an overlay on a video. */}
@@ -767,18 +774,7 @@ export function EnterTheStudio() {
             and an identical one sitting perfectly still behind it. The veil
             stays either way, so the tint over the field never blinks. */}
         <div className={s.wallLayer} aria-hidden="true">
-          {tunnel ? (
-            <AsciiTunnel
-              className={s.wallCanvas}
-              originX={tunnel.x}
-              originY={tunnel.y}
-              onDone={() => {
-                router.push(STUDIO_HREF);
-              }}
-            />
-          ) : (
-            <AsciiWallpaper className={s.wallCanvas} ink={!dark} />
-          )}
+          <AsciiWallpaper className={s.wallCanvas} ink={!dark} />
           <div className={s.wallVeil} />
         </div>
 

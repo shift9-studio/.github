@@ -131,6 +131,19 @@
    labels, hairlines - not as a filled gradient pill. A button that glows is
    a button from a different system. */
 
+/* The return visit never sees this. The attribute is stamped on <html> by a
+   blocking script in the layout, before the first paint, so the plate is
+   hidden from frame zero rather than being un-rendered a few frames later by
+   React. `display: none` and not opacity: the plate is a full-screen JPEG and
+   there is no reason to decode it for someone who is not going to see it.
+
+   The React state still moves to "desk" on mount, so this is belt and braces
+   rather than the only thing holding it — if the script is blocked by a CSP
+   the component still corrects itself, just with the flash it always had. */
+:global(html[data-s9-seen="1"]) .gate {
+  display: none;
+}
+
 .gate {
   position: fixed;
   inset: 0;
