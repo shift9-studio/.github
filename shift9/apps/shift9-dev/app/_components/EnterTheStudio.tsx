@@ -555,6 +555,7 @@ export function EnterTheStudio() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={s.gatePlate} src={ENTRY_PLATE} alt="" />
           <div className={s.gateVeil} aria-hidden="true" />
+      <div className={s.gateGlow} aria-hidden="true" />
 
           <div className={s.gateBody}>
             <p className={s.gateMark}>SHIFT-9</p>

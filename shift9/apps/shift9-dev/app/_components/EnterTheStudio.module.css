@@ -163,6 +163,66 @@
     );
 }
 
+/* ── The seam breathes ────────────────────────────────────────────────────
+   The plate is fabric parted along a seam with light behind it, and until now
+   that light was painted on: the front door appeared fully formed and then sat
+   perfectly still until you touched something. Measured on a cold load, five
+   consecutive frames across a second and a half were byte-for-byte identical.
+   Static and dead are not the same thing, and this was the second one.
+
+   So the gap gets a pulse, and only the gap. The plate does not move, the type
+   does not move, the controls do not move — the light in the seam rises and
+   falls on a cycle slow enough (5.6s) that it registers as the room being lit
+   rather than as the page doing something. One composited layer over the
+   photograph: no repaint of the image, no canvas, no second asset.
+
+   It is deliberately the only thing on this screen with a heartbeat. The plate
+   holding still is exactly what makes the seam read as a light source instead
+   of an effect. */
+.gateGlow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Screen blending can only ADD light. It cannot darken the plate or shift
+     its colour, so the photograph underneath is never touched — the gap just
+     gets brighter. */
+  mix-blend-mode: screen;
+  filter: blur(18px);
+  /* Sited on the seam, which sits at the left third of the frame; the stops
+     track the same 30% object-position the plate is held at. */
+  background: linear-gradient(
+    90deg,
+    transparent 21%,
+    color-mix(in oklab, var(--s9-signal) 26%, transparent) 30%,
+    color-mix(in oklab, var(--s9-signal) 60%, transparent) 36%,
+    color-mix(in oklab, var(--s9-signal) 22%, transparent) 43%,
+    transparent 52%
+  );
+  opacity: 0.08;
+  animation: gateSeam 5.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes gateSeam {
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Reduced motion holds it near the top of the breath rather than the bottom.
+   Stopping at 0.08 would be the page with its light switched off; stopping lit
+   is the finished picture — degrade to a complete state, never a paused one. */
+@media (prefers-reduced-motion: reduce) {
+  .gateGlow {
+    animation: none;
+    opacity: 0.45;
+  }
+}
+
 .gateBody {
   position: relative;
   z-index: 1;
