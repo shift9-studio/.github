@@ -237,13 +237,33 @@
   margin-left: auto;
 }
 
+/* The front door signs itself with the same lockup the desktop carries.
+   It used to be the string SHIFT-9 in letterspaced mono, which said the
+   name but was not the mark — and the first thing anyone sees should be
+   the identity itself. */
 .gateMark {
+  display: flex;
+  align-items: center;
+  gap: 11px;
   margin: 0;
-  font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: var(--s9-text-mono);
+  font-family: var(--s9-font-display, sans-serif);
+  font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: 0.42em;
-  color: var(--s9-signal);
+  letter-spacing: -0.01em;
+  color: var(--s9-paper, #f8fafc);
+}
+.gateWord {
+  display: inline-flex;
+  align-items: center;
+}
+.gateMarkGlyph {
+  margin-left: 1px;
+  transform: translateY(1px);
+}
+.gateIcon {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
 }
 
 .gateLine {
@@ -644,21 +664,33 @@
   gap: 10px;
   padding: 12px 22px 6px;
 }
+/* The lockup: wordmark first, icon after it. The 9 is the drawn mark, and
+   it inherits the wordmark's colour rather than carrying an accent of its
+   own — it is a character in a word, so it is the colour of the word. */
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 11px;
   font-weight: 600;
   font-size: 18px;
+}
+.brandWord {
+  display: inline-flex;
+  align-items: center;
+  color: var(--w-txt);
+  letter-spacing: -0.01em;
+}
+/* Nudged down so the bowl sits on the wordmark's own centre rather than on
+   the box the glyph is drawn in — the dropped half adds room underneath
+   that would otherwise read as the mark floating high. */
+.brandMark {
+  margin-left: 1px;
+  transform: translateY(1px);
 }
 .brand img {
   width: 26px;
   height: 26px;
   border-radius: 6px;
-}
-.brand b {
-  color: var(--nine);
-  font-weight: 800;
 }
 .navlinks {
   margin-left: auto;

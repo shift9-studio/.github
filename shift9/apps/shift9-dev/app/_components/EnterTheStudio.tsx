@@ -29,6 +29,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AsciiTunnel } from "./AsciiTunnel";
 import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
+import { Shift9Mark } from "./Shift9Mark";
 import { SHIFT9_LOGO } from "./logo-data";
 /* CSS-module class access is typed `string | undefined` under
    noUncheckedIndexedAccess; classList APIs need a plain string. */
@@ -558,7 +559,16 @@ export function EnterTheStudio() {
       <div className={s.gateGlow} aria-hidden="true" />
 
           <div className={s.gateBody}>
-            <p className={s.gateMark}>SHIFT-9</p>
+            {/* The same lockup the desktop carries, so the front door and
+                the room behind it are signed by the same hand. */}
+            <p className={s.gateMark}>
+              <span className={s.gateWord}>
+                Shift-
+                <Shift9Mark className={s.gateMarkGlyph ?? ""} size={22} />
+              </span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className={s.gateIcon} src={SHIFT9_LOGO} alt="" />
+            </p>
             <p className={s.gateLine}>
               A studio that builds interfaces, tools and product surfaces.
             </p>
@@ -669,10 +679,17 @@ export function EnterTheStudio() {
         </div>
 
         <div className={s.titlerow}>
+          {/* The wordmark, then the icon. The 9 is the drawn mark rather
+              than a numeral, so the lockup reads Shift-9 once — the icon
+              used to sit on the left and, with the mark in place, that was
+              two logos in the same breath. */}
           <span className={s.brand}>
+            <span className={s.brandWord}>
+              Shift-
+              <Shift9Mark className={s.brandMark ?? ""} size={26} />
+            </span>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={SHIFT9_LOGO} alt="Shift-9" />
-            Shift <b>9</b>
           </span>
           <div className={s.navlinks}>
             <span>Home</span>
