@@ -2391,3 +2391,64 @@
     display: none;
   }
 }
+
+/* ── HOVER: NO BOX, ANYWHERE ─────────────────────────────────────────────
+   The About tile did this already and it was the one that read right, so it
+   stops being the exception and becomes the rule. Kariim's call.
+
+   What the tiles used to do on hover was paint a panel behind themselves
+   (::before), tint their background, turn on a border, drop a shadow and
+   sweep a sheen across the whole rectangle (::after). Five things announcing
+   a box that is not there at rest — on a desktop whose wallpaper is the point,
+   every one of them is a rectangle appearing under the pointer.
+
+   What stays is everything that belongs to the OBJECT rather than to its
+   container: the folder's tab and glyph lifting, the app icon's scale, the
+   holographic pass across the icon face, the label taking the accent colour.
+   The tile still answers the pointer — it just answers with the thing you are
+   pointing at instead of with a frame around it.
+
+   Focus is the exception to the exception. A keyboard user needs to see where
+   they are, and "the icon moved slightly" is not a focus indicator, so
+   :focus-visible keeps a real two-tone ring — the same one About already had. */
+.dicon:hover,
+.dicon:focus-visible {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+.dicon:hover::before,
+.dicon:focus-visible::before,
+.dicon:hover::after,
+.dicon:focus-visible::after {
+  opacity: 0;
+}
+.dicon:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue);
+}
+
+/* The door tile carried a box at REST as well as on hover — a tinted
+   gradient, a blue border and a pulsing ring, all to mark it as the primary
+   action. It no longer needs to shout: it sits at the end of the row now, it
+   is the only tile wearing the app icon, and its label is the only one in the
+   accent colour. The pulse is also the one piece of unprompted looping motion
+   on an otherwise still desktop. */
+.dicon.site {
+  background: transparent;
+  border-color: transparent;
+  animation: none;
+}
+.dicon.site:hover,
+.dicon.site:focus-visible {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.dicon.site:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue);
+}

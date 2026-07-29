@@ -1048,8 +1048,10 @@ export function EnterTheStudio() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={SHIFT9_LOGO} alt="shift9.dev" />
               </div>
-              <div className={s.fname}>shift9.dev</div>
-              <div className={s.fcount}>Enter the live site &#8594;</div>
+              <div className={s.fname}>Shift9.dev</div>
+              {/* No arrow. The line is the invitation, not a button label, and
+                  every other tile's second line is a plain statement. */}
+              <div className={s.fcount}>Enter the live site</div>
             </a>
           </div>
         </div>
