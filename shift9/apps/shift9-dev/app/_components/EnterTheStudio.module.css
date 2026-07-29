@@ -18,8 +18,19 @@
   --w-panel-rgb: 247 246 241;
   --w-side: #f0efe8;
   --w-line: #d8d6cc;
+  /* Tooltip surface. Deliberately the inverse of the desktop it sits on —
+     a light bubble on a light desktop is a sticker; a dark one reads as a
+     layer above the surface, which is what it is. */
+  --w-tipbg: #1f2328;
+  --w-tipink: #f4f3ee;
+  --w-tipline: rgb(255 255 255 / 0.14);
   --w-txt: #1f2328;
-  --w-dim: #6b7078;
+  /* Measured on the desktop's own ground (#eceadf): #6b7078 came out at
+     4.13:1, under the 4.5:1 floor for normal text — and this is the token
+     every secondary label on the light desktop uses, so "hard to read grey
+     on a light background" was the whole surface, not one component.
+     #585d65 is the same hue and weight at 5.49:1. */
+  --w-dim: #585d65;
   --w-sel: #e3ecf9;
   --w-mark: #fdf3d3;
   --w-chrome: #9a9a92;
@@ -31,8 +42,14 @@
   --w-shadow: 15 23 42;
   --w-halo-a: 0.9;
   --w-halo-b: 0.85;
-  --blue: #0b6bd6;
-  --blue-hover: #0a5cb8;
+  /* 4.26:1 on #eceadf — under the floor, and the shift9.dev tile sets its
+     name and its "Enter the live site" line in it, directly over the ASCII
+     wallpaper. It was the least readable text on the page and it was the
+     one thing meant to be pressed. #0a55a8 is 6.05:1 at the same hue.
+     The hover has to stay darker than the base to still read as a state
+     change, so it moves with it. */
+  --blue: #0a55a8;
+  --blue-hover: #08447f;
   --folder: #f6c445;
   --folder-tab: #e8b02e;
   /* The desktop keeps its own local palette because it is a picture of an
@@ -67,6 +84,10 @@
   --w-panel-rgb: 27 31 40;
   --w-side: #171b23;
   --w-line: #2b3140;
+  /* On the dark desktop the inversion runs the other way. */
+  --w-tipbg: #e8eaf0;
+  --w-tipink: #12151c;
+  --w-tipline: rgb(0 0 0 / 0.18);
   --w-txt: #e8eaf0;
   --w-dim: #98a1b3;
   --w-sel: #16304e;
@@ -105,6 +126,25 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* The two opening beats are stacked, not sequenced through one element.
+   Identical box, identical fit, so the join cannot shift the framing. */
+.beat {
+  position: absolute;
+  inset: 0;
+}
+
+/* The second beat waits transparent over the first and dissolves in at the
+   join. The first beat holds its last frame underneath for the length of the
+   fade, so there is no moment where black can show through. */
+.beatB {
+  opacity: 0;
+  transition: opacity var(--s9-dur-cut) linear;
+}
+
+.beatIn {
+  opacity: 1;
 }
 .skip {
   position: absolute;
@@ -1956,9 +1996,22 @@
   transition: opacity var(--s9-dur-base) var(--s9-ease-out);
 }
 
-/* The spectrum, masked to a soft centre so it has no edge of its own. */
+/* The spectrum, masked to a soft centre so it has no edge of its own.
+
+   The mask used to end at 72% from a centre biased up to 42%, which put the
+   two TOP corners of the square at 0.907 of the fade — still 9% opaque. At
+   rest that is invisible; the moment the layer turns, those two corners sweep
+   across the tile and you watch a rotating square. The bottom corners were at
+   1.064 and were fine, which is why only some of them showed.
+
+   Two changes, either of which would do it, both applied because this is the
+   kind of artefact that comes back. The layer is now larger than the tile it
+   sits in, so its corners are outside the `overflow: hidden` box and cannot
+   enter the frame at any angle. And the mask ends at 56%, which puts the
+   nearest corner at 1.166 — transparent with room to spare. */
 .holo::before {
   z-index: 3;
+  inset: -30%;
   background: conic-gradient(
     from 210deg,
     #ff5c93 0deg,
@@ -1969,8 +2022,8 @@
     #ff5c93 360deg
   );
   mix-blend-mode: soft-light;
-  mask: radial-gradient(72% 72% at 50% 42%, #000 28%, transparent 100%);
-  -webkit-mask: radial-gradient(72% 72% at 50% 42%, #000 28%, transparent 100%);
+  mask: radial-gradient(56% 56% at 50% 46%, #000 26%, transparent 100%);
+  -webkit-mask: radial-gradient(56% 56% at 50% 46%, #000 26%, transparent 100%);
 }
 
 /* The specular band — wide, feathered, gone by the end of the sweep. */
@@ -2215,4 +2268,126 @@
 .dicon:focus:not(:focus-visible) {
   outline: none;
   box-shadow: none;
+}
+
+/* ── The email button's confirmation ─────────────────────────────────────
+   Sits beside the envelope rather than over it, so the button never moves
+   and the note cannot cover the thing that was just pressed. */
+.helpnote {
+  position: fixed;
+  right: 74px;
+  bottom: 68px;
+  z-index: 12;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--w-quiet);
+  color: var(--w-txt);
+  border: 1px solid var(--w-line);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(6px);
+  transition:
+    opacity var(--s9-dur-base) var(--s9-ease-out),
+    transform var(--s9-dur-base) var(--s9-ease-out);
+}
+.helpnoteIn {
+  opacity: 1;
+  transform: translateX(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .helpnote {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ── TOOLTIPS ────────────────────────────────────────────────────────────
+   The native `title` tooltip is the operating system's, not the site's: it
+   waits about a second, ignores every token here, and on a page that is
+   already impersonating a desktop it is the one piece of chrome that gives
+   away which desktop you are actually on.
+
+   These are drawn from `data-tip`. `title` is removed from the elements that
+   carry one, because leaving both shows two tooltips.
+
+   Accessibility: the bubble is decorative and hidden from assistive tech —
+   every element that has one already carries an aria-label or its own visible
+   text, and announcing the same string twice is noise. It is pointer-only in
+   the sense that it also appears on :focus-visible, so a keyboard reaches it.
+   Never on :focus alone: a mouse click would leave a bubble stuck open. */
+/* Opt-in, not blanket. A rule like `[data-tip] { position: relative }` at the
+   end of this file has the same specificity as a class and would beat
+   `.helpdot { position: fixed }`, dropping that button out of its corner into
+   normal flow — precisely the bug recorded a few hundred lines up, where the
+   email button ended up at x=-26 with a sliver showing off the left edge of
+   every screen. So elements that need a positioning context ask for one, and
+   anything already positioned is left alone. */
+.tipHost {
+  position: relative;
+}
+.desktop [data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 9px);
+  translate: -50% 0;
+  z-index: 40;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--w-tipbg);
+  color: var(--w-tipink);
+  border: 1px solid var(--w-tipline);
+  box-shadow: 0 8px 22px rgb(0 0 0 / 0.28);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  /* Rises the last few pixels as it fades, so it reads as arriving rather
+     than switching on. */
+  transform: translateY(4px);
+  transition:
+    opacity var(--s9-dur-fast) var(--s9-ease-out),
+    transform var(--s9-dur-fast) var(--s9-ease-out);
+}
+.desktop [data-tip]:hover::after,
+.desktop [data-tip]:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Anything in the taskbar points its tooltip up out of the bar; anything in
+   the title row points down. Same bubble, opposite side. */
+.desktop [data-tip-below]::after {
+  bottom: auto;
+  top: calc(100% + 9px);
+  transform: translateY(-4px);
+}
+.desktop [data-tip-below]:hover::after,
+.desktop [data-tip-below]:focus-visible::after {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop [data-tip]::after {
+    transition: opacity var(--s9-dur-fast) linear;
+    transform: none;
+  }
+  .desktop [data-tip]:hover::after,
+  .desktop [data-tip]:focus-visible::after {
+    transform: none;
+  }
+}
+
+/* Coarse pointers have no hover, and a tooltip that only ever fires on tap
+   would sit under the finger that opened it. */
+@media (hover: none) {
+  .desktop [data-tip]::after {
+    display: none;
+  }
 }

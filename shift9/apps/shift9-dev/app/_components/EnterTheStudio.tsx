@@ -40,6 +40,10 @@ const cls = (name: string): string => (s as Record<string, string>)[name] ?? nam
    landing route. Same-site path, no target=_blank to itself (HANDOFF §8.1). */
 const STUDIO_HREF = "/studio";
 
+/* One address, used by the taskbar button and the About window alike, so the
+   two can never drift. */
+const STUDIO_EMAIL = "shift9.dev@gmail.com";
+
 /* The opening film, in order. Two generated beats played back to back as one
    continuous take: the approach and entry, then the desk. The last frame of the
    second beat is the monitor filling the screen, which is where the real
@@ -367,7 +371,18 @@ type OpenWin = FolderKey | "about" | null;
 
 export function EnterTheStudio() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  /* The second beat gets its own element rather than sharing the first one's.
+     See the playback effect for why — reassigning `src` on a playing video is
+     what made the join at ten seconds look cheap. */
+  const videoBRef = useRef<HTMLVideoElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  /* The icon field — the part of the desktop with nothing sitting on top of
+     it. The wallpaper lays the banner out against this box rather than the
+     whole viewport, so the wordmark is not partly behind the sidebar and
+     partly under the taskbar. */
+  const gridRef = useRef<HTMLDivElement>(null);
+  /* The email button confirmed its own click. */
+  const [copied, setCopied] = useState(false);
   const wakeRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const deskRef = useRef<HTMLDivElement>(null);
@@ -536,22 +551,67 @@ export function EnterTheStudio() {
     vid.addEventListener("error", onFail);
     const bail = setTimeout(onFail, 12000);
 
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const onEnded = () => {
-      /* The opening is shot as separate beats but has to read as one take, so
-         each clip hands straight to the next with no gap and no controls. Only
-         after the last one does the screen wake into the desktop. */
-      const next = OPENING.indexOf(vid.currentSrc.replace(window.location.origin, "")) + 1;
-      if (next > 0 && next < OPENING.length) {
-        vid.src = OPENING[next] ?? "";
-        vid.play().catch(() => {
-          /* refused mid-sequence — fall through to the desktop rather than
-             stranding the visitor on a frozen frame. */
-          enterDesk();
-        });
-        return;
-      }
+    /* ── THE JOIN AT TEN SECONDS ───────────────────────────────────────────
+       Both beats are 10.04s, so the handoff lands at exactly the moment a
+       visitor has settled in — and it was the ugliest thing on the site.
 
+       It used to be one element with its `src` reassigned on `ended`. Three
+       separate faults, all of them visible at once:
+
+       - Nothing fetched the second beat until the instant it was needed, so
+         13.6MB started downloading at the cut. That is the stutter.
+       - Assigning `src` runs the media load algorithm, which resets
+         readyState to HAVE_NOTHING. With no frame to show, the element falls
+         back to its `poster` — and the poster is the film's *opening*
+         exterior shot. So the join flashed a frame from the beginning of the
+         film before beat four appeared. Those are the stray frames.
+       - The old clip's decoder was torn down and a new one spun up between
+         two frames that were meant to be continuous.
+
+       Two elements instead. The second one is loaded while the first one
+       plays, pre-rolled so frame zero is already decoded, and revealed with a
+       short dissolve over the top of the first. Nothing is torn down mid-cut
+       and nothing has to start from cold.
+
+       The dissolve is `--s9-dur-cut`. Set that token to 0ms for a pure cut —
+       the mechanism is a straight swap either way, the fade only softens the
+       frame the two beats meet on. */
+    const beatB = videoBRef.current;
+
+    /* Deliberately after the first beat is actually moving, not on mount:
+       both files are large, and the beat you are watching gets the bandwidth
+       first. Ten seconds is a long head start for a 13.6MB fetch. */
+    const warmSecondBeat = () => {
+      if (!beatB || beatB.getAttribute("data-warm") === "1") return;
+      beatB.setAttribute("data-warm", "1");
+      beatB.preload = "auto";
+      beatB.load();
+    };
+    /* Decode frame zero ahead of time. A muted element is allowed to play
+       without a gesture, and this one has one anyway — the visitor pressed
+       Enter — so a silent play/pause leaves the decoder warm and the first
+       frame ready to paint. */
+    const prerollSecondBeat = () => {
+      if (!beatB) return;
+      beatB.muted = true;
+      beatB.playsInline = true;
+      beatB
+        .play()
+        .then(() => {
+          beatB.pause();
+          beatB.currentTime = 0;
+        })
+        .catch(() => {
+          /* Pre-roll is an optimisation. If it is refused, the handoff still
+             works — it just starts a fraction later. */
+        });
+    };
+    vid.addEventListener("playing", warmSecondBeat, { once: true });
+    beatB?.addEventListener("canplaythrough", prerollSecondBeat, { once: true });
+
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    const wakeIntoDesktop = () => {
       const wake = wakeRef.current;
       const glow = glowRef.current;
       if (!wake || !glow) return;
@@ -583,14 +643,40 @@ export function EnterTheStudio() {
         }, 1320),
       );
     };
-    vid.addEventListener("ended", onEnded);
+
+    const handOffToSecondBeat = () => {
+      if (!beatB) {
+        wakeIntoDesktop();
+        return;
+      }
+      /* Reveal first, play second. The dissolve runs over the first beat's
+         held last frame, so there is never a gap to show black through. */
+      beatB.classList.add(cls("beatIn"));
+      beatB.play().catch(() => enterDesk());
+      /* The first beat is finished and covered; letting go of its decoder
+         keeps one clip in flight rather than two. */
+      timers.push(setTimeout(() => vid.pause(), 600));
+    };
+
+    /* First beat ends → hand to the second. Second beat ends → wake the
+       screen. The last beat's final frame is the monitor filling the screen,
+       which is where the real desktop underneath takes over. */
+    vid.addEventListener("ended", handOffToSecondBeat);
+    beatB?.addEventListener("ended", wakeIntoDesktop);
+    /* A second beat that cannot be decoded must not strand anyone on a held
+       frame — the way forward never depends on the film. */
+    beatB?.addEventListener("error", enterDesk);
 
     return () => {
       clearTimeout(bail);
       vid.removeEventListener("loadeddata", onLoaded);
       vid.removeEventListener("playing", onPlaying);
       vid.removeEventListener("error", onFail);
-      vid.removeEventListener("ended", onEnded);
+      vid.removeEventListener("playing", warmSecondBeat);
+      vid.removeEventListener("ended", handOffToSecondBeat);
+      beatB?.removeEventListener("canplaythrough", prerollSecondBeat);
+      beatB?.removeEventListener("ended", wakeIntoDesktop);
+      beatB?.removeEventListener("error", enterDesk);
       timers.forEach(clearTimeout);
     };
   }, [mode, enterDesk, startVid]);
@@ -747,14 +833,31 @@ export function EnterTheStudio() {
           content, so this is hidden from assistive tech. */}
       <div className={s.stageVideo} ref={stageRef} aria-hidden="true">
         {mode === "film" ? (
-          <video
-            ref={videoRef}
-            src={OPENING[0]}
-            poster={OPENING_POSTER}
-            muted
-            playsInline
-            preload="auto"
-          />
+          <>
+            <video
+              className={s.beat}
+              ref={videoRef}
+              src={OPENING[0]}
+              poster={OPENING_POSTER}
+              muted
+              playsInline
+              preload="auto"
+            />
+            {/* The second beat, stacked over the first and transparent until
+                the join. No `poster`: a poster is what the element paints when
+                it has no frame, and the one frame this must never show is a
+                still from somewhere else in the film. `preload="none"` until
+                the first beat is actually playing, so the two fetches do not
+                race each other for the opening seconds. */}
+            <video
+              className={`${s.beat} ${s.beatB}`}
+              ref={videoBRef}
+              src={OPENING[1]}
+              muted
+              playsInline
+              preload="none"
+            />
+          </>
         ) : null}
         {mode === "film" ? (
           <button
@@ -786,7 +889,7 @@ export function EnterTheStudio() {
             and an identical one sitting perfectly still behind it. The veil
             stays either way, so the tint over the field never blinks. */}
         <div className={s.wallLayer} aria-hidden="true">
-          <AsciiWallpaper className={s.wallCanvas} ink={!dark} />
+          <AsciiWallpaper className={s.wallCanvas} ink={!dark} fitTo={gridRef} />
           <div className={s.wallVeil} />
         </div>
 
@@ -813,10 +916,11 @@ export function EnterTheStudio() {
             <span className={s.inert} aria-hidden>Log in</span>
             <button
               type="button"
-              className={s.themeBtn}
+              className={`${s.themeBtn} ${s.tipHost}`}
               onClick={toggleTheme}
               aria-pressed={dark}
-              title={dark ? "Switch to light" : "Switch to dark"}
+              data-tip={dark ? "Switch to light" : "Switch to dark"}
+              data-tip-below=""
             >
               {dark ? SUN : MOON}
               {dark ? "Light" : "Dark"}
@@ -840,10 +944,10 @@ export function EnterTheStudio() {
           </div>
           <div className={s.viewbtn}>
             <span
-              className={`${s.vseg} ${compact ? "" : s.on}`}
+              className={`${s.vseg} ${s.tipHost} ${compact ? "" : s.on}`}
               role="button"
               tabIndex={0}
-              title="Grid view"
+              data-tip="Grid view"
               onClick={() => setCompact(false)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") setCompact(false);
@@ -852,10 +956,10 @@ export function EnterTheStudio() {
               &#8862; Grid
             </span>
             <span
-              className={`${s.vseg} ${compact ? s.on : ""}`}
+              className={`${s.vseg} ${s.tipHost} ${compact ? s.on : ""}`}
               role="button"
               tabIndex={0}
-              title="Icon view"
+              data-tip="Icon view"
               onClick={() => setCompact(true)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") setCompact(true);
@@ -883,21 +987,7 @@ export function EnterTheStudio() {
             </div>
           </div>
 
-          <div className={`${s.grid} ${compact ? s.compact : ""}`}>
-            {/* Door-tile first — the prominent entrance to the live studio. */}
-            <a
-              className={`${s.dicon} ${s.site}`}
-              href={STUDIO_HREF}
-              style={{ textDecoration: "none" }}
-              onClick={enterStudio}
-            >
-              <div className={`${s.appico} ${s.holo} ${s.holoDark}`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={SHIFT9_LOGO} alt="shift9.dev" />
-              </div>
-              <div className={s.fname}>shift9.dev</div>
-              <div className={s.fcount}>Enter the live site &#8594;</div>
-            </a>
+          <div className={`${s.grid} ${compact ? s.compact : ""}`} ref={gridRef}>
 
             {FOLDERS.map((f) => (
               <div
@@ -943,30 +1033,78 @@ export function EnterTheStudio() {
               <div className={s.fname}>About</div>
               <div className={s.fcount}>Kariim &#183; Shift-9</div>
             </div>
+
+            {/* The door tile closes the row rather than opening it — Kariim's call.
+                The folders are what a visitor came to look through, and the
+                entrance reads as the conclusion of that row rather than as a
+                thing to get past. */}
+            <a
+              className={`${s.dicon} ${s.site}`}
+              href={STUDIO_HREF}
+              style={{ textDecoration: "none" }}
+              onClick={enterStudio}
+            >
+              <div className={`${s.appico} ${s.holo} ${s.holoDark}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={SHIFT9_LOGO} alt="shift9.dev" />
+              </div>
+              <div className={s.fname}>shift9.dev</div>
+              <div className={s.fcount}>Enter the live site &#8594;</div>
+            </a>
           </div>
         </div>
 
         {/* It opens a mail client, so it is an envelope. As a speech bubble
             it read as a live-chat widget — a promise of someone on the other
             end right now, which is not what this is. */}
-        <a className={s.helpdot} href="mailto:shift9.dev@gmail.com" aria-label="Email the studio" title="Email the studio">
+        {/* A bare mailto is a button that does nothing on any machine without
+            a mail client configured — which is most of them, and it gives no
+            feedback either way, so it reads as broken rather than as
+            unhandled. The href stays, because where a handler does exist that
+            is the fastest path and it keeps right-click → copy working. The
+            click also puts the address on the clipboard and says so, so the
+            button always does something the visitor can see. */}
+        <a
+          className={s.helpdot}
+          href={`mailto:${STUDIO_EMAIL}`}
+          aria-label={`Email the studio — ${STUDIO_EMAIL}`}
+          data-tip={STUDIO_EMAIL}
+          onClick={() => {
+            navigator.clipboard?.writeText(STUDIO_EMAIL).then(
+              () => {
+                setCopied(true);
+                window.setTimeout(() => setCopied(false), 2400);
+              },
+              () => {
+                /* Clipboard refused (insecure context, or denied). The mailto
+                   still fires and the address is in the tooltip. */
+              },
+            );
+          }}
+        >
           &#9993;
         </a>
+        {/* Live region: the confirmation is the whole point of the click for
+            anyone whose machine ignored the mailto, so it has to be announced
+            and not only drawn. */}
+        <span className={`${s.helpnote} ${copied ? s.helpnoteIn : ""}`} role="status" aria-live="polite">
+          {copied ? `${STUDIO_EMAIL} copied` : ""}
+        </span>
 
         <div className={s.taskbar}>
           <div className={`${s.tb} ${s.start}`} />
-          <div className={s.tb}>&#128269;</div>
+          <div className={`${s.tb} ${s.tipHost}`} data-tip="Search">&#128269;</div>
           <a
-            className={`${s.tb} ${s.pin}`}
+            className={`${s.tb} ${s.pin} ${s.tipHost}`}
             href={STUDIO_HREF}
-            title="shift9.dev"
+            data-tip="shift9.dev"
             onClick={enterStudio}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={SHIFT9_LOGO} alt="" />
           </a>
-          <div className={s.tb}>&#127760;</div>
-          <div className={s.tb}>&#9993;</div>
+          <div className={`${s.tb} ${s.tipHost}`} data-tip="shift9.dev">&#127760;</div>
+          <div className={`${s.tb} ${s.tipHost}`} data-tip="Email the studio">&#9993;</div>
           <Clock className={s.clock} />
         </div>
       </div>
@@ -1011,7 +1149,7 @@ export function EnterTheStudio() {
                     React UI &#183; automation
                     <br />
                     Email &#8594;{" "}
-                    <a href="mailto:shift9.dev@gmail.com">shift9.dev@gmail.com</a>{" "}
+                    <a href={`mailto:${STUDIO_EMAIL}`}>{STUDIO_EMAIL}</a>{" "}
                     &#183; Studio &#8594;{" "}
                     <a href={STUDIO_HREF} onClick={enterStudio}>
                       shift9.dev

@@ -50,9 +50,18 @@ type Cell = { char: number; tone: number };
 export function AsciiWallpaper({
   className,
   ink = true,
+  fitTo,
 }: {
   className?: string;
   ink?: boolean;
+  /* The box the ARTWORK has to fit inside, when that is smaller than the
+     canvas. The canvas stays full-bleed — a wallpaper that stops at the
+     chrome is a picture, not a wallpaper — but the banner is laid out
+     against the part of the desktop nothing is sitting on top of, so the
+     whole wordmark is visible instead of running under the taskbar and
+     behind the sidebar. Measured from the live element rather than mirrored
+     as numbers, so the two cannot drift apart. */
+  fitTo?: React.RefObject<HTMLElement | null>;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -134,11 +143,36 @@ export function AsciiWallpaper({
          rather than as the banner. One cell size for both axes fixes the
          proportions; the field is then centred in whatever space is left, so
          the whole banner is on screen with its own aspect intact. */
-      const cell = Math.min(rect.width / cols, rect.height / rows);
-      cellW = cell;
-      cellH = cell;
-      offX = (rect.width - cell * cols) / 2;
-      offY = (rect.height - cell * rows) / 2;
+      /* Lay the banner out inside the unobstructed part of the desktop when
+         one is given, then paint it at that place on the full-bleed canvas.
+         Fitting to the viewport instead put roughly a fifth of the artwork
+         under the chrome — the wordmark ran behind the sidebar on the left
+         and under the taskbar at the bottom, which is what made it read as
+         a crop sitting in a corner rather than as the banner. */
+      const box = fitTo?.current?.getBoundingClientRect();
+      const fitW = box && box.width > 1 ? box.width : rect.width;
+      const fitH = box && box.height > 1 ? box.height : rect.height;
+      const fitX = box ? box.left - rect.left : 0;
+      const fitY = box ? box.top - rect.top : 0;
+
+      /* Cells are not square, and forcing them to be is what kept the field
+         to a band across the middle. A terminal cell is taller than it is
+         wide — a monospace advance is about 0.6em — so character art is read
+         at roughly 1:2, and the artwork was sampled for that. Square cells
+         squashed 170x57 down to its raw 3:1 and left the rest of the desktop
+         empty above and below.
+
+         Width fills the box. Height then takes as much of the box as it can
+         up to twice the cell width, which is the terminal's own proportion:
+         past that the rows drift apart and the wordmark stops holding
+         together. The glyph itself is still sized off the cell WIDTH in
+         buildAtlas, so widening the row pitch adds air between rows and never
+         smears neighbouring characters into each other. */
+      const MAX_CELL_ASPECT = 2;
+      cellW = fitW / cols;
+      cellH = Math.min(fitH / rows, cellW * MAX_CELL_ASPECT);
+      offX = fitX + (fitW - cellW * cols) / 2;
+      offY = fitY + (fitH - cellH * rows) / 2;
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
       atlas = buildAtlas();
@@ -228,6 +262,10 @@ export function AsciiWallpaper({
 
     const ro = new ResizeObserver(() => start());
     ro.observe(canvas);
+    /* The fit box can change without the canvas changing — switching Grid to
+       Icons reflows the desktop under a viewport that never moved. Watch it
+       too, or the banner keeps the previous layout's proportions. */
+    if (fitTo?.current) ro.observe(fitTo.current);
     reduced.addEventListener("change", start);
 
     return () => {
@@ -235,7 +273,7 @@ export function AsciiWallpaper({
       ro.disconnect();
       reduced.removeEventListener("change", start);
     };
-  }, [ink]);
+  }, [ink, fitTo]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }
