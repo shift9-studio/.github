@@ -2246,3 +2246,37 @@
   outline: none;
   box-shadow: none;
 }
+
+/* ── The email button's confirmation ─────────────────────────────────────
+   Sits beside the envelope rather than over it, so the button never moves
+   and the note cannot cover the thing that was just pressed. */
+.helpnote {
+  position: fixed;
+  right: 74px;
+  bottom: 68px;
+  z-index: 12;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--w-quiet);
+  color: var(--w-txt);
+  border: 1px solid var(--w-line);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(6px);
+  transition:
+    opacity var(--s9-dur-base) var(--s9-ease-out),
+    transform var(--s9-dur-base) var(--s9-ease-out);
+}
+.helpnoteIn {
+  opacity: 1;
+  transform: translateX(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .helpnote {
+    transition: none;
+    transform: none;
+  }
+}

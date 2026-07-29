@@ -155,11 +155,24 @@ export function AsciiWallpaper({
       const fitX = box ? box.left - rect.left : 0;
       const fitY = box ? box.top - rect.top : 0;
 
-      const cell = Math.min(fitW / cols, fitH / rows);
-      cellW = cell;
-      cellH = cell;
-      offX = fitX + (fitW - cell * cols) / 2;
-      offY = fitY + (fitH - cell * rows) / 2;
+      /* Cells are not square, and forcing them to be is what kept the field
+         to a band across the middle. A terminal cell is taller than it is
+         wide — a monospace advance is about 0.6em — so character art is read
+         at roughly 1:2, and the artwork was sampled for that. Square cells
+         squashed 170x57 down to its raw 3:1 and left the rest of the desktop
+         empty above and below.
+
+         Width fills the box. Height then takes as much of the box as it can
+         up to twice the cell width, which is the terminal's own proportion:
+         past that the rows drift apart and the wordmark stops holding
+         together. The glyph itself is still sized off the cell WIDTH in
+         buildAtlas, so widening the row pitch adds air between rows and never
+         smears neighbouring characters into each other. */
+      const MAX_CELL_ASPECT = 2;
+      cellW = fitW / cols;
+      cellH = Math.min(fitH / rows, cellW * MAX_CELL_ASPECT);
+      offX = fitX + (fitW - cellW * cols) / 2;
+      offY = fitY + (fitH - cellH * rows) / 2;
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
       atlas = buildAtlas();

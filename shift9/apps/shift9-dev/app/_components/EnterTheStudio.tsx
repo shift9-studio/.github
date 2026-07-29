@@ -40,6 +40,10 @@ const cls = (name: string): string => (s as Record<string, string>)[name] ?? nam
    landing route. Same-site path, no target=_blank to itself (HANDOFF §8.1). */
 const STUDIO_HREF = "/studio";
 
+/* One address, used by the taskbar button and the About window alike, so the
+   two can never drift. */
+const STUDIO_EMAIL = "shift9.dev@gmail.com";
+
 /* The opening film, in order. Two generated beats played back to back as one
    continuous take: the approach and entry, then the desk. The last frame of the
    second beat is the monitor filling the screen, which is where the real
@@ -377,6 +381,8 @@ export function EnterTheStudio() {
      whole viewport, so the wordmark is not partly behind the sidebar and
      partly under the taskbar. */
   const gridRef = useRef<HTMLDivElement>(null);
+  /* The email button confirmed its own click. */
+  const [copied, setCopied] = useState(false);
   const wakeRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const deskRef = useRef<HTMLDivElement>(null);
@@ -1046,9 +1052,39 @@ export function EnterTheStudio() {
         {/* It opens a mail client, so it is an envelope. As a speech bubble
             it read as a live-chat widget — a promise of someone on the other
             end right now, which is not what this is. */}
-        <a className={s.helpdot} href="mailto:shift9.dev@gmail.com" aria-label="Email the studio" title="Email the studio">
+        {/* A bare mailto is a button that does nothing on any machine without
+            a mail client configured — which is most of them, and it gives no
+            feedback either way, so it reads as broken rather than as
+            unhandled. The href stays, because where a handler does exist that
+            is the fastest path and it keeps right-click → copy working. The
+            click also puts the address on the clipboard and says so, so the
+            button always does something the visitor can see. */}
+        <a
+          className={s.helpdot}
+          href={`mailto:${STUDIO_EMAIL}`}
+          aria-label={`Email the studio — ${STUDIO_EMAIL}`}
+          title={`Email the studio — ${STUDIO_EMAIL}`}
+          onClick={() => {
+            navigator.clipboard?.writeText(STUDIO_EMAIL).then(
+              () => {
+                setCopied(true);
+                window.setTimeout(() => setCopied(false), 2400);
+              },
+              () => {
+                /* Clipboard refused (insecure context, or denied). The mailto
+                   still fires and the address is in the tooltip. */
+              },
+            );
+          }}
+        >
           &#9993;
         </a>
+        {/* Live region: the confirmation is the whole point of the click for
+            anyone whose machine ignored the mailto, so it has to be announced
+            and not only drawn. */}
+        <span className={`${s.helpnote} ${copied ? s.helpnoteIn : ""}`} role="status" aria-live="polite">
+          {copied ? `${STUDIO_EMAIL} copied` : ""}
+        </span>
 
         <div className={s.taskbar}>
           <div className={`${s.tb} ${s.start}`} />
@@ -1108,7 +1144,7 @@ export function EnterTheStudio() {
                     React UI &#183; automation
                     <br />
                     Email &#8594;{" "}
-                    <a href="mailto:shift9.dev@gmail.com">shift9.dev@gmail.com</a>{" "}
+                    <a href={`mailto:${STUDIO_EMAIL}`}>{STUDIO_EMAIL}</a>{" "}
                     &#183; Studio &#8594;{" "}
                     <a href={STUDIO_HREF} onClick={enterStudio}>
                       shift9.dev
