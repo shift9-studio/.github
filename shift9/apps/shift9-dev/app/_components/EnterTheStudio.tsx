@@ -916,10 +916,11 @@ export function EnterTheStudio() {
             <span className={s.inert} aria-hidden>Log in</span>
             <button
               type="button"
-              className={s.themeBtn}
+              className={`${s.themeBtn} ${s.tipHost}`}
               onClick={toggleTheme}
               aria-pressed={dark}
-              title={dark ? "Switch to light" : "Switch to dark"}
+              data-tip={dark ? "Switch to light" : "Switch to dark"}
+              data-tip-below=""
             >
               {dark ? SUN : MOON}
               {dark ? "Light" : "Dark"}
@@ -943,10 +944,10 @@ export function EnterTheStudio() {
           </div>
           <div className={s.viewbtn}>
             <span
-              className={`${s.vseg} ${compact ? "" : s.on}`}
+              className={`${s.vseg} ${s.tipHost} ${compact ? "" : s.on}`}
               role="button"
               tabIndex={0}
-              title="Grid view"
+              data-tip="Grid view"
               onClick={() => setCompact(false)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") setCompact(false);
@@ -955,10 +956,10 @@ export function EnterTheStudio() {
               &#8862; Grid
             </span>
             <span
-              className={`${s.vseg} ${compact ? s.on : ""}`}
+              className={`${s.vseg} ${s.tipHost} ${compact ? s.on : ""}`}
               role="button"
               tabIndex={0}
-              title="Icon view"
+              data-tip="Icon view"
               onClick={() => setCompact(true)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") setCompact(true);
@@ -987,20 +988,6 @@ export function EnterTheStudio() {
           </div>
 
           <div className={`${s.grid} ${compact ? s.compact : ""}`} ref={gridRef}>
-            {/* Door-tile first — the prominent entrance to the live studio. */}
-            <a
-              className={`${s.dicon} ${s.site}`}
-              href={STUDIO_HREF}
-              style={{ textDecoration: "none" }}
-              onClick={enterStudio}
-            >
-              <div className={`${s.appico} ${s.holo} ${s.holoDark}`}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={SHIFT9_LOGO} alt="shift9.dev" />
-              </div>
-              <div className={s.fname}>shift9.dev</div>
-              <div className={s.fcount}>Enter the live site &#8594;</div>
-            </a>
 
             {FOLDERS.map((f) => (
               <div
@@ -1046,6 +1033,24 @@ export function EnterTheStudio() {
               <div className={s.fname}>About</div>
               <div className={s.fcount}>Kariim &#183; Shift-9</div>
             </div>
+
+            {/* The door tile closes the row rather than opening it — Kariim's call.
+                The folders are what a visitor came to look through, and the
+                entrance reads as the conclusion of that row rather than as a
+                thing to get past. */}
+            <a
+              className={`${s.dicon} ${s.site}`}
+              href={STUDIO_HREF}
+              style={{ textDecoration: "none" }}
+              onClick={enterStudio}
+            >
+              <div className={`${s.appico} ${s.holo} ${s.holoDark}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={SHIFT9_LOGO} alt="shift9.dev" />
+              </div>
+              <div className={s.fname}>shift9.dev</div>
+              <div className={s.fcount}>Enter the live site &#8594;</div>
+            </a>
           </div>
         </div>
 
@@ -1063,7 +1068,7 @@ export function EnterTheStudio() {
           className={s.helpdot}
           href={`mailto:${STUDIO_EMAIL}`}
           aria-label={`Email the studio — ${STUDIO_EMAIL}`}
-          title={`Email the studio — ${STUDIO_EMAIL}`}
+          data-tip={STUDIO_EMAIL}
           onClick={() => {
             navigator.clipboard?.writeText(STUDIO_EMAIL).then(
               () => {
@@ -1088,18 +1093,18 @@ export function EnterTheStudio() {
 
         <div className={s.taskbar}>
           <div className={`${s.tb} ${s.start}`} />
-          <div className={s.tb}>&#128269;</div>
+          <div className={`${s.tb} ${s.tipHost}`} data-tip="Search">&#128269;</div>
           <a
-            className={`${s.tb} ${s.pin}`}
+            className={`${s.tb} ${s.pin} ${s.tipHost}`}
             href={STUDIO_HREF}
-            title="shift9.dev"
+            data-tip="shift9.dev"
             onClick={enterStudio}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={SHIFT9_LOGO} alt="" />
           </a>
-          <div className={s.tb}>&#127760;</div>
-          <div className={s.tb}>&#9993;</div>
+          <div className={`${s.tb} ${s.tipHost}`} data-tip="shift9.dev">&#127760;</div>
+          <div className={`${s.tb} ${s.tipHost}`} data-tip="Email the studio">&#9993;</div>
           <Clock className={s.clock} />
         </div>
       </div>
