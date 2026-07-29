@@ -9,10 +9,19 @@
   position: fixed;
   inset: 0;
   z-index: 20;
+  overflow: hidden;
   /* The letterboxing, on a window the plate cannot cover in both axes. In
      practice `framing()` means it is only ever seen for the frame before the
      canvas sizes itself. */
   background: var(--s9-obsidian);
+}
+
+/* The rendered frame, larger than the window and offset inside it — this is
+   the push-in. Everything the scene draws lives in here so the WebGL layer and
+   the CSS3D layer are cropped by exactly the same box. `overflow: hidden` on
+   .room is what does the cropping. */
+.frame {
+  position: absolute;
 }
 
 .room canvas {

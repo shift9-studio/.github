@@ -102,31 +102,71 @@ const SCREEN_WIDTH_M = 0.7998;
    anything in here starts moving. */
 const DESIGN_FOV_DEG = 35;
 
-/* How much of the frame the room fills. 1 is the film's own framing, to the
-   pixel — the monitor is 55% of the width, exactly where the film left it,
-   and the desk and the wall and the plants are all still there around it.
+/* ── How close the room sits ─────────────────────────────────────────────
+   The film frames the monitor at 55% of the width, with a lot of desk and
+   wall around it. Composited at that framing the desktop renders at 55% scale
+   and its small labels land near 7px, which nothing can read. So the room
+   pushes in — but only as far as it can without throwing away the things the
+   shot is of.
 
-   Above 1 pushes in: the desktop gets bigger and easier to read, the room
-   gets tighter, and the plate — 1928px, and un-reshootable, because the film
-   is locked — gets softer in proportion.
+   That is what this rect is: the region of the plate that MUST stay on
+   screen. The zoom is derived from it rather than dialled by eye, so the
+   framing can never quietly crop something that matters.
 
-   ⚠ THE CEILING IS 1.14, and it is geometry, not taste. The zoom is a fov
-   change about the CENTRE OF FRAME, and the monitor does not sit at the
-   centre of frame; its glass runs from y=70 to y=522 of a 1076px plate, well
-   above the middle. So pushing in eats the top of the monitor before it eats
-   anything else. The glass's top edge leaves frame at z = 540/470 = 1.149.
-   Rendered at 1.5 to check: the top third of the screen is gone and the
-   desktop is cropped. Do not go past 1.14 expecting more room to appear.
+     top     the monitor's top edge, y=70, plus a margin of wall
+     bottom  the mouse at y=905 — where the hand rests, and the hand is a
+             prop now, not a placeholder; cropping it out to gain a few
+             percent of type size would be trading the wrong thing
+     sides   the desk, wide enough to keep both plants and the second monitor
+             reading as a room rather than as wallpaper
 
-   Zooming about the SCREEN instead of the frame would lift that ceiling, and
-   was tried: it needs `camera.setViewOffset`, which shifts the projection's
-   principal point — and three's CSS3DRenderer assumes a centred projection,
-   so the composited desktop slides off the glass it is meant to be welded to.
-   The composite is the point of this milestone, so the ceiling stays.
+   Which yields ~1.25x, and a desktop at ~68% instead of 55%. It is bounded,
+   and worth saying plainly: keeping the whole monitor AND the hand in frame
+   is what stops it going further. Drop the hand from the composition and it
+   would reach ~1.5x; drop the room and you are back to a full-bleed page.
 
-   Getting properly closer needs a re-shot beat, which is locked. Left at 1 =
-   faithful to the approved join. */
-export const FRAMING_ZOOM = 1;
+   HOW the zoom is applied matters as much as its value. It is NOT a fov
+   change — a fov change scales about the centre of frame, and the monitor
+   sits well above centre, so pushing in that way eats the screen's top edge
+   first (measured: it leaves frame at 1.15x). And it is NOT
+   `camera.setViewOffset`, which shifts the projection's principal point and
+   slides the CSS3D composite off the glass it is welded to.
+
+   Instead the scene renders a LARGER frame and the viewport shows a window
+   onto it — see `crop()`. Both layers, WebGL and CSS3D, render at the same
+   enlarged size with the same untouched camera and are offset together, so
+   the composite cannot come apart; the crop is pure CSS. The cost is honest
+   and only one: the plate is 1928px and gets magnified, so the room is
+   proportionally softer. */
+const COMPOSITION = { left: 250, right: 1690, top: 30, bottom: 915 };
+
+/** How much larger than the viewport the scene renders. Derived, not chosen. */
+export const FRAMING_ZOOM = Math.min(
+  PLATE_W / (COMPOSITION.right - COMPOSITION.left),
+  PLATE_H / (COMPOSITION.bottom - COMPOSITION.top),
+);
+
+/**
+ * Where the viewport's window sits on the enlarged frame, in CSS pixels.
+ *
+ * The window is centred on the composition rect and then clamped inside the
+ * rendered frame, so it can never show past the plate's edge.
+ */
+export function crop(viewportW: number, viewportH: number) {
+  const width = viewportW * FRAMING_ZOOM;
+  const height = viewportH * FRAMING_ZOOM;
+  const centre = {
+    x: (COMPOSITION.left + COMPOSITION.right) / 2 / PLATE_W,
+    y: (COMPOSITION.top + COMPOSITION.bottom) / 2 / PLATE_H,
+  };
+  const clamp = (v: number, max: number) => Math.min(Math.max(v, 0), Math.max(max, 0));
+  return {
+    width,
+    height,
+    left: -clamp(centre.x * width - viewportW / 2, width - viewportW),
+    top: -clamp(centre.y * height - viewportH / 2, height - viewportH),
+  };
+}
 
 /* ── Everything below is derived. Do not hand-edit; change an input above. ── */
 
@@ -297,8 +337,7 @@ export const BACKDROP = {
  * at every window size.
  */
 export function framing(viewportAspect: number): number {
-  const visibleHeight =
-    Math.min(BACKDROP.height, BACKDROP.width / viewportAspect) / FRAMING_ZOOM;
+  const visibleHeight = Math.min(BACKDROP.height, BACKDROP.width / viewportAspect);
   return (2 * Math.atan(visibleHeight / (2 * BACKDROP.depth)) * 180) / Math.PI;
 }
 
@@ -311,7 +350,7 @@ export function framing(viewportAspect: number): number {
 export function screenScreenFraction(viewportAspect: number): number {
   const fov = (framing(viewportAspect) * Math.PI) / 180;
   const visibleHeightAtScreen = 2 * -screenCentre.z * Math.tan(fov / 2);
-  return SCREEN_WIDTH_M / (visibleHeightAtScreen * viewportAspect);
+  return (SCREEN_WIDTH_M / (visibleHeightAtScreen * viewportAspect)) * FRAMING_ZOOM;
 }
 
 /* ── Props ───────────────────────────────────────────────────────────────

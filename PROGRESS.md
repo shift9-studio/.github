@@ -9,8 +9,9 @@
 **Base:** `adb29c8` — the entry experience is **merged** (PR #36). This branch
 continues from it, which is why the previous contents of this file (the
 entry-experience branch, PR #35) are gone rather than appended to.
-**Scope:** 11 files. New: `app/_components/desk3d/` (7 files),
-`scripts/build-handoff-plate.py`, one generated JPEG. Modified:
+**Scope:** 14 files. New: `app/_components/desk3d/` (7 files),
+`scripts/build-handoff-plate.py`, `scripts/build-crocheted-hand.py` + its
+run-card, one generated JPEG, one generated `.glb`. Modified:
 `EnterTheStudio.tsx` + `.module.css`, `packages/theme/tokens.css`,
 `apps/shift9-dev/package.json`, `pnpm-lock.yaml`.
 
@@ -24,8 +25,8 @@ the mouse, and a **3D room** takes over from that frame — the same desk, the
 same monitor, with the live interactive desktop composited onto the monitor's
 glass in perspective. The desktop becomes a screen in a room instead of a page.
 
-This is the **scaffold**. The hand is a placeholder, nothing animates, and the
-camera does not move.
+This is the **scaffold**. Nothing animates and the camera does not move. The
+hand is modelled and textured but not yet rigged.
 
 | Piece | Where | What it is |
 |---|---|---|
@@ -36,6 +37,7 @@ camera does not move.
 | The gate | `desk3d/useRoomCapable.ts` | Three-free, so phones never download a renderer. |
 | Materials | `desk3d/palette.ts` | Reads the room's tokens off the document at runtime. |
 | Props | `desk3d/props/` | One file per prop. `hand.tsx` is the worked example. |
+| The hand | `scripts/build-crocheted-hand.py` + `.runcard.md` | Owns the model. Do not hand-edit the `.glb`. |
 | The plate | `scripts/build-handoff-plate.py` | Cuts the backdrop out of the film. Owns the file — do not hand-replace it. |
 
 ## How the geometry was solved (do not re-guess this)
@@ -50,14 +52,14 @@ plate at 5× zoom, and the panel's pose is solved from them in closed form:
 Solving per-edge rather than from the quad's centre matters: perspective is not
 linear, so the centre of a projected quad is not the projection of the centre.
 The first version used the centroid and sat the top edge ~0.7% low — a 9px black
-slit above the desktop at 2560. **Measured now: within 2.1px at every size
+slit above the desktop at 2560. **Measured now: within 2.4px at every size
 tested**, with the top edge correctly wider than the bottom (the panel leans its
 top toward the camera).
 
 The **desk plane is the one estimate** in the file, and it is labelled as such.
 It is calibrated off the mouse — the only object in frame whose real size is
 known and whose top and bottom are both visible — which puts the surface 0.181m
-below the camera axis. An earlier eyeballed 0.14m left the placeholder hand
+below the camera axis. An earlier eyeballed 0.14m left the hand
 hovering 60px above the mouse it was meant to rest on.
 
 `?wire` on the page draws the stand-in geometry, which is how the next prop
@@ -101,12 +103,12 @@ must occlude the screen has to be DOM too.
 | `pnpm --filter shift9-dev build` / `just-a-pinch build` | exit 0, both, no `.env` anywhere in the repo |
 | `pnpm typecheck` | exit 0, both apps. No new `any`, no ts-suppressions |
 | Every route at 1280 / 768 / 390 | `/`, `/studio`, `/start`, `/soon`, `/instrument` — all 200, **zero** console errors, `scrollWidth === clientWidth` (no horizontal overflow) |
-| Composite alignment | **2.1px worst-case** corner drift at 1280×800, 1440×900, 1920×1080, 1600×1200, 2560×1440; top edge wider than bottom at all five (the lean is right, not just the bounding box) |
+| Composite alignment | **2.4px worst-case** corner drift at 1280×800, 1440×900, 1920×1080, 1600×1200, 2560×1440; top edge wider than bottom at all five (the lean is right, not just the bounding box) |
 | Keyboard | 22 of 24 tab stops land inside the composited screen; the full-size hotspot is in the tab order and works |
 | `prefers-reduced-motion` | Room renders, complete and legible, film skipped. Frame **pixel-identical across 1.2s** — nothing is animating |
 | WebGL disabled (actually, via `--disable-webgl`) | Falls back to today's full-bleed desktop. 5 tiles, 0 errors |
 | The 8.45s stop | Driven end-to-end with a timing-identical WebM stand-in (this box has no H.264 decoder). Never reached 8.5; plate decoded and covering at the stop, 3/3 runs |
-| Added page weight | **+0.37 MB** on a desktop that gets the room (231 KB JS, 144 KB plate). **0 MB** on a phone or a machine without WebGL — the room is a dynamic import |
+| Added page weight | **+0.51 MB** on a desktop that gets the room (252 KB JS, 144 KB plate, 124 KB hand model). **0 MB** on a phone or a machine without WebGL — the room is a dynamic import |
 | Tokens | Zero raw hex and zero raw durations outside `tokens.css`; four new room tokens added there |
 
 ## Two bugs this branch found and fixed in existing code
@@ -121,18 +123,22 @@ must occlude the screen has to be DOM too.
 
 ## Known, and deliberately not solved here
 
-- **The desktop is small.** At the film's own framing the glass is 55–61% of the
-  viewport width, so the interface renders at that scale: 14.5px tile names read
-  as ~8px, 11.5px sub-labels as ~7px. That is the cost of the desktop being a
-  screen in a room, and it is not something the room can fix — the room is the
-  reason. The escape hatch is the **"View the desktop full size"** hotspot on the
-  bezel, which is in the tab order and returns the full-bleed desktop.
-- **`FRAMING_ZOOM` cannot rescue it.** It tops out at **1.14**: the zoom is a fov
-  change about the centre of frame and the glass sits above centre, so pushing in
-  eats the top of the monitor first. Rendered at 1.5 to confirm — the top third
-  of the screen is gone. Zooming about the screen instead needs
-  `camera.setViewOffset`, which shifts the principal point, which slides the
-  CSS3D composite off the glass. Getting properly closer needs a re-shot beat.
+- **The desktop is still not full size, and cannot be.** The room pushes in to
+  **1.216x** — derived from `COMPOSITION` in `scene.ts`, the region of the plate
+  that must stay on screen — which puts the glass at **66–88% of viewport width**
+  (was 55–73%) and the small labels near 10px (was 7px). It is bounded by
+  keeping the whole monitor AND the hand in frame at once. Drop the hand and it
+  would reach ~1.5x; drop the room and it is a full-bleed page again. The
+  **"View the desktop full size"** hotspot is still there for anyone who wants
+  the interface at 100%.
+- **How the push-in is done matters.** Not a fov change (scales about the centre
+  of frame, and the monitor sits above centre, so it eats the screen's top edge
+  first — measured: gone at 1.15x). Not `camera.setViewOffset` (shifts the
+  principal point, slides the CSS3D composite off the glass). Instead both
+  layers render a LARGER frame at the same untouched camera and are offset
+  together inside an `overflow: hidden` box, so the crop is pure CSS and the
+  composite cannot come apart. Cost: the 1928px plate is magnified, so the room
+  is proportionally softer.
 - **The lamp no longer lights the screen.** In the plate the desk lamp washes the
   top of the monitor; the composited desktop replaces that, so the monitor reads
   as slightly unlit by its own room. Fixing it means a DOM overlay on the screen,
@@ -143,7 +149,8 @@ must occlude the screen has to be DOM too.
 
 ## Not built — out of scope for a scaffold
 
-- The rigged crocheted hand (this one is five boxes).
+- **Rigging the hand.** It is modelled and placed but static; the armature that
+  makes it follow the pointer is the next step.
 - Any camera move. The backdrop is a flat photograph of a room; move the camera
   and the whole room slides as one card.
 - The 3D printer and projector wall.

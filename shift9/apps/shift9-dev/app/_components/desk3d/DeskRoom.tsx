@@ -31,7 +31,7 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { DeskScene, type ProjectedHotspot } from "./DeskScene";
 import { readRoomPalette } from "./palette";
-import { SCREEN } from "./scene";
+import { SCREEN, crop } from "./scene";
 import s from "./DeskRoom.module.css";
 
 /* `useRoomCapable` lives in its own file, not here. Everything in this one
@@ -64,13 +64,27 @@ export function DeskRoom({ children, onReady, onExit }: DeskRoomProps) {
      so a box of some other width would lay the desktop out for a window that
      does not exist. */
   const [pixelWidth, setPixelWidth] = useState(0);
+  const [viewport, setViewport] = useState({ w: 0, h: 0 });
 
   useEffect(() => {
-    const measure = () => setPixelWidth(window.innerWidth);
+    const measure = () => {
+      setPixelWidth(window.innerWidth);
+      setViewport({ w: window.innerWidth, h: window.innerHeight });
+    };
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
+
+  /* The scene renders a frame LARGER than the window and the window shows a
+     part of it — that is the whole push-in mechanism. Both layers (WebGL and
+     the CSS3D one carrying the desktop) live inside this box, render at its
+     size, and are offset by it together, so the composite cannot come apart.
+     See `crop()` for why it is done this way and not with a fov change. */
+  const frame = useMemo(
+    () => crop(viewport.w || 1, viewport.h || 1),
+    [viewport.w, viewport.h],
+  );
 
   useEffect(() => {
     if (!host) return;
@@ -125,36 +139,46 @@ export function DeskRoom({ children, onReady, onExit }: DeskRoomProps) {
 
   return (
     <div className={s.room}>
-      <Canvas
-        flat
-        frameloop="demand"
-        dpr={[1, 2]}
-        camera={{ position: [0, 0, 0], near: 0.05, far: 20 }}
-        onCreated={onCanvasCreated}
+      <div
+        className={s.frame}
+        style={{
+          width: `${frame.width}px`,
+          height: `${frame.height}px`,
+          left: `${frame.left}px`,
+          top: `${frame.top}px`,
+        }}
       >
-        <Suspense fallback={null}>
-          <DeskScene
-            palette={palette}
-            screenElement={host}
-            screenPixelWidth={pixelWidth}
-            wireframe={wireframe}
-            onHotspots={setHotspots}
-            onPainted={onPainted}
-          />
-        </Suspense>
-      </Canvas>
-
-      {hotspots.map((spot) => (
-        <button
-          key={spot.id}
-          type="button"
-          className={s.hotspot}
-          style={{ left: `${spot.x}px`, top: `${spot.y}px` }}
-          onClick={() => onSignal(spot.signal)}
+        <Canvas
+          flat
+          frameloop="demand"
+          dpr={[1, 2]}
+          camera={{ position: [0, 0, 0], near: 0.05, far: 20 }}
+          onCreated={onCanvasCreated}
         >
-          {spot.label}
-        </button>
-      ))}
+          <Suspense fallback={null}>
+            <DeskScene
+              palette={palette}
+              screenElement={host}
+              screenPixelWidth={pixelWidth}
+              wireframe={wireframe}
+              onHotspots={setHotspots}
+              onPainted={onPainted}
+            />
+          </Suspense>
+        </Canvas>
+
+        {hotspots.map((spot) => (
+          <button
+            key={spot.id}
+            type="button"
+            className={s.hotspot}
+            style={{ left: `${spot.x}px`, top: `${spot.y}px` }}
+            onClick={() => onSignal(spot.signal)}
+          >
+            {spot.label}
+          </button>
+        ))}
+      </div>
 
       {createPortal(children, host)}
     </div>
