@@ -5,7 +5,7 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the state of the entry-experience branch in detail.
 
-**Last updated:** 2026-07-27
+**Last updated:** 2026-07-29
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
 ## Read first - the discovery trap
@@ -43,7 +43,26 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 ## Recent changes
 
-- **2026-07-27 - Entry experience, pre-merge checked.** Branch
+- **2026-07-29 - The 3D desk scaffold.** Branch
+  `claude/shift9-3d-desk-scaffold-4twb21`. The entrance stops the opening film
+  at 8.45s - the last frame before the crocheted hand reaches the mouse - and
+  hands over to a **3D room** built from that exact frame, with the live
+  interactive desktop composited onto the monitor's glass in perspective.
+  The desktop becomes a screen in a room rather than a page filling the
+  browser. React Three Fiber + three, added to `apps/shift9-dev`.
+  New: `app/_components/desk3d/` (scene measurements, scene graph, the CSS3D
+  composite, the prop registry, a placeholder hand) and
+  `scripts/build-handoff-plate.py`, which cuts the backdrop still out of the
+  film. **The mp4s are untouched** - the film is stopped, not edited.
+  Verified: both apps build and typecheck with no env vars, every route 200 at
+  1280/768/390 with zero console errors and no horizontal overflow, the
+  composite lands within 2.1px of the monitor's measured corners at five
+  viewport sizes, reduced motion renders a complete static frame, WebGL
+  disabled falls back to today's desktop, +0.37MB on desktop and +0MB on
+  phones. Full detail in `PROGRESS.md`.
+  **Not merged - awaiting Kariim.**
+
+- **2026-07-27 - Entry experience, MERGED as PR #36.** Branch
   `claude/shift9-studio-entry-experience-5wnekz` (PR #35) replaces `/` on
   shift9.dev with a three-stage entrance - held plate, ~20s film, skeuomorphic
   desktop - and adds `/studio` (the twelve-project dolly), `/start` (the
@@ -53,8 +72,8 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   131 commits, 72 files. Verified: both apps build with no env vars, typecheck
   passes, dry-run merge into `main` is conflict-free, and every route renders
   clean at 1280/768/390 including under reduced motion.
-  **Not merged - awaiting Kariim.** Full detail and the open findings are in
-  `PROGRESS.md`.
+  **Merged** (PR #35 was superseded by #36, `dfd9044`). `PROGRESS.md` used to
+  describe this branch and now describes the 3D-desk branch above.
 
 - **2026-07-22 - Studio About + origin story.** Added an "Origin" panel to
   `profile/README.md` (founder line + Galaxy Z Fold / Steam Deck origin story),
@@ -68,12 +87,25 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 ## Open work - PRs awaiting review, none merged
 
+Listed from the API on 2026-07-29 (`state: open`), not from memory - the
+previous version of this table listed #14/#15/#16/#35, all of which are now
+closed or merged.
+
 | PR | Title | Branch |
 |---|---|---|
-| #35 | Enter the Studio - the entry experience | `claude/shift9-studio-entry-experience-5wnekz` |
-| #16 | Profile: align featured work with the finalized manifest | `claude/org-manifest-y1yqr5` |
-| #15 | Just a Pinch - honest launch status + real waitlist capture | `claude/pinch-landing-y1yqr5` |
-| #14 | Enter the Studio - cinematic entry experience for shift9.dev | `claude/shift9-entry-integration-y1yqr5` |
+| #31 | Studio rebuild - Set 12: Just a Pinch kitchen (Phase 3) | `claude/start-set-12-kgtbwi` |
+| #30 | Studio rebuild - Phase 2: engine core | `claude/studio-rebuild-phase-2-y4ew51` |
+| #28 | studio: "The Uncut Soundstage" - WebGPU production build | `claude/webgpu-post-processing-stack-1n4gw7` |
+| #27 | SHIFT-9 Studio - The Uncut Soundstage, production WebGPU build | `claude/webgpu-post-processing-fidelity-zekprt` |
+
+The 3D desk scaffold's own PR is opened from
+`claude/shift9-3d-desk-scaffold-4twb21` and is the newest of these.
+
+**Note the overlap:** #27/#28/#30/#31 are a separate `apps/studio` rebuild that
+also puts a 3D desk in front of the visitor. The 3D-desk scaffold is inside
+`apps/shift9-dev`'s existing entrance instead, and touches none of the same
+files. Whoever reviews these should decide which surface owns the desk before
+both ship.
 
 34 remote branches exist; most have no open PR. Only `main` deploys - preview
 builds are per-branch and disposable, and nothing reaches the live site until it
@@ -86,9 +118,13 @@ rather than resolving it by hand.
 
 ## Exact next steps
 
-1. Review, merge, or close PRs #14, #15, #16, #35. **#35 is approved by Kariim
-   pending his own merge click** - the three pre-merge fixes he asked for
-   (favicons, the dead `/#work` link, the hardcoded clock) landed at `6c176e2`.
+1. Review the 3D desk scaffold PR, and decide the open question in it: the
+   composited desktop renders at 55-61% scale, which is what "a screen in a
+   room" costs. Either accept it with the full-size escape hatch that ships
+   with it, or re-shoot a tighter beat of the film. `FRAMING_ZOOM` cannot
+   close the gap - it tops out at 1.14 before it crops the monitor.
+2. Review, merge, or close the studio-rebuild PRs #27, #28, #30, #31, and
+   settle which surface owns the 3D desk (see the note above).
 2. Fix the repo-wide `lint` script - `next lint` was removed in Next 16 and there
    is no eslint config in the repo, so lint currently exits 1 in both apps.
 3. Vendor or poster-fallback the ten Higgsfield CloudFront hero videos in

@@ -79,6 +79,26 @@
   --s9-pearl:        #c9d1dc;   /* the primary control                    */
   --s9-pearl-lift:   #e6ebf2;   /* the primary control, approached        */
 
+  /* ── THE ROOM ────────────────────────────────────────────────────────
+     The 3D desk scene on the entrance. WebGL takes colours as JavaScript
+     values rather than CSS, so these are read off the document at runtime
+     (`desk3d/palette.ts`) instead of being written a second time in a shader —
+     the token stays the single source of truth either way.
+
+     Every one of them is SAMPLED, not chosen: the median of a patch of the
+     film's own frame at 9.35s, so the placeholder props sit in the same light
+     as the plate they stand on. The yarn pair is the character's crocheted
+     hand — ochre stitch rows and a black knitted cuff. That hand is crochet,
+     not skin, and the entire world is crocheted fabric; the day it gets
+     modelled properly it inherits these and nothing has to be re-matched. */
+  --s9-yarn-ochre:  #c07243;   /* the hand — sampled off the yarn        */
+  --s9-yarn-cuff:   #131214;   /* the knitted cuff at the wrist          */
+  --s9-room-key:    #ffe9c8;   /* the desk lamp over the monitor         */
+  --s9-room-fill:   #3a414d;   /* the wall's bounce — sampled            */
+
+  /* A scrim for chrome that has to stay readable on a photograph. */
+  --s9-scrim:       rgb(0 0 0 / 0.55);
+
   /* ── TITANIUM ────────────────────────────────────────────────────────
      A material, not a colour. Polished metal does not read as a smooth
      light-to-dark ramp — it reads as a REFLECTION, and what it reflects is
