@@ -117,6 +117,11 @@
   --s9-dur-slow:     480ms;   /* entrances, reveals, larger displacements */
   --s9-dur-boot:     720ms;   /* power-on / page-transition choreography  */
   --s9-dur-tunnel:   420ms;   /* the dissolve — desktop ↔ studio         */
+  /* The join between the two opening beats. Short enough to read as a cut
+     rather than a transition — it only softens the single frame the two
+     shots meet on. Set to 0ms for a pure hard cut; the handoff is a straight
+     swap either way. */
+  --s9-dur-cut:      160ms;
   --s9-dur-premium:  300ms;   /* legacy alias (transition-premium)        */
 
   /* Easing set — one curve per intent, so motion reads as a system.

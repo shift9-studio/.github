@@ -367,6 +367,10 @@ type OpenWin = FolderKey | "about" | null;
 
 export function EnterTheStudio() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  /* The second beat gets its own element rather than sharing the first one's.
+     See the playback effect for why — reassigning `src` on a playing video is
+     what made the join at ten seconds look cheap. */
+  const videoBRef = useRef<HTMLVideoElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const wakeRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
@@ -536,22 +540,67 @@ export function EnterTheStudio() {
     vid.addEventListener("error", onFail);
     const bail = setTimeout(onFail, 12000);
 
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const onEnded = () => {
-      /* The opening is shot as separate beats but has to read as one take, so
-         each clip hands straight to the next with no gap and no controls. Only
-         after the last one does the screen wake into the desktop. */
-      const next = OPENING.indexOf(vid.currentSrc.replace(window.location.origin, "")) + 1;
-      if (next > 0 && next < OPENING.length) {
-        vid.src = OPENING[next] ?? "";
-        vid.play().catch(() => {
-          /* refused mid-sequence — fall through to the desktop rather than
-             stranding the visitor on a frozen frame. */
-          enterDesk();
-        });
-        return;
-      }
+    /* ── THE JOIN AT TEN SECONDS ───────────────────────────────────────────
+       Both beats are 10.04s, so the handoff lands at exactly the moment a
+       visitor has settled in — and it was the ugliest thing on the site.
 
+       It used to be one element with its `src` reassigned on `ended`. Three
+       separate faults, all of them visible at once:
+
+       - Nothing fetched the second beat until the instant it was needed, so
+         13.6MB started downloading at the cut. That is the stutter.
+       - Assigning `src` runs the media load algorithm, which resets
+         readyState to HAVE_NOTHING. With no frame to show, the element falls
+         back to its `poster` — and the poster is the film's *opening*
+         exterior shot. So the join flashed a frame from the beginning of the
+         film before beat four appeared. Those are the stray frames.
+       - The old clip's decoder was torn down and a new one spun up between
+         two frames that were meant to be continuous.
+
+       Two elements instead. The second one is loaded while the first one
+       plays, pre-rolled so frame zero is already decoded, and revealed with a
+       short dissolve over the top of the first. Nothing is torn down mid-cut
+       and nothing has to start from cold.
+
+       The dissolve is `--s9-dur-cut`. Set that token to 0ms for a pure cut —
+       the mechanism is a straight swap either way, the fade only softens the
+       frame the two beats meet on. */
+    const beatB = videoBRef.current;
+
+    /* Deliberately after the first beat is actually moving, not on mount:
+       both files are large, and the beat you are watching gets the bandwidth
+       first. Ten seconds is a long head start for a 13.6MB fetch. */
+    const warmSecondBeat = () => {
+      if (!beatB || beatB.getAttribute("data-warm") === "1") return;
+      beatB.setAttribute("data-warm", "1");
+      beatB.preload = "auto";
+      beatB.load();
+    };
+    /* Decode frame zero ahead of time. A muted element is allowed to play
+       without a gesture, and this one has one anyway — the visitor pressed
+       Enter — so a silent play/pause leaves the decoder warm and the first
+       frame ready to paint. */
+    const prerollSecondBeat = () => {
+      if (!beatB) return;
+      beatB.muted = true;
+      beatB.playsInline = true;
+      beatB
+        .play()
+        .then(() => {
+          beatB.pause();
+          beatB.currentTime = 0;
+        })
+        .catch(() => {
+          /* Pre-roll is an optimisation. If it is refused, the handoff still
+             works — it just starts a fraction later. */
+        });
+    };
+    vid.addEventListener("playing", warmSecondBeat, { once: true });
+    beatB?.addEventListener("canplaythrough", prerollSecondBeat, { once: true });
+
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    const wakeIntoDesktop = () => {
       const wake = wakeRef.current;
       const glow = glowRef.current;
       if (!wake || !glow) return;
@@ -583,14 +632,40 @@ export function EnterTheStudio() {
         }, 1320),
       );
     };
-    vid.addEventListener("ended", onEnded);
+
+    const handOffToSecondBeat = () => {
+      if (!beatB) {
+        wakeIntoDesktop();
+        return;
+      }
+      /* Reveal first, play second. The dissolve runs over the first beat's
+         held last frame, so there is never a gap to show black through. */
+      beatB.classList.add(cls("beatIn"));
+      beatB.play().catch(() => enterDesk());
+      /* The first beat is finished and covered; letting go of its decoder
+         keeps one clip in flight rather than two. */
+      timers.push(setTimeout(() => vid.pause(), 600));
+    };
+
+    /* First beat ends → hand to the second. Second beat ends → wake the
+       screen. The last beat's final frame is the monitor filling the screen,
+       which is where the real desktop underneath takes over. */
+    vid.addEventListener("ended", handOffToSecondBeat);
+    beatB?.addEventListener("ended", wakeIntoDesktop);
+    /* A second beat that cannot be decoded must not strand anyone on a held
+       frame — the way forward never depends on the film. */
+    beatB?.addEventListener("error", enterDesk);
 
     return () => {
       clearTimeout(bail);
       vid.removeEventListener("loadeddata", onLoaded);
       vid.removeEventListener("playing", onPlaying);
       vid.removeEventListener("error", onFail);
-      vid.removeEventListener("ended", onEnded);
+      vid.removeEventListener("playing", warmSecondBeat);
+      vid.removeEventListener("ended", handOffToSecondBeat);
+      beatB?.removeEventListener("canplaythrough", prerollSecondBeat);
+      beatB?.removeEventListener("ended", wakeIntoDesktop);
+      beatB?.removeEventListener("error", enterDesk);
       timers.forEach(clearTimeout);
     };
   }, [mode, enterDesk, startVid]);
@@ -747,14 +822,31 @@ export function EnterTheStudio() {
           content, so this is hidden from assistive tech. */}
       <div className={s.stageVideo} ref={stageRef} aria-hidden="true">
         {mode === "film" ? (
-          <video
-            ref={videoRef}
-            src={OPENING[0]}
-            poster={OPENING_POSTER}
-            muted
-            playsInline
-            preload="auto"
-          />
+          <>
+            <video
+              className={s.beat}
+              ref={videoRef}
+              src={OPENING[0]}
+              poster={OPENING_POSTER}
+              muted
+              playsInline
+              preload="auto"
+            />
+            {/* The second beat, stacked over the first and transparent until
+                the join. No `poster`: a poster is what the element paints when
+                it has no frame, and the one frame this must never show is a
+                still from somewhere else in the film. `preload="none"` until
+                the first beat is actually playing, so the two fetches do not
+                race each other for the opening seconds. */}
+            <video
+              className={`${s.beat} ${s.beatB}`}
+              ref={videoBRef}
+              src={OPENING[1]}
+              muted
+              playsInline
+              preload="none"
+            />
+          </>
         ) : null}
         {mode === "film" ? (
           <button

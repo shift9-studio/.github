@@ -106,6 +106,25 @@
   height: 100%;
   object-fit: cover;
 }
+
+/* The two opening beats are stacked, not sequenced through one element.
+   Identical box, identical fit, so the join cannot shift the framing. */
+.beat {
+  position: absolute;
+  inset: 0;
+}
+
+/* The second beat waits transparent over the first and dissolves in at the
+   join. The first beat holds its last frame underneath for the length of the
+   fade, so there is no moment where black can show through. */
+.beatB {
+  opacity: 0;
+  transition: opacity var(--s9-dur-cut) linear;
+}
+
+.beatIn {
+  opacity: 1;
+}
 .skip {
   position: absolute;
   bottom: 22px;
