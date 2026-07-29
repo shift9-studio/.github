@@ -5,3 +5,10 @@ package.json
 .DS_Store
 .shift9-entry/
 __pycache__/
+
+# Written fresh by .claude/hooks/session-start.sh on every session: which
+# python modules are present, how much disk is left, which branch is checked
+# out. It is a snapshot of one machine at one moment, so committing it would
+# put a stale environment into everyone else's checkout and churn on every
+# branch. The `.local` in the name is the signal — it stays out of the repo.
+.claude/env-facts.local.md
