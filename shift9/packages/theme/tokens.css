@@ -79,6 +79,58 @@
   --s9-pearl:        #c9d1dc;   /* the primary control                    */
   --s9-pearl-lift:   #e6ebf2;   /* the primary control, approached        */
 
+  /* ── TITANIUM ────────────────────────────────────────────────────────
+     A material, not a colour. Polished metal does not read as a smooth
+     light-to-dark ramp — it reads as a REFLECTION, and what it reflects is
+     a room: bright sky above, a hard dark horizon across the middle, a
+     second bounce below. That abrupt horizon at 50% is what separates
+     metal from a grey gradient; soften it and the whole thing collapses
+     into plastic. Stops are deliberately uneven and deliberately hard.
+
+     Two horizons, not one: the hard break at 50% is the room's, and a second
+     softer one at 88% is the roll of the bottom edge catching the floor.
+     Without it the lower half is flat and the letters read as printed rather
+     than turned.
+
+     Barely tinted, and that is the difference between metal and grey. The
+     sky side runs a few points cool, the bounce off the floor a few points
+     warm — the environment reflected, not a colour applied. Far below where
+     it would register as chroma; the palette still carries hue on exactly
+     one thing, the control you press. */
+  --s9-titanium:
+    linear-gradient(
+      176deg,
+      #666e77 0%,
+      #9aa4af 8%,
+      #d8e1ea 16%,
+      #ffffff 22%,
+      #f2f6fa 25%,
+      #bcc5ce 31%,
+      #7c848d 41%,
+      #41474e 48.5%,
+      #363b42 50%,
+      #4d545b 51.5%,
+      #949aa0 57%,
+      #cfd4d6 66%,
+      #f7f6f3 74%,
+      #ddd9d2 80%,
+      #a9a49d 87%,
+      #6f6b66 90%,
+      #b4b2ad 96%,
+      #8b8985 100%
+    );
+  /* The travelling specular. Narrow, because a wide highlight reads as fog
+     rather than gloss, and screened over the body so it clips to white. */
+  --s9-titanium-gloss:
+    linear-gradient(
+      104deg,
+      rgb(255 255 255 / 0) 40%,
+      rgb(255 255 255 / 0.5) 47%,
+      rgb(255 255 255 / 0.92) 50%,
+      rgb(255 255 255 / 0.5) 53%,
+      rgb(255 255 255 / 0) 60%
+    );
+
   /* derived hairlines & glows (oklab mixes keep hue honest) */
   /* Hairlines. These used to be cyan and violet mixes, which on navy read as
      structure and on black read as a glowing wire around every box — one of
@@ -117,6 +169,7 @@
   --s9-dur-slow:     480ms;   /* entrances, reveals, larger displacements */
   --s9-dur-boot:     720ms;   /* power-on / page-transition choreography  */
   --s9-dur-tunnel:   420ms;   /* the dissolve — desktop ↔ studio         */
+  --s9-dur-sheen:   5200ms;   /* one pass of the specular across titanium */
   /* The join between the two opening beats. Short enough to read as a cut
      rather than a transition — it only softens the single frame the two
      shots meet on. Set to 0ms for a pure hard cut; the handoff is a straight

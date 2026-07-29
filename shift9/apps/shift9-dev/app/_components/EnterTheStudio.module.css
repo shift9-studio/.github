@@ -19,7 +19,12 @@
   --w-side: #f0efe8;
   --w-line: #d8d6cc;
   --w-txt: #1f2328;
-  --w-dim: #6b7078;
+  /* Measured on the desktop's own ground (#eceadf): #6b7078 came out at
+     4.13:1, under the 4.5:1 floor for normal text — and this is the token
+     every secondary label on the light desktop uses, so "hard to read grey
+     on a light background" was the whole surface, not one component.
+     #585d65 is the same hue and weight at 5.49:1. */
+  --w-dim: #585d65;
   --w-sel: #e3ecf9;
   --w-mark: #fdf3d3;
   --w-chrome: #9a9a92;
@@ -31,8 +36,14 @@
   --w-shadow: 15 23 42;
   --w-halo-a: 0.9;
   --w-halo-b: 0.85;
-  --blue: #0b6bd6;
-  --blue-hover: #0a5cb8;
+  /* 4.26:1 on #eceadf — under the floor, and the shift9.dev tile sets its
+     name and its "Enter the live site" line in it, directly over the ASCII
+     wallpaper. It was the least readable text on the page and it was the
+     one thing meant to be pressed. #0a55a8 is 6.05:1 at the same hue.
+     The hover has to stay darker than the base to still read as a state
+     change, so it moves with it. */
+  --blue: #0a55a8;
+  --blue-hover: #08447f;
   --folder: #f6c445;
   --folder-tab: #e8b02e;
   /* The desktop keeps its own local palette because it is a picture of an

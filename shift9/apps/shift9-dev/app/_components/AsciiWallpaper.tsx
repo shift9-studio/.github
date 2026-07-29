@@ -50,9 +50,18 @@ type Cell = { char: number; tone: number };
 export function AsciiWallpaper({
   className,
   ink = true,
+  fitTo,
 }: {
   className?: string;
   ink?: boolean;
+  /* The box the ARTWORK has to fit inside, when that is smaller than the
+     canvas. The canvas stays full-bleed — a wallpaper that stops at the
+     chrome is a picture, not a wallpaper — but the banner is laid out
+     against the part of the desktop nothing is sitting on top of, so the
+     whole wordmark is visible instead of running under the taskbar and
+     behind the sidebar. Measured from the live element rather than mirrored
+     as numbers, so the two cannot drift apart. */
+  fitTo?: React.RefObject<HTMLElement | null>;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -134,11 +143,23 @@ export function AsciiWallpaper({
          rather than as the banner. One cell size for both axes fixes the
          proportions; the field is then centred in whatever space is left, so
          the whole banner is on screen with its own aspect intact. */
-      const cell = Math.min(rect.width / cols, rect.height / rows);
+      /* Lay the banner out inside the unobstructed part of the desktop when
+         one is given, then paint it at that place on the full-bleed canvas.
+         Fitting to the viewport instead put roughly a fifth of the artwork
+         under the chrome — the wordmark ran behind the sidebar on the left
+         and under the taskbar at the bottom, which is what made it read as
+         a crop sitting in a corner rather than as the banner. */
+      const box = fitTo?.current?.getBoundingClientRect();
+      const fitW = box && box.width > 1 ? box.width : rect.width;
+      const fitH = box && box.height > 1 ? box.height : rect.height;
+      const fitX = box ? box.left - rect.left : 0;
+      const fitY = box ? box.top - rect.top : 0;
+
+      const cell = Math.min(fitW / cols, fitH / rows);
       cellW = cell;
       cellH = cell;
-      offX = (rect.width - cell * cols) / 2;
-      offY = (rect.height - cell * rows) / 2;
+      offX = fitX + (fitW - cell * cols) / 2;
+      offY = fitY + (fitH - cell * rows) / 2;
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
       atlas = buildAtlas();
@@ -228,6 +249,10 @@ export function AsciiWallpaper({
 
     const ro = new ResizeObserver(() => start());
     ro.observe(canvas);
+    /* The fit box can change without the canvas changing — switching Grid to
+       Icons reflows the desktop under a viewport that never moved. Watch it
+       too, or the banner keeps the previous layout's proportions. */
+    if (fitTo?.current) ro.observe(fitTo.current);
     reduced.addEventListener("change", start);
 
     return () => {
@@ -235,7 +260,7 @@ export function AsciiWallpaper({
       ro.disconnect();
       reduced.removeEventListener("change", start);
     };
-  }, [ink]);
+  }, [ink, fitTo]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }

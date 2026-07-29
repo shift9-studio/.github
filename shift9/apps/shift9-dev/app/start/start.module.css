@@ -101,8 +101,65 @@
 /* The one word the sentence turns on, in the one colour the page has. Flat,
    not a gradient: a gradient would be a second and a third value on a page
    whose whole argument is that there is only one. */
+/* ── "building", milled out of titanium ──────────────────────────────────
+   The word the sentence turns on, given the material the studio is named
+   for. Two background layers clipped to the glyphs: the body of the metal
+   underneath, a narrow specular travelling across it on top, screened so
+   the crest blows to white the way a real highlight does.
+
+   One element, no duplicated text, no pseudo-element carrying a second copy
+   of the word — a screen reader hears "building" exactly once, and the
+   glyphs stay selectable.
+
+   The drop-shadows do what an inner bevel cannot with clipped text: they
+   follow the glyph alpha, so a hard dark one seats the letters onto the
+   ground and a soft light one lifts the top edge. */
 .grad {
-  color: var(--s9-verdant);
+  /* If background-clip: text is not supported, this is what stays. Declared
+     first and unconditionally, so the word can never come out invisible. */
+  color: var(--s9-chalk);
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .grad {
+    color: transparent;
+    background-image: var(--s9-titanium-gloss), var(--s9-titanium);
+    background-size: 260% 100%, 100% 100%;
+    background-position: -80% 0, 0 0;
+    background-repeat: no-repeat;
+    background-blend-mode: screen, normal;
+    -webkit-background-clip: text;
+    background-clip: text;
+    filter:
+      drop-shadow(0 1px 0 rgb(0 0 0 / 0.55))
+      drop-shadow(0 0 1px rgb(255 255 255 / 0.35))
+      drop-shadow(0 6px 14px rgb(0 0 0 / 0.45));
+    animation: sheen var(--s9-dur-sheen) var(--s9-ease-inout) infinite;
+  }
+}
+
+@keyframes sheen {
+  0% {
+    background-position: -80% 0, 0 0;
+  }
+  /* The highlight crosses, then the surface rests. A specular that never
+     stops moving reads as an animation; one that passes and settles reads
+     as a lit object someone walked past. */
+  55%,
+  100% {
+    background-position: 180% 0, 0 0;
+  }
+}
+
+/* Reduced motion keeps the metal and parks the highlight across the middle
+   of the word — a complete, lit, legible state rather than a paused sweep. */
+@media (prefers-reduced-motion: reduce) {
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .grad {
+      animation: none;
+      background-position: 46% 0, 0 0;
+    }
+  }
 }
 
 .lede {

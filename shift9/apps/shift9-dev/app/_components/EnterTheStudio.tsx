@@ -372,6 +372,11 @@ export function EnterTheStudio() {
      what made the join at ten seconds look cheap. */
   const videoBRef = useRef<HTMLVideoElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  /* The icon field — the part of the desktop with nothing sitting on top of
+     it. The wallpaper lays the banner out against this box rather than the
+     whole viewport, so the wordmark is not partly behind the sidebar and
+     partly under the taskbar. */
+  const gridRef = useRef<HTMLDivElement>(null);
   const wakeRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const deskRef = useRef<HTMLDivElement>(null);
@@ -878,7 +883,7 @@ export function EnterTheStudio() {
             and an identical one sitting perfectly still behind it. The veil
             stays either way, so the tint over the field never blinks. */}
         <div className={s.wallLayer} aria-hidden="true">
-          <AsciiWallpaper className={s.wallCanvas} ink={!dark} />
+          <AsciiWallpaper className={s.wallCanvas} ink={!dark} fitTo={gridRef} />
           <div className={s.wallVeil} />
         </div>
 
@@ -975,7 +980,7 @@ export function EnterTheStudio() {
             </div>
           </div>
 
-          <div className={`${s.grid} ${compact ? s.compact : ""}`}>
+          <div className={`${s.grid} ${compact ? s.compact : ""}`} ref={gridRef}>
             {/* Door-tile first — the prominent entrance to the live studio. */}
             <a
               className={`${s.dicon} ${s.site}`}
