@@ -52,33 +52,57 @@ const hand: SceneProp = {
   label: "The studio's hand, on the mouse",
   Model: CrochetedHand,
   transform: {
-    /* Modelled at true size in metres, so it needs no scaling — it is 108mm
-       from wrist to fingertip because the film's hand measures 108mm at the
-       depth the desk calibration puts the mouse at.
+    /* ── ON the mouse, not beside it ──────────────────────────────────────
+       `MOUSE_POSITION` is the mouse's FOOT — the point the desk plane was
+       calibrated against — and a hand does not go there. It goes on the hump,
+       which is a different place in all three axes.
 
-       Placed by its WRIST, which is where the model's origin is, not by its
-       palm. Dropping the origin straight onto `MOUSE_POSITION` buried the
-       wrist 13mm under the desk and left the mitten short of the mouse
-       entirely — the offsets below sit it on top of the mouse instead:
-         +Y   a mouse is ~42mm tall and the hand rests on it, not on the desk
-         −Z   further into the room, so the mitten covers the mouse rather
-              than stopping in front of it
-         +X   the film's hand comes in from the right of the mouse's centre */
-    position: [MOUSE_POSITION[0] + 0.004, DESK.height + 0.034, MOUSE_POSITION[2] + 0.004],
-    /* Hand broadside to the camera, fingers to the left over the mouse, forearm
-       leaving frame to the right — the pose the film's own frame at 9.35s
-       shows. Positive, because a +Y rotation swings the model's fingers toward
-       -X and its forearm toward +X.
+       The hump was measured the same way everything else in this room was, off
+       the plate: the mouse occupies plate x 1307–1437, y 812–915, and its long
+       axis runs almost straight away from the camera. Unprojecting the top of
+       the hump at the depth the desk puts it lands the offsets below. The
+       origin is the WRIST, and the palm's underside is ~9mm below it, so the
+       height is the hump's top plus that clearance rather than the hump itself.
 
-       1.45 rather than the 0.98 of the first pass, and the difference is not
-       taste. Below about 1.2 the forearm points too far AT the camera, and a
-       tube coming at the lens foreshortens into a wedge that covered three of
-       the four fingers — the fingers were fine, they were simply behind the
-       arm. Above about 1.5 the arm runs exactly across the frame, loses all
-       perspective and reads as a flat black bar. Chosen by screenshotting six
-       values at the size it ships at, which is the only way to see either
-       failure. */
-    rotation: [0, 1.45, 0],
+         +X 0.024   the hump sits right of the foot the calibration used
+         +Y 0.014   a mouse is ~47mm tall and the palm sits ON it, and the
+                    model's own arch already lifts the wrist above the palm
+         −Z 0.030   further into the room, onto the body rather than in front
+       Dropping the origin straight onto `MOUSE_POSITION` buried the wrist under
+       the desk and left the hand short of the mouse entirely; the first attempt
+       at these offsets over-corrected and left it hovering above and behind the
+       mouse instead. Both were found by screenshot, not by arithmetic. */
+    position: [
+      MOUSE_POSITION[0] + 0.024,
+      DESK.height + 0.014,
+      MOUSE_POSITION[2] - 0.030,
+    ],
+    /* Fingers over the mouse, forearm leaving frame to the right. Positive,
+       because a +Y rotation swings the model's fingers toward -X and its
+       forearm toward +X.
+
+       ── Why this is now 0.62 and not 1.45 ────────────────────────────────
+       The mouse points almost straight away from the camera, so a hand truly
+       square on it wants to be near 0 here — and every earlier pass had to turn
+       it most of the way to 90 degrees instead, because the forearm shared the
+       hand's axis and had to be swung out of the way of its own palm. The hand
+       ended up holding a mouse it was no longer pointing at.
+
+       The wrist bend now lives in the model (`cuff_rings`), so the arm can
+       leave to the right while the hand stays pointed down the mouse, and this
+       number only has to do one job. 0.62 keeps all four fingers separated at
+       the size the prop actually covers; past ~0.8 they overlap into two lobes
+       again, and below ~0.4 the sleeve starts crowding the palm. Chosen by
+       screenshotting a sweep in the room — the only place either failure is
+       visible. */
+    rotation: [0, 0.62, 0],
+    /* Kariim's call: a bit bigger. The model is built at the true size the desk
+       calibration derives (about 110mm across the spread grip) and this is the
+       one place that measurement is deliberately overridden, because the
+       character is a doll and a doll's hands are chunky relative to its world.
+       Nothing downstream depends on the hand's true size, so it is a single
+       reversible number here rather than a rebuild. */
+    scale: 1.18,
   },
 };
 

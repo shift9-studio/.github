@@ -200,37 +200,64 @@ PALM_PROFILE = [
 
 # One digit's radius along its length. Blunt: it never gets below 6mm, so the
 # tip is a dome. A taper to a point is what made the first thumb read as a beak.
+# Slimmer than the pass before it. At a 8.8mm peak radius — 17.6mm across, on a
+# 36mm finger — the four digits touched each other along their whole length and
+# merged into one lobe at the size the prop actually covers in the room, which
+# is the exact failure the fingers were added to fix. Doll fingers are fat, but
+# fat relative to their LENGTH, not fat enough to close the gaps between them.
 FINGER_PROFILE = [
-    (0.00, 0.0082),
-    (0.35, 0.0088),
-    (0.72, 0.0082),
-    (0.88, 0.0066),
-    (0.96, 0.0040),
-    (1.00, 0.0014),   # all but closed, so the end cap is a speck
+    (0.00, 0.0068),
+    (0.35, 0.0072),
+    (0.72, 0.0067),
+    (0.88, 0.0054),
+    (0.96, 0.0034),
+    (1.00, 0.0012),   # all but closed, so the end cap is a speck
 ]
 
 # Where each finger leaves the knuckle line, how far it reaches, and how much
-# it closes over the mouse. Splayed slightly so they read as four fingers and
-# not as a paddle; the middle finger is the longest, as fingers are.
+# it closes over the mouse.
+#
+# ── This is a PALM GRIP, and every number below comes from that ──────────────
+# The previous pass fanned all four fingers forward with the same gentle curl,
+# which is a hand lying on a table, not a hand holding anything. A hand actually
+# on a mouse does something specific and asymmetric (ergonomics references are
+# unanimous on it): the palm sits on the mouse's rear hump with the weight under
+# the knuckles, INDEX and MIDDLE run forward along the top and drop onto the two
+# buttons, and RING and PINKY turn outward and wrap down the mouse's right
+# flank. The thumb does the same on the left. It is the outward turn of the last
+# two fingers that reads as "gripping" rather than "resting" — without it the
+# hand is a paddle laid over an object.
+#
+# So `aim x` climbs steeply across the four (index almost straight ahead, pinky
+# turned well out) and `curl` climbs with it, because a finger going round the
+# side of a mouse is dropping as it goes.
 KNUCKLE_Y = 0.028
+#
+# The CURL numbers here are the ones that have been got wrong twice, in both
+# directions, so they are worth being explicit about. `curl` is how far the tip
+# drops below the knuckle over the finger's length. At 0.017 the hand read as
+# resting flat on the desk; pushed to 0.024 to make it grip, the digits came
+# round far enough to meet their own knuckles and the hand rendered as two fat
+# hooks with no palm — a croissant, not a hand. The window is narrower than it
+# looks: a finger on a mouse drops about a third of its own length, no more.
 FINGERS = [
     # (x at knuckle, aim x, aim y, length, curl)
-    (-0.0215, -0.26, 1.0, 0.0345, 0.0175),
-    (-0.0072, -0.07, 1.0, 0.0375, 0.0195),
-    (0.0072, 0.09, 1.0, 0.0350, 0.0190),
-    (0.0210, 0.26, 1.0, 0.0295, 0.0170),
+    (-0.0215, -0.12, 1.00, 0.0400, 0.0140),   # index — forward, onto the left button
+    (-0.0072, 0.04, 1.00, 0.0425, 0.0150),    # middle — the longest, right button
+    (0.0072, 0.26, 0.97, 0.0395, 0.0165),     # ring — turning onto the flank
+    (0.0210, 0.48, 0.88, 0.0340, 0.0180),     # pinky — down the right flank
 ]
 
 # The thumb: fatter than the fingers and blunter still, which is what a
 # crocheted thumb is. Rooted low on the palm's left flank and reaching
 # forward-left, leaving the notch the mouse shows through in the reference.
 THUMB_PROFILE = [
-    (0.00, 0.0115),
-    (0.35, 0.0125),
-    (0.72, 0.0118),
-    (0.88, 0.0092),
-    (0.96, 0.0056),
-    (1.00, 0.0018),   # same: close it down so no flat disc faces the light
+    (0.00, 0.0098),
+    (0.35, 0.0106),
+    (0.72, 0.0100),
+    (0.88, 0.0078),
+    (0.96, 0.0048),
+    (1.00, 0.0016),   # same: close it down so no flat disc faces the light
 ]
 
 # Slimmer than pass 2, where the cuff was nearly as wide as the mitten and took
@@ -243,11 +270,15 @@ THUMB_PROFILE = [
 # own frame at 9.35s (`scratchpad/ref.py` cuts it) the sleeve is a LOOSE chunky
 # knit, not a fitted one: it grips at the wrist and opens out along the forearm.
 # At a near-constant 25mm it read as a pipe of uniform bore.
+# The flare is gentler than the pass that introduced it. The forearm runs partly
+# TOWARD the camera, so perspective is already enlarging it along its length —
+# a strong modelled flare stacks on top of that, and the two together grew the
+# sleeve into something that covered the hand at every angle tried.
 CUFF_PROFILE = [
     (0.00, 0.0232),
-    (0.14, 0.0258),  # just past the rib band, where the knit relaxes
-    (0.45, 0.0296),
-    (1.00, 0.0340),
+    (0.14, 0.0248),  # just past the rib band, where the knit relaxes
+    (0.45, 0.0268),
+    (1.00, 0.0292),
 ]
 
 
@@ -311,12 +342,49 @@ def cuff_rings():
     #
     # Long for a forearm on a 96mm hand, and deliberately so: every millimetre
     # past the frame edge is invisible, and the alternative is a visible cap.
+    #
+    # ── THE WRIST BEND, and why it is in the model rather than in the scene ──
+    # The forearm used to run straight back along the palm's own axis, and that
+    # is the reason three passes of this hand had their palm invisible: the palm
+    # sits directly BEHIND the wrist from the camera's point of view, so a
+    # forearm on the same axis is a 68mm tube parked in front of it.
+    #
+    # The scene's answer was to rotate the whole prop until the palm cleared the
+    # sleeve — which worked, and cost the pose: at the angle it needed, the hand
+    # was no longer square to the mouse it is supposed to be holding.
+    #
+    # A real hand does not have that problem, because a real wrist BENDS. The
+    # forearm leaves the hand at an angle (ulnar deviation — about 30 degrees is
+    # comfortable, which is what this is), so the hand can point straight down
+    # the mouse while the arm goes off to the side. Putting the bend here rather
+    # than in `props/hand.tsx` is what lets the prop's own rotation drop back to
+    # something square, and it is anatomy, so it belongs to the model.
+    #
+    # Toward +X, which is the pinky side — the side a right-handed forearm comes
+    # from.
+    #
+    # 50 degrees, and that is past what a human wrist does (about 30 comfortably).
+    # Stated plainly rather than dressed up: at 30 the sleeve still covered the
+    # palm at this camera, because the sleeve is a 60mm tube pointing at the lens
+    # and the whole hand is only 110mm. The bend has to open far enough that the
+    # hand clears the sleeve's silhouette, and the character is a crocheted doll
+    # whose wrist is a piece of fabric, not a joint. The alternative is a hand
+    # that is anatomically defensible and invisible.
+    BEND = math.radians(50)
     rings = []
     N = 14
     for i in range(N):
         t = i / (N - 1)
         (r,) = profile(CUFF_PROFILE, t)
-        rings.append(((0.0, -0.024 - t * 0.340, -0.001 - t * 0.017), r, r * 0.93, 0.0))
+        reach = t * 0.340
+        rings.append(
+            (
+                (reach * math.sin(BEND), -0.024 - reach * math.cos(BEND), -0.001 - t * 0.017),
+                r,
+                r * 0.93,
+                0.0,
+            )
+        )
     return rings
 
 
@@ -368,9 +436,14 @@ thumb = loft(
     "Thumb",
     # Same reason as the fingers: the thumb roots part-way up the arch, so its
     # Z is read off the palm at the height it actually leaves from.
+    # The thumb grips the mouse's LEFT flank, which is the mirror of what the
+    # pinky is doing on the right — the two of them are what actually hold a
+    # mouse; the middle two fingers only press buttons. So it aims out and
+    # forward and curls hard downward, rather than reaching forward along the
+    # desk the way it did when the hand was resting rather than holding.
     digit_rings(
         (-0.0195, -0.010, profile(PALM_PROFILE, 0.345)[2] - 0.0026),
-        (-0.86, 0.62), 0.0500, THUMB_PROFILE, 0.0115, segs=15,
+        (-0.90, 0.44), 0.0510, THUMB_PROFILE, 0.0135, segs=15,
     ),
 )
 
@@ -536,10 +609,17 @@ def make_crochet(
         # the two domes weights them equally and comes out as basketweave —
         # square cells, no courses. Biasing the row and letting the stitch
         # modulate it is what makes it read as something worked in rounds.
-        rows_first = math("POWER", a=dome_row, vb=0.55)
-        stitched = math("ADD", a=math("MULTIPLY", a=rows_first, vb=0.42),
-                        b=math("MULTIPLY", a=math("MULTIPLY", a=rows_first, b=dome_st), vb=0.58))
-        height = math("POWER", a=stitched, vb=0.85)
+        #
+        # 0.40 rather than 0.55, and 0.56/0.44 rather than 0.42/0.58: the first
+        # attempt at this bias was not enough. Cells were still square enough to
+        # read as quilting, and a quilted surface is what a puffer jacket is
+        # made of. A lower exponent flattens the top of each round and sharpens
+        # the valley BETWEEN rounds, which is the thing your eye actually uses
+        # to count courses in a piece of crochet.
+        rows_first = math("POWER", a=dome_row, vb=0.40)
+        stitched = math("ADD", a=math("MULTIPLY", a=rows_first, vb=0.56),
+                        b=math("MULTIPLY", a=math("MULTIPLY", a=rows_first, b=dome_st), vb=0.44))
+        height = math("POWER", a=stitched, vb=0.80)
 
     # a little fibre fuzz over the stitch lattice, so the yarn is not plastic
     fuzz = node("ShaderNodeTexNoise")
@@ -579,7 +659,7 @@ def make_crochet(
 
 # Sampled from the film at 9.35s; the same hex values are tokens in
 # @shift9/theme (--s9-yarn-ochre, --s9-yarn-cuff), converted to linear here.
-YARN = srgb("#c07243")
+YARN = srgb("#d68a58")
 CUFF = srgb("#131214")
 
 if STAGE == "blockout":

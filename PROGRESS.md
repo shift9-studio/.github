@@ -108,7 +108,7 @@ must occlude the screen has to be DOM too.
 | Keyboard | 22 of 24 tab stops land inside the composited screen; the full-size hotspot is in the tab order and works |
 | `prefers-reduced-motion` | Room renders, complete and legible, film skipped. Frame **pixel-identical across 1.2s** at 1280 and 390 — nothing is animating |
 | WebGL disabled (actually, via `--disable-webgl`) | Falls back to today's full-bleed desktop. 5 tiles, 0 errors |
-| The 8.45s stop | Stopped at **8.451s**, furthest the film played **8.439s** (the hand enters at 8.500). Plate decoded and covering before the stop could be seen |
+| The 8.45s stop | Three runs: stopped at **8.495 / 8.466 / 8.464s**, furthest the film played **8.475 / 8.463 / 8.442s** (the hand enters at 8.500). Plate decoded and covering in all three — which is the point of the design: the stop is never exact, the still is |
 | Added page weight | **+0.55 MB** on a desktop that gets the room (252 KB JS, 167 KB hand model, 144 KB plate). **0 MB** on a phone or a machine without WebGL — the room is a dynamic import |
 | Tokens | Zero raw hex and zero raw durations outside `tokens.css`; six room tokens there |
 
@@ -150,13 +150,25 @@ must occlude the screen has to be DOM too.
   the crop was magnifying a 1928px still and softening the room to buy it. The
   machinery is intact and measured — narrow the rect again if the room ever needs
   to push in for a different reason.
-- **The hand is revision 3, and its run-card records all 13 passes.** Revision 2
-  had correct fingers that were invisible in the room: the palm was flat where
-  the film's is arched over the mouse, so the forearm's silhouette cut straight
-  across the knuckles. Fixed by arching the palm 18mm, cutting the sleeve's rib
-  back to a 34mm band with plain chunky knit past it, lengthening the forearm to
-  340mm so its open end is never on screen, and choosing the prop's rotation by
-  screenshotting six values *in the room*.
+- **The hand is revision 4, and its run-card records all 17 passes.** It now
+  HOLDS the mouse rather than resting near it — a palm grip taken off ergonomics
+  references, since the film only ever shows the hand from one angle: index and
+  middle onto the buttons, ring and pinky turning down the right flank, thumb
+  gripping the left. Also 18% larger and a lighter ochre, both on Kariim's call,
+  and a row-biased stitch field so the crochet reads as courses rather than as
+  quilting.
+- **The wrist bend is in the model, and it is 50° where a human does 30.** The
+  one deliberately non-anatomical number, and load-bearing: with the forearm on
+  the hand's own axis the sleeve sits directly between the camera and the palm,
+  and three passes tried to fix that by rotating the whole prop — each one
+  buying a visible palm by turning the hand off the mouse. With the bend in the
+  model the prop's rotation drops from 1.45 to 0.62 and the hand points down the
+  mouse it is holding.
+- **The curl window is narrower than it looks.** Pushed to make the hand grip,
+  the digits came round far enough to meet their own knuckles and rendered as
+  two fat hooks with no palm. A finger on a mouse drops about a third of its own
+  length, no more — and the digits had to slim from 17.6mm to 13.6mm across or
+  they merged into one lobe at the size the prop actually covers.
 - **The room's lighting gained the monitor.** Both existing lights sit deeper in
   the room than the props do, so the nearest object to the camera — the forearm —
   was lit only along its top edge and read as a black slab. A screen glow and a

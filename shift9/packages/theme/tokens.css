@@ -91,7 +91,13 @@
      hand — ochre stitch rows and a black knitted cuff. That hand is crochet,
      not skin, and the entire world is crocheted fabric; the day it gets
      modelled properly it inherits these and nothing has to be re-matched. */
-  --s9-yarn-ochre:  #c07243;   /* the hand — sampled off the yarn        */
+  /* Lifted from the sampled #c07243 on Kariim's call — the hand should read
+     lighter. Hue and chroma held (23 deg, and the saturation actually goes UP a
+     little) while lightness climbs from 51% to 59%: dropping saturation to
+     lighten it is exactly how two earlier passes slid the ochre into pale
+     peach, which is the one direction this colour may never go. The room's
+     light is dim enough that the prop lands darker than the swatch anyway. */
+  --s9-yarn-ochre:  #d68a58;   /* the hand — sampled, then lifted        */
   --s9-yarn-cuff:   #131214;   /* the knitted cuff at the wrist          */
   --s9-room-key:    #ffe9c8;   /* the desk lamp over the monitor         */
   --s9-room-fill:   #3a414d;   /* the wall's bounce — sampled            */
