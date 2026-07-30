@@ -181,11 +181,21 @@ def profile(points, t):
 # calibration measures the film's hand at.
 
 # (t, half-width, half-height, z-offset) — wrist to knuckles.
+# The fourth column is the palm's RISE, and it is the difference between a hand
+# on a mouse and a hand lying on a table. Pass 3 had it flat — 3mm of hump — and
+# in the room the forearm's silhouette cut straight across the knuckles and hid
+# three of the four fingers. Nothing was wrong with the fingers; the hand simply
+# had nowhere to be.
+#
+# The film's own frame at 9.35s shows why: the hand is ARCHED over the mouse,
+# knuckles high, fingers curling down the far side, and it is the arch that
+# lifts the whole hand clear of the sleeve. 18mm of rise from wrist to knuckle,
+# read off that frame against the 96mm the hand measures across.
 PALM_PROFILE = [
-    (0.00, 0.0225, 0.0130, 0.0000),   # wrist
-    (0.30, 0.0288, 0.0148, 0.0026),
-    (0.65, 0.0330, 0.0146, 0.0030),
-    (1.00, 0.0335, 0.0132, 0.0010),   # knuckles — the digits leave from here
+    (0.00, 0.0225, 0.0130, 0.0000),   # wrist — flat, because it is in the sleeve
+    (0.30, 0.0288, 0.0150, 0.0075),
+    (0.65, 0.0330, 0.0150, 0.0148),
+    (1.00, 0.0335, 0.0134, 0.0182),   # knuckles — arched clear of the forearm
 ]
 
 # One digit's radius along its length. Blunt: it never gets below 6mm, so the
@@ -193,8 +203,10 @@ PALM_PROFILE = [
 FINGER_PROFILE = [
     (0.00, 0.0082),
     (0.35, 0.0088),
-    (0.75, 0.0080),
-    (1.00, 0.0060),
+    (0.72, 0.0082),
+    (0.88, 0.0066),
+    (0.96, 0.0040),
+    (1.00, 0.0014),   # all but closed, so the end cap is a speck
 ]
 
 # Where each finger leaves the knuckle line, how far it reaches, and how much
@@ -215,8 +227,10 @@ FINGERS = [
 THUMB_PROFILE = [
     (0.00, 0.0115),
     (0.35, 0.0125),
-    (0.75, 0.0115),
-    (1.00, 0.0082),
+    (0.72, 0.0118),
+    (0.88, 0.0092),
+    (0.96, 0.0056),
+    (1.00, 0.0018),   # same: close it down so no flat disc faces the light
 ]
 
 # Slimmer than pass 2, where the cuff was nearly as wide as the mitten and took
@@ -225,11 +239,15 @@ THUMB_PROFILE = [
 # camera, so perspective already makes it the largest thing in the shot; at
 # 32mm it came out visibly thicker than the hand, which the film's forearm is
 # not. These are read off the film, where cuff and mitten are about equal.
+# The flare toward the elbow is bigger than pass 3's. Held against the film's
+# own frame at 9.35s (`scratchpad/ref.py` cuts it) the sleeve is a LOOSE chunky
+# knit, not a fitted one: it grips at the wrist and opens out along the forearm.
+# At a near-constant 25mm it read as a pipe of uniform bore.
 CUFF_PROFILE = [
     (0.00, 0.0232),
-    (0.20, 0.0246),
-    (0.45, 0.0256),
-    (1.00, 0.0278),  # the sleeve widens a little toward the elbow
+    (0.14, 0.0258),  # just past the rib band, where the knit relaxes
+    (0.45, 0.0296),
+    (1.00, 0.0340),
 ]
 
 
@@ -248,7 +266,7 @@ def hand_rings():
     return rings
 
 
-def digit_rings(root, aim, length, radius_profile, curl, segs=10):
+def digit_rings(root, aim, length, radius_profile, curl, segs=14):
     """One finger or thumb, as its own worked-in-the-round tube.
 
     A crocheted doll's finger is a short stuffed tube that tapers a little and
@@ -283,16 +301,22 @@ def digit_rings(root, aim, length, radius_profile, curl, segs=10):
 def cuff_rings():
     """The chunky black knit — a shade wider than the wrist, running back off
     frame. The first pass made it 62mm across, which swamped the hand."""
-    # 200mm, not 78mm. The forearm has to run off the edge of frame the way it
-    # does in the film — at 78mm it stopped in mid-air on the desk, and once
-    # the subdivision came off for export its flat end cap was the most
-    # noticeable thing in the render.
+    # 340mm, not 200mm, and the number is derived rather than picked. The tube
+    # is open at the elbow end, so its flat cap must never be on screen — and at
+    # 200mm it was, 40px inside the right edge at 1920x1080. The wrist sits
+    # 0.20m off the room's axis at 0.84m depth; the widest window the room
+    # admits (2:1) puts the frame edge 0.53m off axis there, and the forearm
+    # covers that gap with margin only past ~0.30m. 340mm clears it at every
+    # admitted size — verified by screenshot at nine of them, not by this sum.
+    #
+    # Long for a forearm on a 96mm hand, and deliberately so: every millimetre
+    # past the frame edge is invisible, and the alternative is a visible cap.
     rings = []
     N = 14
     for i in range(N):
         t = i / (N - 1)
         (r,) = profile(CUFF_PROFILE, t)
-        rings.append(((0.0, -0.024 - t * 0.200, -0.001 - t * 0.010), r, r * 0.93, 0.0))
+        rings.append(((0.0, -0.024 - t * 0.340, -0.001 - t * 0.017), r, r * 0.93, 0.0))
     return rings
 
 
@@ -329,13 +353,25 @@ for i, (x, ax, ay, length, curl) in enumerate(FINGERS):
     digits.append(
         loft(
             f"Finger{i + 1}",
-            digit_rings((x, KNUCKLE_Y - 0.011, 0.0015), (ax, ay), length, FINGER_PROFILE, curl),
+            # Z follows the palm's arch — the roots have to sit on the knuckle
+            # line wherever the arch puts it, or the fingers would sprout out of
+            # the palm's side. `profile` is the same curve the palm is lofted
+            # from, so this can never drift out of step with it.
+            digit_rings(
+                (x, KNUCKLE_Y - 0.011, profile(PALM_PROFILE, 0.81)[2] + 0.0015),
+                (ax, ay), length, FINGER_PROFILE, curl,
+            ),
         )
     )
 
 thumb = loft(
     "Thumb",
-    digit_rings((-0.0195, -0.010, 0.0000), (-0.86, 0.62), 0.0500, THUMB_PROFILE, 0.0115, segs=11),
+    # Same reason as the fingers: the thumb roots part-way up the arch, so its
+    # Z is read off the palm at the height it actually leaves from.
+    digit_rings(
+        (-0.0195, -0.010, profile(PALM_PROFILE, 0.345)[2] - 0.0026),
+        (-0.86, 0.62), 0.0500, THUMB_PROFILE, 0.0115, segs=15,
+    ),
 )
 
 cuff = loft("Cuff", cuff_rings(), close_start=False, close_end=True)
@@ -397,7 +433,7 @@ def srgb(hex_str):
 
 def make_crochet(
     name, base_color, rows, stitches, bump=0.0016, rough=(0.72, 0.90), offset=0.5,
-    sheen=0.08, rib=False,
+    sheen=0.08, rib=False, rib_band=1.0,
 ):
     """Crocheted fabric, built out of the mesh's own UV grid.
 
@@ -460,9 +496,50 @@ def make_crochet(
         # a faint course between them. Multiplying the two domes (which is
         # right for crochet) gave the cuff a quilted grid that read as a puffer
         # jacket, not knitwear.
-        height = math("ADD", a=math("MULTIPLY", a=dome_st, vb=0.86), b=math("MULTIPLY", a=dome_row, vb=0.14))
+        ribbed = math("ADD", a=math("MULTIPLY", a=dome_st, vb=0.86), b=math("MULTIPLY", a=dome_row, vb=0.14))
+        if rib_band < 1.0:
+            # ── The rib is a BAND, not the whole sleeve ──────────────────────
+            # Running the rib the full 200mm of forearm gave a tube of hard,
+            # perfectly straight, full-depth grooves — which in the room read
+            # as corrugated hose, not as a sleeve. It was the most artificial
+            # thing left in the shot.
+            #
+            # On a real garment the rib is a short band at the wrist and the
+            # sleeve past it is plain knitted fabric: same yarn, much quieter
+            # surface, courses running around rather than columns running along.
+            # So the rib's amplitude falls off over `rib_band` of the tube's
+            # length and a shallow stockinette takes over — one material, one
+            # bake, the change is where along the arm you are.
+            plain = math(
+                "MULTIPLY",
+                a=math("ADD", a=math("MULTIPLY", a=dome_row, vb=0.66),
+                       b=math("MULTIPLY", a=dome_st, vb=0.34)),
+                vb=0.42,
+            )
+            # v=0 is the wrist ring (see `cuff_rings`), so the band sits where
+            # the cuff actually is. Clamped, or the sleeve end would go negative
+            # and punch a groove into the fabric.
+            fade = node("ShaderNodeClamp")
+            nt.links.new(
+                math("SUBTRACT", va=1.0, b=math("DIVIDE", a=v, vb=rib_band)),
+                fade.inputs["Value"],
+            )
+            height = math(
+                "ADD", a=plain,
+                b=math("MULTIPLY", a=fade.outputs["Result"],
+                       b=math("SUBTRACT", a=ribbed, b=plain)),
+            )
+        else:
+            height = ribbed
     else:
-        height = math("POWER", a=math("MULTIPLY", a=dome_row, b=dome_st), vb=0.62)
+        # Crochet reads as ROWS first and stitches second. A straight product of
+        # the two domes weights them equally and comes out as basketweave —
+        # square cells, no courses. Biasing the row and letting the stitch
+        # modulate it is what makes it read as something worked in rounds.
+        rows_first = math("POWER", a=dome_row, vb=0.55)
+        stitched = math("ADD", a=math("MULTIPLY", a=rows_first, vb=0.42),
+                        b=math("MULTIPLY", a=math("MULTIPLY", a=rows_first, b=dome_st), vb=0.58))
+        height = math("POWER", a=stitched, vb=0.85)
 
     # a little fibre fuzz over the stitch lattice, so the yarn is not plastic
     fuzz = node("ShaderNodeTexNoise")
@@ -525,10 +602,24 @@ else:  # noqa: PLR5501 — 'final' and 'export' share the real materials
         d.data.materials.append(
             make_crochet(f"YarnFinger{i + 1}", YARN, rows=7, stitches=10, bump=0.0018)
         )
-    # the cuff is knitted, not crocheted: ribbed columns, coarser yarn, no sheen
+    # The cuff is knitted, not crocheted: ribbed columns, coarser yarn, no sheen.
+    #
+    # Gauge read off the film's frame at 9.35s rather than guessed: the sleeve
+    # there is a CHUNKY knit whose individual purl bumps are ~20mm — you can
+    # count them. On a 175mm circumference that is 9 stitches around, and 20mm
+    # courses over 340mm of forearm is 17 rows. The earlier 26x9 put 7mm
+    # stitches on it, which at the size the prop actually covers in the room
+    # dissolved into a smooth grey tube with no knit in it at all.
+    #
+    # bump 0.0038 for the same reason: a chunky knit's surface relief is a
+    # couple of millimetres of actual yarn, and 2.2mm was reading as a sheen.
+    #
+    # rib_band 0.10 puts the ribbing in the first 34mm off the wrist — the width
+    # of a real knitted cuff — and leaves the remaining 306mm plain knit.
     cuff.data.materials.append(
-        make_crochet("Cuff", CUFF, rows=9, stitches=26, bump=0.0022,
-                     rough=(0.80, 0.95), offset=0.0, sheen=0.0, rib=True)
+        make_crochet("Cuff", CUFF, rows=17, stitches=9, bump=0.0038,
+                     rough=(0.80, 0.95), offset=0.0, sheen=0.0, rib=True,
+                     rib_band=0.10)
     )
 
 # ground for scale

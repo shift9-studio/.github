@@ -17,6 +17,8 @@ const TOKENS = {
   cuff: "--s9-yarn-cuff",
   key: "--s9-room-key",
   fill: "--s9-room-fill",
+  screen: "--s9-room-screen",
+  shell: "--s9-shell",
 } as const;
 
 export function readRoomPalette(): RoomPalette | null {

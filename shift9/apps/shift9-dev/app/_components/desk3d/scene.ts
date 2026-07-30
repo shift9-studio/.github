@@ -37,6 +37,8 @@ export type RoomPalette = {
   cuff: string;
   key: string;
   fill: string;
+  screen: string;
+  shell: string;
 };
 
 /* The plate. Cut by `scripts/build-handoff-plate.py` from the film's second
@@ -87,7 +89,60 @@ const SCREEN_CORNERS = {
 
 /* The one physical constant. A 34" 21:9 panel is 0.7998m of glass across.
    Every other dimension in the room is in metres because of this line. */
-const SCREEN_WIDTH_M = 0.7998;
+const SCREEN_MEASURED_WIDTH_M = 0.7998;
+
+/* ── A BIGGER MONITOR ────────────────────────────────────────────────────
+   Kariim's call: the monitor should be a lot bigger.
+
+   Up to now the screen was welded to the monitor in the photograph — solved
+   from its corners, exactly its size. That is what kept the composite honest,
+   and it is also what capped the desktop at ~54% of the frame, because the film
+   frames a 34" panel at 54% of the frame and no amount of arithmetic changes
+   what the camera saw.
+
+   So the scene stops borrowing the photograph's monitor and brings its own: a
+   larger panel, standing where that one stood, with a modelled bezel and shell
+   behind it (`BEZEL` below, drawn in DeskScene). It covers the photographed
+   monitor completely, so there is no double-monitor and nothing to mask — the
+   plate still supplies the desk, the wall, the mat, the keyboard, the speaker
+   and the lamp, which is everything the room is actually for.
+
+   ── WHICH WAY IT GROWS, and why that is the whole problem ─────────────────
+   The first attempt scaled the glass about its own centre. Every viewport
+   clipped, and 4:3 clipped on all four sides. The reason is in the plate and
+   cannot be argued with: the photographed panel's top edge sits 70px from the
+   top of a 1076px frame. Grow it symmetrically and the top leaves frame at
+   1.31x — before it has grown enough to matter. Measured, at five sizes, not
+   reasoned about.
+
+   And there is no framing trick that buys headroom. `crop()` can slide the
+   window over the plate, but it cannot show what the camera never shot; above
+   the monitor there are 70 pixels of wall and then the edge of the film.
+
+   So the panel grows DOWNWARD — its top edge pinned exactly where the
+   photograph's is, its glass extending into the space below, which in the plate
+   holds the stand and two plants. That space is decoration; the top of frame is
+   a wall. Trading the plants for a monitor twice the area is the right trade,
+   and it is the only one available.
+
+   A big panel on a low stand is also just what this looks like in a real room.
+
+   1.52 is the largest scale at which nothing clips at any aspect the room
+   admits — found by flooding the glass magenta and measuring its bounding box
+   against the viewport at nine sizes from 4:3 to 21:9, not chosen. It puts a
+   ~52" ultrawide where the 34" was: glass across ~83% of the viewport width
+   against 54% before, so the composited desktop renders at 83% linear scale and
+   its small mono labels land near 11px instead of 7px.
+
+   The binding case is a 16:10 window, where the glass's LEFT edge runs out of
+   frame first — the photographed panel sits 37px left of the plate's centre, so
+   it grows into the left margin sooner than the right. The bezel is drawn
+   outside the glass and has to fit too, which is what the last 0.02 of slack is
+   for. Both aspect bounds are enforced by `useRoomCapable`; outside them the
+   flat desktop is the site. */
+const SCREEN_SCALE = 1.52;
+
+const SCREEN_WIDTH_M = SCREEN_MEASURED_WIDTH_M * SCREEN_SCALE;
 
 /* The lens. The plate is a generated frame, so its true focal length is not
    recorded anywhere — but the choice is not free-floating: it sets the camera
@@ -138,7 +193,14 @@ const DESIGN_FOV_DEG = 35;
    the composite cannot come apart; the crop is pure CSS. The cost is honest
    and only one: the plate is 1928px and gets magnified, so the room is
    proportionally softer. */
-const COMPOSITION = { left: 250, right: 1690, top: 30, bottom: 915 };
+/* The whole plate, which makes the derived zoom exactly 1 — no push-in at all.
+   The push-in existed to make the desktop readable when the monitor was stuck
+   at the photograph's size. The monitor is its own object now and 1.55x bigger,
+   so the crop is not needed and is actively unwanted: it magnified a 1928px
+   still and softened the room for a gain the bigger panel supplies for free.
+   Narrow this rect again if the room ever needs to push in for a different
+   reason; the machinery is intact and measured. */
+const COMPOSITION = { left: 0, right: PLATE_W, top: 0, bottom: PLATE_H };
 
 /** How much larger than the viewport the scene renders. Derived, not chosen. */
 export const FRAMING_ZOOM = Math.min(
@@ -202,8 +264,12 @@ const bottomWidthPx = SCREEN_CORNERS.br[0] - SCREEN_CORNERS.bl[0];
    same 0.80m of glass, so the top is nearer — the panel leans its top toward
    the camera. 27px on 1045 is a 2.6% difference against a reading error of
    about 3px, so it is the panel, not the measurement. */
-const topDepth = (FOCAL_PX * SCREEN_WIDTH_M) / topWidthPx;
-const bottomDepth = (FOCAL_PX * SCREEN_WIDTH_M) / bottomWidthPx;
+/* MEASURED width, not the scaled one. The solve is asking "how far away is a
+   0.80m panel that covers 1045px?" — feed it the enlarged width and it answers
+   with a proportionally greater depth, which lands a bigger monitor at exactly
+   the same size on screen. The scale is applied to the geometry afterwards. */
+const topDepth = (FOCAL_PX * SCREEN_MEASURED_WIDTH_M) / topWidthPx;
+const bottomDepth = (FOCAL_PX * SCREEN_MEASURED_WIDTH_M) / bottomWidthPx;
 
 const edge = (
   ax: number,
@@ -234,10 +300,25 @@ const bottomEdge = edge(
 
 /* Two points, so: the height is the distance between them, the lean is the
    angle of the line joining them, and the centre is halfway. */
-const screenHeightM = Math.hypot(
+const screenMeasuredHeightM = Math.hypot(
   topEdge.y - bottomEdge.y,
   topEdge.z - bottomEdge.z,
 );
+const screenHeightM = screenMeasuredHeightM * SCREEN_SCALE;
+
+/* The bottom edge, moved down the panel's own plane until the glass is
+   `SCREEN_SCALE` times as tall. Down the PLANE, not down the world: the panel
+   leans, so the edge has to travel along the lean or the enlarged glass would
+   be a different shape from the one that was solved and the composite would
+   shear. Sliding the bottom edge and leaving the top alone is what "grows
+   downward" means in three dimensions — the top edge, the tilt and the depth
+   all stay exactly as measured, so the part of the panel that overlaps the
+   photograph still lands on the photograph. */
+const grownBottom = {
+  x: bottomEdge.x,
+  y: topEdge.y + (bottomEdge.y - topEdge.y) * SCREEN_SCALE,
+  z: topEdge.z + (bottomEdge.z - topEdge.z) * SCREEN_SCALE,
+};
 /* Positive: a +X rotation in three.js swings the plane's top edge toward a
    camera on +Z, which is the direction the widths say the panel leans. Getting
    this backwards is invisible in a bounding box — both signs give the same
@@ -245,9 +326,9 @@ const screenHeightM = Math.hypot(
    be checked against the top and bottom edge widths separately, and is. */
 const screenTilt = Math.atan2(topEdge.z - bottomEdge.z, topEdge.y - bottomEdge.y);
 const screenCentre = {
-  x: (topEdge.x + bottomEdge.x) / 2,
-  y: (topEdge.y + bottomEdge.y) / 2,
-  z: (topEdge.z + bottomEdge.z) / 2,
+  x: (topEdge.x + grownBottom.x) / 2,
+  y: (topEdge.y + grownBottom.y) / 2,
+  z: (topEdge.z + grownBottom.z) / 2,
 };
 
 /* The monitor. Position is the glass's centre; rotation.x is negative because
@@ -274,9 +355,13 @@ export const SCREEN = {
   hotspot: {
     signal: "full-size",
     label: "View the desktop full size",
-    /* Bezel, lower right — in the monitor's own space, so it travels with the
-       panel if the panel ever moves. Y is just past the bottom edge. */
-    at: [0.34, -0.5 * screenHeightM - 0.028, 0.004] as [number, number, number],
+    /* Bezel, lower LEFT — in the monitor's own space, so it travels with the
+       panel if the panel ever moves. Y is just past the bottom edge.
+       It was on the right until the panel grew: the bigger glass reaches much
+       further down the desk, and its lower-right corner now lands exactly on
+       the mouse, so the label was printing across the crocheted hand. The left
+       corner is over empty mat. */
+    at: [-0.42, -0.5 * screenHeightM - 0.028, 0.004] as [number, number, number],
   },
 };
 
@@ -347,6 +432,17 @@ export function framing(viewportAspect: number): number {
  * used to size the screen's DOM so it is never asked to render at a size the
  * layout was not designed for.
  */
+/* The modelled bezel and shell — what makes the enlarged glass read as a
+   monitor in the room rather than a rectangle hanging in front of one. Drawn in
+   DeskScene, and drawn AROUND the glass: CSS3D composites above WebGL, so
+   nothing here may overlap the screen or it would be painted over. */
+export const BEZEL = {
+  /* A big panel wears a slim bezel — 14mm on 1.24m of glass. */
+  border: 0.014,
+  /* The shell behind, a little deeper than the bezel so the panel has body. */
+  depth: 0.034,
+};
+
 export function screenScreenFraction(viewportAspect: number): number {
   const fov = (framing(viewportAspect) * Math.PI) / 180;
   const visibleHeightAtScreen = 2 * -screenCentre.z * Math.tan(fov / 2);

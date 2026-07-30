@@ -16,8 +16,31 @@ import { readRoomPalette } from "./palette";
 /* Under this, the desktop inside the monitor is too small to use at any
    framing, so the room is not offered and the flat desktop is the site. Matches
    the repo's standing rule that 3D is a desktop affordance and phones get the
-   flat layout. */
-const ROOM_QUERY = "(pointer: fine) and (min-width: 64rem) and (min-height: 34rem)";
+   flat layout.
+ *
+ * The two aspect bounds are the plate's, not a preference — and both were
+ * measured by flooding the monitor's glass and reading its bounding box against
+ * the viewport at nine sizes (`scratchpad/sweep.mjs`, reproduced in the PR):
+ *
+ *   below 8/5   The backdrop covers the viewport, so a window narrower than the
+ *               film crops the film's sides. Past 8/5 the crop reaches the
+ *               monitor and takes the glass's left edge off frame. A 4:3 window
+ *               loses both sides of it.
+ *   above 2/1   The same crop, vertically: above ~2.05:1 the film's own monitor
+ *               has its top edge outside the frame — at ANY monitor size, the
+ *               34" one included, because the plate only has 70px of wall above
+ *               it. This is not something the room introduced and not something
+ *               it can fix; the frame does not contain the pixels.
+ *
+ * Outside those bounds the flat desktop is the site — the same fallback a
+ * machine without WebGL gets, which is already the proven path. That is a real
+ * trade and worth naming: an ultrawide window gets no room. Letterboxing the
+ * plate would keep it, but the film's own beat is `object-fit: cover`, and
+ * black bars appearing on the handover frame would make the locked cut from
+ * film to room visible. Not worth it. */
+const ROOM_QUERY =
+  "(pointer: fine) and (min-width: 64rem) and (min-height: 34rem)" +
+  " and (min-aspect-ratio: 8/5) and (max-aspect-ratio: 2/1)";
 
 /**
  * `null` until measured, so the server (which always renders the flat

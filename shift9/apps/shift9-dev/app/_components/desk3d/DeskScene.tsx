@@ -38,6 +38,7 @@ import { ScreenSurface } from "./ScreenSurface";
 import { SET_PIECES } from "./props";
 import {
   BACKDROP,
+  BEZEL,
   DESK,
   PLATE_SRC,
   SCREEN,
@@ -242,6 +243,58 @@ export function DeskScene({
       {/* The wall's bounce, and the lamp. Tokens, like every other colour. */}
       <ambientLight color={palette.fill} intensity={1.6} />
       <pointLight color={palette.key} intensity={1.4} distance={4} position={lamp} />
+
+      {/* THE MONITOR'S OWN GLOW — the brightest thing in this room by a
+          distance, and the only light in front of the props.
+          Without it the lamp is the sole source and it sits BEHIND everything,
+          so the crocheted forearm rendered as a flat black slab with none of
+          its knit visible. That is not a lighting preference; it is the reason
+          a screen-lit desk looks the way it does.
+          It cannot touch the plate — the backdrop is `meshBasicMaterial`, so
+          it is unlit by construction and only the props respond. `distance`
+          keeps the falloff local to the desk. */}
+      <pointLight
+        color={palette.screen}
+        intensity={2.1}
+        distance={2.2}
+        decay={2}
+        position={[SCREEN.position[0], SCREEN.position[1], SCREEN.position[2] + 0.12]}
+      />
+
+      {/* The bounce off the room BEHIND the viewer. Every interior has one, and
+          without it the only two sources both sit deeper in the room than the
+          props do — so the forearm, which is the nearest thing to the camera,
+          was lit exclusively along its top edge and read as a silhouette.
+          Dim on purpose: it is bounce, not a light. */}
+      <pointLight
+        color={palette.fill}
+        intensity={1.1}
+        distance={3}
+        decay={2}
+        position={[0.35, 0.22, 0.15]}
+      />
+
+      {/* THE MONITOR the room brings with it.
+          The plate's own panel is photographed and 34"; this one is modelled and
+          1.55x larger, sitting in front of it and covering it completely — which
+          is what lets the desktop be read without cropping the room away.
+
+          Drawn as a shell BEHIND the glass and slightly wider, so what shows
+          around the composited desktop is a bezel. It has to be behind rather
+          than a frame on top: CSS3D composites above WebGL, so anything drawn
+          in front of the screen would be painted over by the desktop anyway. */}
+      <group position={SCREEN.position} rotation={SCREEN.rotation}>
+        <mesh position={[0, 0, -BEZEL.depth / 2 - 0.001]}>
+          <boxGeometry
+            args={[
+              SCREEN.width + BEZEL.border * 2,
+              SCREEN.height + BEZEL.border * 2,
+              BEZEL.depth,
+            ]}
+          />
+          <meshStandardMaterial color={palette.shell} roughness={0.62} metalness={0.0} />
+        </mesh>
+      </group>
 
       <StandIn
         position={SCREEN.position}
