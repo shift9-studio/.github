@@ -1,15 +1,20 @@
 """The studio's crocheted hand — headless Blender build.
 
-Reference: 04-desk-mouse-screen-v5.mp4 at 9.1–10.0s. A crocheted mitten in
-ochre yarn resting on a mouse: stitch rows running AROUND the hand, a separate
-thumb gusset with a deep notch between it and the finger mass, and a chunky
-black ribbed cuff at the wrist. No individual fingers — it is a mitten.
+Reference: 04-desk-mouse-screen-v5.mp4 at 9.1–10.0s. A crocheted DOLL'S hand
+resting on a mouse: chunky stitch rounds worked around every piece, four short
+blunt fingers and a fatter thumb, and a black ribbed knit cuff at the wrist.
+
+It has real fingers, and they are deliberately NOT anatomical. A doll's hand in
+yarn has short, fat, dome-ended digits — about two thirds the length of the palm
+and half again as thick as a real finger. Getting those proportions right is
+what keeps it reading as the character's own hand; model it accurately and it
+turns into a knitted glove worn by a real hand, which is the failure mode.
 
 Scale is not invented. The desk scene's own calibration puts the mouse 0.843m
 from the camera, which makes the hand in frame 0.104m from wrist to fingertip.
 That is this model's length.
 
-Stage it:  python3 build_hand.py --stage blockout|final
+Stage it:  python3 build-crocheted-hand.py --stage blockout|final|export
 """
 
 import math
@@ -21,6 +26,7 @@ import sys
 # with ModuleNotFoundError, which reads like a broken install and is not one.
 import bpy  # isort: skip
 import bmesh  # isort: skip  # noqa: E402
+from mathutils import Vector  # isort: skip  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RENDERS = os.path.join(HERE, "renders")
@@ -81,15 +87,38 @@ def loft(name, rings, close_start=True, close_end=True):
 
     bm = bmesh.new()
     uv_layer = bm.loops.layers.uv.new("UVMap")
+
+    # Each cross-section is built PERPENDICULAR TO THE SPINE, not in a fixed
+    # plane. The first version laid every ring flat in constant-Y, which is
+    # harmless while a tube runs along +Y and wrong the moment one does not:
+    # the thumb aims mostly sideways, so its rings ended up nearly parallel to
+    # its own spine and it rendered as a flat blade — a paddle stuck on the side
+    # of the hand. Framing each ring off the local tangent fixes every digit at
+    # once and leaves the symmetric palm unchanged.
+    centres = [Vector(c) for c, _, _, _ in rings]
+    up = Vector((0.0, 0.0, 1.0))
     grid = []
-    for (cx, cy, cz), hw, hh, roll in rings:
+    for idx, ((cx, cy, cz), hw, hh, roll) in enumerate(rings):
+        nxt = centres[min(idx + 1, len(centres) - 1)]
+        prv = centres[max(idx - 1, 0)]
+        tangent = (nxt - prv)
+        if tangent.length < 1e-9:
+            tangent = Vector((0.0, 1.0, 0.0))
+        tangent.normalize()
+        # a spine running straight up would make this degenerate; nothing here does
+        ref = up if abs(tangent.dot(up)) < 0.98 else Vector((0.0, 1.0, 0.0))
+        right = ref.cross(tangent)
+        right.normalize()
+        upv = tangent.cross(right)
         row = []
         for i in range(SEGS):
             a = 2 * math.pi * i / SEGS
-            x, z = math.cos(a) * hw, math.sin(a) * hh
-            xr = x * math.cos(roll) - z * math.sin(roll)
-            zr = x * math.sin(roll) + z * math.cos(roll)
-            row.append(bm.verts.new((cx + xr, cy, cz + zr)))
+            u_off = math.cos(a) * hw
+            v_off = math.sin(a) * hh
+            ur = u_off * math.cos(roll) - v_off * math.sin(roll)
+            vr = u_off * math.sin(roll) + v_off * math.cos(roll)
+            p = Vector((cx, cy, cz)) + right * ur + upv * vr
+            row.append(bm.verts.new((p.x, p.y, p.z)))
         grid.append(row)
     bm.verts.ensure_lookup_table()
 
@@ -139,29 +168,55 @@ def profile(points, t):
     return points[-1][1:]
 
 
-# (t, half-width, half-height, z-offset) from wrist to fingertip.
-# A hand is 84mm across the knuckles and 34mm thick — the first pass came out
-# 53mm thick, which read as a bread roll.
-HAND_PROFILE = [
-    (0.00, 0.0235, 0.0135, 0.0000),
-    (0.15, 0.0305, 0.0158, 0.0028),
-    (0.35, 0.0392, 0.0170, 0.0046),
-    (0.55, 0.0420, 0.0163, 0.0032),   # knuckles — widest
-    (0.75, 0.0408, 0.0139, -0.0030),
-    (0.88, 0.0352, 0.0108, -0.0098),
-    (1.00, 0.0170, 0.0055, -0.0175),  # rounded tip, dipped over the mouse
+# ── A DOLL'S hand, with real fingers ────────────────────────────────────
+# Not a mitten (the earlier version fused the fingers into one lobe) and not an
+# anatomical hand either. An amigurumi hand: a broad soft palm with SHORT, FAT,
+# BLUNT digits, each one a stuffed tube ending in a dome. The proportions are
+# deliberately doll-like — a real hand's fingers are about as long as its palm,
+# these are two thirds of it and half again as thick — because the character is
+# crocheted and a correctly-proportioned hand in yarn reads as a glove on a
+# real hand, which is the thing to avoid.
+#
+# Total wrist-to-fingertip still lands at ~104mm, which is what the desk
+# calibration measures the film's hand at.
+
+# (t, half-width, half-height, z-offset) — wrist to knuckles.
+PALM_PROFILE = [
+    (0.00, 0.0225, 0.0130, 0.0000),   # wrist
+    (0.30, 0.0288, 0.0148, 0.0026),
+    (0.65, 0.0330, 0.0146, 0.0030),
+    (1.00, 0.0335, 0.0132, 0.0010),   # knuckles — the digits leave from here
 ]
 
-# The thumb gusset: shorter and fatter than the first pass, and swung further
-# out to the side so the notch between it and the fingers actually opens.
-# Fatter and blunter than pass 2, which tapered to a spike and read as a beak.
-# Crocheted thumbs are stuffed tubes — they round off, they do not come to a point.
+# One digit's radius along its length. Blunt: it never gets below 6mm, so the
+# tip is a dome. A taper to a point is what made the first thumb read as a beak.
+FINGER_PROFILE = [
+    (0.00, 0.0082),
+    (0.35, 0.0088),
+    (0.75, 0.0080),
+    (1.00, 0.0060),
+]
+
+# Where each finger leaves the knuckle line, how far it reaches, and how much
+# it closes over the mouse. Splayed slightly so they read as four fingers and
+# not as a paddle; the middle finger is the longest, as fingers are.
+KNUCKLE_Y = 0.028
+FINGERS = [
+    # (x at knuckle, aim x, aim y, length, curl)
+    (-0.0215, -0.26, 1.0, 0.0345, 0.0175),
+    (-0.0072, -0.07, 1.0, 0.0375, 0.0195),
+    (0.0072, 0.09, 1.0, 0.0350, 0.0190),
+    (0.0210, 0.26, 1.0, 0.0295, 0.0170),
+]
+
+# The thumb: fatter than the fingers and blunter still, which is what a
+# crocheted thumb is. Rooted low on the palm's left flank and reaching
+# forward-left, leaving the notch the mouse shows through in the reference.
 THUMB_PROFILE = [
-    (0.00, 0.0150),
-    (0.30, 0.0178),
-    (0.65, 0.0172),
-    (0.88, 0.0140),
-    (1.00, 0.0092),
+    (0.00, 0.0115),
+    (0.35, 0.0125),
+    (0.75, 0.0115),
+    (1.00, 0.0082),
 ]
 
 # Slimmer than pass 2, where the cuff was nearly as wide as the mitten and took
@@ -179,32 +234,46 @@ CUFF_PROFILE = [
 
 
 def hand_rings():
-    """Wrist -> fingertip, along +Y."""
+    """The PALM only. Wrist -> knuckles, along +Y.
+
+    Shorter than the earlier mitten, because the fingers are now their own
+    pieces rather than a fused lobe: the palm stops at the knuckles and the
+    digits carry on from there."""
     rings = []
-    N = 26
+    N = 18
     for i in range(N):
         t = i / (N - 1)
-        hw, hh, dz = profile(HAND_PROFILE, t)
-        rings.append(((0.0, -0.030 + t * 0.108, dz), hw, hh, 0.0))
+        hw, hh, dz = profile(PALM_PROFILE, t)
+        rings.append(((0.0, -0.030 + t * 0.058, dz), hw, hh, 0.0))
     return rings
 
 
-def thumb_rings():
-    """A separate gusset, the way a crocheted mitten actually has one. Rooted
-    on the palm's left flank near the wrist and reaching forward-left, which is
-    what leaves the notch the mouse shows through in the reference."""
+def digit_rings(root, aim, length, radius_profile, curl, segs=10):
+    """One finger or thumb, as its own worked-in-the-round tube.
+
+    A crocheted doll's finger is a short stuffed tube that tapers a little and
+    ends in a dome — never a point — and it is worked in rounds, which is why
+    each one is its own loft: the rounds then run around the finger the way
+    they actually do, and the crochet material picks them up from the UVs
+    without being told anything about fingers.
+
+    `curl` bends the spine downward along its length, so the digits close over
+    the front of the mouse the way the film's hand does rather than lying flat
+    like a glove on a table."""
+    ax, ay, az = root
+    dx, dy = aim
+    n = math.hypot(dx, dy) or 1.0
+    dx, dy = dx / n, dy / n
     rings = []
-    N = 12
-    ax, ay, az = -0.024, -0.002, 0.000
-    for i in range(N):
-        t = i / (N - 1)
-        reach = 0.056 * t
-        (r,) = profile(THUMB_PROFILE, t)
+    for i in range(segs):
+        t = i / (segs - 1)
+        reach = length * t
+        (r,) = profile(radius_profile, t)
         rings.append(
             (
-                (ax - reach * 0.80, ay + reach * 0.60, az + 0.004 * math.sin(math.pi * t) - 0.012 * t * t),
+                (ax + dx * reach, ay + dy * reach, az - curl * t * t),
                 r,
-                r * 0.88,
+                r * 0.92,
                 0.0,
             )
         )
@@ -250,10 +319,28 @@ def smooth_stack(obj, levels=SUBSURF):
 root = bpy.data.objects.new("Hand_root", None)
 scene.collection.objects.link(root)
 
-hand = loft("Hand", hand_rings())
-thumb = loft("Thumb", thumb_rings())
+hand = loft("Palm", hand_rings())
+
+# Four fingers, each its own worked-in-the-round tube. They start slightly
+# INSIDE the palm (`-0.004` on Y) so the joint is buried rather than showing a
+# ring of daylight where tube meets palm.
+digits = []
+for i, (x, ax, ay, length, curl) in enumerate(FINGERS):
+    digits.append(
+        loft(
+            f"Finger{i + 1}",
+            digit_rings((x, KNUCKLE_Y - 0.011, 0.0015), (ax, ay), length, FINGER_PROFILE, curl),
+        )
+    )
+
+thumb = loft(
+    "Thumb",
+    digit_rings((-0.0195, -0.010, 0.0000), (-0.86, 0.62), 0.0500, THUMB_PROFILE, 0.0115, segs=11),
+)
+
 cuff = loft("Cuff", cuff_rings(), close_start=False, close_end=True)
-for part in (hand, thumb, cuff):
+
+for part in [hand, thumb, cuff, *digits]:
     part.parent = root
     smooth_stack(part)
 
@@ -276,7 +363,7 @@ def audit_mesh(obj):
     )
 
 
-for part in (hand, thumb, cuff):
+for part in [hand, thumb, cuff, *digits]:
     audit_mesh(part)
 
 
@@ -419,17 +506,25 @@ YARN = srgb("#c07243")
 CUFF = srgb("#131214")
 
 if STAGE == "blockout":
-    for part in (hand, thumb):
+    for part in [hand, thumb, *digits]:
         part.data.materials.append(make_grey("Blockout", 0.55))
     cuff.data.materials.append(make_grey("BlockoutDark", 0.12))
 else:  # noqa: PLR5501 — 'final' and 'export' share the real materials
-    # ~3.5mm per stitch: 30 rounds up a 108mm mitten, 46 stitches around it.
-    # Pass 1 used 22x34 and the stitches read as pineapple scales — too few,
-    # too proud. Real crochet at this size is finer than it looks.
-    hand.data.materials.append(make_crochet("Yarn", YARN, rows=30, stitches=46, bump=0.0011))
-    # the thumb is a smaller tube worked at the same stitch size, so its counts
-    # scale with its dimensions rather than matching the palm's
-    thumb.data.materials.append(make_crochet("YarnThumb", YARN, rows=15, stitches=20, bump=0.0011))
+    # ~5mm per stitch, and PROUD. The reference's stitches are chunky — you can
+    # count them across the back of the hand — and the previous 3.5mm lattice
+    # read as fine machine knit rather than something worked by hand. Fewer,
+    # bigger, deeper.
+    #
+    # Every part gets its own counts scaled to its own size, so a stitch is the
+    # same physical 5mm on a 67mm palm and on a 16mm finger. One shared
+    # material would have put 46 stitches around a fingertip.
+    yarn_palm = make_crochet("Yarn", YARN, rows=14, stitches=30, bump=0.0019)
+    hand.data.materials.append(yarn_palm)
+    thumb.data.materials.append(make_crochet("YarnThumb", YARN, rows=9, stitches=13, bump=0.0019))
+    for i, d in enumerate(digits):
+        d.data.materials.append(
+            make_crochet(f"YarnFinger{i + 1}", YARN, rows=7, stitches=10, bump=0.0018)
+        )
     # the cuff is knitted, not crocheted: ribbed columns, coarser yarn, no sheen
     cuff.data.materials.append(
         make_crochet("Cuff", CUFF, rows=9, stitches=26, bump=0.0022,
@@ -679,7 +774,7 @@ def bake_and_export(parts, out_glb):
 
 
 if STAGE == "export":
-    bake_and_export([hand, thumb, cuff], os.path.join(HERE, "crocheted-hand.glb"))
+    bake_and_export([hand, thumb, cuff, *digits], os.path.join(HERE, "crocheted-hand.glb"))
     raise SystemExit(0)
 
 # ── three verification angles ────────────────────────────────────────────

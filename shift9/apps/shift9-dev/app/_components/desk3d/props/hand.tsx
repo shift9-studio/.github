@@ -57,11 +57,11 @@ const hand: SceneProp = {
          −Z   further into the room, so the mitten covers the mouse rather
               than stopping in front of it
          +X   the film's hand comes in from the right of the mouse's centre */
-    position: [MOUSE_POSITION[0] + 0.022, DESK.height + 0.030, MOUSE_POSITION[2] - 0.030],
+    position: [MOUSE_POSITION[0] + 0.004, DESK.height + 0.034, MOUSE_POSITION[2] + 0.004],
     /* Fingers away from camera and slightly left, forearm leaving frame to the
        lower right — matching the film. Positive, because a +Y rotation swings
        the model's -Y (its fingers) toward -X. */
-    rotation: [0, 0.46, 0],
+    rotation: [0, 0.98, 0],
   },
 };
 
