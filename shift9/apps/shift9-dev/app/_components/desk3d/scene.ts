@@ -304,66 +304,117 @@ const screenMeasuredHeightM = Math.hypot(
   topEdge.y - bottomEdge.y,
   topEdge.z - bottomEdge.z,
 );
-const screenHeightM = screenMeasuredHeightM * SCREEN_SCALE;
+/* ── HOW BIG THE PANEL CAN BE IN *THIS* WINDOW ────────────────────────────
+   The scale is not a constant, and the reason it stopped being one is a real
+   defect that shipped: the first version of the bigger monitor picked one scale
+   and then GATED the room off for any window whose aspect that scale did not
+   suit. A maximised browser on a 1080p display has a viewport near 1920x937 —
+   aspect 2.05 — which fell outside the gate, so the single most common desktop
+   setup there is got no room at all. The feature was invisible to the person
+   who asked for it.
 
-/* The bottom edge, moved down the panel's own plane until the glass is
-   `SCREEN_SCALE` times as tall. Down the PLANE, not down the world: the panel
-   leans, so the edge has to travel along the lean or the enlarged glass would
-   be a different shape from the one that was solved and the composite would
-   shear. Sliding the bottom edge and leaving the top alone is what "grows
-   downward" means in three dimensions — the top edge, the tilt and the depth
-   all stay exactly as measured, so the part of the panel that overlaps the
-   photograph still lands on the photograph. */
-const grownBottom = {
-  x: bottomEdge.x,
-  y: topEdge.y + (bottomEdge.y - topEdge.y) * SCREEN_SCALE,
-  z: topEdge.z + (bottomEdge.z - topEdge.z) * SCREEN_SCALE,
-};
+   The lesson is the one this file keeps teaching: derive it, do not pick it.
+   The panel is now as large as the window can actually hold, so every window
+   gets a room and the room is as big as that window allows.
+
+   What binds, exactly:
+
+   · WIDE windows (aspect above the plate's 1.792) crop the plate's top and
+     bottom. The glass's top edge is PINNED at plate y=70 and does not move with
+     the scale, so this constraint is completely independent of how big the
+     panel is — above ~2.06 the film's own monitor has its top edge off frame at
+     any size, the photographed 34" one included. Nothing here can change that,
+     and it is not a reason to withhold the room.
+
+   · NARROW windows crop the plate's sides, and that IS scale-dependent: the
+     glass grows sideways as it grows, so the left edge (the tighter of the two
+     — the photographed panel sits 37px left of the plate's centre) runs out of
+     frame first. Solving `left edge >= visible left edge` for the scale gives
+     the expression below; 18px is the modelled bezel, which has to fit too.
+
+   Clamped to [1, SCREEN_SCALE]: never bigger than the size that was verified by
+   measurement, and never smaller than the photographed panel it has to cover. */
+export function screenScale(viewportAspect: number): number {
+  const halfVisibleWidthPx = (PLATE_H * viewportAspect) / 2;
+  const leftMarginPx = cx - Math.min(halfVisibleWidthPx, PLATE_W / 2);
+  const glassCentrePx = (SCREEN_CORNERS.tl[0] + SCREEN_CORNERS.tr[0]) / 2;
+  const BEZEL_PX = 18;
+  const fits = (glassCentrePx - leftMarginPx - BEZEL_PX) / (topWidthPx / 2);
+  return Math.max(1, Math.min(SCREEN_SCALE, fits));
+}
+
+/* The panel's pose at a given scale. Everything is derived from the two solved
+   edges; only the bottom one moves.
+
+   The bottom edge slides down the panel's OWN plane. Down the plane, not down
+   the world: the panel leans, so the edge has to travel along the lean or the
+   enlarged glass would be a different shape from the one that was solved and
+   the composite would shear. Sliding the bottom edge and leaving the top alone
+   is what "grows downward" means in three dimensions — the top edge, the tilt
+   and the depth all stay exactly as measured, so the part of the panel that
+   overlaps the photograph still lands on the photograph. */
 /* Positive: a +X rotation in three.js swings the plane's top edge toward a
    camera on +Z, which is the direction the widths say the panel leans. Getting
    this backwards is invisible in a bounding box — both signs give the same
    outer rectangle, one just has the wide edge at the wrong end — so it has to
    be checked against the top and bottom edge widths separately, and is. */
 const screenTilt = Math.atan2(topEdge.z - bottomEdge.z, topEdge.y - bottomEdge.y);
-const screenCentre = {
-  x: (topEdge.x + grownBottom.x) / 2,
-  y: (topEdge.y + grownBottom.y) / 2,
-  z: (topEdge.z + grownBottom.z) / 2,
+
+export type ScreenPose = {
+  width: number;
+  height: number;
+  aspect: number;
+  position: [number, number, number];
+  rotation: [number, number, number];
+  hotspot: { signal: string; label: string; at: [number, number, number] };
 };
 
-/* The monitor. Position is the glass's centre; rotation.x is negative because
-   the top leans toward the camera, and in three.js a positive X rotation
-   pushes the +Y edge away from a camera sitting on +Z. */
-export const SCREEN = {
-  width: SCREEN_WIDTH_M,
-  height: screenHeightM,
-  aspect: SCREEN_WIDTH_M / screenHeightM,
-  position: [screenCentre.x, screenCentre.y, screenCentre.z] as [number, number, number],
-  rotation: [screenTilt, 0, 0] as [number, number, number],
-  /* The way back to a full-size desktop.
+/**
+ * The monitor, sized for a viewport of this aspect. Position is the glass's
+ * centre; the rotation is the panel's measured lean.
+ *
+ * A function rather than a constant because the panel's size depends on the
+ * window — see `screenScale`. It is cheap and pure, so callers recompute it on
+ * resize rather than caching it.
+ */
+export function screen(viewportAspect: number): ScreenPose {
+  const scale = screenScale(viewportAspect);
+  const width = SCREEN_MEASURED_WIDTH_M * scale;
+  const height = screenMeasuredHeightM * scale;
+  const bottom = {
+    x: bottomEdge.x,
+    y: topEdge.y + (bottomEdge.y - topEdge.y) * scale,
+    z: topEdge.z + (bottomEdge.z - topEdge.z) * scale,
+  };
+  return {
+    width,
+    height,
+    aspect: width / height,
+    position: [
+      (topEdge.x + bottom.x) / 2,
+      (topEdge.y + bottom.y) / 2,
+      (topEdge.z + bottom.z) / 2,
+    ],
+    rotation: [screenTilt, 0, 0],
+    /* The way back to a full-size desktop.
 
-     Compositing the desktop into the monitor shrinks it — at the film's own
-     framing the screen is 54% of the viewport width, so the whole interface
-     renders at roughly 54% linear scale and 13px type lands near 7px. That is
-     not a legibility bar anything clears, and it is not something the room can
-     solve: the room is the reason it happens.
+       Compositing the desktop into the monitor shrinks it, and no amount of
+       enlarging the panel makes it 100%. So the full-size desktop stays one
+       keypress away, and this is where that control lives — on the bezel below
+       the glass rather than over it, so it never sits on top of the thing it is
+       offering to enlarge.
 
-     So the full-size desktop stays one keypress away, and this is where that
-     control lives. Placed on the bezel below the glass's right corner rather
-     than over the screen, so it never sits on top of the thing it is offering
-     to enlarge. */
-  hotspot: {
-    signal: "full-size",
-    label: "View the desktop full size",
-    /* Bezel, lower LEFT — in the monitor's own space, so it travels with the
-       panel if the panel ever moves. Y is just past the bottom edge.
-       It was on the right until the panel grew: the bigger glass reaches much
-       further down the desk, and its lower-right corner now lands exactly on
-       the mouse, so the label was printing across the crocheted hand. The left
-       corner is over empty mat. */
-    at: [-0.42, -0.5 * screenHeightM - 0.028, 0.004] as [number, number, number],
-  },
-};
+       Lower LEFT. It was on the right until the panel grew: the bigger glass
+       reaches much further down the desk, and its lower-right corner now lands
+       exactly on the mouse, so the label was printing across the crocheted
+       hand. The left corner is over empty mat. */
+    hotspot: {
+      signal: "full-size",
+      label: "View the desktop full size",
+      at: [-0.42, -0.5 * height - 0.028, 0.004],
+    },
+  };
+}
 
 /* ── The desk ────────────────────────────────────────────────────────────
    An ESTIMATE, and the only one in this file — say so rather than let the
@@ -444,9 +495,10 @@ export const BEZEL = {
 };
 
 export function screenScreenFraction(viewportAspect: number): number {
+  const panel = screen(viewportAspect);
   const fov = (framing(viewportAspect) * Math.PI) / 180;
-  const visibleHeightAtScreen = 2 * -screenCentre.z * Math.tan(fov / 2);
-  return (SCREEN_WIDTH_M / (visibleHeightAtScreen * viewportAspect)) * FRAMING_ZOOM;
+  const visibleHeightAtScreen = 2 * -panel.position[2] * Math.tan(fov / 2);
+  return (panel.width / (visibleHeightAtScreen * viewportAspect)) * FRAMING_ZOOM;
 }
 
 /* ── Props ───────────────────────────────────────────────────────────────

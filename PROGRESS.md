@@ -103,7 +103,7 @@ must occlude the screen has to be DOM too.
 | `pnpm --filter shift9-dev build` / `just-a-pinch build` | exit 0, both, run with the Supabase vars explicitly unset |
 | `pnpm typecheck` | exit 0, both apps. No new `any`, no ts-suppressions |
 | Every route at 1280 / 768 / 390 | `/`, `/studio`, `/start`, `/soon`, `/instrument` — all 200, **zero** console errors, `scrollWidth === clientWidth` (no horizontal overflow) |
-| The enlarged monitor fits | Glass flooded and its bounding box measured against the viewport at **nine sizes, 4:3 → 21:9**. Every size the room admits is clear on all four edges; tightest is 1280×800 with **24px to spare**. Sizes outside the gate are correctly refused the room |
+| The enlarged monitor fits | Glass flooded and its bounding box measured against the viewport at **nine real browser viewport sizes** (1080p/1440p maximised, MacBook 13/14/16 maximised, ultrawide, small window). Clear on all four edges at every one; tightest 1920×937 with 4px to spare. Only a 2.65:1 ultrawide crops the panel's top, which the plate does at any size |
 | The forearm leaves frame | Open end off-screen at 1280×800, 1440×900, 1920×1080, 2560×1440 and 2560×1280 (2:1, the widest admitted) |
 | Keyboard | 22 of 24 tab stops land inside the composited screen; the full-size hotspot is in the tab order and works |
 | `prefers-reduced-motion` | Room renders, complete and legible, film skipped. Frame **pixel-identical across 1.2s** at 1280 and 390 — nothing is animating |
@@ -136,14 +136,22 @@ must occlude the screen has to be DOM too.
   pixels of wall and then the edge of the film. So the top edge is pinned where
   the photograph's is and the glass extends into the stand-and-plants space
   below. That space is decoration; the top of frame is a wall.
-- **The room now refuses windows outside 8:5 – 2:1**, and this is a real trade.
-  Narrower and the side-crop takes the glass's left edge off frame; wider and the
-  photographed monitor's own top edge is already outside the frame *at any panel
-  size*, 34" included. Both measured. Outside the bounds the flat desktop is the
-  site — the same proven fallback a machine without WebGL gets. Letterboxing the
-  plate would keep the room on ultrawides, but the film's beat is
-  `object-fit: cover` and black bars appearing on the handover frame would make
-  the locked cut visible.
+- **The panel resizes to the window; there is no aspect gate.** For one commit
+  there was one — 8:5 to 2:1 — and it was a shipped bug: a maximised browser on
+  a 1080p display has a viewport near 1920x937, aspect **2.05**, which fell
+  outside it. The most common desktop setup there is silently got no room at all
+  and the whole feature was invisible to the person who asked for it. Caught only
+  because Kariim said "that preview is the current site".
+  `screenScale(aspect)` in `scene.ts` now makes the panel as large as the current
+  window can hold, clamped to [1, 1.52]. Every window that can show a room gets
+  one, sized to itself — verified at nine real browser viewport sizes, not at
+  monitor resolutions, because the media query sees the viewport.
+  **The lesson, since this file exists to stop the next agent repeating it:** a
+  gate is the wrong tool for "this might not fit". Resize the thing.
+- **Above ~2.06:1 the top of the film's monitor is cropped**, at *any* panel
+  size, the photographed 34" one included — the plate has 70px of wall above it
+  and the frame does not contain more. The room still renders there; cropping the
+  top of a monitor is a far smaller loss than deleting the room.
 - **The push-in is gone.** `COMPOSITION` is the whole plate, so `FRAMING_ZOOM`
   is exactly 1. It existed to make the desktop readable while the monitor was
   stuck at the photograph's size; the bigger panel supplies that for free, and

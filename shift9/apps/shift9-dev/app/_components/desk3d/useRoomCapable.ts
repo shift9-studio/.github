@@ -18,29 +18,25 @@ import { readRoomPalette } from "./palette";
    the repo's standing rule that 3D is a desktop affordance and phones get the
    flat layout.
  *
- * The two aspect bounds are the plate's, not a preference — and both were
- * measured by flooding the monitor's glass and reading its bounding box against
- * the viewport at nine sizes (`scratchpad/sweep.mjs`, reproduced in the PR):
+ * ── There were aspect bounds here, and taking them out fixed a real bug ─────
+ * For one commit this also required an aspect between 8:5 and 2:1, on the
+ * reasoning that outside that range the enlarged monitor did not fit the frame.
+ * The reasoning was about the plate; the bounds were about nothing. A maximised
+ * browser on a 1080p display has a viewport near 1920x937 — aspect 2.05 — and
+ * that fell outside, so the most common desktop setup there is silently got no
+ * room at all and the whole feature was invisible.
  *
- *   below 8/5   The backdrop covers the viewport, so a window narrower than the
- *               film crops the film's sides. Past 8/5 the crop reaches the
- *               monitor and takes the glass's left edge off frame. A 4:3 window
- *               loses both sides of it.
- *   above 2/1   The same crop, vertically: above ~2.05:1 the film's own monitor
- *               has its top edge outside the frame — at ANY monitor size, the
- *               34" one included, because the plate only has 70px of wall above
- *               it. This is not something the room introduced and not something
- *               it can fix; the frame does not contain the pixels.
+ * A gate is the wrong tool for "the panel might not fit". The panel resizes
+ * instead: `screenScale` in `scene.ts` makes it as large as the current window
+ * can actually hold. So this asks only what it should — is there a pointer, is
+ * there room, is there a renderer — and every window that can show a room gets
+ * one, sized to itself.
  *
- * Outside those bounds the flat desktop is the site — the same fallback a
- * machine without WebGL gets, which is already the proven path. That is a real
- * trade and worth naming: an ultrawide window gets no room. Letterboxing the
- * plate would keep it, but the film's own beat is `object-fit: cover`, and
- * black bars appearing on the handover frame would make the locked cut from
- * film to room visible. Not worth it. */
-const ROOM_QUERY =
-  "(pointer: fine) and (min-width: 64rem) and (min-height: 34rem)" +
-  " and (min-aspect-ratio: 8/5) and (max-aspect-ratio: 2/1)";
+ * A window wider than ~2.06:1 does still crop the top of the film's monitor,
+ * and that is true at ANY panel size, the photographed 34" one included: the
+ * plate has 70px of wall above it and the frame does not contain more. Cropping
+ * the top of a monitor is a much smaller loss than deleting the room. */
+const ROOM_QUERY = "(pointer: fine) and (min-width: 64rem) and (min-height: 34rem)";
 
 /**
  * `null` until measured, so the server (which always renders the flat

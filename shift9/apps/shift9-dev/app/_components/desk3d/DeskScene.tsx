@@ -41,9 +41,10 @@ import {
   BEZEL,
   DESK,
   PLATE_SRC,
-  SCREEN,
   framing,
+  screen,
   type RoomPalette,
+  type ScreenPose,
 } from "./scene";
 
 /** Screen-space position of a hotspot, in CSS pixels from the canvas corner. */
@@ -149,7 +150,13 @@ function StandIn({
    world position is projected here and handed back out to `DeskRoom`, which
    renders the buttons over the canvas. Static camera, so this settles on the
    first frame and only moves again on resize. */
-function Projector({ onHotspots }: { onHotspots: DeskSceneProps["onHotspots"] }) {
+function Projector({
+  panel,
+  onHotspots,
+}: {
+  panel: ScreenPose;
+  onHotspots: DeskSceneProps["onHotspots"];
+}) {
   const camera = useThree((s) => s.camera);
   const size = useThree((s) => s.size);
   const point = useMemo(() => new Vector3(), []);
@@ -186,11 +193,11 @@ function Projector({ onHotspots }: { onHotspots: DeskSceneProps["onHotspots"] })
 
     place(
       "screen",
-      SCREEN.hotspot.label,
-      SCREEN.hotspot.signal,
-      SCREEN.hotspot.at,
-      SCREEN.position,
-      SCREEN.rotation,
+      panel.hotspot.label,
+      panel.hotspot.signal,
+      panel.hotspot.at,
+      panel.position,
+      panel.rotation,
     );
 
     for (const prop of SET_PIECES) {
@@ -225,6 +232,14 @@ export function DeskScene({
   onPainted,
 }: DeskSceneProps) {
   const invalidate = useThree((s) => s.invalidate);
+  const size = useThree((s) => s.size);
+
+  /* The monitor is sized for THIS window — see `screenScale` in `scene.ts`.
+     Recomputed on resize rather than read as a constant, because a constant is
+     what forced the room to be refused outright on windows whose shape one
+     fixed size did not suit. Pure and cheap; memoised only to keep the
+     downstream props referentially stable between renders. */
+  const panel = useMemo(() => screen(size.width / size.height), [size.width, size.height]);
 
   /* The desk lamp in the plate, solved onto the same grid as everything else:
      just above and behind the monitor's top edge. It is the only light in the
@@ -233,7 +248,7 @@ export function DeskScene({
 
   useEffect(() => {
     invalidate();
-  }, [invalidate, wireframe, screenPixelWidth]);
+  }, [invalidate, wireframe, screenPixelWidth, panel]);
 
   return (
     <>
@@ -258,7 +273,7 @@ export function DeskScene({
         intensity={2.1}
         distance={2.2}
         decay={2}
-        position={[SCREEN.position[0], SCREEN.position[1], SCREEN.position[2] + 0.12]}
+        position={[panel.position[0], panel.position[1], panel.position[2] + 0.12]}
       />
 
       {/* The bounce off the room BEHIND the viewer. Every interior has one, and
@@ -275,20 +290,21 @@ export function DeskScene({
       />
 
       {/* THE MONITOR the room brings with it.
-          The plate's own panel is photographed and 34"; this one is modelled and
-          1.55x larger, sitting in front of it and covering it completely — which
-          is what lets the desktop be read without cropping the room away.
+          The plate's own panel is photographed and 34"; this one is modelled,
+          up to 1.52x larger, sitting in front of it and covering it completely —
+          which is what lets the desktop be read without cropping the room away.
+          "Up to", because its size is a function of the window: see `panel`.
 
           Drawn as a shell BEHIND the glass and slightly wider, so what shows
           around the composited desktop is a bezel. It has to be behind rather
           than a frame on top: CSS3D composites above WebGL, so anything drawn
           in front of the screen would be painted over by the desktop anyway. */}
-      <group position={SCREEN.position} rotation={SCREEN.rotation}>
+      <group position={panel.position} rotation={panel.rotation}>
         <mesh position={[0, 0, -BEZEL.depth / 2 - 0.001]}>
           <boxGeometry
             args={[
-              SCREEN.width + BEZEL.border * 2,
-              SCREEN.height + BEZEL.border * 2,
+              panel.width + BEZEL.border * 2,
+              panel.height + BEZEL.border * 2,
               BEZEL.depth,
             ]}
           />
@@ -297,9 +313,9 @@ export function DeskScene({
       </group>
 
       <StandIn
-        position={SCREEN.position}
-        rotation={SCREEN.rotation}
-        args={[SCREEN.width, SCREEN.height]}
+        position={panel.position}
+        rotation={panel.rotation}
+        args={[panel.width, panel.height]}
         wireframe={wireframe}
       />
       <StandIn
@@ -311,10 +327,10 @@ export function DeskScene({
 
       <ScreenSurface
         element={screenElement}
-        worldWidth={SCREEN.width}
+        worldWidth={panel.width}
         pixelWidth={screenPixelWidth}
-        position={SCREEN.position}
-        rotation={SCREEN.rotation}
+        position={panel.position}
+        rotation={panel.rotation}
       />
 
       {SET_PIECES.map((prop) => (
@@ -328,7 +344,7 @@ export function DeskScene({
         </group>
       ))}
 
-      <Projector onHotspots={onHotspots} />
+      <Projector panel={panel} onHotspots={onHotspots} />
       <Painted onPainted={onPainted} />
     </>
   );

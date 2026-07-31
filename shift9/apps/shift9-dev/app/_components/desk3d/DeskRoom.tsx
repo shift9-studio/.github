@@ -17,7 +17,7 @@
      inside a WebGL canvas, so the scene projects the 3D point out here and
      this renders the control over it.
 
-   · the way back out. See `SCREEN.hotspot` in `scene.ts` for why the full-size
+   · the way back out. See `screen().hotspot` in `scene.ts` for why the full-size
      desktop has to stay one keypress away.
 
    The room never renders unless it can: no WebGL, a coarse pointer, or a
@@ -31,7 +31,7 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { DeskScene, type ProjectedHotspot } from "./DeskScene";
 import { readRoomPalette } from "./palette";
-import { SCREEN, crop } from "./scene";
+import { crop, screen } from "./scene";
 import s from "./DeskRoom.module.css";
 
 /* `useRoomCapable` lives in its own file, not here. Everything in this one
@@ -88,11 +88,13 @@ export function DeskRoom({ children, onReady, onExit }: DeskRoomProps) {
 
   useEffect(() => {
     if (!host) return;
-    /* Class for the look (tokens live in CSS), inline for the measurement. */
+    /* Class for the look (tokens live in CSS), inline for the measurement.
+       The panel's aspect depends on the window — a narrow window gets a smaller
+       monitor — so this is read per-viewport rather than from a constant. */
     host.className = s.screenHost ?? "";
     host.style.width = `${pixelWidth}px`;
-    host.style.height = `${pixelWidth / SCREEN.aspect}px`;
-  }, [host, pixelWidth]);
+    host.style.height = `${pixelWidth / screen((viewport.w || 1) / (viewport.h || 1)).aspect}px`;
+  }, [host, pixelWidth, viewport.w, viewport.h]);
 
   /* A context loss mid-session drops the room and hands the flat desktop back,
      rather than leaving a dead black rectangle where the site was.
