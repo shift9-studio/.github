@@ -44,6 +44,10 @@
 - The two opening curtain layers now use overlapping alpha feathers at their
   inner edges instead of hard 50% clips. Frame-by-frame production playback
   confirms the yarn parts without exposing straight crop lines.
+- The curtain now starts on the click rather than waiting for video playback.
+  Its moving fabric parts at the photographed aperture, suppresses the baked-in
+  blue light, and reveals a preloaded exterior frame so the light stays behind
+  the yarn without introducing a black gap.
 - Studio set-piece clips no longer use native hard loops. Two cached video layers
   crossfade before the decoded end, pause offscreen, and clean up rAF/timers.
 - The studio outro is a physical invitation card with a secondary backing card,
@@ -82,6 +86,9 @@
   project titles are present in the public DOM, with no horizontal overflow.
 - The curtain opening was replayed and captured at three points across its
   release; the closed texture remains identical and the separating edges stay soft.
+- The project archive inspection motion is now a tapered optical wash with a
+  slight image lift, not a bright one-pixel laser line; hover and focus trigger
+  one restrained pass and reduced motion keeps it still.
 
 ## User-gated
 

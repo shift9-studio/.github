@@ -69,8 +69,11 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   threshold rather than a basic centered title. Desktop routes plus 390px archive
   and Studio layouts were visually checked. The entrance curtain now feathers
   overlapping inner edges instead of revealing two hard clipped crop lines; its
-  production opening was verified frame by frame. Do not merge without Kariim's
-  approval.
+  production opening was verified frame by frame. It now leaves immediately on
+  click, parts at the photographed aperture, keeps the blue light on the static
+  plate, and reveals a preloaded film frame. The project archive scan is a soft
+  tapered inspection wash rather than a hard laser line. Do not merge without
+  Kariim's approval.
 
 - **2026-08-01 - Flow State waitlist merged and verified.** PR #39 adds
   `/flow-state`, routes the studio card to it,

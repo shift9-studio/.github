@@ -464,12 +464,21 @@
 
 .projectScan {
   position: absolute;
-  inset-inline: 0;
-  top: 0;
-  height: 1px;
+  inset-inline: -5%;
+  top: -24%;
+  height: 22%;
   opacity: 0;
-  background: var(--s9-pearl);
-  box-shadow: 0 0 1.4rem var(--s9-titanium);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--s9-pearl) 6%, transparent) 42%,
+    color-mix(in srgb, var(--s9-pearl) 18%, transparent) 50%,
+    color-mix(in srgb, var(--s9-pearl) 5%, transparent) 58%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  backdrop-filter: brightness(1.07) saturate(1.04);
   pointer-events: none;
 }
 
@@ -490,7 +499,7 @@
 }
 
 .projectCard:is(:hover, :focus-within) .projectScan {
-  animation: projectInspect var(--s9-dur-slow) var(--s9-ease-out) both;
+  animation: projectInspect calc(var(--s9-dur-slow) * 2.4) var(--s9-ease-premium) both;
 }
 
 @keyframes projectInspect {
@@ -503,7 +512,7 @@
   }
   to {
     opacity: 0;
-    transform: translateY(38rem);
+    transform: translateY(660%);
   }
 }
 

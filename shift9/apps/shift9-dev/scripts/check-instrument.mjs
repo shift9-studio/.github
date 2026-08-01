@@ -14,6 +14,10 @@ const styles = await readFile(
   new URL("../app/instrument/case-study.module.css", import.meta.url),
   "utf8",
 );
+const referenceStyles = await readFile(
+  new URL("../app/instrument/instrument.module.css", import.meta.url),
+  "utf8",
+);
 const labSurface = await readFile(
   new URL("../app/instrument/LabSurface.tsx", import.meta.url),
   "utf8",
@@ -75,6 +79,8 @@ assert.match(styles, /:focus-visible/, "Instrument links must keep a visible foc
 assert.match(styles, /prefers-reduced-motion: reduce/, "Instrument must define a reduced-motion state");
 assert.match(styles, /--probe-x/, "Instrument must keep the lab inspection light");
 assert.match(styles, /@keyframes benchScan/, "Instrument must keep the single bench scan motion");
+assert.match(referenceStyles, /projectScan[\s\S]*backdrop-filter:\s*brightness/, "The project archive must use an optical inspection wash");
+assert.doesNotMatch(referenceStyles, /projectScan[\s\S]{0,180}height:\s*1px/, "The project archive must not restore a hard laser scan line");
 assert.match(labSurface, /\(pointer: fine\)/, "The lab probe must run only for fine pointers");
 assert.match(labSurface, /prefers-reduced-motion: reduce/, "The lab probe must respect reduced motion");
 assert.match(labSurface, /requestAnimationFrame/, "The lab probe must batch pointer updates");

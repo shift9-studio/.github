@@ -578,8 +578,6 @@ export function EnterTheStudio() {
       setLoading(false);
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         setCurtainDone(true);
-      } else {
-        setCurtainOpening(true);
       }
     };
     vid.addEventListener("loadeddata", onLoaded);
@@ -784,7 +782,7 @@ export function EnterTheStudio() {
       {/* STAGE 0 — the front door. A still and two controls. Nothing is
           fetched, decoded or played until the visitor asks for it, which is
           also why this is real content rather than an overlay on a video. */}
-      {mode === "gate" || loading || !curtainDone ? (
+      {mode === "gate" || !curtainDone ? (
         <div
           className={`${s.gate} ${curtainOpening ? s.gateOpening : ""}`}
           onAnimationEnd={(event) => {
@@ -831,12 +829,12 @@ export function EnterTheStudio() {
                 type="button"
                 className={s.enter}
                 aria-label={`${ENTER_LABEL} — ${INTRO_RUNTIME}`}
-                onClick={() => {
-                  setCurtainDone(false);
-                  setCurtainOpening(false);
-                  setLoading(true);
-                  setMode("film");
-                }}
+                 onClick={() => {
+                   setCurtainDone(false);
+                   setCurtainOpening(true);
+                   setLoading(true);
+                   setMode("film");
+                 }}
               >
                 <span className={s.enterFrame} aria-hidden="true">
                   <i />
