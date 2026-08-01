@@ -6,7 +6,7 @@
 
 **Last updated:** 2026-08-01
 **Branch:** `claude/flow-state-waitlist`
-**PR:** #39 — merge authorized by Kariim after the final holofoil checks are green
+**PR:** #39 — merged to `main` on 2026-08-01 after Kariim's authorization
 **Base:** `origin/main` @ `2fa1b4b` (2026-07-29)
 **Scope:** dedicated Flow State page, waitlist capture, studio link, and product-scoped waitlist uniqueness.
 
@@ -47,6 +47,10 @@
   invalid-email feedback, and the safe no-env state work. Reverting the F to
   titanium fails the contract; restoring holofoil passes. Full typecheck and both
   production builds exit 0; independent review has no findings.
+- Updated protected preview: `/flow-state` returned 200; first and duplicate
+  waitlist submissions both returned 200; Supabase stored exactly one
+  `flow-state` row. The synthetic row was deleted and a zero-row query confirmed
+  cleanup before merge.
 
 ## Known follow-up
 
