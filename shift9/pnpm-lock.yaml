@@ -66,6 +66,9 @@ importers:
 
   apps/shift9-dev:
     dependencies:
+      '@shift9/data':
+        specifier: workspace:*
+        version: link:../../packages/data
       '@shift9/motion':
         specifier: workspace:*
         version: link:../../packages/motion

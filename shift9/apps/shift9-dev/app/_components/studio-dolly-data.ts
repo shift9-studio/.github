@@ -104,7 +104,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}02-flow-state.png`,
     clip: `${BASE}02-flow-state-v2.mp4`,
     card: "waveform",
-    href: "/soon?from=02",
+    href: "/flow-state",
   },
   {
     n: "03",
