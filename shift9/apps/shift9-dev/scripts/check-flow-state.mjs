@@ -18,6 +18,7 @@ const page = read("app/flow-state/page.tsx");
 const form = read("app/flow-state/WaitlistForm.tsx");
 const payload = read("app/flow-state/waitlist-payload.ts");
 const demo = read("app/flow-state/FlowStateDemo.tsx");
+const water = read("app/flow-state/WaterSurface.tsx");
 const styles = read("app/flow-state/flow-state.module.css");
 const dolly = read("app/_components/studio-dolly-data.ts");
 const themeTokens = read("../../packages/theme/tokens.css");
@@ -137,9 +138,18 @@ assert.match(
   "The studio Flow State entry must open the dedicated page",
 );
 assert.match(page, /Local Windows Dictation/i);
+assert.match(page, /<WaterSurface/, "Flow State must keep the full-page water surface");
+assert.match(page, /logoJewel/, "Flow State must keep the jewel-F header mark");
 assert.match(form, /aria-live="polite"/);
 assert.match(form, /type="email"/);
 assert.match(demo, /useReducedMotionSafe/);
+assert.match(water, /prefers-reduced-motion: reduce/, "The water surface must respect reduced motion");
+assert.match(water, /requestAnimationFrame/, "The water surface must render a live ripple field");
+assert.match(water, /cancelAnimationFrame/, "The water animation loop must terminate cleanly");
+assert.match(water, /\(pointer: fine\)/, "Water interaction must run only for fine pointers");
+assert.match(water, /pointerQuery\.matches\s*&&\s*!motionQuery\.matches/, "Water interaction must stop for reduced motion");
+assert.match(water, /if \(motionQuery\.matches\) paint\(0\)/, "Reduced-motion water must repaint after resize");
+assert.doesNotMatch(water, /rgba?\(/i, "Canvas colors must come from Shift-9 theme tokens");
 assert.match(styles, /prefers-reduced-motion/);
 assert.match(
   themeTokens,
@@ -177,6 +187,11 @@ assert.doesNotMatch(
   pageSurface,
   /project\s*(?:number|no\.?|#)?\s*\d+/i,
   "The Flow State page must not present a project number",
+);
+assert.doesNotMatch(
+  `${page}\n${demo}\n${form}`,
+  /prototype|\bTODO\b|\bdraft\b|review note|automated test suite/i,
+  "The public Flow State page must contain only customer-facing product copy",
 );
 
 console.log("Flow State route, waitlist, motion, and studio-link contracts pass.");

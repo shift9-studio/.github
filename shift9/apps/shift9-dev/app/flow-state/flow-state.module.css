@@ -1,52 +1,122 @@
 .root {
   position: relative;
   min-height: 100svh;
-  background: var(--s9-obsidian);
-  color: var(--s9-chalk);
+  overflow: hidden;
   isolation: isolate;
+  color: var(--s9-chalk);
+  background:
+    radial-gradient(ellipse at 62% 12%, color-mix(in oklab, var(--s9-pearl) 9%, transparent), transparent 42%),
+    linear-gradient(155deg, var(--s9-obsidian), color-mix(in oklab, var(--s9-obsidian) 92%, black));
 }
 
-.root::before {
+.root::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-image:
-    linear-gradient(var(--s9-line-2) 1px, transparent 1px),
-    linear-gradient(90deg, var(--s9-line-2) 1px, transparent 1px);
-  background-size:
-    calc(var(--s9-grid-unit) * 5) calc(var(--s9-grid-unit) * 5);
-  opacity: 0.55;
+  background:
+    radial-gradient(ellipse at center, transparent 28%, color-mix(in oklab, var(--s9-obsidian) 52%, transparent) 100%),
+    linear-gradient(105deg, transparent 28%, color-mix(in oklab, var(--s9-pearl) 3%, transparent) 50%, transparent 72%);
+}
+
+.waterSurface {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  opacity: 0.96;
+  filter: blur(0.15px);
+  pointer-events: none;
 }
 
 .topbar {
-  min-height: 4.5rem;
+  min-height: 5.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
   padding: 1rem clamp(1.25rem, 4vw, 3.5rem) 1rem clamp(10.5rem, 15vw, 13rem);
-  border-bottom: 1px solid var(--s9-line);
-  background: color-mix(in oklab, var(--s9-obsidian) 88%, transparent);
-  backdrop-filter: blur(0.75rem);
+  border-bottom: 1px solid color-mix(in oklab, var(--s9-pearl) 14%, transparent);
+  background: color-mix(in oklab, var(--s9-obsidian) 52%, transparent);
+  backdrop-filter: blur(1.2rem) saturate(112%);
 }
 
 .brandLockup {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.85rem;
+}
+
+.logoJewel {
+  position: relative;
+  width: 2.65rem;
+  height: 2.65rem;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  transform: rotate(45deg);
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 42%, transparent);
+  border-radius: 0.48rem;
+  background:
+    linear-gradient(145deg, color-mix(in oklab, var(--s9-pearl) 13%, transparent), transparent 42%),
+    var(--s9-obsidian);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--s9-chalk) 8%, transparent),
+    0 0 1.6rem color-mix(in oklab, var(--s9-pearl) 9%, transparent);
+}
+
+.logoJewel::before,
+.logoJewel::after {
+  content: "";
+  position: absolute;
+  inset: 0.34rem;
+  border: 1px solid color-mix(in oklab, var(--s9-chalk) 13%, transparent);
+  border-radius: 0.26rem;
+}
+
+.logoJewel::after {
+  inset: 0.6rem;
+  border-color: color-mix(in oklab, var(--s9-pearl) 11%, transparent);
+}
+
+.logoJewel b {
+  position: relative;
+  z-index: 1;
+  transform: rotate(-45deg);
   font-family: var(--s9-font-display);
+  font-size: 1.65rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--s9-holofoil-fallback);
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .logoJewel b,
+  .fMark span {
+    color: transparent;
+    background-image: var(--s9-holofoil);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
+
+.brandName {
+  font-family: var(--s9-font-display);
+  font-size: 1.1rem;
   font-weight: 760;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
 }
 
 .brandStudio {
+  font-family: var(--s9-font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-}
-
-.brandSlash {
-  color: var(--s9-pulse);
+  color: color-mix(in oklab, var(--s9-chalk) 45%, transparent);
 }
 
 .intakeStatus {
@@ -64,11 +134,13 @@
 .intakeStatus > span {
   width: 0.45rem;
   height: 0.45rem;
-  background: var(--s9-pearl);
+  border-radius: 50%;
+  background: var(--s9-verdant);
+  box-shadow: 0 0 0.9rem color-mix(in oklab, var(--s9-verdant) 56%, transparent);
 }
 
 .composition {
-  min-height: calc(100svh - 4.5rem);
+  min-height: calc(100svh - 5.25rem);
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(23rem, 0.85fr);
 }
@@ -80,11 +152,12 @@
   justify-content: space-between;
   gap: clamp(3rem, 7vh, 6rem);
   padding: clamp(5rem, 9vh, 8rem) clamp(1.5rem, 5vw, 5rem) 2rem;
-  border-right: 1px solid var(--s9-line);
+  border-right: 1px solid color-mix(in oklab, var(--s9-pearl) 12%, transparent);
 }
 
 .heroCopy {
   position: relative;
+  padding-left: clamp(0rem, 3vw, 2.5rem);
 }
 
 .eyebrow,
@@ -105,6 +178,7 @@
   line-height: 0.83;
   letter-spacing: -0.065em;
   text-wrap: balance;
+  text-shadow: 0 1.5rem 4rem color-mix(in oklab, var(--s9-obsidian) 70%, transparent);
 }
 
 .foilWord {
@@ -120,29 +194,19 @@
     -webkit-background-clip: text;
     background-clip: text;
   }
-
-  .fMark span {
-    color: transparent;
-    background-image: var(--s9-holofoil);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-blend-mode: screen, normal;
-    -webkit-background-clip: text;
-    background-clip: text;
-  }
 }
 
 .lede {
-  max-width: 42rem;
+  max-width: 40rem;
   margin: 0;
   font-size: var(--s9-text-lead);
-  line-height: 1.35;
-  color: color-mix(in oklab, var(--s9-chalk) 78%, transparent);
+  line-height: 1.4;
+  color: color-mix(in oklab, var(--s9-chalk) 82%, transparent);
   text-wrap: pretty;
 }
 
 .shortcut {
-  margin: 1.5rem 0 0;
+  margin: 1.75rem 0 0;
   font-family: var(--s9-font-mono);
   font-size: var(--s9-text-mono);
   letter-spacing: 0.08em;
@@ -158,18 +222,28 @@
 }
 
 .shortcut kbd {
-  padding: 0.35rem 0.55rem;
-  border: 1px solid var(--s9-line);
-  background: color-mix(in oklab, var(--s9-chalk) 7%, transparent);
-  box-shadow: inset 0 -0.12rem 0 var(--s9-line);
+  padding: 0.38rem 0.62rem;
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 20%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--s9-obsidian) 54%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--s9-chalk) 10%, transparent);
   color: var(--s9-chalk);
+  backdrop-filter: blur(0.7rem);
 }
 
 .demo {
+  position: relative;
   margin: 0;
   padding: clamp(1.25rem, 3vw, 2rem);
-  border: 1px solid var(--s9-line);
-  background: color-mix(in oklab, var(--s9-chalk) 3%, transparent);
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 19%, transparent);
+  border-radius: 999px;
+  background:
+    linear-gradient(115deg, color-mix(in oklab, var(--s9-pearl) 7%, transparent), transparent 34%),
+    color-mix(in oklab, var(--s9-obsidian) 62%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--s9-chalk) 12%, transparent),
+    0 1.6rem 5rem color-mix(in oklab, var(--s9-obsidian) 55%, transparent);
+  backdrop-filter: blur(1rem) saturate(118%);
 }
 
 .demoLabels,
@@ -177,11 +251,12 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
+  padding-inline: 1rem;
   font-family: var(--s9-font-mono);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--s9-chalk) 48%, transparent);
+  color: color-mix(in oklab, var(--s9-chalk) 46%, transparent);
 }
 
 .demoLabels span:nth-child(2),
@@ -197,13 +272,13 @@
 .demoRail {
   position: relative;
   display: grid;
-  grid-template-columns: 3.25rem minmax(7rem, 0.75fr) minmax(12rem, 1.25fr);
+  grid-template-columns: 3.5rem minmax(7rem, 0.75fr) minmax(12rem, 1.25fr);
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   min-height: 5.75rem;
-  margin: 0.9rem 0;
-  padding: 0.75rem;
-  border-block: 1px solid var(--s9-line);
+  margin: 0.75rem 0;
+  padding: 0.65rem;
+  border-block: 1px solid color-mix(in oklab, var(--s9-pearl) 11%, transparent);
 }
 
 .demoRail::before {
@@ -213,17 +288,29 @@
   right: 1rem;
   top: 50%;
   height: 1px;
-  background: var(--s9-line);
+  background: color-mix(in oklab, var(--s9-pearl) 18%, transparent);
 }
 
 .fMark {
   position: relative;
   z-index: 1;
+  width: 3.15rem;
+  height: 3.15rem;
   display: grid;
   place-items: center;
-  min-height: 3.25rem;
+  transform: rotate(45deg);
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 32%, transparent);
+  border-radius: 0.55rem;
+  background: var(--s9-obsidian);
+  box-shadow:
+    inset 0 0 0 0.35rem color-mix(in oklab, var(--s9-chalk) 3%, transparent),
+    0 0 1.4rem color-mix(in oklab, var(--s9-pearl) 10%, transparent);
+}
+
+.fMark span {
+  transform: rotate(-45deg);
   font-family: var(--s9-font-display);
-  font-size: 2.35rem;
+  font-size: 2rem;
   font-weight: 900;
   color: var(--s9-holofoil-fallback);
 }
@@ -235,10 +322,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.26rem;
-  padding-inline: 0.75rem;
-  border-inline: 1px solid var(--s9-line);
-  background: var(--s9-obsidian);
+  gap: 0.28rem;
+  padding-inline: 0.9rem;
+  border-inline: 1px solid color-mix(in oklab, var(--s9-pearl) 10%, transparent);
+  background: color-mix(in oklab, var(--s9-obsidian) 68%, transparent);
 }
 
 .waveBar {
@@ -247,10 +334,11 @@
   width: 0.18rem;
   height: 70%;
   min-height: 0.3rem;
+  border-radius: 999px;
   background: var(--s9-pearl);
   transform-origin: center;
   animation: listen var(--s9-dur-slow) var(--s9-ease-inout) infinite alternate;
-  box-shadow: 0 0 0.4rem color-mix(in oklab, var(--s9-pearl) 22%, transparent);
+  box-shadow: 0 0 0.55rem color-mix(in oklab, var(--s9-pearl) 34%, transparent);
 }
 
 .waveBar:nth-child(3n) {
@@ -274,8 +362,9 @@
   min-width: 0;
   min-height: 4.25rem;
   overflow: hidden;
-  border: 1px solid var(--s9-line);
-  background: var(--s9-obsidian);
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 14%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--s9-obsidian) 75%, transparent);
 }
 
 .appSimHeader {
@@ -284,10 +373,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding-inline: 0.55rem;
-  border-bottom: 1px solid var(--s9-line);
+  padding-inline: 1rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--s9-pearl) 10%, transparent);
   font-family: var(--s9-font-mono);
-  font-size: 0.52rem;
+  font-size: 0.5rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: color-mix(in oklab, var(--s9-chalk) 52%, transparent);
@@ -302,7 +391,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  padding-inline: 0.7rem;
+  padding-inline: 1rem;
   font-family: var(--s9-font-text);
   font-size: clamp(0.75rem, 1vw, 1rem);
   font-weight: 650;
@@ -329,15 +418,20 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
-  border-left: 1px solid var(--s9-line);
-  border-top: 1px solid var(--s9-line);
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 12%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--s9-obsidian) 48%, transparent);
+  backdrop-filter: blur(1rem);
 }
 
 .metrics > div {
   min-height: 6rem;
   padding: 1rem;
-  border-right: 1px solid var(--s9-line);
-  border-bottom: 1px solid var(--s9-line);
+  border-right: 1px solid color-mix(in oklab, var(--s9-pearl) 10%, transparent);
+}
+
+.metrics > div:last-child {
+  border-right: 0;
 }
 
 .metrics dt {
@@ -360,17 +454,25 @@
   display: grid;
   align-items: center;
   padding: clamp(4rem, 9vh, 7rem) clamp(1.5rem, 4vw, 4rem);
-  background: color-mix(in oklab, var(--s9-obsidian) 88%, transparent);
+  background: color-mix(in oklab, var(--s9-obsidian) 34%, transparent);
 }
 
 .intakePanel {
-  border: 1px solid var(--s9-line);
-  background: var(--s9-obsidian);
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 20%, transparent);
+  border-radius: 1.6rem;
+  background:
+    linear-gradient(145deg, color-mix(in oklab, var(--s9-pearl) 7%, transparent), transparent 38%),
+    color-mix(in oklab, var(--s9-obsidian) 66%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--s9-chalk) 11%, transparent),
+    0 2rem 7rem color-mix(in oklab, var(--s9-obsidian) 64%, transparent);
+  backdrop-filter: blur(1.4rem) saturate(115%);
 }
 
 .panelLabel {
-  padding: 1rem;
-  border-bottom: 1px solid var(--s9-line);
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--s9-pearl) 12%, transparent);
 }
 
 .formBody {
@@ -386,7 +488,7 @@
 
 .formCopy {
   margin: 0 0 2rem;
-  color: color-mix(in oklab, var(--s9-chalk) 66%, transparent);
+  color: color-mix(in oklab, var(--s9-chalk) 70%, transparent);
 }
 
 .waitlistForm {
@@ -405,10 +507,10 @@
 .emailInput {
   width: 100%;
   min-height: 3.5rem;
-  border: 1px solid var(--s9-line);
-  border-radius: 0;
-  padding: 0.8rem 1rem;
-  background: color-mix(in oklab, var(--s9-chalk) 4%, transparent);
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 18%, transparent);
+  border-radius: 999px;
+  padding: 0.8rem 1.15rem;
+  background: color-mix(in oklab, var(--s9-obsidian) 58%, transparent);
   color: var(--s9-chalk);
   font: inherit;
   transition:
@@ -421,7 +523,7 @@
 }
 
 .emailInput:hover {
-  border-color: color-mix(in oklab, var(--s9-chalk) 32%, transparent);
+  border-color: color-mix(in oklab, var(--s9-pearl) 42%, transparent);
 }
 
 .emailInput:focus-visible {
@@ -477,7 +579,7 @@
   margin: 2rem 0 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--s9-line);
+  border-top: 1px solid color-mix(in oklab, var(--s9-pearl) 12%, transparent);
 }
 
 .privacyList li {
@@ -485,7 +587,7 @@
   grid-template-columns: 1.25rem 1fr;
   gap: 0.6rem;
   padding: 0.8rem 0;
-  border-bottom: 1px solid var(--s9-line);
+  border-bottom: 1px solid color-mix(in oklab, var(--s9-pearl) 10%, transparent);
   color: color-mix(in oklab, var(--s9-chalk) 72%, transparent);
   font-size: 0.82rem;
 }
@@ -517,26 +619,8 @@
   top: clamp(0.75rem, 2.5vw, 1.5rem);
   left: clamp(0.75rem, 2.5vw, 1.5rem);
   z-index: 3;
-  padding: 0.55em 0.9em;
-  border: 1px solid var(--s9-line);
-  border-radius: 2px;
-  background: color-mix(in oklab, var(--s9-obsidian) 74%, transparent);
-  color: color-mix(in oklab, var(--s9-chalk) 62%, transparent);
-  font-family: var(--s9-font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  text-decoration: none;
-  backdrop-filter: blur(0.6rem);
-  transition:
-    color var(--s9-dur-fast) var(--s9-ease-out),
-    border-color var(--s9-dur-fast) var(--s9-ease-out);
-}
-
-.exitPin:hover,
-.exitPin:focus-visible {
-  color: var(--s9-chalk);
-  border-color: color-mix(in oklab, var(--s9-chalk) 44%, transparent);
+  width: fit-content;
+  max-width: calc(100vw - 1.5rem);
 }
 
 .exitPin:focus-visible,
@@ -558,28 +642,14 @@
 }
 
 @keyframes listen {
-  from {
-    transform: scaleY(0.18);
-    opacity: 0.38;
-  }
-  to {
-    transform: scaleY(1);
-    opacity: 1;
-  }
+  from { transform: scaleY(0.18); opacity: 0.38; }
+  to { transform: scaleY(1); opacity: 1; }
 }
 
 @keyframes typeIn {
-  0%,
-  30% {
-    clip-path: inset(0 100% 0 0);
-  }
-  72%,
-  92% {
-    clip-path: inset(0 0 0 0);
-  }
-  100% {
-    clip-path: inset(0 100% 0 0);
-  }
+  0%, 30% { clip-path: inset(0 100% 0 0); }
+  72%, 92% { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 100% 0 0); }
 }
 
 .demo[data-reduced="true"] .waveBar,
@@ -598,77 +668,30 @@
 
 @media (prefers-reduced-motion: reduce) {
   .waveBar,
-  .typedCopy {
-    animation: none;
-  }
-
-  .waveBar {
-    transform: scaleY(0.55);
-    opacity: 0.74;
-  }
-
-  .typedCopy {
-    clip-path: none;
-  }
+  .typedCopy { animation: none; }
+  .waveBar { transform: scaleY(0.55); opacity: 0.74; }
+  .typedCopy { clip-path: none; }
 }
 
 @media (max-width: 62rem) {
-  .composition {
-    grid-template-columns: 1fr;
-  }
-
-  .story {
-    border-right: 0;
-    border-bottom: 1px solid var(--s9-line);
-  }
-
-  .intake {
-    min-height: 42rem;
-  }
+  .composition { grid-template-columns: 1fr; }
+  .story { border-right: 0; border-bottom: 1px solid color-mix(in oklab, var(--s9-pearl) 12%, transparent); }
+  .intake { min-height: 42rem; }
 }
 
 @media (max-width: 40rem) {
-  .topbar {
-    padding-left: 10.25rem;
-  }
-
+  .topbar { padding-left: 9.75rem; }
   .brandStudio,
-  .brandSlash {
-    display: none;
-  }
-
-  .intakeStatus {
-    display: none;
-  }
-
-  .story {
-    padding-top: 4rem;
-  }
-
-  .headline {
-    font-size: clamp(3.75rem, 18vw, 6rem);
-  }
-
-  .demoRail {
-    grid-template-columns: 2.75rem minmax(0, 1fr);
-    gap: 0.6rem;
-    padding-inline: 0.25rem;
-  }
-
-  .appSim {
-    grid-column: 1 / -1;
-  }
-
+  .intakeStatus { display: none; }
+  .story { padding-top: 4rem; }
+  .headline { font-size: clamp(3.75rem, 18vw, 6rem); }
+  .demo { border-radius: 1.35rem; }
+  .demoRail { grid-template-columns: 3rem minmax(0, 1fr); gap: 0.7rem; padding-inline: 0.25rem; }
+  .appSim { grid-column: 1 / -1; }
   .demoLabels,
-  .demoFooter {
-    font-size: 0.52rem;
-  }
-
-  .metrics {
-    grid-template-columns: 1fr;
-  }
-
-  .intake {
-    padding-inline: 1rem;
-  }
+  .demoFooter { padding-inline: 0; font-size: 0.5rem; }
+  .metrics { grid-template-columns: 1fr; }
+  .metrics > div { border-right: 0; border-bottom: 1px solid color-mix(in oklab, var(--s9-pearl) 10%, transparent); }
+  .metrics > div:last-child { border-bottom: 0; }
+  .intake { padding-inline: 1rem; }
 }

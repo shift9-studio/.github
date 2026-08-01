@@ -43,6 +43,37 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 ## Recent changes
 
+- **2026-08-01 - Instrument public case study prepared in PR #40; merge authorized.** Branch
+  `codex/instrument-case-study` turns `/instrument` into a public explanation of
+  the system through Shift-9 Studio, Flow State, and Just a Pinch. The complete
+  technical catalog remains at `/instrument/reference`; stale room/material
+  claims were corrected. Studio copy now separates Instrument, the production
+  system used by Shift-9, from Titanium Forge, the portable component workbench.
+  The live site, not earlier docs, is the visual source. Flow State now has a
+  pointer-reactive black-water/refraction surface and diamond-jewel `F`; Instrument
+  is a distinct open-lab room with an inspection light and one scanner motion, not
+  an invitation-page clone. Its hero is borderless, transitions fade cleanly, and
+  all controls use pearl styling. Future project pages are one entry in
+  `instrument-projects.ts`. Client-facing copy guards reject prototype/draft/TODO/
+  review-note/test-suite language. The landing yarn is the original static
+  photograph with a direct handoff to the film, the redundant visible `20s` is
+  gone, the split 9 has a restrained opposing hover, studio clips crossfade
+  before their loop seams, and the studio closes
+  on a physical invitation card. `/start`, `/flow-state`, and `/instrument` share
+  one compact translucent ghost-pearl return control. `test:studio-polish` guards
+  these details. Alternating light project rows now explicitly use dark ink for
+  their titles, the public email is consistently `shift9dev@gmail.com`, and late
+  media promises cannot revive torn-down animation loops. The full production
+  build, browser contrast check, and both Vercel deployments pass. The technical
+  reference now includes all twelve current projects from the reel registry in
+  an asymmetric living archive, and the Studio reel opens on a twelve-stop dolly
+  threshold rather than a basic centered title. Desktop routes plus 390px archive
+  and Studio layouts were visually checked. The rejected curtain split and
+  WebGPU experiment were removed; the original yarn photograph stays static and
+  pressing Enter hands directly to the preloaded film. The blue light stays on
+  the static plate. The project archive scan is a soft tapered inspection wash
+  rather than a hard laser line. Kariim authorized merging PR #40 on 2026-08-01.
+
 - **2026-08-01 - Flow State waitlist merged and verified.** PR #39 adds
   `/flow-state`, routes the studio card to it,
   and captures source-tagged emails through `/api/waitlist`. The approved

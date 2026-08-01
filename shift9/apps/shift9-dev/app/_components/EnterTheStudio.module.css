@@ -16,6 +16,10 @@
   --w-bg-rgb: 236 234 223;
   --w-panel: #f7f6f1;
   --w-panel-rgb: 247 246 241;
+  --w-light-row: #fbfaf5;
+  --w-light-row-text: #1f2328;
+  --w-light-row-dim: #4a4f57;
+  --w-light-row-line: #d8d6cc;
   --w-side: #f0efe8;
   --w-line: #d8d6cc;
   /* Tooltip surface. Deliberately the inverse of the desktop it sits on —
@@ -118,7 +122,10 @@
 .stageVideo {
   position: fixed;
   inset: 0;
-  background: #000;
+  /* Paint the first exterior frame before the video element is even mounted.
+     The curtain can leave on the click with no loading hold and still reveal a
+     real frame rather than a black decoder gap. */
+  background: #000 url("/experience/opening/01-exterior-approach-poster.jpg") center / cover no-repeat;
   z-index: 30;
   transition: opacity 0.6s ease;
 }
@@ -235,34 +242,15 @@
     );
 }
 
-/* ── The seam breathes ────────────────────────────────────────────────────
-   The plate is fabric parted along a seam with light behind it, and until now
-   that light was painted on: the front door appeared fully formed and then sat
-   perfectly still until you touched something. Measured on a cold load, five
-   consecutive frames across a second and a half were byte-for-byte identical.
-   Static and dead are not the same thing, and this was the second one.
-
-   So the gap gets a pulse, and only the gap. The plate does not move, the type
-   does not move, the controls do not move — the light in the seam rises and
-   falls on a cycle slow enough (5.6s) that it registers as the room being lit
-   rather than as the page doing something. One composited layer over the
-   photograph: no repaint of the image, no canvas, no second asset.
-
-   It is deliberately the only thing on this screen with a heartbeat. The plate
-   holding still is exactly what makes the seam read as a light source instead
-   of an effect. */
+/* The yarn stays still. Only the existing light in its seam rises and falls,
+   preserving the original entrance image without trying to simulate fabric. */
 .gateGlow {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  /* Screen blending can only ADD light. It cannot darken the plate or shift
-     its colour, so the photograph underneath is never touched — the gap just
-     gets brighter. */
   mix-blend-mode: screen;
   filter: blur(18px);
-  /* Sited on the seam, which sits at the left third of the frame; the stops
-     track the same 30% object-position the plate is held at. */
   background: linear-gradient(
     90deg,
     transparent 21%,
@@ -285,9 +273,6 @@
   }
 }
 
-/* Reduced motion holds it near the top of the breath rather than the bottom.
-   Stopping at 0.08 would be the page with its light switched off; stopping lit
-   is the finished picture — degrade to a complete state, never a paused one. */
 @media (prefers-reduced-motion: reduce) {
   .gateGlow {
     animation: none;
@@ -380,6 +365,23 @@
   animation: iconBreathe 4.4s var(--s9-ease-inout) infinite;
 }
 
+.enterIconArt :global(.shift9-mark-light),
+.enterIconArt :global(.shift9-mark-grey) {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform var(--s9-dur-base) var(--s9-ease-premium);
+}
+
+.enter:hover .enterIconArt :global(.shift9-mark-light),
+.enter:focus-visible .enterIconArt :global(.shift9-mark-light) {
+  transform: translateY(-1.5px);
+}
+
+.enter:hover .enterIconArt :global(.shift9-mark-grey),
+.enter:focus-visible .enterIconArt :global(.shift9-mark-grey) {
+  transform: translateY(1.5px);
+}
+
 @keyframes iconBreathe {
   0%,
   100% {
@@ -444,15 +446,6 @@
 }
 
 /* The runtime, on the icon's line. */
-.enterCount {
-  font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  line-height: 1;
-  color: color-mix(in oklab, var(--s9-paper, #f8fafc) 62%, transparent);
-}
-
 /* Reduced motion: no breathing, no spin, no morph. The busy state still
    reads, because the ring appears and stays — presence is the signal;
    movement was only ever the flourish on top of it. */
@@ -465,6 +458,13 @@
   .enterIconBusy .enterIconArt::before {
     opacity: 1;
   }
+
+  .enterIconArt :global(.shift9-mark-light),
+  .enterIconArt :global(.shift9-mark-grey) {
+    transition: none;
+    transform: none;
+  }
+
 }
 
 .gateActions {
@@ -1427,7 +1427,14 @@
   background: var(--w-panel);
 }
 .item:nth-child(even) {
-  background: #fbfaf5;
+  --w-dim: var(--w-light-row-dim);
+  --w-line: var(--w-light-row-line);
+  color: var(--w-light-row-text);
+  background: var(--w-light-row);
+}
+.item:nth-child(even) h3,
+.item:nth-child(even) h3 a {
+  color: var(--w-light-row-text);
 }
 .item:last-child {
   border-bottom: none;
@@ -1460,7 +1467,7 @@
 }
 .item p {
   font-size: 13px;
-  color: #4a4f57;
+  color: var(--w-dim);
   line-height: 1.55;
 }
 .item .tags {

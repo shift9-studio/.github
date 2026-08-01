@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm test:flow-state && next build",
+    "build": "pnpm test:flow-state && pnpm test:instrument && pnpm test:studio-polish && next build",
     "start": "next start",
     "lint": "next lint",
     "test:flow-state": "node scripts/check-flow-state.mjs",
+    "test:instrument": "node scripts/check-instrument.mjs",
+    "test:studio-polish": "node scripts/check-studio-polish.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
