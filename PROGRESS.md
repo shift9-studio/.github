@@ -6,7 +6,7 @@
 
 **Last updated:** 2026-08-01
 **Branch:** `codex/instrument-case-study`
-**PR:** pending
+**PR:** #40 — draft, checks green, awaiting Kariim's merge approval
 **Base:** `origin/main` @ `62bdea5` (Flow State merged)
 **Scope:** give Flow State its water-surface direction; make `/instrument` a public lab case study with an easy project-extension path; preserve its technical catalog and distinguish it from Titanium Forge.
 
@@ -70,7 +70,8 @@
 
 ## User-gated
 
-- Open the ready PR after final independent review. Do not merge without Kariim's approval.
+- PR #40 is open as a draft with both Vercel deployments green. Do not merge
+  without Kariim's approval.
 
 ## Machine gotcha
 

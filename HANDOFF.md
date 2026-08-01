@@ -43,7 +43,7 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 ## Recent changes
 
-- **2026-08-01 - Instrument public case study prepared, unmerged.** Branch
+- **2026-08-01 - Instrument public case study prepared in PR #40, unmerged.** Branch
   `codex/instrument-case-study` turns `/instrument` into a public explanation of
   the system through Shift-9 Studio, Flow State, and Just a Pinch. The complete
   technical catalog remains at `/instrument/reference`; stale room/material
@@ -63,7 +63,8 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   these details. Alternating light project rows now explicitly use dark ink for
   their titles, the public email is consistently `shift9dev@gmail.com`, and late
   media promises cannot revive torn-down animation loops. The full production
-  build and browser contrast check pass. Do not merge without Kariim's approval.
+  build, browser contrast check, and both Vercel deployments pass. Do not merge
+  without Kariim's approval.
 
 - **2026-08-01 - Flow State waitlist merged and verified.** PR #39 adds
   `/flow-state`, routes the studio card to it,
