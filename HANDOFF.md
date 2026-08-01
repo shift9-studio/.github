@@ -50,8 +50,10 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   `(lower(email), source)`, `source` is required and nonblank, and insert-only
   RLS is unchanged. Rollback-only tests proved cross-product membership works,
   same-product duplicates remain blocked, and blank source tags are rejected.
-  `shift-9/shift9-dev` has the existing
-  Supabase public URL and anon key configured for Production and Preview. The
+  The protected branch preview returned 200 and a real synthetic signup was
+  persisted once, duplicate-masked, then removed with zero rows remaining.
+  `shift-9/shift9-dev` has the checked-in public Supabase URL and publishable anon
+  key configured for Production and Preview. The
   remaining hardening note is deployment-wide rate limiting; the current route
   uses a honeypot plus a bounded per-instance limiter.
 
@@ -131,4 +133,7 @@ rather than resolving it by hand.
 - Two voices, never mixed. `shift9-dev` is cyber-brutalist; `just-a-pinch` is warm and uses no `//` labels.
 - Every animation branches on `useReducedMotionSafe()` to a fully legible static state, never a paused half-state.
 - Both apps must `next build` with no env vars present.
+- Never copy sensitive values with `vercel env pull`; it exports placeholders.
+  For the public Supabase client values, use the checked-in `.env.example`, then
+  redeploy and verify `/api/waitlist` end to end.
 - Branch `claude/...`; PR ready-for-review; never push to `main`; never self-merge.

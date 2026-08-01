@@ -26,8 +26,8 @@
 - A rollback-only production test proved one address can join `pinch-landing` and
   `flow-state`, while a second `flow-state` insert is rejected. The database still
   contains only the one pre-existing `mcp-verify` row.
-- Vercel project `shift-9/shift9-dev` now has the existing Supabase URL and anon
-  key configured as encrypted Production and Preview variables.
+- Vercel project `shift-9/shift9-dev` now has the checked-in public Supabase URL
+  and publishable anon key configured as encrypted Production and Preview variables.
 
 ## Verification
 
@@ -38,12 +38,20 @@
   `pnpm --filter just-a-pinch build` all exited 0.
 - The page was visually checked at desktop and 390px mobile with no overlap or
   horizontal overflow; reduced motion has a complete static state.
+- The protected branch preview returned 200 for `/flow-state`. Two real
+  `/api/waitlist` submissions returned `{"ok":true}`; Supabase contained exactly
+  one `flow-state` row, proving duplicate masking and persistence. The synthetic
+  `.invalid` row was then deleted and a zero-row query confirmed cleanup.
 
 ## Known follow-up
 
 - The route limiter is process-local. Deployment-wide rate limiting needs a
   shared store, Vercel firewall rule, or verified challenge. The honeypot remains
   the low-cost protection in this branch.
+- Do not copy a sensitive Vercel variable by running `vercel env pull`: Vercel
+  exports an 11-character placeholder, not the value. That caused a preview 500
+  (`Invalid supabaseUrl`) during this session. Restore these public client values
+  from the checked-in `.env.example`, then redeploy and test the real endpoint.
 
 ---
 
