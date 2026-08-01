@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm test:flow-state && next build",
     "start": "next start",
     "lint": "next lint",
+    "test:flow-state": "node scripts/check-flow-state.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@shift9/data": "workspace:*",
     "@shift9/motion": "workspace:*",
     "@shift9/theme": "workspace:*",
     "@shift9/ui": "workspace:*",

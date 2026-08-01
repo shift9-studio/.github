@@ -1,19 +1,73 @@
-# PROGRESS — `claude/shift9-studio-entry-experience-5wnekz`
+# PROGRESS — `claude/flow-state-waitlist`
 
-> State of the entry-experience branch, written so a cold agent can resume without briefing.
+> State of the Flow State waitlist branch, written so a cold agent can resume without briefing.
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction.
 > `HANDOFF.md` = repo-wide continuity. **This file = this branch.**
 
-**Last updated:** 2026-07-27
-**Branch:** `claude/shift9-studio-entry-experience-5wnekz`
-**PR:** #35 — open, ready for review, **not merged**
-**Base:** `origin/main` @ `dacbed1` (2026-07-22, "Merge pull request #34")
-**Position:** 133 commits ahead, 0 behind. Working tree clean.
-**Scope:** 80 files. Most under `shift9/apps/shift9-dev`.
+**Last updated:** 2026-08-01
+**Branch:** `claude/flow-state-waitlist`
+**PR:** #39 — merged to `main` on 2026-08-01 after Kariim's authorization
+**Base:** `origin/main` @ `2fa1b4b` (2026-07-29)
+**Scope:** dedicated Flow State page, waitlist capture, studio link, and product-scoped waitlist uniqueness.
+
+## Current focus
+
+- `/flow-state` is a standalone launch page approved by Kariim: titanium/pearl on
+  black, a solid warm-spectrum holofoil `F`, animated waveform, simulated
+  dictation, and no visible project number. The headline remains titanium.
+- The Flow State card in `/studio` now links directly to `/flow-state`.
+- The waitlist posts through `/api/waitlist` with email validation, a honeypot,
+  best-effort per-instance limiting, generic duplicate responses, and source
+  `flow-state`.
+- Supabase migration `20260731_waitlist_email_source_uniqueness.sql` was applied
+  to production. Uniqueness is now `(lower(email), source)`, `source` is required,
+  `waitlist_source_nonempty` rejects blank tags, and the existing insert-only RLS
+  policy is unchanged.
+- A rollback-only production test proved one address can join `pinch-landing` and
+  `flow-state`, while a second `flow-state` insert is rejected. The database still
+  contains only the one pre-existing `mcp-verify` row.
+- Vercel project `shift-9/shift9-dev` now has the checked-in public Supabase URL
+  and publishable anon key configured as encrypted Production and Preview variables.
+
+## Verification
+
+- `pnpm --filter shift9-dev test:flow-state` passes. Its migration assertion was
+  mutation-tested: `source_typo` failed red, restored `source` passed green.
+- Final checks on 2026-07-31: `pnpm typecheck`,
+  `pnpm --filter shift9-dev build`, and
+  `pnpm --filter just-a-pinch build` all exited 0.
+- The page was visually checked at desktop and 390px mobile with no overlap or
+  horizontal overflow; reduced motion has a complete static state.
+- The protected branch preview returned 200 for `/flow-state`. Two real
+  `/api/waitlist` submissions returned `{"ok":true}`; Supabase contained exactly
+  one `flow-state` row, proving duplicate masking and persistence. The synthetic
+  `.invalid` row was then deleted and a zero-row query confirmed cleanup.
+- Holofoil refinement on 2026-08-01: desktop and 390px mobile render the tokenized
+  coral/gold/pearl/jade/rose material with no overflow. Waveform, typed simulation,
+  invalid-email feedback, and the safe no-env state work. Reverting the F to
+  titanium fails the contract; restoring holofoil passes. Full typecheck and both
+  production builds exit 0; independent review has no findings.
+- Updated protected preview: `/flow-state` returned 200; first and duplicate
+  waitlist submissions both returned 200; Supabase stored exactly one
+  `flow-state` row. The synthetic row was deleted and a zero-row query confirmed
+  cleanup before merge.
+
+## Known follow-up
+
+- The route limiter is process-local. Deployment-wide rate limiting needs a
+  shared store, Vercel firewall rule, or verified challenge. The honeypot remains
+  the low-cost protection in this branch.
+- Do not copy a sensitive Vercel variable by running `vercel env pull`: Vercel
+  exports an 11-character placeholder, not the value. That caused a preview 500
+  (`Invalid supabaseUrl`) during this session. Restore these public client values
+  from the checked-in `.env.example`, then redeploy and test the real endpoint.
 
 ---
 
-## What this branch is
+## Prior entry-experience branch context
+
+The remaining notes below describe the earlier entry-experience branch and are
+kept as historical design context; they are not the current branch state.
 
 It replaces `/` on shift9.dev with a three-stage entrance and adds the surfaces
 that entrance leads to.

@@ -1,0 +1,182 @@
+import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import ts from "typescript";
+
+const appRoot = dirname(dirname(fileURLToPath(import.meta.url)));
+
+function read(relativePath) {
+  const absolutePath = join(appRoot, relativePath);
+  assert.ok(existsSync(absolutePath), `Missing ${relativePath}`);
+  return readFileSync(absolutePath, "utf8");
+}
+
+const route = read("app/api/waitlist/route.ts");
+const policy = read("app/api/waitlist/waitlist-policy.ts");
+const page = read("app/flow-state/page.tsx");
+const form = read("app/flow-state/WaitlistForm.tsx");
+const payload = read("app/flow-state/waitlist-payload.ts");
+const demo = read("app/flow-state/FlowStateDemo.tsx");
+const styles = read("app/flow-state/flow-state.module.css");
+const dolly = read("app/_components/studio-dolly-data.ts");
+const themeTokens = read("../../packages/theme/tokens.css");
+const waitlistMigration = read(
+  "../../supabase/migrations/20260731_waitlist_email_source_uniqueness.sql",
+);
+const waitlistSourceMigration = read(
+  "../../supabase/migrations/20260731_waitlist_source_nonempty.sql",
+);
+
+const routeAst = ts.createSourceFile(
+  "route.ts",
+  route,
+  ts.ScriptTarget.Latest,
+  true,
+  ts.ScriptKind.TS,
+);
+const waitlistCalls = [];
+function visit(node) {
+  if (
+    ts.isCallExpression(node) &&
+    ts.isIdentifier(node.expression) &&
+    node.expression.text === "addToWaitlist"
+  ) {
+    waitlistCalls.push(node);
+  }
+  ts.forEachChild(node, visit);
+}
+visit(routeAst);
+
+assert.equal(waitlistCalls.length, 1, "Expected one executable addToWaitlist call");
+const [emailArgument, sourceArgument] = waitlistCalls[0].arguments;
+assert.ok(
+  emailArgument && ts.isIdentifier(emailArgument) && emailArgument.text === "email",
+  "The route must submit the validated email variable",
+);
+assert.ok(
+  sourceArgument &&
+    ts.isStringLiteral(sourceArgument) &&
+    sourceArgument.text === "flow-state",
+  "Flow State signups must keep the flow-state source tag",
+);
+
+const compiledPolicy = ts.transpileModule(policy, {
+  compilerOptions: {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES2022,
+  },
+}).outputText;
+const policyModule = { exports: {} };
+new Function("module", "exports", compiledPolicy)(
+  policyModule,
+  policyModule.exports,
+);
+const { createRateLimiter, publicWaitlistResponse } = policyModule.exports;
+
+const compiledPayload = ts.transpileModule(payload, {
+  compilerOptions: {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES2022,
+  },
+}).outputText;
+const payloadModule = { exports: {} };
+new Function("module", "exports", compiledPayload)(
+  payloadModule,
+  payloadModule.exports,
+);
+const payloadData = new FormData();
+payloadData.set("website", "filled-by-a-bot.example");
+assert.deepEqual(
+  payloadModule.exports.waitlistPayload("person@example.com", payloadData),
+  {
+    email: "person@example.com",
+    website: "filled-by-a-bot.example",
+  },
+  "The browser payload must carry the actual honeypot value",
+);
+
+assert.deepEqual(publicWaitlistResponse({ ok: true }), {
+  body: { ok: true },
+  status: 200,
+});
+assert.deepEqual(
+  publicWaitlistResponse({ ok: false, reason: "duplicate" }),
+  { body: { ok: true }, status: 200 },
+  "Duplicate membership must not be exposed publicly",
+);
+assert.equal(
+  publicWaitlistResponse({ ok: false, reason: "invalid" }).status,
+  400,
+);
+assert.equal(
+  publicWaitlistResponse({ ok: false, reason: "unconfigured" }).status,
+  503,
+);
+assert.equal(
+  publicWaitlistResponse({ ok: false, reason: "error" }).status,
+  500,
+);
+
+const limited = createRateLimiter({ windowMs: 100, maxRequests: 2, maxBuckets: 2 });
+assert.equal(limited("first", 0), false);
+assert.equal(limited("first", 1), false);
+assert.equal(limited("first", 2), true);
+assert.equal(limited("first", 101), false, "Expired buckets must reset");
+assert.equal(limited("second", 102), false);
+assert.equal(limited("third", 103), false, "Bucket storage must stay bounded");
+assert.equal(limited("first", 104), false);
+assert.equal(
+  limited("first", 105),
+  false,
+  "Revisiting an evicted key must start a fresh request window",
+);
+assert.match(
+  dolly,
+  /title:\s*"Flow State"[\s\S]*?href:\s*"\/flow-state"/,
+  "The studio Flow State entry must open the dedicated page",
+);
+assert.match(page, /Local Windows Dictation/i);
+assert.match(form, /aria-live="polite"/);
+assert.match(form, /type="email"/);
+assert.match(demo, /useReducedMotionSafe/);
+assert.match(styles, /prefers-reduced-motion/);
+assert.match(
+  themeTokens,
+  /--s9-holofoil:\s*[\s\S]*linear-gradient/i,
+  "The Flow State mark needs a tokenized holofoil material",
+);
+assert.match(
+  styles,
+  /\.fMark\s+span\s*\{[\s\S]*?background-image:\s*var\(--s9-holofoil\)/i,
+  "The standalone F must use holofoil instead of titanium",
+);
+assert.match(
+  waitlistMigration,
+  /alter\s+table\s+public\.waitlist[\s\S]*alter\s+column\s+source\s+set\s+not\s+null/i,
+  "Waitlist product membership requires a source",
+);
+assert.match(
+  waitlistMigration,
+  /create\s+unique\s+index\s+waitlist_email_source_key\s+on\s+public\.waitlist\s*\(\s*lower\s*\(\s*email\s*\)\s*,\s*source\s*\)/i,
+  "Waitlist uniqueness must be scoped to email and product source",
+);
+assert.match(
+  waitlistMigration,
+  /drop\s+index\s+public\.waitlist_email_key/i,
+  "The old email-only waitlist index must be removed",
+);
+assert.match(
+  waitlistSourceMigration,
+  /alter\s+table\s+public\.waitlist[\s\S]*add\s+constraint\s+waitlist_source_nonempty[\s\S]*length\s*\(\s*btrim\s*\(\s*source\s*\)\s*\)\s*>\s*0/i,
+  "Waitlist source tags must not be blank",
+);
+
+const pageSurface = `${page}\n${form}\n${demo}\n${styles}`;
+assert.doesNotMatch(
+  pageSurface,
+  /project\s*(?:number|no\.?|#)?\s*\d+/i,
+  "The Flow State page must not present a project number",
+);
+
+console.log("Flow State route, waitlist, motion, and studio-link contracts pass.");
