@@ -24,7 +24,7 @@ export const metadata = {
     "Tell Shift-9 what you're building. Interfaces, tools and product surfaces, built to the standard the studio reel shows.",
 };
 
-const EMAIL = "shift9.dev@gmail.com";
+const EMAIL = "shift9dev@gmail.com";
 
 export default function StartPage() {
   return (
@@ -74,7 +74,7 @@ export default function StartPage() {
       </section>
 
       {/* A second way back that does not depend on reaching the buttons. */}
-      <a className={s.exitPin} href="/studio">
+      <a className={`s9-pearl-dark s9-pearl-ghost ${s.exitPin}`} href="/studio">
         &#8592; The studio
       </a>
     </main>

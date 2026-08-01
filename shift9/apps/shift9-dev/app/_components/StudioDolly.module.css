@@ -60,8 +60,30 @@
   transition: opacity var(--s9-dur-slow) var(--s9-ease-out);
 }
 
+.seamlessLoop {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.loopLayer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--s9-dur-slow) linear;
+  will-change: opacity;
+}
+
+.loopLayer:first-child {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .shot {
+    transition: none;
+  }
+
+  .loopLayer {
     transition: none;
   }
 }
@@ -301,10 +323,43 @@
 .banner {
   position: absolute;
   inset: 0;
-  display: block;
+  display: grid;
+  place-items: center;
   overflow: hidden;
+  padding: clamp(1.25rem, 5vw, 4.5rem);
   text-decoration: none;
   cursor: pointer;
+  perspective: 1200px;
+}
+
+.banner::before {
+  content: "";
+  position: absolute;
+  width: min(84vw, 70rem);
+  aspect-ratio: 16 / 9;
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 13%, transparent);
+  border-radius: 0.65rem;
+  background: color-mix(in oklab, var(--s9-obsidian) 92%, var(--s9-pearl));
+  box-shadow: 0 2.5rem 7rem color-mix(in oklab, var(--s9-obsidian) 76%, transparent);
+  transform: translate(1.2rem, 1rem) rotate(1.2deg);
+}
+
+.invitationCard {
+  position: relative;
+  width: min(84vw, 70rem);
+  aspect-ratio: 16 / 9;
+  display: block;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 34%, transparent);
+  border-radius: 0.55rem;
+  background: var(--s9-obsidian);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, var(--s9-chalk) 12%, transparent),
+    0 2.4rem 6rem color-mix(in oklab, var(--s9-obsidian) 68%, transparent);
+  transform: rotate(-0.45deg);
+  transition:
+    transform var(--s9-dur-slow) var(--s9-ease-premium),
+    border-color var(--s9-dur-base) var(--s9-ease-out);
 }
 
 /* The still. It is the poster the film loads behind and the complete frame
@@ -326,6 +381,42 @@
   object-fit: contain;
   opacity: 0;
   animation: outroArt var(--s9-dur-boot) var(--s9-ease-out) forwards;
+}
+
+.invitationDetails {
+  position: absolute;
+  z-index: 3;
+  top: clamp(1rem, 3vw, 2rem);
+  left: clamp(1rem, 3vw, 2rem);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--s9-chalk) 58%, transparent);
+  text-shadow: 0 1px 1rem var(--s9-obsidian);
+}
+
+.invitationSeal {
+  position: absolute;
+  z-index: 3;
+  top: clamp(1rem, 3vw, 2rem);
+  right: clamp(1rem, 3vw, 2rem);
+  width: clamp(2.8rem, 5vw, 4rem);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 46%, transparent);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 36% 28%, color-mix(in oklab, var(--s9-chalk) 24%, transparent), transparent 34%),
+    color-mix(in oklab, var(--s9-obsidian) 72%, transparent);
+  box-shadow:
+    inset 0 0 0 0.35rem color-mix(in oklab, var(--s9-chalk) 4%, transparent),
+    0 0.8rem 2rem color-mix(in oklab, var(--s9-obsidian) 70%, transparent);
+  color: var(--s9-pearl);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.08em;
 }
 
 @keyframes outroArt {
@@ -360,8 +451,8 @@
    can be clicked. */
 .cue {
   position: absolute;
-  right: clamp(1rem, 5vw, 4rem);
-  bottom: clamp(1.5rem, 7vh, 5rem);
+  right: clamp(1rem, 3vw, 2.4rem);
+  bottom: clamp(1rem, 3vw, 2.4rem);
   display: grid;
   justify-items: end;
   gap: 0.5rem;
@@ -410,6 +501,12 @@
   background-size: 100% 2px;
 }
 
+.banner:hover .invitationCard,
+.banner:focus-visible .invitationCard {
+  border-color: color-mix(in oklab, var(--s9-pearl) 62%, transparent);
+  transform: translateY(-0.45rem) rotate(0deg);
+}
+
 /* The frame lifts fractionally toward the visitor on hover — the only reply
    the artwork gives, because anything louder would be decoration on top of
    decoration. */
@@ -420,7 +517,45 @@
 
 .banner:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 0 3px var(--s9-signal);
+}
+
+.banner:focus-visible .invitationCard {
+  box-shadow:
+    0 0 0 3px var(--s9-verdant),
+    0 2.4rem 6rem color-mix(in oklab, var(--s9-obsidian) 68%, transparent);
+}
+
+@media (max-width: 40rem) {
+  .banner {
+    padding: 1rem;
+  }
+
+  .banner::before,
+  .invitationCard {
+    width: calc(100vw - 2rem);
+    aspect-ratio: 4 / 5;
+  }
+
+  .banner::before {
+    transform: translate(0.5rem, 0.6rem) rotate(1deg);
+  }
+
+  .outroArt,
+  .outroFilm {
+    top: 13%;
+    bottom: auto;
+    height: 55%;
+  }
+
+  .cue {
+    right: 1.25rem;
+    bottom: 1.5rem;
+    left: 1.25rem;
+  }
+
+  .cueAction {
+    font-size: 1.15rem;
+  }
 }
 
 /* The exit that used to sit here — a full BACK TO THE DESKTOP pill anchored

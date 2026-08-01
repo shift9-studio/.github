@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { FlowStateDemo } from "./FlowStateDemo";
 import { WaitlistForm } from "./WaitlistForm";
+import { WaterSurface } from "./WaterSurface";
 import s from "./flow-state.module.css";
 
 const CONTACT_EMAIL = "shift9dev@gmail.com";
@@ -20,17 +21,18 @@ export const metadata: Metadata = {
 export default function FlowStatePage() {
   return (
     <main className={s.root}>
-      <a className={s.exitPin} href="/studio#set-02">
+      <WaterSurface />
+      <a className={`s9-pearl-dark s9-pearl-ghost ${s.exitPin}`} href="/studio#set-02">
         &#8592; The studio
       </a>
 
       <header className={s.topbar}>
         <div className={s.brandLockup}>
-          <span className={s.brandStudio}>Shift-9</span>
-          <span className={s.brandSlash} aria-hidden="true">
-            /
+          <span className={s.logoJewel} aria-hidden="true">
+            <b>F</b>
           </span>
-          <span>Flow State</span>
+          <span className={s.brandName}>Flow State</span>
+          <span className={s.brandStudio}>by Shift-9</span>
         </div>
         <p className={s.intakeStatus}>
           <span aria-hidden="true" /> Private beta intake online
@@ -40,7 +42,7 @@ export default function FlowStatePage() {
       <div className={s.composition}>
         <section className={s.story}>
           <div className={s.heroCopy}>
-            <p className={s.eyebrow}>Local Windows Dictation</p>
+            <p className={s.eyebrow}>Private dictation / uninterrupted thought</p>
             <h1 className={s.headline}>
               Stay in the <span className={s.foilWord}>thought.</span>
             </h1>
@@ -65,15 +67,15 @@ export default function FlowStatePage() {
 
           <dl className={s.metrics}>
             <div>
-              <dt>Real-audio recognition</dt>
+              <dt>Voice processing</dt>
+              <dd>On-device</dd>
+            </div>
+            <div>
+              <dt>Measured recognition</dt>
               <dd>185.2 ms</dd>
             </div>
             <div>
-              <dt>Automated test suite</dt>
-              <dd>155 tests</dd>
-            </div>
-            <div>
-              <dt>Speech data sent out</dt>
+              <dt>Speech uploaded</dt>
               <dd>0 bytes</dd>
             </div>
           </dl>

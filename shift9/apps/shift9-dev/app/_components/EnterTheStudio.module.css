@@ -16,6 +16,10 @@
   --w-bg-rgb: 236 234 223;
   --w-panel: #f7f6f1;
   --w-panel-rgb: 247 246 241;
+  --w-light-row: #fbfaf5;
+  --w-light-row-text: #1f2328;
+  --w-light-row-dim: #4a4f57;
+  --w-light-row-line: #d8d6cc;
   --w-side: #f0efe8;
   --w-line: #d8d6cc;
   /* Tooltip surface. Deliberately the inverse of the desktop it sits on —
@@ -213,6 +217,79 @@
   object-position: 30% 50%;
 }
 
+.gateCurtains {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  perspective: 1200px;
+}
+
+.gateCurtainLeft,
+.gateCurtainRight {
+  position: absolute;
+  inset: 0;
+  background: url("/experience/opening/00-entry-seam.jpg") 30% 50% / cover no-repeat;
+  will-change: transform;
+}
+
+.gateCurtainLeft {
+  clip-path: inset(0 50% 0 0);
+  transform-origin: left center;
+}
+
+.gateCurtainRight {
+  clip-path: inset(0 0 0 50%);
+  transform-origin: right center;
+}
+
+.gateOpening {
+  animation: gateRelease var(--s9-dur-boot) var(--s9-ease-premium) both;
+}
+
+.gateOpening .gatePlate {
+  animation: gatePlateAdvance var(--s9-dur-boot) var(--s9-ease-premium) both;
+}
+
+.gateOpening .gateCurtainLeft {
+  animation: curtainLeft var(--s9-dur-boot) var(--s9-ease-premium) both;
+}
+
+.gateOpening .gateCurtainRight {
+  animation: curtainRight var(--s9-dur-boot) var(--s9-ease-premium) both;
+}
+
+.gateOpening .gateBody,
+.gateOpening .gateVeil,
+.gateOpening .gateGlow {
+  animation: gateUiDepart var(--s9-dur-base) var(--s9-ease-out) both;
+}
+
+@keyframes gateRelease {
+  0%, 76% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes gatePlateAdvance {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.1); }
+}
+
+@keyframes curtainLeft {
+  from { transform: translate3d(0, 0, 0) rotateY(0) scale(1); }
+  to { transform: translate3d(-34%, 0, 0) rotateY(-5deg) scale(1.08); }
+}
+
+@keyframes curtainRight {
+  from { transform: translate3d(0, 0, 0) rotateY(0) scale(1); }
+  to { transform: translate3d(34%, 0, 0) rotateY(5deg) scale(1.08); }
+}
+
+@keyframes gateUiDepart {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(0.75rem); }
+}
+
 /* Weights the lower half so the type has ground under it whatever the plate
    is doing behind, without flattening the light. */
 .gateVeil {
@@ -380,6 +457,23 @@
   animation: iconBreathe 4.4s var(--s9-ease-inout) infinite;
 }
 
+.enterIconArt :global(.shift9-mark-light),
+.enterIconArt :global(.shift9-mark-grey) {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform var(--s9-dur-base) var(--s9-ease-premium);
+}
+
+.enter:hover .enterIconArt :global(.shift9-mark-light),
+.enter:focus-visible .enterIconArt :global(.shift9-mark-light) {
+  transform: translateY(-1.5px);
+}
+
+.enter:hover .enterIconArt :global(.shift9-mark-grey),
+.enter:focus-visible .enterIconArt :global(.shift9-mark-grey) {
+  transform: translateY(1.5px);
+}
+
 @keyframes iconBreathe {
   0%,
   100% {
@@ -444,15 +538,6 @@
 }
 
 /* The runtime, on the icon's line. */
-.enterCount {
-  font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  line-height: 1;
-  color: color-mix(in oklab, var(--s9-paper, #f8fafc) 62%, transparent);
-}
-
 /* Reduced motion: no breathing, no spin, no morph. The busy state still
    reads, because the ring appears and stays — presence is the signal;
    movement was only ever the flourish on top of it. */
@@ -464,6 +549,22 @@
   }
   .enterIconBusy .enterIconArt::before {
     opacity: 1;
+  }
+
+  .enterIconArt :global(.shift9-mark-light),
+  .enterIconArt :global(.shift9-mark-grey) {
+    transition: none;
+    transform: none;
+  }
+
+  .gateOpening,
+  .gateOpening .gatePlate,
+  .gateOpening .gateCurtainLeft,
+  .gateOpening .gateCurtainRight,
+  .gateOpening .gateBody,
+  .gateOpening .gateVeil,
+  .gateOpening .gateGlow {
+    animation: none;
   }
 }
 
@@ -729,6 +830,11 @@
      in frame and stays clear of the words. */
   .gatePlate {
     object-position: 18% 50%;
+  }
+
+  .gateCurtainLeft,
+  .gateCurtainRight {
+    background-position: 18% 50%;
   }
 
   .gateBody {
@@ -1427,7 +1533,14 @@
   background: var(--w-panel);
 }
 .item:nth-child(even) {
-  background: #fbfaf5;
+  --w-dim: var(--w-light-row-dim);
+  --w-line: var(--w-light-row-line);
+  color: var(--w-light-row-text);
+  background: var(--w-light-row);
+}
+.item:nth-child(even) h3,
+.item:nth-child(even) h3 a {
+  color: var(--w-light-row-text);
 }
 .item:last-child {
   border-bottom: none;
@@ -1460,7 +1573,7 @@
 }
 .item p {
   font-size: 13px;
-  color: #4a4f57;
+  color: var(--w-dim);
   line-height: 1.55;
 }
 .item .tags {

@@ -22,6 +22,7 @@
    ──────────────────────────────────────────────────────────────────────── */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useReducedMotionSafe } from "@shift9/motion";
 import s from "./StudioDolly.module.css";
 import { SET_PIECES } from "./studio-dolly-data";
 import { PROJECT_FONTS } from "./studio-fonts";
@@ -54,6 +55,7 @@ const OUTRO_FILM = "/experience/outro/banner-settle.mp4";
    The cue arrives after the statement rather than over it: `ended` reveals the
    invitation, with a failsafe for the cases where it never fires. */
 function BannerOutro() {
+  const reducedMotion = useReducedMotionSafe();
   const hostRef = useRef<HTMLAnchorElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -70,7 +72,7 @@ function BannerOutro() {
 
     /* Reduced motion: the still is the whole thing, and the cue is there
        immediately. Nothing to wait for, so nothing waits. */
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (reducedMotion) {
       setSettled(true);
       return;
     }
@@ -83,10 +85,13 @@ function BannerOutro() {
     );
     io.observe(host);
     return () => io.disconnect();
-  }, []);
+  }, [reducedMotion]);
 
   useEffect(() => {
-    if (!live) return;
+    if (!live || reducedMotion) {
+      videoRef.current?.pause();
+      return;
+    }
     const vid = videoRef.current;
     if (!vid) return;
     vid.play().catch(() => setSettled(true));
@@ -106,7 +111,7 @@ function BannerOutro() {
       clearTimeout(failsafe);
       vid.removeEventListener("ended", onEnded);
     };
-  }, [live]);
+  }, [live, reducedMotion]);
 
   return (
     <a
@@ -115,35 +120,186 @@ function BannerOutro() {
       ref={hostRef}
       aria-label="Open the invitation — start a project with Shift-9"
     >
-      {/* The still is real markup, so the frame is complete before any script
-          runs and survives a failed video load. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className={s.outroArt}
-        src={OUTRO_ART}
-        alt="SHIFT-9 — code execution in motion"
-      />
-
-      {live ? (
-        <video
-          className={s.outroFilm}
-          ref={videoRef}
-          src={OUTRO_FILM}
-          poster={OUTRO_ART}
-          muted
-          playsInline
-          preload="auto"
-          aria-hidden="true"
+      <span className={s.invitationCard}>
+        {/* The still is real markup, so the frame is complete before any script
+            runs and survives a failed video load. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className={s.outroArt}
+          src={OUTRO_ART}
+          alt="SHIFT-9 — code execution in motion"
         />
-      ) : null}
 
-      <span className={`${s.cue} ${settled ? s.cueIn : ""}`}>
-        <span className={s.cueLabel} aria-hidden="true">
-          // the studio is open
+        {live && !reducedMotion ? (
+          <video
+            className={s.outroFilm}
+            ref={videoRef}
+            src={OUTRO_FILM}
+            poster={OUTRO_ART}
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+          />
+        ) : null}
+
+        <span className={s.invitationDetails} aria-hidden="true">
+          Private viewing / Shift-9 Studio
         </span>
-        <span className={s.cueAction}>Open the invitation &#8594;</span>
+        <span className={s.invitationSeal} aria-hidden="true">S9</span>
+
+        <span className={`${s.cue} ${settled ? s.cueIn : ""}`}>
+          <span className={s.cueLabel} aria-hidden="true">
+            A private invitation from Shift-9
+          </span>
+          <span className={s.cueAction}>Open your invitation &#8594;</span>
+        </span>
       </span>
     </a>
+  );
+}
+
+/* Native video `loop` exposes the edit by jumping straight from the final
+   decoded frame to frame zero. Two cached layers overlap one transition early:
+   the incoming pass starts under the outgoing pass, then becomes the lead.
+   Only the visible set-pieces play, and every timer/frame is cancelled when a
+   shot leaves the warm viewport. */
+function SeamlessLoopVideo({
+  src,
+  poster,
+  playing,
+}: {
+  src: string;
+  poster: string;
+  playing: boolean;
+}) {
+  const firstRef = useRef<HTMLVideoElement>(null);
+  const secondRef = useRef<HTMLVideoElement>(null);
+  const activeRef = useRef<0 | 1>(0);
+  const frameRef = useRef(0);
+  const finishRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const blendingRef = useRef(false);
+
+  useEffect(() => {
+    const first = firstRef.current;
+    const second = secondRef.current;
+    if (!first || !second) return;
+    const videos = [first, second] as const;
+    let cancelled = false;
+
+    const reset = () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frameRef.current);
+      if (finishRef.current) clearTimeout(finishRef.current);
+      finishRef.current = null;
+      blendingRef.current = false;
+      activeRef.current = 0;
+      videos.forEach((video, index) => {
+        video.pause();
+        video.style.opacity = index === 0 ? "1" : "0";
+        if (video.readyState > 0) video.currentTime = 0;
+      });
+    };
+
+    if (!playing) {
+      reset();
+      return reset;
+    }
+
+    const durationToken = getComputedStyle(document.documentElement)
+      .getPropertyValue("--s9-dur-slow")
+      .trim();
+    const durationValue = Number.parseFloat(durationToken);
+    const fadeMs = Number.isFinite(durationValue)
+      ? durationToken.endsWith("ms")
+        ? durationValue
+        : durationValue * 1000
+      : 700;
+
+    const blend = () => {
+      if (cancelled || blendingRef.current) return;
+      const currentIndex = activeRef.current;
+      const nextIndex = currentIndex === 0 ? 1 : 0;
+      const current = videos[currentIndex];
+      const next = videos[nextIndex];
+      blendingRef.current = true;
+      next.currentTime = 0;
+      next
+        .play()
+        .then(() => {
+          if (cancelled) return;
+          next.style.opacity = "1";
+          current.style.opacity = "0";
+
+          finishRef.current = setTimeout(() => {
+            current.pause();
+            current.currentTime = 0;
+            activeRef.current = nextIndex;
+            blendingRef.current = false;
+            finishRef.current = null;
+          }, fadeMs + 80);
+        })
+        .catch(() => {
+          if (cancelled) return;
+          /* Keep the working layer's final frame. Swapping to a layer that
+             failed to start would turn a recoverable media error into a
+             visible poster jump and an endless retry loop. */
+          current.pause();
+          current.style.opacity = "1";
+          next.style.opacity = "0";
+          blendingRef.current = false;
+          window.cancelAnimationFrame(frameRef.current);
+          frameRef.current = 0;
+        });
+    };
+
+    const watch = () => {
+      if (cancelled) return;
+      const current = videos[activeRef.current];
+      if (
+        Number.isFinite(current.duration) &&
+        current.duration > 0 &&
+        current.duration - current.currentTime <= fadeMs / 1000 + 0.08
+      ) {
+        blend();
+      }
+      frameRef.current = window.requestAnimationFrame(watch);
+    };
+
+    videos[0]
+      .play()
+      .then(() => {
+        if (cancelled) return;
+        frameRef.current = window.requestAnimationFrame(watch);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        videos[0].style.opacity = "1";
+      });
+    return reset;
+  }, [playing, poster, src]);
+
+  return (
+    <span className={s.seamlessLoop} aria-hidden="true">
+      <video
+        ref={firstRef}
+        src={src}
+        poster={poster}
+        className={s.loopLayer}
+        muted
+        playsInline
+        preload="auto"
+      />
+      <video
+        ref={secondRef}
+        src={src}
+        poster={poster}
+        className={s.loopLayer}
+        muted
+        playsInline
+        preload="metadata"
+      />
+    </span>
   );
 }
 
@@ -180,6 +336,7 @@ function Stage({
   live,
   onEnter,
   onWarm,
+  reducedMotion,
 }: {
   piece: (typeof SET_PIECES)[number];
   index: number;
@@ -187,9 +344,9 @@ function Stage({
   live: boolean;
   onEnter: (i: number) => void;
   onWarm: (i: number) => void;
+  reducedMotion: boolean;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const font = PROJECT_FONTS[piece.n];
   const [visible, setVisible] = useState(false);
 
@@ -197,7 +354,10 @@ function Stage({
     const host = hostRef.current;
     if (!host) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (reducedMotion) {
+      setVisible(false);
+      return;
+    }
 
     /* Which shot you are looking at — drives the counter and the warm-ahead. */
     const focus = new IntersectionObserver(
@@ -223,24 +383,7 @@ function Stage({
       focus.disconnect();
       play.disconnect();
     };
-  }, [index, onEnter, onWarm]);
-
-  /* Playback runs in its own effect rather than inside the observer callback:
-     the <video> does not exist until the render that `live` triggers, so
-     calling play() from the callback would always hit a null ref and the clip
-     would sit on its poster forever. */
-  useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
-    if (visible) {
-      vid.play().catch(() => {
-        /* autoplay refused — the poster plate is the approved frame, so the
-           set-piece still reads exactly as composed. */
-      });
-    } else {
-      vid.pause();
-    }
-  }, [visible, live]);
+  }, [index, onEnter, onWarm, reducedMotion]);
 
   return (
     <section
@@ -253,16 +396,11 @@ function Stage({
     >
       <div className={s.pin}>
         <div className={s.shot}>
-          {live ? (
-            <video
-              ref={videoRef}
+          {live && !reducedMotion ? (
+            <SeamlessLoopVideo
               src={piece.clip}
               poster={piece.plate}
-              muted
-              loop
-              playsInline
-              preload="auto"
-              aria-hidden="true"
+              playing={visible}
             />
           ) : (
             /* The shot is decorative in both states: the caption below states
@@ -357,6 +495,7 @@ function Stage({
 }
 
 export function StudioDolly() {
+  const reducedMotion = useReducedMotionSafe();
   const [at, setAt] = useState(1);
   /* Stable, because it is a dependency of the Stage observers — an inline
      arrow would rebuild both observers on every state change, and this
@@ -368,27 +507,12 @@ export function StudioDolly() {
   const [atBanner, setAtBanner] = useState(false);
   const outroRef = useRef<HTMLElement>(null);
 
-  /* Which clips are mounted. The first is warmed on mount so the reel opens
-     moving rather than on a poster; after that, arriving at a shot warms the
-     one after it, so the next element is created and its first frames decoded
-     while you are still watching the current one. That work used to land at
-     the moment a shot scrolled into frame, which is precisely where the
-     stutters were.
-
-     A Set that only ever grows: a clip that has been mounted stays mounted.
-     Unmounting on the way out would throw away decoded frames and re-fetch on
-     the way back, which is the expensive half of the problem, not the cheap
-     one. Twelve muted, paused <video> elements cost far less than twelve
-     re-decodes. */
-  const [warm, setWarm] = useState<Set<number>>(() => new Set([0]));
+  /* Keep only the current shot and its two neighbours warm. This preserves a
+     decoded handoff in both scroll directions without retaining 24 video
+     elements and the entire reel's buffers after one pass. */
+  const [warmCenter, setWarmCenter] = useState(0);
   const warmAhead = useCallback((i: number) => {
-    setWarm((prev) => {
-      if (prev.has(i) && prev.has(i + 1)) return prev;
-      const next = new Set(prev);
-      next.add(i);
-      next.add(i + 1);
-      return next;
-    });
+    setWarmCenter(i);
   }, []);
 
   useEffect(() => {
@@ -421,9 +545,10 @@ export function StudioDolly() {
           key={piece.n}
           piece={piece}
           index={i}
-          live={warm.has(i)}
+          live={!reducedMotion && Math.abs(i - warmCenter) <= 1}
           onEnter={handleEnter}
           onWarm={warmAhead}
+          reducedMotion={reducedMotion}
         />
       ))}
 

@@ -1,4 +1,86 @@
-# PROGRESS — `claude/flow-state-waitlist`
+# PROGRESS — `codex/instrument-case-study`
+
+> State of the Instrument redesign branch, written so a cold agent can resume without briefing.
+> `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction.
+> `HANDOFF.md` = repo-wide continuity. **This file = this branch.**
+
+**Last updated:** 2026-08-01
+**Branch:** `codex/instrument-case-study`
+**PR:** pending
+**Base:** `origin/main` @ `62bdea5` (Flow State merged)
+**Scope:** give Flow State its water-surface direction; make `/instrument` a public lab case study with an easy project-extension path; preserve its technical catalog and distinguish it from Titanium Forge.
+
+## Current focus
+
+- `/flow-state` now uses a full-page, pointer-reactive black-water canvas with
+  subtle refracted pearl/warm light, a black diamond jewel `F` header mark, and
+  the existing logo/waveform/text demo shaped into the same pill language.
+- `/instrument` is its own lab room: the actual Instrument set-piece sits on an
+  open bench with a pointer inspection light and one slow scanner pass. The hero
+  copy is borderless so it does not block the light, and the image masks smoothly
+  into the next section instead of ending on a hard line.
+- The live site is the visual source; earlier docs are context only. The
+  invitation page is not a template and its closing WaveField is not used here.
+- Instrument specimens and surface-voice rows come from
+  `app/instrument/instrument-projects.ts`. A new project page needs one registry
+  entry (name, route, image, copy); the page JSX and CSS do not change.
+- The dense token, type, motion, component, and hook catalog moved intact to
+  `/instrument/reference`. Its stale room count, `/start` accent description,
+  missing Flow State and Instrument rooms, and missing product materials were corrected.
+- Both studio catalogs now identify Instrument as Shift-9's production system
+  and Titanium Forge as the portable component workbench.
+- All Instrument return and action controls use the pearl button family.
+- The floating return control on `/start`, `/flow-state`, and `/instrument` now
+  uses one shared compact ghost-pearl modifier. Instrument page actions are
+  slimmer and capped on mobile instead of filling the viewport by default.
+- The landing gate keeps the exact yarn image, then parts duplicate left/right
+  halves with a shallow perspective push while the intro becomes ready. The
+  visible `20s` is removed; the split 9 mark lifts its light half and settles its
+  grey half on approach, with a static reduced-motion state.
+- Studio set-piece clips no longer use native hard loops. Two cached video layers
+  crossfade before the decoded end, pause offscreen, and clean up rAF/timers.
+- The studio outro is a physical invitation card with a secondary backing card,
+  private-viewing line, S9 seal, and the existing Shift-9 artwork/settle film.
+- Alternating light project rows now pin their headings and links to the dark
+  ink token instead of inheriting the low-contrast title color. The production
+  preview confirms all four Apps titles remain readable on both row materials.
+- Intro and reel media promises are cancellation-safe after teardown, and the
+  intro runtime watchdog now starts on actual playback rather than on mount.
+- Public contact links now consistently use `shift9dev@gmail.com`.
+- Public copy on both pages was audited for clients and partners. Guards reject
+  prototype, draft, TODO, review-note, stale bench-note, and test-suite language.
+- `test:instrument` guards the route split, registry path, product distinction,
+  current reference, lab motion, reduced-motion branch, set-piece media, and listing copy.
+- `test:studio-polish` guards seamless media, the invitation object, split-9
+  hover, curtain opening, ghost controls, reduced motion, and public note cleanup.
+
+## Verification
+
+- Contract green. Changing the Titanium Forge distinction made it fail red with
+  `Instrument must distinguish itself from Titanium Forge`; restoring it passed.
+- `pnpm typecheck`, `pnpm --filter shift9-dev build`, and
+  `pnpm --filter just-a-pinch build` all exit 0. Both Instrument routes prerender.
+- Production preview: `/flow-state`, `/instrument`, and `/instrument/reference`
+  render with no horizontal overflow. Flow State and Instrument were checked at
+  1280px and 390px; their public DOM contains none of the forbidden internal copy.
+- `/`, `/start`, and `/studio` were visually checked in the rebuilt production
+  preview. The visible `20s` and all rendered `prototype note` strings are absent.
+- The rebuilt Apps folder was checked in-browser: light rows use dark project
+  titles and body copy; the full Shift-9 production build exits 0.
+
+## User-gated
+
+- Open the ready PR after final independent review. Do not merge without Kariim's approval.
+
+## Machine gotcha
+
+- `next dev` can exceed the Windows path limit for `/instrument/reference` in this
+  long generated worktree path. The optimized build and `next start` both work;
+  use the production preview here or a shorter checkout for development mode.
+
+---
+
+## Prior Flow State branch state
 
 > State of the Flow State waitlist branch, written so a cold agent can resume without briefing.
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction.

@@ -27,6 +27,7 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useReducedMotionSafe } from "@shift9/motion";
 import { FadeToBlack } from "./FadeToBlack";
 import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
@@ -42,7 +43,7 @@ const STUDIO_HREF = "/studio";
 
 /* One address, used by the taskbar button and the About window alike, so the
    two can never drift. */
-const STUDIO_EMAIL = "shift9.dev@gmail.com";
+const STUDIO_EMAIL = "shift9dev@gmail.com";
 
 /* The opening film, in order. Two generated beats played back to back as one
    continuous take: the approach and entry, then the desk. The last frame of the
@@ -68,9 +69,6 @@ const ENTRY_PLATE = "/experience/opening/00-entry-seam.jpg";
 /* Stated on the button so pressing it is an informed choice rather than a
    trapdoor. Two beats, ten seconds each. */
 const INTRO_RUNTIME = "20 sec";
-/* The same number, small enough to sit on a 26px icon. */
-const INTRO_RUNTIME_SHORT = "20s";
-
 /* Held as a constant so the button's accessible name and the glyphs drawn on
    screen can never drift apart. */
 const ENTER_LABEL = "Enter the studio";
@@ -190,7 +188,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
   },
   games: {
     t: "Games",
-    n: "prototype note: honest status labels stay — labeled WIP earns more trust than mystery polish",
+    n: "Work in progress is labeled plainly; every build says what is real and what comes next.",
     items: [
       {
         n: "Voxel Arcade Basketball",
@@ -220,22 +218,22 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
   },
   tools: {
     t: "Tools",
-    n: "prototype note: WinFix = renamed whome-diagnostic · Titanium Forge Pro folds in when the zip lands",
+    n: "Utilities, component systems, and studio infrastructure built to solve specific production problems.",
     items: [
       {
         n: "Titanium Forge Pro",
         s: "IN DEV",
         sc: "dev",
-        d: "A UI/UX component workbench — a dark-mode React component library with live demos and copyable snippets you can lift straight into a project. In active development.",
-        tags: ["React", "TypeScript", "Design System", "Cloudflare"],
+        d: "A portable React component workbench with live demos and copyable snippets for teams to bring into their own products. In active development.",
+        tags: ["React", "TypeScript", "Component Library", "Cloudflare"],
         h: "/soon",
       },
       {
         n: "INSTRUMENT",
         s: "LIVE",
         sc: "live",
-        d: "The design system running shift9.dev and pinch.shift9.dev — tokens, motion, accessibility. Proof you can click.",
-        tags: ["Tailwind v4", "Motion", "A11y"],
+        d: "Shift-9's production design system: shared interaction, motion and accessibility rules across live products, with each product free to keep its own voice.",
+        tags: ["Design Systems", "Motion", "Accessibility"],
         h: "/instrument",
       },
       {
@@ -370,6 +368,7 @@ const SIDEBAR: { label: string; glyph: string; on?: boolean }[] = [
 type OpenWin = FolderKey | "about" | null;
 
 export function EnterTheStudio() {
+  const reducedMotion = useReducedMotionSafe();
   const videoRef = useRef<HTMLVideoElement>(null);
   /* The second beat gets its own element rather than sharing the first one's.
      See the playback effect for why — reassigning `src` on a playing video is
@@ -398,8 +397,30 @@ export function EnterTheStudio() {
      The opening is 24MB; on anything but a fast line there is a real wait
      there, and it used to be a dead screen. */
   const [loading, setLoading] = useState(false);
+  const [curtainDone, setCurtainDone] = useState(true);
+  const [curtainOpening, setCurtainOpening] = useState(false);
   /* Which folder is mid-open, so its lid can lift before the window arrives. */
   const [opening, setOpening] = useState<string | null>(null);
+  const folderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!curtainOpening) return;
+    const token = getComputedStyle(document.documentElement)
+      .getPropertyValue("--s9-dur-boot")
+      .trim();
+    const value = Number.parseFloat(token);
+    const duration = Number.isFinite(value)
+      ? token.endsWith("ms")
+        ? value
+        : value * 1000
+      : 1200;
+    const curtainFallback = setTimeout(() => {
+      setCurtainDone(true);
+      setCurtainOpening(false);
+    }, duration + 160);
+    return () => clearTimeout(curtainFallback);
+  }, [curtainOpening]);
 
   /* Theme. SSR renders light so the server and first client paint agree; the
      stored choice (or the OS preference) is applied on mount. The desktop is
@@ -483,6 +504,12 @@ export function EnterTheStudio() {
      SKIP, by reduced-motion, and as the terminal step of the wake sequence. */
   const enterDesk = useCallback(() => {
     markIntroSeen();
+    setMode("desk");
+    setLoading(false);
+    setCurtainDone(true);
+    setCurtainOpening(false);
+    videoRef.current?.pause();
+    videoBRef.current?.pause();
     const stage = stageRef.current;
     const wake = wakeRef.current;
     const glow = glowRef.current;
@@ -519,20 +546,21 @@ export function EnterTheStudio() {
      run until a video exists, and now no video exists until it is asked for. */
   useEffect(() => {
     if (
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-      introAlreadySeen()
+      reducedMotion || introAlreadySeen()
     ) {
       setMode("desk");
       enterDesk();
     }
-  }, [enterDesk]);
+  }, [enterDesk, reducedMotion]);
 
   useEffect(() => {
-    if (mode !== "film") return;
+    if (mode !== "film" || reducedMotion) return;
     const vid = videoRef.current;
     const stage = stageRef.current;
     const desk = deskRef.current;
     if (!vid || !stage || !desk) return;
+    let cancelled = false;
+    let runtimeBail: ReturnType<typeof setTimeout> | null = null;
 
     startVid();
 
@@ -543,13 +571,25 @@ export function EnterTheStudio() {
        `playing` rather than `loadeddata`: data arriving is not the same as
        the picture moving, and dropping the gate a beat early is how you get
        a flash of black between the door and the film. */
-    const onPlaying = () => setLoading(false);
+    const onPlaying = () => {
+      if (cancelled) return;
+      clearTimeout(loadBail);
+      if (runtimeBail === null) runtimeBail = setTimeout(enterDesk, 26000);
+      setLoading(false);
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        setCurtainDone(true);
+      } else {
+        setCurtainOpening(true);
+      }
+    };
     vid.addEventListener("loadeddata", onLoaded);
     vid.addEventListener("playing", onPlaying);
     /* If it cannot play at all, do not strand anyone on a spinner. */
-    const onFail = () => setLoading(false);
+    const onFail = () => {
+      if (!cancelled) enterDesk();
+    };
     vid.addEventListener("error", onFail);
-    const bail = setTimeout(onFail, 12000);
+    const loadBail = setTimeout(onFail, 12000);
 
     /* ── THE JOIN AT TEN SECONDS ───────────────────────────────────────────
        Both beats are 10.04s, so the handoff lands at exactly the moment a
@@ -598,6 +638,7 @@ export function EnterTheStudio() {
       beatB
         .play()
         .then(() => {
+          if (cancelled) return;
           beatB.pause();
           beatB.currentTime = 0;
         })
@@ -610,6 +651,7 @@ export function EnterTheStudio() {
     beatB?.addEventListener("canplaythrough", prerollSecondBeat, { once: true });
 
     const timers: ReturnType<typeof setTimeout>[] = [];
+    const frames: number[] = [];
 
     const wakeIntoDesktop = () => {
       const wake = wakeRef.current;
@@ -621,25 +663,20 @@ export function EnterTheStudio() {
           desk.classList.add(cls("boot")); // screen powers on
           desk.classList.add(cls("on"));
           glow.classList.add(cls("on")); // backlight bloom
-          requestAnimationFrame(() => {
-            desk.classList.add(cls("boot"));
-            desk.classList.add(cls("on"));
-          });
+          frames.push(
+            requestAnimationFrame(() => {
+              desk.classList.add(cls("boot"));
+              desk.classList.add(cls("on"));
+            }),
+          );
           stage.style.opacity = "0";
         }, 300),
       );
       timers.push(
         setTimeout(() => {
-          // live interactive desktop — and the arrival is spent
-          markIntroSeen();
-          stage.style.display = "none";
-          wake.style.display = "none";
           wake.classList.remove(cls("dim"));
-          glow.style.display = "none";
           glow.classList.remove(cls("on"));
-          desk.classList.remove(cls("boot"));
-          desk.style.transform = "none";
-          desk.style.opacity = "1";
+          enterDesk();
         }, 1320),
       );
     };
@@ -649,13 +686,19 @@ export function EnterTheStudio() {
         wakeIntoDesktop();
         return;
       }
-      /* Reveal first, play second. The dissolve runs over the first beat's
-         held last frame, so there is never a gap to show black through. */
-      beatB.classList.add(cls("beatIn"));
-      beatB.play().catch(() => enterDesk());
-      /* The first beat is finished and covered; letting go of its decoder
-         keeps one clip in flight rather than two. */
-      timers.push(setTimeout(() => vid.pause(), 600));
+      /* Reveal only once playback has actually started. A resolved play()
+         keeps the held final frame covering a slow decoder instead of
+         dissolving onto an empty or poster-only second layer. */
+      beatB
+        .play()
+        .then(() => {
+          if (cancelled) return;
+          beatB.classList.add(cls("beatIn"));
+          timers.push(setTimeout(() => vid.pause(), 600));
+        })
+        .catch(() => {
+          if (!cancelled) enterDesk();
+        });
     };
 
     /* First beat ends → hand to the second. Second beat ends → wake the
@@ -668,7 +711,9 @@ export function EnterTheStudio() {
     beatB?.addEventListener("error", enterDesk);
 
     return () => {
-      clearTimeout(bail);
+      cancelled = true;
+      clearTimeout(loadBail);
+      if (runtimeBail !== null) clearTimeout(runtimeBail);
       vid.removeEventListener("loadeddata", onLoaded);
       vid.removeEventListener("playing", onPlaying);
       vid.removeEventListener("error", onFail);
@@ -678,8 +723,34 @@ export function EnterTheStudio() {
       beatB?.removeEventListener("ended", wakeIntoDesktop);
       beatB?.removeEventListener("error", enterDesk);
       timers.forEach(clearTimeout);
+      frames.forEach(cancelAnimationFrame);
     };
-  }, [mode, enterDesk, startVid]);
+  }, [mode, enterDesk, startVid, reducedMotion]);
+
+  const openFolder = useCallback((key: string) => {
+    if (folderTimerRef.current) clearTimeout(folderTimerRef.current);
+    setOpening(key);
+    folderTimerRef.current = setTimeout(() => {
+      setOpening(null);
+      setOpenWin(key as Exclude<OpenWin, "about" | null>);
+      folderTimerRef.current = null;
+    }, 260);
+  }, []);
+
+  const openWindowNow = useCallback((windowName: OpenWin) => {
+    if (folderTimerRef.current) clearTimeout(folderTimerRef.current);
+    folderTimerRef.current = null;
+    setOpening(null);
+    setOpenWin(windowName);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (folderTimerRef.current) clearTimeout(folderTimerRef.current);
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    },
+    [],
+  );
 
   // Escape closes the folder window.
   useEffect(() => {
@@ -695,7 +766,7 @@ export function EnterTheStudio() {
     openWin === "about" ? "About — Kariim" : openWin ? DATA[openWin].t : "";
   const winNote =
     openWin === "about"
-      ? "prototype note: freelance-facing only — résumé/LinkedIn layer handled separately"
+      ? "Available for product, interface, and studio partnerships."
       : openWin
         ? DATA[openWin].n
         : "";
@@ -713,10 +784,24 @@ export function EnterTheStudio() {
       {/* STAGE 0 — the front door. A still and two controls. Nothing is
           fetched, decoded or played until the visitor asks for it, which is
           also why this is real content rather than an overlay on a video. */}
-      {mode === "gate" || loading ? (
-        <div className={s.gate}>
+      {mode === "gate" || loading || !curtainDone ? (
+        <div
+          className={`${s.gate} ${curtainOpening ? s.gateOpening : ""}`}
+          onAnimationEnd={(event) => {
+            if (event.target === event.currentTarget) {
+              setCurtainDone(true);
+              setCurtainOpening(false);
+            }
+          }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={s.gatePlate} src={ENTRY_PLATE} alt="" />
+          {mode === "film" ? (
+            <div className={s.gateCurtains} aria-hidden="true">
+              <span className={s.gateCurtainLeft} />
+              <span className={s.gateCurtainRight} />
+            </div>
+          ) : null}
           <div className={s.gateVeil} aria-hidden="true" />
       <div className={s.gateGlow} aria-hidden="true" />
 
@@ -747,6 +832,8 @@ export function EnterTheStudio() {
                 className={s.enter}
                 aria-label={`${ENTER_LABEL} — ${INTRO_RUNTIME}`}
                 onClick={() => {
+                  setCurtainDone(false);
+                  setCurtainOpening(false);
                   setLoading(true);
                   setMode("film");
                 }}
@@ -783,12 +870,9 @@ export function EnterTheStudio() {
                     </span>
                   ))}
                 </span>
-                {/* Where the runtime used to be printed. The icon idles
-                    with a slow morph and, once Enter is pressed, spins up
-                    into a real progress state — the film is 24MB and the
-                    wait for it was previously a dead screen. The runtime is
-                    still spoken by the button's accessible name below, so
-                    nothing was lost, only moved. */}
+                {/* The mark becomes the loading state once Enter is pressed;
+                    the runtime remains in the accessible name without adding
+                    a second visible label beside the 9. */}
                 <span
                   className={`${s.enterIcon} ${loading ? s.enterIconBusy : ""}`}
                   aria-hidden="true"
@@ -803,11 +887,6 @@ export function EnterTheStudio() {
                   <span className={s.enterIconArt}>
                     <Shift9Mark size={20} />
                   </span>
-                  {/* The runtime, back on screen. It was printed in full
-                      beside the label and moving the icon into that slot took
-                      it away, which is the one thing on this button nobody
-                      should have to guess at. */}
-                  <span className={s.enterCount}>{INTRO_RUNTIME_SHORT}</span>
                 </span>
               </button>
 
@@ -996,15 +1075,12 @@ export function EnterTheStudio() {
                 data-f={f.key}
                 role="button"
                 tabIndex={0}
-                onClick={() => {
-                  setOpening(f.key);
-                  window.setTimeout(() => {
-                    setOpening(null);
-                    setOpenWin(f.key);
-                  }, 260);
-                }}
+                onClick={() => openFolder(f.key)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") setOpenWin(f.key);
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openFolder(f.key);
+                  }
                 }}
               >
                 <div className={s.fico}>
@@ -1024,9 +1100,12 @@ export function EnterTheStudio() {
               data-f="about"
               role="button"
               tabIndex={0}
-              onClick={() => setOpenWin("about")}
+              onClick={() => openWindowNow("about")}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") setOpenWin("about");
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openWindowNow("about");
+                }
               }}
             >
               <div className={`${s.aboutico} ${s.holo}`}>{ABOUT_GLYPH}</div>
@@ -1075,7 +1154,11 @@ export function EnterTheStudio() {
             navigator.clipboard?.writeText(STUDIO_EMAIL).then(
               () => {
                 setCopied(true);
-                window.setTimeout(() => setCopied(false), 2400);
+                if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+                copyTimerRef.current = setTimeout(() => {
+                  setCopied(false);
+                  copyTimerRef.current = null;
+                }, 2400);
               },
               () => {
                 /* Clipboard refused (insecure context, or denied). The mailto
