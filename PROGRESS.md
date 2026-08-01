@@ -6,7 +6,7 @@
 
 **Last updated:** 2026-07-31
 **Branch:** `claude/flow-state-waitlist`
-**PR:** pending
+**PR:** #39 — open, ready for review, **not merged**
 **Base:** `origin/main` @ `2fa1b4b` (2026-07-29)
 **Scope:** dedicated Flow State page, waitlist capture, studio link, and product-scoped waitlist uniqueness.
 

@@ -82,6 +82,7 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 | PR | Title | Branch |
 |---|---|---|
+| #39 | Add the Flow State waitlist | `claude/flow-state-waitlist` |
 | #35 | Enter the Studio - the entry experience | `claude/shift9-studio-entry-experience-5wnekz` |
 | #16 | Profile: align featured work with the finalized manifest | `claude/org-manifest-y1yqr5` |
 | #15 | Just a Pinch - honest launch status + real waitlist capture | `claude/pinch-landing-y1yqr5` |
