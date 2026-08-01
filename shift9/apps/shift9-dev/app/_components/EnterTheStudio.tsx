@@ -397,30 +397,10 @@ export function EnterTheStudio() {
      The opening is 24MB; on anything but a fast line there is a real wait
      there, and it used to be a dead screen. */
   const [loading, setLoading] = useState(false);
-  const [curtainDone, setCurtainDone] = useState(true);
-  const [curtainOpening, setCurtainOpening] = useState(false);
   /* Which folder is mid-open, so its lid can lift before the window arrives. */
   const [opening, setOpening] = useState<string | null>(null);
   const folderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (!curtainOpening) return;
-    const token = getComputedStyle(document.documentElement)
-      .getPropertyValue("--s9-dur-boot")
-      .trim();
-    const value = Number.parseFloat(token);
-    const duration = Number.isFinite(value)
-      ? token.endsWith("ms")
-        ? value
-        : value * 1000
-      : 1200;
-    const curtainFallback = setTimeout(() => {
-      setCurtainDone(true);
-      setCurtainOpening(false);
-    }, duration + 160);
-    return () => clearTimeout(curtainFallback);
-  }, [curtainOpening]);
 
   /* Theme. SSR renders light so the server and first client paint agree; the
      stored choice (or the OS preference) is applied on mount. The desktop is
@@ -506,8 +486,6 @@ export function EnterTheStudio() {
     markIntroSeen();
     setMode("desk");
     setLoading(false);
-    setCurtainDone(true);
-    setCurtainOpening(false);
     videoRef.current?.pause();
     videoBRef.current?.pause();
     const stage = stageRef.current;
@@ -576,9 +554,6 @@ export function EnterTheStudio() {
       clearTimeout(loadBail);
       if (runtimeBail === null) runtimeBail = setTimeout(enterDesk, 26000);
       setLoading(false);
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        setCurtainDone(true);
-      }
     };
     vid.addEventListener("loadeddata", onLoaded);
     vid.addEventListener("playing", onPlaying);
@@ -782,26 +757,12 @@ export function EnterTheStudio() {
       {/* STAGE 0 — the front door. A still and two controls. Nothing is
           fetched, decoded or played until the visitor asks for it, which is
           also why this is real content rather than an overlay on a video. */}
-      {mode === "gate" || !curtainDone ? (
-        <div
-          className={`${s.gate} ${curtainOpening ? s.gateOpening : ""}`}
-          onAnimationEnd={(event) => {
-            if (event.target === event.currentTarget) {
-              setCurtainDone(true);
-              setCurtainOpening(false);
-            }
-          }}
-        >
+      {mode === "gate" ? (
+        <div className={s.gate}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={s.gatePlate} src={ENTRY_PLATE} alt="" />
-          {mode === "film" ? (
-            <div className={s.gateCurtains} aria-hidden="true">
-              <span className={s.gateCurtainLeft} />
-              <span className={s.gateCurtainRight} />
-            </div>
-          ) : null}
           <div className={s.gateVeil} aria-hidden="true" />
-      <div className={s.gateGlow} aria-hidden="true" />
+          <div className={s.gateGlow} aria-hidden="true" />
 
           <div className={s.gateBody}>
             {/* The same lockup the desktop carries, so the front door and
@@ -829,12 +790,10 @@ export function EnterTheStudio() {
                 type="button"
                 className={s.enter}
                 aria-label={`${ENTER_LABEL} — ${INTRO_RUNTIME}`}
-                 onClick={() => {
-                   setCurtainDone(false);
-                   setCurtainOpening(true);
-                   setLoading(true);
-                   setMode("film");
-                 }}
+                onClick={() => {
+                  setLoading(true);
+                  setMode("film");
+                }}
               >
                 <span className={s.enterFrame} aria-hidden="true">
                   <i />

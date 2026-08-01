@@ -220,117 +220,6 @@
   object-position: 30% 50%;
 }
 
-.gateCurtains {
-  --curtain-seam: 30%;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  perspective: 1200px;
-}
-
-.gateCurtainLeft,
-.gateCurtainRight {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      ellipse 12% 110% at var(--curtain-seam) 50%,
-      var(--s9-void-2) 0%,
-      var(--s9-chalk) 100%
-    ),
-    url("/experience/opening/00-entry-seam.jpg") 30% 50% / cover no-repeat;
-  background-blend-mode: multiply;
-  will-change: transform;
-  backface-visibility: hidden;
-}
-
-.gateCurtainLeft {
-  /* Part at the photographed aperture, not at the viewport midpoint. A narrow
-     transparent channel leaves the original light on the stationary plate
-     below, while the moving copy contains only dark fabric. */
-  -webkit-mask-image: linear-gradient(
-    to right,
-    black 0%,
-    black calc(var(--curtain-seam) - 6%),
-    transparent calc(var(--curtain-seam) - 1%),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    black 0%,
-    black calc(var(--curtain-seam) - 6%),
-    transparent calc(var(--curtain-seam) - 1%),
-    transparent 100%
-  );
-  transform-origin: left center;
-}
-
-.gateCurtainRight {
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    transparent calc(var(--curtain-seam) + 1%),
-    black calc(var(--curtain-seam) + 6%),
-    black 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0%,
-    transparent calc(var(--curtain-seam) + 1%),
-    black calc(var(--curtain-seam) + 6%),
-    black 100%
-  );
-  transform-origin: right center;
-}
-
-.gateOpening {
-  animation: gateRelease var(--s9-dur-boot) var(--s9-ease-premium) both;
-}
-
-.gateOpening .gatePlate {
-  animation: gatePlateAdvance var(--s9-dur-boot) var(--s9-ease-premium) both;
-}
-
-.gateOpening .gateCurtainLeft {
-  animation: curtainLeft var(--s9-dur-boot) var(--s9-ease-premium) both;
-}
-
-.gateOpening .gateCurtainRight {
-  animation: curtainRight var(--s9-dur-boot) var(--s9-ease-premium) both;
-}
-
-.gateOpening .gateBody,
-.gateOpening .gateVeil,
-.gateOpening .gateGlow {
-  animation: gateUiDepart var(--s9-dur-base) var(--s9-ease-out) both;
-}
-
-@keyframes gateRelease {
-  0%, 76% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-@keyframes gatePlateAdvance {
-  from { opacity: 1; transform: scale(1); }
-  to { opacity: 0; transform: scale(1.1); }
-}
-
-@keyframes curtainLeft {
-  from { transform: translate3d(0, 0, 0) rotateY(0) scale(1); }
-  to { transform: translate3d(-34%, 0, 0) rotateY(-5deg) scale(1.08); }
-}
-
-@keyframes curtainRight {
-  from { transform: translate3d(0, 0, 0) rotateY(0) scale(1); }
-  to { transform: translate3d(34%, 0, 0) rotateY(5deg) scale(1.08); }
-}
-
-@keyframes gateUiDepart {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(0.75rem); }
-}
-
 /* Weights the lower half so the type has ground under it whatever the plate
    is doing behind, without flattening the light. */
 .gateVeil {
@@ -353,34 +242,15 @@
     );
 }
 
-/* ── The seam breathes ────────────────────────────────────────────────────
-   The plate is fabric parted along a seam with light behind it, and until now
-   that light was painted on: the front door appeared fully formed and then sat
-   perfectly still until you touched something. Measured on a cold load, five
-   consecutive frames across a second and a half were byte-for-byte identical.
-   Static and dead are not the same thing, and this was the second one.
-
-   So the gap gets a pulse, and only the gap. The plate does not move, the type
-   does not move, the controls do not move — the light in the seam rises and
-   falls on a cycle slow enough (5.6s) that it registers as the room being lit
-   rather than as the page doing something. One composited layer over the
-   photograph: no repaint of the image, no canvas, no second asset.
-
-   It is deliberately the only thing on this screen with a heartbeat. The plate
-   holding still is exactly what makes the seam read as a light source instead
-   of an effect. */
+/* The yarn stays still. Only the existing light in its seam rises and falls,
+   preserving the original entrance image without trying to simulate fabric. */
 .gateGlow {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  /* Screen blending can only ADD light. It cannot darken the plate or shift
-     its colour, so the photograph underneath is never touched — the gap just
-     gets brighter. */
   mix-blend-mode: screen;
   filter: blur(18px);
-  /* Sited on the seam, which sits at the left third of the frame; the stops
-     track the same 30% object-position the plate is held at. */
   background: linear-gradient(
     90deg,
     transparent 21%,
@@ -403,9 +273,6 @@
   }
 }
 
-/* Reduced motion holds it near the top of the breath rather than the bottom.
-   Stopping at 0.08 would be the page with its light switched off; stopping lit
-   is the finished picture — degrade to a complete state, never a paused one. */
 @media (prefers-reduced-motion: reduce) {
   .gateGlow {
     animation: none;
@@ -598,15 +465,6 @@
     transform: none;
   }
 
-  .gateOpening,
-  .gateOpening .gatePlate,
-  .gateOpening .gateCurtainLeft,
-  .gateOpening .gateCurtainRight,
-  .gateOpening .gateBody,
-  .gateOpening .gateVeil,
-  .gateOpening .gateGlow {
-    animation: none;
-  }
 }
 
 .gateActions {
@@ -871,15 +729,6 @@
      in frame and stays clear of the words. */
   .gatePlate {
     object-position: 18% 50%;
-  }
-
-  .gateCurtainLeft,
-  .gateCurtainRight {
-    background-position: 18% 50%;
-  }
-
-  .gateCurtains {
-    --curtain-seam: 18%;
   }
 
   .gateBody {

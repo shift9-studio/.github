@@ -6,7 +6,7 @@
 
 **Last updated:** 2026-08-01
 **Branch:** `codex/instrument-case-study`
-**PR:** #40 — draft, checks green, awaiting Kariim's merge approval
+**PR:** #40 — merge authorized by Kariim on 2026-08-01; merge after final green checks
 **Base:** `origin/main` @ `62bdea5` (Flow State merged)
 **Scope:** give Flow State its water-surface direction; make `/instrument` a public lab case study with an easy project-extension path; preserve its technical catalog and distinguish it from Titanium Forge.
 
@@ -37,17 +37,10 @@
 - The floating return control on `/start`, `/flow-state`, and `/instrument` now
   uses one shared compact ghost-pearl modifier. Instrument page actions are
   slimmer and capped on mobile instead of filling the viewport by default.
-- The landing gate keeps the exact yarn image, then parts duplicate left/right
-  halves with a shallow perspective push while the intro becomes ready. The
-  visible `20s` is removed; the split 9 mark lifts its light half and settles its
-  grey half on approach, with a static reduced-motion state.
-- The two opening curtain layers now use overlapping alpha feathers at their
-  inner edges instead of hard 50% clips. Frame-by-frame production playback
-  confirms the yarn parts without exposing straight crop lines.
-- The curtain now starts on the click rather than waiting for video playback.
-  Its moving fabric parts at the photographed aperture, suppresses the baked-in
-  blue light, and reveals a preloaded exterior frame so the light stays behind
-  the yarn without introducing a black gap.
+- The landing gate is back to the original static yarn photograph. There are no
+  split layers, displacement shader, or curtain-motion states; Enter hands
+  directly to the preloaded film. The visible `20s` remains removed, and the
+  split 9 mark keeps its restrained opposing hover.
 - Studio set-piece clips no longer use native hard loops. Two cached video layers
   crossfade before the decoded end, pause offscreen, and clean up rAF/timers.
 - The studio outro is a physical invitation card with a secondary backing card,
@@ -66,7 +59,7 @@
 - `test:instrument` guards the route split, registry path, product distinction,
   current reference, lab motion, reduced-motion branch, set-piece media, and listing copy.
 - `test:studio-polish` guards seamless media, the invitation object, split-9
-  hover, curtain opening, ghost controls, reduced motion, and public note cleanup.
+  hover, the static yarn entrance, ghost controls, reduced motion, and public note cleanup.
 
 ## Verification
 
@@ -84,16 +77,16 @@
 - Every public route was reviewed at desktop scale. The archive and Studio
   threshold were additionally checked at 390px; all twelve archive links and
   project titles are present in the public DOM, with no horizontal overflow.
-- The curtain opening was replayed and captured at three points across its
-  release; the closed texture remains identical and the separating edges stay soft.
+- The rebuilt entrance shows the original static yarn plate and contains no
+  curtain split, WebGPU renderer, or curtain-motion state.
 - The project archive inspection motion is now a tapered optical wash with a
   slight image lift, not a bright one-pixel laser line; hover and focus trigger
   one restrained pass and reduced motion keeps it still.
 
-## User-gated
+## Merge authorization
 
-- PR #40 is open as a draft with both Vercel deployments green. Do not merge
-  without Kariim's approval.
+- Kariim explicitly authorized landing PR #40 on `main` on 2026-08-01 after
+  rewinding the yarn entrance to its static version.
 
 ## Machine gotcha
 
