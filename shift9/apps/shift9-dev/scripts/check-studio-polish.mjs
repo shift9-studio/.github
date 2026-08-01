@@ -37,9 +37,12 @@ assert.match(dolly, /next[\s\S]*?\.play\(\)[\s\S]*?\.then\([\s\S]*?next\.style\.
 assert.match(dolly, /let cancelled = false[\s\S]*?\.then\(\(\) => \{[\s\S]{0,120}if \(cancelled\) return/, "Late media promises must not revive a cleaned-up studio loop");
 
 assert.match(dolly, /invitationCard/, "The studio outro must render a physical invitation object");
+assert.match(dolly, /bookendTrack/, "The studio opening must render the twelve-stop dolly track");
+assert.match(dolly, /SET_PIECES\.map[\s\S]{0,160}piece\.n/, "The opening track must come from the canonical project roster");
 assert.match(dolly, /Open your invitation/, "The invitation must name its action clearly");
 assert.match(dollyStyles, /\.invitationCard/, "The invitation object must have a finished material");
 assert.match(dollyStyles, /prefers-reduced-motion: reduce/, "Studio motion must have a reduced-motion state");
+assert.match(dollyStyles, /bookendTrack i[\s\S]*animation:\s*none/, "The opening track must stop under reduced motion");
 
 assert.doesNotMatch(entrance, /prototype note/i, "The studio desktop must not expose internal notes");
 assert.doesNotMatch(entrance, /INTRO_RUNTIME_SHORT|enterCount/, "The redundant visible 20s label must stay removed");
@@ -56,6 +59,9 @@ assert.match(entranceStyles, /shift9-mark-grey[\s\S]*translateY\(1\.5px\)/, "The
 assert.match(entrance, /gateCurtainLeft/, "The entrance must render the opening curtain halves");
 assert.match(entranceStyles, /@keyframes curtainLeft/, "The entrance must part the left curtain");
 assert.match(entranceStyles, /@keyframes curtainRight/, "The entrance must part the right curtain");
+assert.match(entranceStyles, /gateCurtainLeft[\s\S]*mask-image:\s*linear-gradient/, "The left curtain edge must feather instead of exposing a clipped seam");
+assert.match(entranceStyles, /gateCurtainRight[\s\S]*mask-image:\s*linear-gradient/, "The right curtain edge must feather instead of exposing a clipped seam");
+assert.doesNotMatch(entranceStyles, /gateCurtainLeft[\s\S]{0,160}clip-path/, "The curtain must not restore a hard clipped center edge");
 assert.match(entranceStyles, /--w-light-row-text/, "Light folder rows must define readable title text");
 assert.match(entranceStyles, /\.item:nth-child\(even\)[\s\S]*color:\s*var\(--w-light-row-text\)/, "Light folder rows must apply their dark text token");
 assert.match(entranceStyles, /\.item:nth-child\(even\) h3[\s\S]{0,120}color:\s*var\(--w-light-row-text\)/, "Light folder titles must explicitly keep readable dark text");

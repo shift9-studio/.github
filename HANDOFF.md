@@ -63,8 +63,14 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   these details. Alternating light project rows now explicitly use dark ink for
   their titles, the public email is consistently `shift9dev@gmail.com`, and late
   media promises cannot revive torn-down animation loops. The full production
-  build, browser contrast check, and both Vercel deployments pass. Do not merge
-  without Kariim's approval.
+  build, browser contrast check, and both Vercel deployments pass. The technical
+  reference now includes all twelve current projects from the reel registry in
+  an asymmetric living archive, and the Studio reel opens on a twelve-stop dolly
+  threshold rather than a basic centered title. Desktop routes plus 390px archive
+  and Studio layouts were visually checked. The entrance curtain now feathers
+  overlapping inner edges instead of revealing two hard clipped crop lines; its
+  production opening was verified frame by frame. Do not merge without Kariim's
+  approval.
 
 - **2026-08-01 - Flow State waitlist merged and verified.** PR #39 adds
   `/flow-state`, routes the studio card to it,

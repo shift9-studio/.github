@@ -63,6 +63,13 @@ assert.match(reference, /Instrument case study/, "The technical reference must l
 assert.match(reference, /route: "\/flow-state"/, "The technical reference must include the current Flow State room");
 assert.match(reference, /route: "\/instrument"/, "The technical reference must include its public case-study room");
 assert.doesNotMatch(reference, /four rooms/i, "The technical reference must not keep the stale room count");
+assert.match(reference, /SET_PIECES\.map/, "The technical reference must render the canonical project register");
+assert.match(reference, /Twelve builds\. One living archive\./, "The project register must explain the full studio roster");
+assert.equal(
+  [...studioDolly.matchAll(/\n\s+n: "\d{2}",/g)].length,
+  12,
+  "The canonical studio register must keep all twelve current projects",
+);
 
 assert.match(styles, /:focus-visible/, "Instrument links must keep a visible focus treatment");
 assert.match(styles, /prefers-reduced-motion: reduce/, "Instrument must define a reduced-motion state");

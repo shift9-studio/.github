@@ -210,19 +210,54 @@
 
 /* Opening and closing plates — the take has to start and end somewhere. */
 .bookend {
+  position: relative;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: clamp(5rem, 12vh, 9rem) 6vw clamp(9rem, 18vh, 13rem);
+}
+
+.bookendCopy {
+  width: min(1180px, 100%);
+  margin-inline: auto;
   display: grid;
-  place-content: center;
-  gap: 1.1rem;
-  padding: 12vh 6vw;
-  text-align: center;
+  gap: clamp(2.5rem, 7vw, 7rem);
+  align-items: end;
+}
+
+.bookendKicker,
+.bookendCue {
+  display: block;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+}
+
+.bookendKicker::before {
+  content: "// ";
+  color: var(--s9-signal);
 }
 
 .bookend h1 {
-  font-size: clamp(2.4rem, 7vw, 5rem);
-  line-height: 0.96;
-  letter-spacing: -0.03em;
-  margin: 0;
+  max-width: 10ch;
+  margin: 1.4rem 0 0;
+  font-size: clamp(4rem, 10vw, 8.5rem);
+  line-height: 0.84;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.bookend h1 em {
+  font-style: normal;
+  color: var(--s9-ink-dim);
+}
+
+.bookendAside {
+  padding-left: clamp(1.2rem, 3vw, 2.4rem);
+  border-left: 1px solid var(--s9-hair, color-mix(in srgb, var(--s9-paper) 10%, transparent));
 }
 
 /* The opening statement, and for a long stretch the only thing on screen.
@@ -237,12 +272,87 @@
    title above it, no longer something you lean in for. */
 .lede {
   max-width: 46ch;
-  margin-inline: auto;
+  margin: 0;
   color: rgb(248 250 252 / 0.88);
   font-size: var(--s9-text-lead);
   font-weight: 500;
   line-height: 1.5;
   text-wrap: pretty;
+}
+
+.bookendCue {
+  margin-top: 2rem;
+  color: var(--s9-signal);
+}
+
+.bookendTrack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(2.25rem, 7vh, 5.5rem);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  height: 3.8rem;
+  border-block: 1px solid var(--s9-hair, color-mix(in srgb, var(--s9-paper) 10%, transparent));
+}
+
+.bookendTrack span {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0.55rem;
+  border-left: 1px solid var(--s9-hair, color-mix(in srgb, var(--s9-paper) 10%, transparent));
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  color: var(--s9-ink-dim);
+}
+
+.bookendTrack span:first-child {
+  border-left: 0;
+}
+
+.bookendTrack i {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: calc(100% / 12);
+  background: color-mix(in srgb, var(--s9-pearl) 12%, transparent);
+  border-inline: 1px solid var(--s9-pearl);
+  animation: trackSurvey calc(var(--s9-dur-slow) * 8) var(--s9-ease-inout) infinite alternate;
+}
+
+@keyframes trackSurvey {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(1100%);
+  }
+}
+
+@media (min-width: 54rem) {
+  .bookendCopy {
+    grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.55fr);
+  }
+}
+
+@media (max-width: 40rem) {
+  .bookend {
+    align-items: flex-start;
+  }
+
+  .bookend h1 {
+    font-size: clamp(3.7rem, 17vw, 5.6rem);
+  }
+
+  .bookendTrack span {
+    font-size: 0;
+  }
+
+  .bookendTrack span:nth-child(3n + 1) {
+    font-size: 0.54rem;
+  }
 }
 
 /* It reads 12/12 and then has nothing left to count, so it goes. The banner
@@ -300,6 +410,10 @@
 
   .counter {
     display: none;
+  }
+
+  .bookendTrack i {
+    animation: none;
   }
 }
 

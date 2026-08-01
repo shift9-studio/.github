@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import { SET_PIECES } from "../../_components/studio-dolly-data";
 import { CopyRow } from "../CopyRow";
 import s from "../instrument.module.css";
 
@@ -270,13 +272,117 @@ export default function InstrumentReferencePage() {
           <em>Every surface.</em>
         </h1>
         <p className={s.lede}>
-          The tokens, type, motion and components every Shift-9 surface is built
-          from — and, just as usefully, where each surface deliberately departs.
+          A living register of every Shift-9 project, followed by the tokens,
+          type, motion and components that keep twelve different voices feeling
+          like one studio.
         </p>
         <p className={s.note}>
           Each swatch reads the live custom property. The text beside it names
           the documented value and role. Press any row to copy the token.
         </p>
+      </section>
+
+      <section id="project-register" className={`${s.wrap} ${s.section} ${s.projectArchive}`}>
+        <div className={s.archiveFrame}>
+          <header className={s.archiveHeader}>
+            <span className={s.label}>the project register</span>
+            <span className={s.archiveCount} aria-hidden>
+              {SET_PIECES.length.toString().padStart(2, "0")}
+            </span>
+            <h2 className={s.h2}>Twelve builds. One living archive.</h2>
+            <p className={s.note}>
+              Apps, games, product systems and studio infrastructure. This
+              register grows with the work; every new project joins the same
+              source that drives the studio reel.
+            </p>
+            <nav className={s.archiveNav} aria-label="Project register index">
+              {SET_PIECES.map((project) => (
+                <a
+                  key={project.n}
+                  href={`#project-${project.n}`}
+                  aria-label={`Jump to ${project.title}`}
+                  title={project.title}
+                >
+                  {project.n}
+                </a>
+              ))}
+            </nav>
+          </header>
+
+          <div className={s.projectGrid}>
+            {SET_PIECES.map((project) => {
+              const href = project.href ?? "/soon";
+              const isExternal = href.startsWith("http");
+              const isComingSoon = href.startsWith("/soon");
+              const isFeature = ["01", "02", "09", "10"].includes(project.n);
+
+              return (
+                <article
+                  key={project.n}
+                  id={`project-${project.n}`}
+                  className={`${s.projectCard} ${isFeature ? s.projectFeature : ""}`}
+                >
+                  <Link
+                    href={href}
+                    className={s.projectMedia}
+                    aria-label={`${isComingSoon ? "View status for" : "Open"} ${project.title}`}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noreferrer" : undefined}
+                  >
+                    <Image
+                      src={project.plate}
+                      alt=""
+                      fill
+                      sizes={isFeature ? "(min-width: 64rem) 62vw, 100vw" : "(min-width: 64rem) 31vw, 100vw"}
+                      className={s.projectImage}
+                    />
+                    <span className={s.projectShade} aria-hidden />
+                    <span className={s.projectScan} aria-hidden />
+                    <span className={s.projectCorner} aria-hidden>
+                      {project.card}
+                    </span>
+                  </Link>
+
+                  <div className={s.projectCopy}>
+                    <div className={s.projectMeta}>
+                      <span>{project.n}</span>
+                      <span>{project.status}</span>
+                    </div>
+                    <h3>
+                      <Link
+                        href={href}
+                        target={isExternal ? "_blank" : undefined}
+                        rel={isExternal ? "noreferrer" : undefined}
+                      >
+                        {project.title}
+                      </Link>
+                    </h3>
+                    <p>{project.note}</p>
+                    <div className={s.projectTags} aria-label="Project technologies">
+                      {project.tags.map((tag) => (
+                        <span key={tag}>{tag}</span>
+                      ))}
+                    </div>
+                    <div className={s.projectActions}>
+                      <Link
+                        href={href}
+                        target={isExternal ? "_blank" : undefined}
+                        rel={isExternal ? "noreferrer" : undefined}
+                      >
+                        {isComingSoon ? "View build status" : "Open project"} →
+                      </Link>
+                      {project.appHref ? (
+                        <Link href={project.appHref} target="_blank" rel="noreferrer">
+                          {project.appLabel ?? "Open app"} ↗
+                        </Link>
+                      ) : null}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
       </section>
 
       {palette.map((group) => (

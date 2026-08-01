@@ -532,12 +532,29 @@ export function StudioDolly() {
           desktop starts on its way out. */}
       <div className={s.curtain} aria-hidden />
       <header className={s.bookend}>
-        <h1>The Studio</h1>
-        <p className={s.lede}>
-          Twelve projects, one continuous take. Scroll to move through them. The
-          finished ones look finished. The ones still in development don&apos;t
-          &mdash; and I left them that way on purpose.
-        </p>
+        <div className={s.bookendCopy}>
+          <div>
+            <span className={s.bookendKicker}>uncut studio reel / twelve builds</span>
+            <h1>
+              The studio,
+              <br />
+              <em>in one take.</em>
+            </h1>
+          </div>
+          <div className={s.bookendAside}>
+            <p className={s.lede}>
+              Scroll to travel through twelve projects as one continuous shot.
+              Finished work is settled; active builds keep their working edges.
+            </p>
+            <span className={s.bookendCue}>scroll to roll ↓</span>
+          </div>
+        </div>
+        <div className={s.bookendTrack} aria-hidden>
+          {SET_PIECES.map((piece) => (
+            <span key={piece.n}>{piece.n}</span>
+          ))}
+          <i />
+        </div>
       </header>
 
       {SET_PIECES.map((piece, i) => (

@@ -355,6 +355,280 @@
   color: var(--s9-ink);
 }
 
+/* ── Project register ─────────────────────────────────────────────────────
+   An archive, not a card shelf. The index stays put while the work travels;
+   four anchor projects take a wider frame and the remaining builds tighten
+   into the same measured register. */
+
+.archiveFrame {
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 5.5rem);
+}
+
+.archiveHeader {
+  align-self: start;
+}
+
+.archiveHeader .label {
+  margin-bottom: 1.2rem;
+}
+
+.archiveCount {
+  display: block;
+  margin-bottom: 1.5rem;
+  font-family: var(--s9-font-display);
+  font-size: clamp(5rem, 13vw, 9rem);
+  font-weight: 700;
+  line-height: 0.78;
+  letter-spacing: -0.08em;
+  color: var(--s9-ink-dim);
+}
+
+.archiveNav {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 2rem;
+  border: 1px solid var(--s9-hair);
+  background: var(--s9-hair);
+}
+
+.archiveNav a {
+  display: grid;
+  min-height: 2.6rem;
+  place-items: center;
+  background: var(--s9-obsidian);
+  font-family: var(--s9-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--s9-ink-dim);
+  text-decoration: none;
+  transition:
+    color var(--s9-dur-fast) var(--s9-ease-out),
+    background-color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.archiveNav a:is(:hover, :focus-visible) {
+  color: var(--s9-obsidian);
+  background: var(--s9-pearl);
+  outline: none;
+}
+
+.projectGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+  border: 1px solid var(--s9-hair);
+  background: var(--s9-hair);
+}
+
+.projectCard {
+  min-width: 0;
+  scroll-margin-top: 2.25rem;
+  background: var(--s9-obsidian);
+}
+
+.projectMedia {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  color: var(--s9-ink);
+  background: var(--s9-obsidian);
+}
+
+.projectMedia:focus-visible {
+  outline: 2px solid var(--s9-signal);
+  outline-offset: -2px;
+}
+
+.projectImage {
+  object-fit: cover;
+  filter: saturate(0.55) contrast(1.08);
+  transform: scale(1.01);
+  transition:
+    transform var(--s9-dur-slow) var(--s9-ease-premium),
+    filter var(--s9-dur-slow) var(--s9-ease-out);
+}
+
+.projectShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 42%,
+    color-mix(in srgb, var(--s9-obsidian) 88%, transparent)
+  );
+  pointer-events: none;
+}
+
+.projectScan {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  opacity: 0;
+  background: var(--s9-pearl);
+  box-shadow: 0 0 1.4rem var(--s9-titanium);
+  pointer-events: none;
+}
+
+.projectCorner {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.9rem;
+  font-family: var(--s9-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--s9-ink-2);
+}
+
+.projectCard:is(:hover, :focus-within) .projectImage {
+  filter: saturate(1) contrast(1.02);
+  transform: scale(1.045);
+}
+
+.projectCard:is(:hover, :focus-within) .projectScan {
+  animation: projectInspect var(--s9-dur-slow) var(--s9-ease-out) both;
+}
+
+@keyframes projectInspect {
+  from {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  18% {
+    opacity: 0.78;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(38rem);
+  }
+}
+
+.projectCopy {
+  display: flex;
+  min-height: 19rem;
+  flex-direction: column;
+  padding: 1.3rem 1.25rem 1.5rem;
+}
+
+.projectMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--s9-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--s9-ink-dim);
+}
+
+.projectMeta span:last-child {
+  color: var(--s9-verdant);
+}
+
+.projectCopy h3 {
+  margin: 1.1rem 0 0;
+  font-family: var(--s9-font-display);
+  font-size: clamp(1.7rem, 3vw, 2.5rem);
+  font-weight: 650;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+.projectCopy h3 a {
+  color: var(--s9-ink);
+  text-decoration: none;
+}
+
+.projectCopy h3 a:focus-visible,
+.projectActions a:focus-visible {
+  outline: 2px solid var(--s9-signal);
+  outline-offset: 4px;
+}
+
+.projectCopy > p {
+  margin-top: 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.58;
+  color: var(--s9-ink-2);
+}
+
+.projectTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1.1rem;
+}
+
+.projectTags span {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--s9-hair);
+  font-family: var(--s9-font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  color: var(--s9-ink-dim);
+}
+
+.projectActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.15rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--s9-hair);
+}
+
+.projectActions a {
+  font-family: var(--s9-font-mono);
+  font-size: 0.64rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--s9-ink);
+  text-decoration: none;
+  transition: color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.projectActions a:hover {
+  color: var(--s9-verdant);
+}
+
+@media (min-width: 46rem) {
+  .projectGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .projectFeature {
+    grid-column: span 2;
+  }
+
+  .projectFeature .projectMedia {
+    aspect-ratio: 21 / 9;
+  }
+}
+
+@media (min-width: 68rem) {
+  .archiveFrame {
+    grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 2.3fr);
+  }
+
+  .archiveNav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .archiveHeader {
+    position: sticky;
+    top: 2.25rem;
+  }
+
+  .projectFeature .projectCopy {
+    min-height: 16rem;
+  }
+}
+
 /* ── Surfaces ───────────────────────────────────────────────────────────── */
 
 .surfaces {
@@ -460,7 +734,17 @@
   .copy,
   .flash,
   .hint,
-  .back {
+  .back,
+  .projectImage,
+  .projectActions a {
     transition: none;
+  }
+
+  .archiveNav a {
+    transition: none;
+  }
+
+  .projectCard:is(:hover, :focus-within) .projectScan {
+    animation: none;
   }
 }

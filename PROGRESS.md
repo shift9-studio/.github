@@ -27,6 +27,10 @@
 - The dense token, type, motion, component, and hook catalog moved intact to
   `/instrument/reference`. Its stale room count, `/start` accent description,
   missing Flow State and Instrument rooms, and missing product materials were corrected.
+- `/instrument/reference` now opens with a living archive of all twelve current
+  projects, sourced directly from the Studio reel registry. A sticky numbered
+  index, asymmetric feature frames, project imagery, status, stack, and actions
+  keep the page useful as the catalog grows.
 - Both studio catalogs now identify Instrument as Shift-9's production system
   and Titanium Forge as the portable component workbench.
 - All Instrument return and action controls use the pearl button family.
@@ -37,10 +41,16 @@
   halves with a shallow perspective push while the intro becomes ready. The
   visible `20s` is removed; the split 9 mark lifts its light half and settles its
   grey half on approach, with a static reduced-motion state.
+- The two opening curtain layers now use overlapping alpha feathers at their
+  inner edges instead of hard 50% clips. Frame-by-frame production playback
+  confirms the yarn parts without exposing straight crop lines.
 - Studio set-piece clips no longer use native hard loops. Two cached video layers
   crossfade before the decoded end, pause offscreen, and clean up rAF/timers.
 - The studio outro is a physical invitation card with a secondary backing card,
   private-viewing line, S9 seal, and the existing Shift-9 artwork/settle film.
+- The Studio reel no longer enters through a basic centered title card. Its new
+  asymmetric threshold uses a twelve-stop dolly track and a seamless alternating
+  survey motion sourced from the same canonical roster.
 - Alternating light project rows now pin their headings and links to the dark
   ink token instead of inheriting the low-contrast title color. The production
   preview confirms all four Apps titles remain readable on both row materials.
@@ -67,6 +77,11 @@
   preview. The visible `20s` and all rendered `prototype note` strings are absent.
 - The rebuilt Apps folder was checked in-browser: light rows use dark project
   titles and body copy; the full Shift-9 production build exits 0.
+- Every public route was reviewed at desktop scale. The archive and Studio
+  threshold were additionally checked at 390px; all twelve archive links and
+  project titles are present in the public DOM, with no horizontal overflow.
+- The curtain opening was replayed and captured at three points across its
+  release; the closed texture remains identical and the separating edges stay soft.
 
 ## User-gated
 

@@ -231,15 +231,46 @@
   inset: 0;
   background: url("/experience/opening/00-entry-seam.jpg") 30% 50% / cover no-repeat;
   will-change: transform;
+  backface-visibility: hidden;
 }
 
 .gateCurtainLeft {
-  clip-path: inset(0 50% 0 0);
+  /* A clipped half exposes a ruler-straight raster edge as soon as the planes
+     rotate apart. Keep the duplicate full-size and feather only its inner half
+     into the untouched plate below; identical pixels composite invisibly while
+     closed, then separate like fibres instead of two cropped rectangles. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    black 0%,
+    black 46%,
+    transparent 54%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    black 0%,
+    black 46%,
+    transparent 54%,
+    transparent 100%
+  );
   transform-origin: left center;
 }
 
 .gateCurtainRight {
-  clip-path: inset(0 0 0 50%);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 46%,
+    black 54%,
+    black 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 46%,
+    black 54%,
+    black 100%
+  );
   transform-origin: right center;
 }
 
