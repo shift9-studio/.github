@@ -112,12 +112,21 @@
 }
 
 @supports (background-clip: text) or (-webkit-background-clip: text) {
-  .foilWord,
-  .fMark span {
+  .foilWord {
     color: transparent;
     background-image: var(--s9-titanium);
     background-size: 100% 100%;
     background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .fMark span {
+    color: transparent;
+    background-image: var(--s9-holofoil);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-blend-mode: screen, normal;
     -webkit-background-clip: text;
     background-clip: text;
   }
@@ -216,7 +225,7 @@
   font-family: var(--s9-font-display);
   font-size: 2.35rem;
   font-weight: 900;
-  color: var(--s9-pearl);
+  color: var(--s9-holofoil-fallback);
 }
 
 .waveform {

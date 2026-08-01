@@ -131,6 +131,34 @@
       rgb(255 255 255 / 0) 60%
     );
 
+  /* ── HOLOFOIL ────────────────────────────────────────────────────────
+     Flow State's single chromatic material. Warm spectral travel keeps it
+     out of the cyan/indigo software-gradient lane; the first layer is one
+     clean specular reflection, not a repeating stripe texture. */
+  --s9-holofoil-fallback: #f3bf70;
+  --s9-holofoil:
+    linear-gradient(
+      108deg,
+      rgb(255 255 255 / 0) 36%,
+      rgb(255 255 255 / 0.32) 45%,
+      rgb(255 255 255 / 0.95) 50%,
+      rgb(255 255 255 / 0.26) 56%,
+      rgb(255 255 255 / 0) 64%
+    ),
+    linear-gradient(
+      118deg,
+      #7a2e25 0%,
+      #e8633f 12%,
+      #f6c85f 25%,
+      #fff3bf 34%,
+      #72d6a0 44%,
+      #fffdf5 54%,
+      #f29ab2 66%,
+      #d96b3a 78%,
+      #f7d76a 90%,
+      #8b3328 100%
+    );
+
   /* derived hairlines & glows (oklab mixes keep hue honest) */
   /* Hairlines. These used to be cyan and violet mixes, which on navy read as
      structure and on black read as a glowing wire around every box — one of

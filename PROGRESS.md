@@ -4,17 +4,17 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction.
 > `HANDOFF.md` = repo-wide continuity. **This file = this branch.**
 
-**Last updated:** 2026-07-31
+**Last updated:** 2026-08-01
 **Branch:** `claude/flow-state-waitlist`
-**PR:** #39 — open, ready for review, **not merged**
+**PR:** #39 — merge authorized by Kariim after the final holofoil checks are green
 **Base:** `origin/main` @ `2fa1b4b` (2026-07-29)
 **Scope:** dedicated Flow State page, waitlist capture, studio link, and product-scoped waitlist uniqueness.
 
 ## Current focus
 
 - `/flow-state` is a standalone launch page approved by Kariim: titanium/pearl on
-  black, solid titanium `F`, animated waveform, simulated dictation, and no visible
-  project number.
+  black, a solid warm-spectrum holofoil `F`, animated waveform, simulated
+  dictation, and no visible project number. The headline remains titanium.
 - The Flow State card in `/studio` now links directly to `/flow-state`.
 - The waitlist posts through `/api/waitlist` with email validation, a honeypot,
   best-effort per-instance limiting, generic duplicate responses, and source
@@ -42,6 +42,11 @@
   `/api/waitlist` submissions returned `{"ok":true}`; Supabase contained exactly
   one `flow-state` row, proving duplicate masking and persistence. The synthetic
   `.invalid` row was then deleted and a zero-row query confirmed cleanup.
+- Holofoil refinement on 2026-08-01: desktop and 390px mobile render the tokenized
+  coral/gold/pearl/jade/rose material with no overflow. Waveform, typed simulation,
+  invalid-email feedback, and the safe no-env state work. Reverting the F to
+  titanium fails the contract; restoring holofoil passes. Full typecheck and both
+  production builds exit 0; independent review has no findings.
 
 ## Known follow-up
 

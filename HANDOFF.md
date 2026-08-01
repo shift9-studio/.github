@@ -5,7 +5,7 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-07-31
+**Last updated:** 2026-08-01
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
 ## Read first - the discovery trap
@@ -56,6 +56,11 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   key configured for Production and Preview. The
   remaining hardening note is deployment-wide rate limiting; the current route
   uses a honeypot plus a bounded per-instance limiter.
+  **2026-08-01 final visual:** Kariim replaced the standalone silver F with a
+  static warm-spectrum holofoil surface; the headline remains titanium. The
+  regression gate fails if the F returns to titanium. Desktop/mobile visual
+  checks, full typecheck, both builds, and independent review are green. Kariim
+  authorized merge after the updated preview and waitlist pass end to end.
 
 - **2026-07-27 - Entry experience, pre-merge checked.** Branch
   `claude/shift9-studio-entry-experience-5wnekz` (PR #35) replaces `/` on

@@ -20,6 +20,7 @@ const payload = read("app/flow-state/waitlist-payload.ts");
 const demo = read("app/flow-state/FlowStateDemo.tsx");
 const styles = read("app/flow-state/flow-state.module.css");
 const dolly = read("app/_components/studio-dolly-data.ts");
+const themeTokens = read("../../packages/theme/tokens.css");
 const waitlistMigration = read(
   "../../supabase/migrations/20260731_waitlist_email_source_uniqueness.sql",
 );
@@ -140,6 +141,16 @@ assert.match(form, /aria-live="polite"/);
 assert.match(form, /type="email"/);
 assert.match(demo, /useReducedMotionSafe/);
 assert.match(styles, /prefers-reduced-motion/);
+assert.match(
+  themeTokens,
+  /--s9-holofoil:\s*[\s\S]*linear-gradient/i,
+  "The Flow State mark needs a tokenized holofoil material",
+);
+assert.match(
+  styles,
+  /\.fMark\s+span\s*\{[\s\S]*?background-image:\s*var\(--s9-holofoil\)/i,
+  "The standalone F must use holofoil instead of titanium",
+);
 assert.match(
   waitlistMigration,
   /alter\s+table\s+public\.waitlist[\s\S]*alter\s+column\s+source\s+set\s+not\s+null/i,
