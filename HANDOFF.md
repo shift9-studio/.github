@@ -43,6 +43,19 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 ## Recent changes
 
+- **2026-08-01 - Desktop and conversion follow-up authorized for merge.** Branch
+  `codex/fix-theme-tooltip` keeps the Light-theme tooltip above the desktop
+  controls while removing the redundant Grid/Icons hover tips. Flow State's
+  header now clears the fixed return control (measured at 185.72px versus
+  188px, with no overlap). The Instrument boundary copy is client-facing and
+  its repeated mid-page `Start a project` button is gone; the final conversion
+  point remains. The Shift-9 Vercel Production and Preview projects now hold
+  the real public Supabase URL and publishable key instead of placeholder
+  references. A local `/api/waitlist` submission for `shift9dev@gmail.com`
+  returned `200 {"ok":true}` against the live insert-only list. Focused guards,
+  typecheck, the full production build, `git diff --check`, and live DOM checks
+  pass. Kariim explicitly authorized merging this follow-up on 2026-08-01.
+
 - **2026-08-01 - Instrument public case study prepared in PR #40; merge authorized.** Branch
   `codex/instrument-case-study` turns `/instrument` into a public explanation of
   the system through Shift-9 Studio, Flow State, and Just a Pinch. The complete

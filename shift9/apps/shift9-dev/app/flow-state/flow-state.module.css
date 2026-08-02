@@ -37,7 +37,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  padding: 1rem clamp(1.25rem, 4vw, 3.5rem) 1rem clamp(10.5rem, 15vw, 13rem);
+  padding: 1rem clamp(1.25rem, 4vw, 3.5rem) 1rem clamp(11.75rem, 16vw, 14rem);
   border-bottom: 1px solid color-mix(in oklab, var(--s9-pearl) 14%, transparent);
   background: color-mix(in oklab, var(--s9-obsidian) 52%, transparent);
   backdrop-filter: blur(1.2rem) saturate(112%);
@@ -680,7 +680,7 @@
 }
 
 @media (max-width: 40rem) {
-  .topbar { padding-left: 9.75rem; }
+  .topbar { padding-left: 11.75rem; }
   .brandStudio,
   .intakeStatus { display: none; }
   .story { padding-top: 4rem; }

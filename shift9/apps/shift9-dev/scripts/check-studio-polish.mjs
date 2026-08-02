@@ -46,6 +46,11 @@ assert.match(dollyStyles, /bookendTrack i[\s\S]*animation:\s*none/, "The opening
 
 assert.doesNotMatch(entrance, /prototype note/i, "The studio desktop must not expose internal notes");
 assert.doesNotMatch(entrance, /INTRO_RUNTIME_SHORT|enterCount/, "The redundant visible 20s label must stay removed");
+assert.doesNotMatch(
+  entrance,
+  /data-tip="(?:Grid|Icon) view"/,
+  "The Grid and Icons controls must not show redundant hover tips",
+);
 assert.match(entrance, /setMode\("desk"\)[\s\S]{0,180}setLoading\(false\)/, "Every terminal intro path must canonicalize desktop state");
 assert.match(entrance, /onPlaying[\s\S]{0,180}runtimeBail = setTimeout\(enterDesk, 26000\)/, "The intro runtime must begin when playback begins");
 assert.match(entrance, /let cancelled = false[\s\S]*?beatB[\s\S]*?\.then\(\(\) => \{[\s\S]{0,120}if \(cancelled\) return/, "Late intro media promises must not mutate a cleaned-up scene");
@@ -54,6 +59,7 @@ assert.match(mark, /shift9-mark-light/, "The Shift-9 mark must expose its light 
 assert.match(mark, /shift9-mark-grey/, "The Shift-9 mark must expose its grey half");
 assert.match(entranceStyles, /shift9-mark-light[\s\S]*translateY\(-1\.5px\)/, "The light half must lift on approach");
 assert.match(entranceStyles, /shift9-mark-grey[\s\S]*translateY\(1\.5px\)/, "The grey half must settle on approach");
+assert.match(entranceStyles, /\.titlerow,[\s\S]{0,80}\.taskbar\s*\{[\s\S]{0,120}z-index:\s*1;[\s\S]{0,60}\.titlerow\s*\{\s*z-index:\s*2;/, "The title-row tooltips must paint above the controls below them");
 assert.match(entrance, /mode === "gate"[\s\S]{0,180}<img className=\{s\.gatePlate\}/, "The entrance must render the original static yarn plate");
 assert.match(entrance, /setLoading\(true\);[\s\S]{0,80}setMode\("film"\)/, "Enter must hand directly from the static plate to the film");
 assert.doesNotMatch(entrance, /curtainDone|curtainOpening|YarnCurtain/, "The rejected curtain animation state must stay removed");

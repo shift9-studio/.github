@@ -50,7 +50,7 @@ assert.match(projects, /Flow State/, "Instrument must register Flow State");
 assert.match(projects, /Just a Pinch/, "Instrument must register Just a Pinch");
 assert.match(projects, /Add one entry here/i, "The project registry must explain the one-entry extension path");
 assert.match(projects, /no page or CSS edit/i, "The registry must keep future projects config-only");
-assert.match(page, /Titanium Forge is the separate product/, "Instrument must distinguish itself from Titanium Forge");
+assert.match(page, /Titanium Forge is the separate[\s\S]{0,80}component workbench/, "Instrument must distinguish itself from Titanium Forge in client-facing language");
 assert.match(page, /href="\/instrument\/reference"/, "Instrument must link to its technical reference");
 assert.match(page, /<LabSurface/, "Instrument must expose the pointer-driven inspection surface");
 assert.match(page, /scanBeam/, "Instrument must keep the focused bench scan");
@@ -60,6 +60,11 @@ assert.doesNotMatch(
   `${page}\n${projects}`,
   /prototype|\bTODO\b|\bdraft\b|review note|automated test suite/i,
   "The public Instrument page must not expose prototype or review notes",
+);
+assert.equal(
+  [...page.matchAll(/Start a project/gi)].length,
+  1,
+  "Instrument must reserve Start a project for its final conversion point",
 );
 
 assert.match(reference, /CopyRow/, "The technical reference must preserve copyable implementation rows");
