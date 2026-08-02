@@ -1,4 +1,56 @@
-# PROGRESS — `codex/instrument-case-study`
+# PROGRESS — `claude/flow-state-confirmation-email`
+
+> Current branch state. Older branch records remain below as historical context.
+
+**Last updated:** 2026-08-02
+**Branch:** `claude/flow-state-confirmation-email`
+**Base:** `origin/main` @ `92b74d3` (PR #41 merged)
+**Scope:** send one confirmation after Flow State waitlist acceptance and document the private owner workflow.
+
+## Current focus
+
+- `/api/waitlist` still writes through the insert-only Supabase client first.
+  Accepted and duplicate-masked requests then call Resend; a mail failure never
+  discards the saved place.
+- `confirmation-email.ts` uses the native HTTPS API with a five-second abort,
+  no SDK dependency, a deterministic SHA-256 idempotency key, and a server-only
+  `RESEND_API_KEY`. The sender is `Flow State <updates@shift9.dev>` and replies go
+  to `shift9dev@gmail.com`.
+- The form now distinguishes `confirmation: sent` from `unavailable`. The latter
+  says the place is saved instead of falsely promising inbox delivery.
+- The existing Resend account already had `shift9.dev` verified. A separate
+  `Flow State confirmation` key was created with sending-only access restricted
+  to that domain and stored as a sensitive Vercel variable for Preview and
+  Production. The existing `Supabase Auth SMTP` key was untouched.
+- Owner workflow: Supabase Table Editor → `waitlist` → filter `source` to
+  `flow-state`; Resend → Emails shows delivery and bounce status.
+
+## Verification
+
+- `test:flow-state` passes. Bite proof: replacing the sender call with a hardcoded
+  success failed red at `Confirmation must run only after the waitlist accepts
+  the address`; restoring it passed green.
+- `pnpm --filter shift9-dev typecheck`, the full Shift-9 production build, and
+  the Just-a-Pinch production build pass with no Resend key in the checkout.
+- The configured local endpoint returned
+  `200 {"ok":true,"confirmation":"unavailable"}`, proving a missing sender does
+  not erase the accepted waitlist state or claim an email was delivered.
+
+## Remaining gate
+
+- Push a ready PR, verify the Vercel preview sends the confirmation to
+  `shift9dev@gmail.com`, confirm delivery in Resend and the inbox, then wait for
+  Kariim's explicit merge approval. Nothing is live until that merge.
+
+## Provider gotcha
+
+- Vercel CLI advertised a free Resend marketplace plan, but provisioning exposed
+  only paid Pro/Scale resources after terms acceptance. Do not select a paid plan.
+  The correct no-monthly-bill path is the existing direct Resend account.
+
+---
+
+# Prior state — `codex/instrument-case-study`
 
 > State of the Instrument redesign branch, written so a cold agent can resume without briefing.
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction.

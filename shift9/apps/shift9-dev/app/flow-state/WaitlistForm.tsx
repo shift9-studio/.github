@@ -2,19 +2,25 @@
 
 import { type FormEvent, useState } from "react";
 import s from "./flow-state.module.css";
-import { waitlistPayload } from "./waitlist-payload";
+import {
+  waitlistPayload,
+  waitlistSuccessState,
+} from "./waitlist-payload";
 
 type FormState =
   | "idle"
   | "submitting"
   | "success"
+  | "saved"
   | "invalid"
   | "rateLimited"
   | "unavailable"
   | "error";
 
 const MESSAGES: Record<Exclude<FormState, "idle" | "submitting">, string> = {
-  success: "Thanks. Watch this inbox for Flow State access and updates.",
+  success: "You're on the list. Check your inbox for confirmation.",
+  saved:
+    "You're on the list. We couldn't send a confirmation, but your place is saved.",
   invalid: "Enter a complete email address.",
   rateLimited: "Too many requests. Wait a few minutes or email us below.",
   unavailable: "The list is temporarily unavailable. Email us directly below.",
@@ -24,7 +30,7 @@ const MESSAGES: Record<Exclude<FormState, "idle" | "submitting">, string> = {
 export function WaitlistForm() {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<FormState>("idle");
-  const settled = state === "success";
+  const settled = state === "success" || state === "saved";
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,8 +51,9 @@ export function WaitlistForm() {
       });
 
       if (response.ok) {
+        const result = (await response.json()) as { confirmation?: unknown };
         setEmail("");
-        setState("success");
+        setState(waitlistSuccessState(result.confirmation));
       } else if (response.status === 400) {
         setState("invalid");
       } else if (response.status === 429) {

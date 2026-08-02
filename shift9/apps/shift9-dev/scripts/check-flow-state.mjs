@@ -14,6 +14,7 @@ function read(relativePath) {
 
 const route = read("app/api/waitlist/route.ts");
 const policy = read("app/api/waitlist/waitlist-policy.ts");
+const confirmationEmail = read("app/api/waitlist/confirmation-email.ts");
 const page = read("app/flow-state/page.tsx");
 const form = read("app/flow-state/WaitlistForm.tsx");
 const payload = read("app/flow-state/waitlist-payload.ts");
@@ -97,6 +98,85 @@ assert.deepEqual(
   },
   "The browser payload must carry the actual honeypot value",
 );
+assert.equal(
+  payloadModule.exports.waitlistSuccessState("sent"),
+  "success",
+  "A delivered confirmation must show the inbox message",
+);
+assert.equal(
+  payloadModule.exports.waitlistSuccessState("unavailable"),
+  "saved",
+  "A mail failure must still acknowledge the saved waitlist place",
+);
+
+const compiledConfirmation = ts.transpileModule(confirmationEmail, {
+  compilerOptions: {
+    module: ts.ModuleKind.CommonJS,
+    target: ts.ScriptTarget.ES2022,
+  },
+}).outputText;
+const confirmationModule = { exports: {} };
+new Function("module", "exports", compiledConfirmation)(
+  confirmationModule,
+  confirmationModule.exports,
+);
+const {
+  flowStateConfirmationIdempotencyKey,
+  sendFlowStateConfirmation,
+} = confirmationModule.exports;
+
+let sentRequest;
+const confirmationResult = await sendFlowStateConfirmation(
+  "Person@Example.com ",
+  {
+    apiKey: "test-api-key",
+    signal: new AbortController().signal,
+    fetcher: async (url, options) => {
+      sentRequest = { url, options };
+      return { ok: true };
+    },
+  },
+);
+assert.equal(confirmationResult, "sent");
+assert.equal(sentRequest.url, "https://api.resend.com/emails");
+const sentHeaders = new Headers(sentRequest.options.headers);
+assert.equal(sentHeaders.get("Authorization"), "Bearer test-api-key");
+assert.equal(sentHeaders.get("User-Agent"), "shift9.dev/flow-state");
+assert.equal(
+  sentHeaders.get("Idempotency-Key"),
+  await flowStateConfirmationIdempotencyKey(" person@example.com"),
+  "Equivalent email casing and whitespace must share one delivery key",
+);
+const sentBody = JSON.parse(sentRequest.options.body);
+assert.deepEqual(sentBody.to, ["Person@Example.com"]);
+assert.equal(sentBody.from, "Flow State <updates@shift9.dev>");
+assert.equal(sentBody.reply_to, "shift9dev@gmail.com");
+assert.match(sentBody.subject, /Flow State private beta list/);
+
+let unconfiguredFetchCalled = false;
+assert.equal(
+  await sendFlowStateConfirmation("person@example.com", {
+    apiKey: "",
+    fetcher: async () => {
+      unconfiguredFetchCalled = true;
+      return { ok: true };
+    },
+  }),
+  "unconfigured",
+);
+assert.equal(
+  unconfiguredFetchCalled,
+  false,
+  "A missing key must never make a network request",
+);
+assert.equal(
+  await sendFlowStateConfirmation("person@example.com", {
+    apiKey: "test-api-key",
+    signal: new AbortController().signal,
+    fetcher: async () => ({ ok: false }),
+  }),
+  "rejected",
+);
 
 assert.deepEqual(publicWaitlistResponse({ ok: true }), {
   body: { ok: true },
@@ -143,6 +223,18 @@ assert.match(page, /<WaterSurface/, "Flow State must keep the full-page water su
 assert.match(page, /logoJewel/, "Flow State must keep the jewel-F header mark");
 assert.match(form, /aria-live="polite"/);
 assert.match(form, /type="email"/);
+assert.match(form, /Check your inbox for confirmation/);
+assert.match(form, /your place is saved/);
+assert.match(
+  route,
+  /addToWaitlist\(email, "flow-state"\)[\s\S]{0,180}publicWaitlistResponse\(result\)[\s\S]{0,220}if \(!response\.body\.ok\)[\s\S]{0,320}sendFlowStateConfirmation\(email\)/,
+  "Confirmation must run only after the waitlist accepts the address",
+);
+assert.doesNotMatch(
+  confirmationEmail,
+  /re_[A-Za-z0-9]{16,}/,
+  "The Resend key must stay in server environment configuration",
+);
 assert.match(demo, /useReducedMotionSafe/);
 assert.match(water, /prefers-reduced-motion: reduce/, "The water surface must respect reduced motion");
 assert.match(water, /requestAnimationFrame/, "The water surface must render a live ripple field");
@@ -166,6 +258,16 @@ assert.match(
   deploymentGuide,
   /shift9\.dev[\s\S]*NEXT_PUBLIC_SUPABASE_URL[\s\S]*NEXT_PUBLIC_SUPABASE_ANON_KEY[\s\S]*Flow State beta intake/i,
   "Shift-9 deployment docs must keep the Flow State intake configuration explicit",
+);
+assert.match(
+  deploymentGuide,
+  /RESEND_API_KEY[\s\S]*confirmation email/i,
+  "Shift-9 deployment docs must name the server-only confirmation sender key",
+);
+assert.match(
+  deploymentGuide,
+  /Table Editor[\s\S]*waitlist[\s\S]*source[\s\S]*flow-state/i,
+  "The owner handoff must explain how to inspect Flow State signups privately",
 );
 assert.match(
   styles,

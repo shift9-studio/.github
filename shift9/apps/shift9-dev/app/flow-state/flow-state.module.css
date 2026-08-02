@@ -575,6 +575,10 @@
   color: var(--s9-verdant);
 }
 
+.formStatus[data-kind="saved"] {
+  color: var(--s9-pearl);
+}
+
 .privacyList {
   margin: 2rem 0 0;
   padding: 0;

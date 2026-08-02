@@ -4,6 +4,7 @@ import {
   createRateLimiter,
   publicWaitlistResponse,
 } from "./waitlist-policy";
+import { sendFlowStateConfirmation } from "./confirmation-email";
 
 const RATE_LIMIT_WINDOW_MINUTES = 15;
 const RATE_LIMIT_MAX_REQUESTS = 5;
@@ -49,5 +50,16 @@ export async function POST(request: Request) {
 
   const result = await addToWaitlist(email, "flow-state");
   const response = publicWaitlistResponse(result);
-  return NextResponse.json(response.body, { status: response.status });
+  if (!response.body.ok) {
+    return NextResponse.json(response.body, { status: response.status });
+  }
+
+  const confirmation = await sendFlowStateConfirmation(email);
+  return NextResponse.json(
+    {
+      ok: true,
+      confirmation: confirmation === "sent" ? "sent" : "unavailable",
+    },
+    { status: response.status },
+  );
 }
