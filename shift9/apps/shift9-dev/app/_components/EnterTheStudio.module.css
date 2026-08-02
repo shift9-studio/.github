@@ -2462,3 +2462,58 @@
     0 0 0 2px var(--w-bg),
     0 0 0 4px var(--blue);
 }
+
+/* ── THE DESKTOP, ON THE MONITOR ──────────────────────────────────────────
+   When the entrance hands over to the 3D desk scene, this exact desktop is
+   portalled onto the monitor's glass and driven by three's CSS3DRenderer. It
+   is the same markup and the same rules — with one class added, and this
+   block is everything that class changes.
+
+   All of it is the same correction. The desktop was written to fill a browser
+   window, so it positions against the viewport: `position: fixed`, `94vw`,
+   `86vh`. Inside the monitor the viewport is the wrong thing to measure
+   against — the screen is. Anchoring is the only thing that moves. No colour,
+   no type, no spacing, no layout. The composite has to be the approved
+   desktop or it is not worth compositing.
+
+   (`fixed` would in fact resolve against the CSS3D element anyway, because a
+   transformed ancestor becomes the containing block for fixed descendants.
+   Relying on that is relying on a side effect of the transform still being
+   there. `absolute` says it.) */
+.root.inScreen,
+.inScreen .desktop,
+.inScreen .win,
+.inScreen .helpdot,
+.inScreen .helpnote {
+  position: absolute;
+}
+
+/* Percentages of the screen instead of the window. Same numbers. */
+.inScreen .window {
+  width: min(900px, 94%);
+  max-height: 86%;
+}
+
+/* ── The still the film stops on ─────────────────────────────────────────
+   Mounted transparent when the film starts, so it is fetched and decoded
+   during the eighteen seconds nobody is looking at it, and revealed with no
+   transition the instant playback stops. See the comment at its usage: where
+   a video actually stops is not exact, and one run in three overshot onto the
+   frame the crocheted hand enters on. This covers it before it can be read.
+
+   z-index 4 puts it over both beats (3). `cover` matches how the room's
+   backdrop fills the viewport, so this still and the backdrop that replaces
+   it are the same picture at the same size. */
+.handoffPlate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+}
+.handoffPlateOn {
+  opacity: 1;
+}

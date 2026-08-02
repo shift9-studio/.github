@@ -79,6 +79,47 @@
   --s9-pearl:        #c9d1dc;   /* the primary control                    */
   --s9-pearl-lift:   #e6ebf2;   /* the primary control, approached        */
 
+  /* ── THE ROOM ────────────────────────────────────────────────────────
+     The 3D desk scene on the entrance. WebGL takes colours as JavaScript
+     values rather than CSS, so these are read off the document at runtime
+     (`desk3d/palette.ts`) instead of being written a second time in a shader —
+     the token stays the single source of truth either way.
+
+     Every one of them is SAMPLED, not chosen: the median of a patch of the
+     film's own frame at 9.35s, so the placeholder props sit in the same light
+     as the plate they stand on. The yarn pair is the character's crocheted
+     hand — ochre stitch rows and a black knitted cuff. That hand is crochet,
+     not skin, and the entire world is crocheted fabric; the day it gets
+     modelled properly it inherits these and nothing has to be re-matched. */
+  /* Lifted from the sampled #c07243 on Kariim's call — the hand should read
+     lighter. Hue and chroma held (23 deg, and the saturation actually goes UP a
+     little) while lightness climbs from 51% to 59%: dropping saturation to
+     lighten it is exactly how two earlier passes slid the ochre into pale
+     peach, which is the one direction this colour may never go. The room's
+     light is dim enough that the prop lands darker than the swatch anyway. */
+  --s9-yarn-ochre:  #d68a58;   /* the hand — sampled, then lifted        */
+  --s9-yarn-cuff:   #131214;   /* the knitted cuff at the wrist          */
+  --s9-room-key:    #ffe9c8;   /* the desk lamp over the monitor         */
+  --s9-room-fill:   #3a414d;   /* the wall's bounce — sampled            */
+
+  /* The monitor's own glow. Not decoration: the desktop is a metre of bright
+     surface pointed straight at the desk, and it is the brightest thing in the
+     room by a distance. Leaving it out lit the props only from the lamp BEHIND
+     them, so the crocheted forearm — which is near-black to begin with — came
+     out as a featureless slab with no knit in it at all.
+     Sampled off the composited desktop's own wallpaper as it renders. */
+  --s9-room-screen: #e3e1d7;
+
+  /* The monitor the room brings with it. The plate's own panel is photographed
+     and 34"; the scene models a larger one over the top of it, and this is its
+     shell — the near-black matte plastic every monitor bezel is made of.
+     Sampled off the plate's own bezel so the new panel belongs to the room's
+     light rather than to a swatch. */
+  --s9-shell:       #14161a;
+
+  /* A scrim for chrome that has to stay readable on a photograph. */
+  --s9-scrim:       rgb(0 0 0 / 0.55);
+
   /* ── TITANIUM ────────────────────────────────────────────────────────
      A material, not a colour. Polished metal does not read as a smooth
      light-to-dark ramp — it reads as a REFLECTION, and what it reflects is

@@ -33,6 +33,20 @@ import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { Shift9Mark } from "./Shift9Mark";
 import { SHIFT9_LOGO } from "./logo-data";
+import dynamic from "next/dynamic";
+import { useRoomCapable } from "./desk3d/useRoomCapable";
+import { HANDOFF_AT_S, PLATE_AT_S, PLATE_SRC } from "./desk3d/scene";
+
+/* The room, and three.js with it, is fetched only once something is actually
+   going to be shown a room. A phone, or a machine with no WebGL, never
+   downloads a renderer in order to be told it is not getting one — which is
+   what a plain import would have made it do, because the import is at the top
+   of the entrance and the entrance is the site's front page.
+   `ssr: false` because there is nothing to server-render: the room needs a
+   canvas, and the SSR-legible state of this page is, and stays, the desktop. */
+const DeskRoom = dynamic(() => import("./desk3d/DeskRoom").then((m) => m.DeskRoom), {
+  ssr: false,
+});
 /* CSS-module class access is typed `string | undefined` under
    noUncheckedIndexedAccess; classList APIs need a plain string. */
 const cls = (name: string): string => (s as Record<string, string>)[name] ?? name;
@@ -367,6 +381,42 @@ const SIDEBAR: { label: string; glyph: string; on?: boolean }[] = [
 
 type OpenWin = FolderKey | "about" | null;
 
+/* ── Where the desktop is ────────────────────────────────────────────────
+   Two places, same markup: filling the browser, or on the monitor of the
+   3D desk the film hands over to. Nothing about the desktop itself changes
+   between them — it is wrapped, never rewritten.
+
+   A component at module scope rather than a branch inside the render, so its
+   identity is stable and React does not tear the desktop down and rebuild it
+   on every keystroke. It does rebuild when `room` flips, which is correct and
+   is the one moment it should: the DOM genuinely moves into the CSS3D layer.
+   Everything stateful — theme, which folder is open — lives in the parent and
+   survives the move.
+
+   `.inScreen` re-anchors the handful of rules that position against the
+   viewport (`fixed`, `94vw`, `86vh`). Inside the monitor the viewport is the
+   wrong reference: the screen is. */
+function Surface({
+  room,
+  dark,
+  onReady,
+  onExit,
+  children,
+}: {
+  room: boolean;
+  dark: boolean;
+  onReady: () => void;
+  onExit: () => void;
+  children: React.ReactNode;
+}) {
+  if (!room) return <>{children}</>;
+  return (
+    <DeskRoom onReady={onReady} onExit={onExit}>
+      <div className={`${s.root} ${s.inScreen} ${dark ? s.dark : ""}`}>{children}</div>
+    </DeskRoom>
+  );
+}
+
 export function EnterTheStudio() {
   const reducedMotion = useReducedMotionSafe();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -401,6 +451,24 @@ export function EnterTheStudio() {
   const [opening, setOpening] = useState<string | null>(null);
   const folderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /* ── The room ──────────────────────────────────────────────────────────
+     The desk the film ends on stops being a picture and becomes a place: the
+     desktop moves onto the monitor and the room stays around it. Only where
+     it can be — a machine with WebGL, a real pointer, a window big enough to
+     put a desktop inside a monitor. Everywhere else this is all inert and the
+     site is exactly what it is today. */
+  const roomCapable = useRoomCapable();
+  const [room, setRoom] = useState(false);
+
+  /* Every way of arriving at the desktop that is not the film — reduced
+     motion, an intro already spent this session, or pressing Skip — lands in
+     the room too. The film's own handover is separate, below, because it has
+     to stop the video on the right frame first. */
+  useEffect(() => {
+    if (roomCapable && mode === "desk") setRoom(true);
+  }, [roomCapable, mode]);
+
 
   /* Theme. SSR renders light so the server and first client paint agree; the
      stored choice (or the OS preference) is applied on mount. The desktop is
@@ -484,6 +552,12 @@ export function EnterTheStudio() {
      SKIP, by reduced-motion, and as the terminal step of the wake sequence. */
   const enterDesk = useCallback(() => {
     markIntroSeen();
+    /* Arriving at the desk ends the film, whatever ended it — SKIP, a codec
+       the browser cannot decode, or the room taking over. It used to only
+       tear down the DOM and leave `mode` reading "film" forever, which was
+       invisible while the desk was the only destination and became a bug the
+       moment there were two: a browser that could not decode the opening got
+       the flat desktop even when it could have had the room. */
     setMode("desk");
     setLoading(false);
     videoRef.current?.pause();
@@ -500,6 +574,23 @@ export function EnterTheStudio() {
       desk.style.transform = "none";
       desk.style.opacity = "1";
     }
+  }, []);
+
+  /* The room has painted its first frame, so the film can be let go of. Until
+     this fires the paused video stays exactly where it was, holding the frame
+     the room's backdrop is cut from — so there is never a frame with neither
+     of them on screen, and the two images being the same one means the swap
+     has nothing to show. */
+  const onRoomReady = useCallback(() => {
+    setMode("desk");
+    enterDesk();
+  }, [enterDesk]);
+
+  /* Out of the room and back to the full-bleed desktop — because the visitor
+     asked for the interface at full size, or because the graphics context
+     died under us. Same exit either way. */
+  const leaveRoom = useCallback(() => {
+    setRoom(false);
   }, []);
 
   /* Playback now always follows a click, so the browser has no reason to
@@ -649,6 +740,11 @@ export function EnterTheStudio() {
         setTimeout(() => {
           wake.classList.remove(cls("dim"));
           glow.classList.remove(cls("on"));
+          /* Last, never earlier: this re-runs the effect, and the effect's
+             cleanup clears `timers`. Calling it from the 300ms step would
+             cancel this one. `enterDesk` does everything the tail used to do
+             inline — boot class off, transform and opacity reset, mode set —
+             and additionally stops both videos, so it is a superset. */
           enterDesk();
         }, 1320),
       );
@@ -674,11 +770,78 @@ export function EnterTheStudio() {
         });
     };
 
+    /* ── THE HANDOVER AT 8.45 ──────────────────────────────────────────────
+       Where the film stops being the way in and the room takes over.
+
+       The second beat runs 10.04s, but its last 1.5s are the crocheted hand
+       arriving on the mouse — and that hand is going to be a rigged prop in
+       the room, following the pointer. It cannot also be baked into the plate
+       the room stands on, or the visitor gets two of them. So playback stops
+       at the last frame before it enters and the room continues from there.
+
+       The mp4 is untouched. Stopping is a playback decision, not an edit —
+       `HANDOFF_AT_S` and the plate the room is built on are the same moment,
+       and `scripts/build-handoff-plate.py` cuts one from the other.
+
+       `requestVideoFrameCallback` where it exists, because it fires per
+       decoded frame and lands on the exact one. rAF elsewhere: at 60Hz the
+       worst overshoot is 16ms, which is 8.466s — still two frames clear of
+       the hand. `timeupdate` was not an option; it fires about four times a
+       second and would routinely run past 8.5 and show the hand for a beat. */
+    let watching = 0;
+    const stopAtHandover = () => {
+      if (!beatB) return;
+      if (beatB.currentTime >= HANDOFF_AT_S) {
+        beatB.pause();
+        /* Belt as well as braces. The plate covering the video is what
+           actually guarantees the right frame is on screen; this pins the
+           video's own frame too, for the case where the still fails to load
+           and the video is what a visitor is looking at. */
+        beatB.currentTime = PLATE_AT_S;
+        markIntroSeen();
+        setRoom(true);
+        return;
+      }
+      watching = requestAnimationFrame(stopAtHandover);
+    };
+    const stopAtHandoverByFrame = () => {
+      if (!beatB) return;
+      if (beatB.currentTime >= HANDOFF_AT_S) {
+        beatB.pause();
+        /* Belt as well as braces. The plate covering the video is what
+           actually guarantees the right frame is on screen; this pins the
+           video's own frame too, for the case where the still fails to load
+           and the video is what a visitor is looking at. */
+        beatB.currentTime = PLATE_AT_S;
+        markIntroSeen();
+        setRoom(true);
+        return;
+      }
+      beatB.requestVideoFrameCallback(stopAtHandoverByFrame);
+    };
+    const watchForHandover = () => {
+      if (!beatB) return;
+      if ("requestVideoFrameCallback" in beatB) {
+        beatB.requestVideoFrameCallback(stopAtHandoverByFrame);
+      } else {
+        watching = requestAnimationFrame(stopAtHandover);
+      }
+    };
+
     /* First beat ends → hand to the second. Second beat ends → wake the
        screen. The last beat's final frame is the monitor filling the screen,
-       which is where the real desktop underneath takes over. */
+       which is where the real desktop underneath takes over.
+
+       That ending is still the ending for anyone the room is not offered to —
+       a phone, a machine without WebGL. They get the film entire and the
+       approved screen-wake, exactly as today. Only the room path stops early,
+       because only the room path has somewhere better to go. */
     vid.addEventListener("ended", handOffToSecondBeat);
-    beatB?.addEventListener("ended", wakeIntoDesktop);
+    if (roomCapable) {
+      beatB?.addEventListener("playing", watchForHandover, { once: true });
+    } else {
+      beatB?.addEventListener("ended", wakeIntoDesktop);
+    }
     /* A second beat that cannot be decoded must not strand anyone on a held
        frame — the way forward never depends on the film. */
     beatB?.addEventListener("error", enterDesk);
@@ -687,18 +850,23 @@ export function EnterTheStudio() {
       cancelled = true;
       clearTimeout(loadBail);
       if (runtimeBail !== null) clearTimeout(runtimeBail);
+      /* The handover watcher is a rAF loop, not a timer — it has to be
+         cancelled by hand or it keeps polling the film after the effect is
+         gone. `bail` used to be cleared here too; main renamed it `loadBail`. */
+      cancelAnimationFrame(watching);
       vid.removeEventListener("loadeddata", onLoaded);
       vid.removeEventListener("playing", onPlaying);
       vid.removeEventListener("error", onFail);
       vid.removeEventListener("playing", warmSecondBeat);
       vid.removeEventListener("ended", handOffToSecondBeat);
       beatB?.removeEventListener("canplaythrough", prerollSecondBeat);
+      beatB?.removeEventListener("playing", watchForHandover);
       beatB?.removeEventListener("ended", wakeIntoDesktop);
       beatB?.removeEventListener("error", enterDesk);
       timers.forEach(clearTimeout);
       frames.forEach(cancelAnimationFrame);
     };
-  }, [mode, enterDesk, startVid, reducedMotion]);
+  }, [mode, enterDesk, startVid, reducedMotion, roomCapable]);
 
   const openFolder = useCallback((key: string) => {
     if (folderTimerRef.current) clearTimeout(folderTimerRef.current);
@@ -895,6 +1063,39 @@ export function EnterTheStudio() {
             />
           </>
         ) : null}
+        {/* ── THE FRAME THE FILM STOPS ON ──────────────────────────────────
+            Stopping a video on a chosen frame is not exact. The callback fires
+            after a frame is already composited, so where playback actually
+            stops moves with how hard the machine is working. Measured across
+            three runs on one box: 8.473, 8.521, 8.484 — and 8.521 is past
+            8.500, which is the frame the crocheted hand walks into. So one run
+            in three showed a hand that the room is about to draw for itself.
+
+            Rewinding the video fixes the value but not the picture: the seek
+            is asynchronous and the element is torn down moments later, so the
+            frame on screen is still whatever it stopped on.
+
+            This does fix the picture. It is the plate — the same still the
+            room's backdrop is built from — mounted the moment the film starts
+            and left transparent, so it spends the next eighteen seconds being
+            fetched and decoded while nobody is looking at it. When playback
+            stops it is made visible in the same commit, with no transition and
+            nothing left to load. Whatever frame the video stopped on is
+            covered before it can be seen.
+
+            `object-fit: cover` matches `framing()`, which is how the room
+            covers the viewport — so this still and the backdrop that replaces
+            it are the same picture at the same size, and the swap between them
+            has nothing to show either. */}
+        {roomCapable && mode === "film" ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            className={`${s.handoffPlate} ${room ? s.handoffPlateOn : ""}`}
+            src={PLATE_SRC}
+            alt=""
+            aria-hidden="true"
+          />
+        ) : null}
         {mode === "film" ? (
           <button
             type="button"
@@ -914,7 +1115,12 @@ export function EnterTheStudio() {
       <div className={s.glow} ref={glowRef} aria-hidden="true" />
 
       {/* STAGE 2 — the desktop, mirroring the video's final frame. Always
-          rendered so it is the SSR-legible static fallback. */}
+          rendered so it is the SSR-legible static fallback.
+
+          `Surface` decides whether it fills the browser or sits on the
+          monitor in the room. The markup below is identical either way; it
+          does not know which it is in. */}
+      <Surface room={room} dark={dark} onReady={onRoomReady} onExit={leaveRoom}>
       <div className={`${s.desktop} ${s.show} ${s.on}`} ref={deskRef}>
         {/* Live wallpaper — the real banner as an animated ASCII field, with
             the Windows tint veiled over it. Decorative; the chrome above is
@@ -1236,6 +1442,7 @@ export function EnterTheStudio() {
           </div>
         )}
       </div>
+      </Surface>
     </div>
   );
 }
