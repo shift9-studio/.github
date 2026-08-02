@@ -112,9 +112,13 @@ export function Shift9Mark({ size = 28, className }: Props) {
           <rect x={CUT + GAP / 2} y="0" width={W - CUT - GAP / 2} height={box} />
         </clipPath>
       </defs>
-      <g clipPath={`url(#l${uid})`}>{half}</g>
-      <g clipPath={`url(#r${uid})`} opacity="0.58" transform={`translate(0,${SHIFT})`}>
-        {half}
+      <g className="shift9-mark-light">
+        <g clipPath={`url(#l${uid})`}>{half}</g>
+      </g>
+      <g className="shift9-mark-grey">
+        <g clipPath={`url(#r${uid})`} opacity="0.58" transform={`translate(0,${SHIFT})`}>
+          {half}
+        </g>
       </g>
     </svg>
   );

@@ -1,0 +1,679 @@
+.root {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  color: var(--s9-chalk);
+  background: var(--s9-obsidian);
+  font-family: var(--s9-font-text);
+}
+
+.root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--s9-chalk) 3%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--s9-chalk) 3%, transparent) 1px, transparent 1px);
+  background-size: calc(var(--s9-grid-unit) * 5) calc(var(--s9-grid-unit) * 5);
+  mask-image: linear-gradient(to bottom, transparent, black 24%, black 82%, transparent);
+}
+
+.root * {
+  box-sizing: border-box;
+}
+
+.root :global(.s9-pearl),
+.root :global(.s9-pearl-dark) {
+  min-height: 2.7rem;
+  padding: 0.82em 1.55em;
+  gap: 0.45em;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+}
+
+.exitPin {
+  position: fixed;
+  z-index: 20;
+  top: clamp(0.75rem, 2.5vw, 1.5rem);
+  left: clamp(0.75rem, 2.5vw, 1.5rem);
+  width: fit-content;
+  min-width: 0;
+  max-width: calc(100vw - 1.5rem);
+}
+
+.exitPin:focus-visible,
+.root a:focus-visible {
+  outline: 2px solid var(--s9-verdant);
+  outline-offset: 3px;
+}
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--s9-obsidian);
+}
+
+.heroBench {
+  --probe-x: 68%;
+  --probe-y: 42%;
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding: clamp(6rem, 12vh, 9rem) var(--s9-gutter);
+  isolation: isolate;
+}
+
+.heroBench::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 13rem at var(--probe-x) var(--probe-y),
+    color-mix(in oklab, var(--s9-pearl) 18%, transparent),
+    color-mix(in oklab, var(--s9-pearl) 4%, transparent) 42%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+}
+
+.heroMedia {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: url("/experience/set-pieces/09-instrument.png");
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.025);
+  filter: contrast(1.08) saturate(0.82);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 68%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 68%, transparent 100%);
+}
+
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--s9-obsidian) 92%, transparent),
+      color-mix(in oklab, var(--s9-obsidian) 44%, transparent) 48%,
+      color-mix(in oklab, var(--s9-obsidian) 12%, transparent) 78%
+    ),
+    radial-gradient(
+      circle at 68% 42%,
+      transparent 0%,
+      color-mix(in oklab, var(--s9-obsidian) 68%, transparent) 92%
+    );
+}
+
+.scanBeam {
+  position: absolute;
+  z-index: -1;
+  top: -16%;
+  bottom: -16%;
+  left: -22%;
+  width: 7rem;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--s9-pearl) 15%, transparent), transparent);
+  filter: blur(1rem);
+  transform: rotate(8deg);
+  animation: benchScan var(--s9-dur-sheen) var(--s9-ease-inout) infinite alternate;
+  mix-blend-mode: screen;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 1;
+  width: min(49rem, 100%);
+  display: grid;
+  justify-items: start;
+  padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 2.25rem);
+  border-left: 1px solid color-mix(in oklab, var(--s9-chalk) 24%, transparent);
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--s9-obsidian) 34%, transparent),
+    transparent 84%
+  );
+  box-shadow: none;
+  text-align: left;
+}
+
+.heroNotes {
+  position: absolute;
+  z-index: 2;
+  top: clamp(6rem, 12vh, 9rem);
+  right: var(--s9-gutter);
+  width: min(18rem, 25vw);
+  display: grid;
+  gap: 0;
+  border-top: 1px solid color-mix(in oklab, var(--s9-chalk) 34%, transparent);
+  font-family: var(--s9-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--s9-chalk) 62%, transparent);
+}
+
+.heroNotes p,
+.heroNotes span {
+  margin: 0;
+  padding: 0.72rem 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--s9-chalk) 16%, transparent);
+}
+
+.heroNotes p {
+  color: var(--s9-pearl);
+}
+
+.eyebrow,
+.contractLabel,
+.contractLine,
+.scrollCue,
+.frameIndex {
+  margin: 0;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  color: color-mix(in oklab, var(--s9-chalk) 70%, transparent);
+}
+
+.eyebrow::before {
+  content: "// ";
+  color: var(--s9-signal);
+}
+
+.hero h1 {
+  max-width: 10ch;
+  margin: clamp(1.25rem, 3vh, 2rem) 0;
+  font-family: var(--s9-font-display);
+  font-size: clamp(3.8rem, 7.4vw, 8.2rem);
+  font-weight: 800;
+  letter-spacing: -0.065em;
+  line-height: 0.88;
+  text-wrap: balance;
+}
+
+.hero h1 span {
+  color: var(--s9-pearl);
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .hero h1 span {
+    color: transparent;
+    background-image: var(--s9-titanium);
+    background-clip: text;
+    -webkit-background-clip: text;
+  }
+}
+
+.lede {
+  max-width: 48ch;
+  margin: 0;
+  color: color-mix(in oklab, var(--s9-chalk) 82%, transparent);
+  font-size: var(--s9-text-body);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.heroActions,
+.referenceActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-start;
+  margin-top: clamp(1.5rem, 4vh, 2.5rem);
+}
+
+.contractLine {
+  margin-top: clamp(1.5rem, 4vh, 2.5rem);
+  color: color-mix(in oklab, var(--s9-chalk) 48%, transparent);
+}
+
+.scrollCue {
+  position: absolute;
+  z-index: 2;
+  right: var(--s9-gutter);
+  bottom: calc(var(--s9-grid-unit) * 2);
+  color: color-mix(in oklab, var(--s9-chalk) 46%, transparent);
+}
+
+.productSection,
+.contractSection,
+.boundarySection {
+  width: min(calc(100% - (var(--s9-gutter) * 2)), var(--s9-maxw));
+  margin-inline: auto;
+  padding-block: clamp(6rem, 12vw, 11rem);
+}
+
+.sectionIntro {
+  width: min(58rem, 100%);
+  display: grid;
+  justify-items: start;
+  margin: 0 0 clamp(4rem, 9vw, 8rem);
+  text-align: left;
+}
+
+.sectionIntro h2,
+.boundaryCopy h2,
+.referenceCopy h2 {
+  margin: clamp(1rem, 2.5vh, 1.75rem) 0;
+  font-family: var(--s9-font-display);
+  font-size: var(--s9-text-h2);
+  font-weight: 760;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.sectionIntro > p:last-child,
+.boundaryCopy > p,
+.referenceCopy > p:last-of-type {
+  max-width: 48ch;
+  margin: 0;
+  color: color-mix(in oklab, var(--s9-chalk) 74%, transparent);
+  font-size: var(--s9-text-body);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.studies {
+  display: grid;
+  gap: clamp(2rem, 6vw, 5rem);
+}
+
+.study {
+  position: relative;
+  min-height: clamp(34rem, 82svh, 52rem);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding: clamp(1rem, 4vw, 3rem);
+  border: 1px solid color-mix(in oklab, var(--s9-chalk) 12%, transparent);
+  border-radius: 0.35rem;
+  background: color-mix(in oklab, var(--s9-obsidian) 86%, transparent);
+  box-shadow:
+    0 2rem 6rem color-mix(in oklab, black 40%, transparent),
+    inset 0 0 0 1px color-mix(in oklab, var(--s9-chalk) 3%, transparent);
+  isolation: isolate;
+}
+
+.studyVisual {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.studyImage {
+  object-fit: cover;
+  object-position: center;
+  transition: transform var(--s9-dur-slow) var(--s9-ease-out);
+}
+
+.study:hover .studyImage {
+  transform: scale(1.015);
+}
+
+.study::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      to top,
+      color-mix(in oklab, var(--s9-obsidian) 92%, transparent),
+      color-mix(in oklab, var(--s9-obsidian) 24%, transparent) 58%,
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--s9-obsidian) 48%, transparent),
+      transparent 70%
+    );
+  pointer-events: none;
+}
+
+.frameIndex {
+  position: absolute;
+  top: calc(var(--s9-grid-unit) * 3);
+  right: calc(var(--s9-grid-unit) * 3);
+  padding: calc(var(--s9-grid-unit) * 1.25) calc(var(--s9-grid-unit) * 1.5);
+  border: 1px solid color-mix(in oklab, var(--s9-chalk) 18%, transparent);
+  border-radius: 0.2rem;
+  color: color-mix(in oklab, var(--s9-chalk) 66%, transparent);
+  background: color-mix(in oklab, var(--s9-obsidian) 58%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.studyCopy {
+  position: relative;
+  width: min(46rem, 100%);
+  padding: clamp(1.75rem, 4vw, 3.5rem);
+  border: 1px solid color-mix(in oklab, var(--s9-chalk) 20%, transparent);
+  border-radius: 0.3rem;
+  background: color-mix(in oklab, var(--s9-obsidian) 72%, transparent);
+  backdrop-filter: blur(12px);
+  clip-path: polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%);
+}
+
+.drawerNumber {
+  position: absolute;
+  right: calc(var(--s9-grid-unit) * 2);
+  bottom: calc(var(--s9-grid-unit) * 1.5);
+  color: color-mix(in oklab, var(--s9-chalk) 18%, transparent);
+  font-family: var(--s9-font-mono);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.study:nth-child(even) .studyCopy {
+  margin-left: auto;
+}
+
+.studyLabel {
+  margin: 0 0 calc(var(--s9-grid-unit) * 1.5);
+  color: color-mix(in oklab, var(--s9-chalk) 58%, transparent);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.studyCopy h3 {
+  margin: 0;
+  font-family: var(--s9-font-display);
+  font-size: clamp(2.4rem, 5vw, 5.5rem);
+  letter-spacing: -0.055em;
+  line-height: 0.94;
+  text-wrap: balance;
+}
+
+.studyDescription {
+  max-width: 38rem;
+  margin: calc(var(--s9-grid-unit) * 2.5) 0 0;
+  color: color-mix(in oklab, var(--s9-chalk) 76%, transparent);
+  font-size: var(--s9-text-body);
+  line-height: 1.6;
+}
+
+.studyCopy a {
+  display: inline-block;
+  margin-top: calc(var(--s9-grid-unit) * 3);
+  color: var(--s9-chalk);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  text-decoration-color: color-mix(in oklab, var(--s9-chalk) 42%, transparent);
+  text-underline-offset: 0.4em;
+}
+
+.studyCopy a:hover {
+  text-decoration-color: var(--s9-chalk);
+}
+
+.contractSection {
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+}
+
+.contractGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-block: 1px solid color-mix(in oklab, var(--s9-chalk) 14%, transparent);
+  background: color-mix(in oklab, var(--s9-obsidian) 58%, transparent);
+}
+
+.contractGrid > div {
+  padding-block: clamp(2rem, 5vw, 4.5rem);
+}
+
+.contractGrid > div:first-child {
+  padding-right: clamp(2rem, 5vw, 5rem);
+  border-right: 1px solid color-mix(in oklab, var(--s9-chalk) 14%, transparent);
+}
+
+.contractGrid > div:last-child {
+  padding-left: clamp(2rem, 5vw, 5rem);
+}
+
+.contractLabel {
+  color: color-mix(in oklab, var(--s9-chalk) 58%, transparent);
+}
+
+.contractGrid ul,
+.contractGrid dl {
+  margin: calc(var(--s9-grid-unit) * 3) 0 0;
+  padding: 0;
+}
+
+.contractGrid li,
+.contractGrid dl div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: calc(var(--s9-grid-unit) * 2);
+  align-items: baseline;
+  padding-block: calc(var(--s9-grid-unit) * 2.5);
+  border-top: 1px solid color-mix(in oklab, var(--s9-chalk) 10%, transparent);
+}
+
+.contractGrid li {
+  color: color-mix(in oklab, var(--s9-chalk) 82%, transparent);
+  list-style: none;
+  font-size: var(--s9-text-body);
+}
+
+.contractGrid li > span {
+  color: color-mix(in oklab, var(--s9-chalk) 46%, transparent);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+}
+
+.contractGrid dl div {
+  grid-template-columns: minmax(9rem, 0.45fr) 1fr;
+}
+
+.contractGrid dt {
+  color: var(--s9-chalk);
+  font-family: var(--s9-font-display);
+  font-size: var(--s9-text-lead);
+  font-weight: 650;
+}
+
+.contractGrid dd {
+  margin: 0;
+  color: color-mix(in oklab, var(--s9-chalk) 62%, transparent);
+  line-height: 1.5;
+}
+
+.boundarySection {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.4fr) minmax(0, 1fr);
+  gap: clamp(2rem, 7vw, 8rem);
+  border-top: 1px solid color-mix(in oklab, var(--s9-chalk) 14%, transparent);
+}
+
+.boundaryCopy {
+  display: grid;
+  grid-template-columns: 1fr 0.7fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: end;
+}
+
+.referenceSection {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(5rem, 12vh, 9rem) var(--s9-gutter);
+}
+
+.referenceObject {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: url("/experience/set-pieces/09-instrument.png") center / cover no-repeat;
+  opacity: 0.28;
+  filter: grayscale(0.8) contrast(1.18);
+  transform: scale(1.04);
+}
+
+.referenceGrid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(color-mix(in oklab, var(--s9-chalk) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--s9-chalk) 4%, transparent) 1px, transparent 1px),
+    radial-gradient(ellipse at center, color-mix(in oklab, var(--s9-obsidian) 80%, transparent), var(--s9-obsidian) 76%);
+  background-size: calc(var(--s9-grid-unit) * 5) calc(var(--s9-grid-unit) * 5), calc(var(--s9-grid-unit) * 5) calc(var(--s9-grid-unit) * 5), auto;
+}
+
+.referenceCopy {
+  width: min(54rem, 100%);
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: clamp(2rem, 5vw, 4rem);
+  border: 1px solid color-mix(in oklab, var(--s9-chalk) 18%, transparent);
+  border-radius: 0.35rem;
+  background: color-mix(in oklab, var(--s9-obsidian) 78%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+@keyframes benchScan {
+  from { transform: translateX(0) rotate(8deg); opacity: 0.18; }
+  to { transform: translateX(145vw) rotate(8deg); opacity: 0.72; }
+}
+
+.footer {
+  width: min(calc(100% - (var(--s9-gutter) * 2)), var(--s9-maxw));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-inline: auto;
+  padding-block: calc(var(--s9-grid-unit) * 5);
+  border-top: 1px solid color-mix(in oklab, var(--s9-chalk) 14%, transparent);
+}
+
+@media (max-width: 62rem) {
+  .heroCopy {
+    width: min(48rem, 100%);
+  }
+
+  .heroNotes {
+    display: none;
+  }
+
+  .contractGrid,
+  .boundarySection,
+  .boundaryCopy {
+    grid-template-columns: 1fr;
+  }
+
+  .contractGrid > div:first-child {
+    padding-right: 0;
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in oklab, var(--s9-chalk) 14%, transparent);
+  }
+
+  .contractGrid > div:last-child {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 44rem) {
+  .heroBench {
+    padding-inline: var(--s9-gutter);
+    padding-bottom: clamp(5rem, 10vh, 7rem);
+  }
+
+  .heroMedia {
+    background-position: 56% center;
+  }
+
+  .heroCopy,
+  .studyCopy {
+    border-radius: 0.3rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(3.4rem, 15vw, 5.7rem);
+  }
+
+  .heroActions,
+  .referenceActions,
+  .footer {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .heroActions > a,
+  .referenceActions > a,
+  .footer > a {
+    width: min(100%, 20rem);
+    align-self: center;
+  }
+
+  .contractLine,
+  .scrollCue {
+    display: none;
+  }
+
+  .productSection,
+  .contractSection,
+  .boundarySection {
+    width: min(calc(100% - (var(--s9-gutter) * 2)), var(--s9-maxw));
+    padding-block: clamp(5rem, 16vw, 7rem);
+  }
+
+  .study {
+    min-height: 78svh;
+    padding: var(--s9-grid-unit);
+  }
+
+  .frameIndex {
+    top: calc(var(--s9-grid-unit) * 2);
+    right: calc(var(--s9-grid-unit) * 2);
+  }
+
+  .studyCopy {
+    padding: calc(var(--s9-grid-unit) * 3);
+  }
+
+  .contractGrid dl div {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studyImage,
+  .exitPin {
+    transition: none;
+  }
+
+  .scanBeam {
+    display: none;
+  }
+
+  .study:hover .studyImage {
+    transform: none;
+  }
+}

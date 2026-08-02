@@ -46,7 +46,7 @@ directory to `shift9/pnpm-workspace.yaml`).
 | **Root Directory** | `shift9/apps/shift9-dev` |
 | **Framework Preset** | Next.js *(auto)* |
 | **Build / Install / Output** | defaults |
-| **Environment variables** | none required (fully static) |
+| **Environment variables** | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (from §1; required for Flow State beta intake), `RESEND_API_KEY` (server-only; required for confirmation email) |
 | **Domain** | `shift9.dev` |
 
 ### Project #2 — `just-a-pinch`
@@ -121,6 +121,15 @@ Both apps build clean and prerender static:
 pnpm --filter just-a-pinch build
 pnpm --filter shift9-dev   build
 ```
+
+### Checking Flow State signups
+
+Open the Supabase project `qdlfiewspjgbucszezja`, choose **Table Editor** →
+**waitlist**, and filter `source` to `flow-state`. Customer addresses stay in the
+private dashboard; the public app has insert-only access and cannot list them.
+Use Resend's **Emails** dashboard to check confirmation delivery, bounces, and
+suppression. The dedicated key is named `Flow State confirmation`, has sending
+access only, and is restricted to the verified `shift9.dev` domain.
 
 ---
 

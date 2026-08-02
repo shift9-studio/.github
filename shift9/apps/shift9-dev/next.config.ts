@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Compile the workspace TS packages directly — no pre-build step.
-  transpilePackages: ["@shift9/ui", "@shift9/motion"],
+  transpilePackages: ["@shift9/ui", "@shift9/motion", "@shift9/data"],
 
   /* ── /work is retired ──────────────────────────────────────────────────
      Four case pages lived at /work/<slug> and were deleted: they were stubs

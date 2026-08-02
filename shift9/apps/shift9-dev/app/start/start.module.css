@@ -210,26 +210,8 @@
   top: clamp(0.75rem, 2.5vw, 1.5rem);
   left: clamp(0.75rem, 2.5vw, 1.5rem);
   z-index: 2;
-  font-family: var(--s9-font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: color-mix(in oklab, var(--s9-chalk) 58%, transparent);
-  text-decoration: none;
-  padding: 0.55em 0.9em;
-  border: 1px solid color-mix(in oklab, var(--s9-chalk) 22%, transparent);
-  border-radius: 2px;
-  background: color-mix(in oklab, var(--s9-obsidian) 60%, transparent);
-  backdrop-filter: blur(6px);
-  transition:
-    color var(--s9-dur-fast) var(--s9-ease-out),
-    border-color var(--s9-dur-fast) var(--s9-ease-out);
-}
-
-.exitPin:hover,
-.exitPin:focus-visible {
-  color: var(--s9-chalk);
-  border-color: color-mix(in oklab, var(--s9-chalk) 52%, transparent);
+  width: fit-content;
+  max-width: calc(100vw - 1.5rem);
 }
 
 /* Focus stays visible on every target. The ring is the accent rather than the

@@ -17,7 +17,231 @@ run-card, one generated JPEG, one generated `.glb`. Modified:
 
 ---
 
-## What this branch is
+# Prior state — `claude/flow-state-confirmation-email`  (merged, PR #42)
+
+**Last updated:** 2026-08-02
+**Branch:** `claude/flow-state-confirmation-email`
+**PR:** #42 — ready, green, awaiting Kariim's merge approval
+**Base:** `origin/main` @ `92b74d3` (PR #41 merged)
+**Scope:** send one confirmation after Flow State waitlist acceptance and document the private owner workflow.
+
+## Current focus
+
+- `/api/waitlist` still writes through the insert-only Supabase client first.
+  Accepted and duplicate-masked requests then call Resend; a mail failure never
+  discards the saved place.
+- `confirmation-email.ts` uses the native HTTPS API with a five-second abort,
+  no SDK dependency, a deterministic SHA-256 idempotency key, and a server-only
+  `RESEND_API_KEY`. The sender is `Flow State <updates@shift9.dev>` and replies go
+  to `shift9dev@gmail.com`.
+- The form now distinguishes `confirmation: sent` from `unavailable`. The latter
+  says the place is saved instead of falsely promising inbox delivery.
+- The existing Resend account already had `shift9.dev` verified. A separate
+  `Flow State confirmation` key was created with sending-only access restricted
+  to that domain and stored as a sensitive Vercel variable for Preview and
+  Production. The existing `Supabase Auth SMTP` key was untouched.
+- Owner workflow: Supabase Table Editor → `waitlist` → filter `source` to
+  `flow-state`; Resend → Emails shows delivery and bounce status.
+
+## Verification
+
+- `test:flow-state` passes. Bite proof: replacing the sender call with a hardcoded
+  success failed red at `Confirmation must run only after the waitlist accepts
+  the address`; restoring it passed green.
+- `pnpm --filter shift9-dev typecheck`, the full Shift-9 production build, and
+  the Just-a-Pinch production build pass with no Resend key in the checkout.
+- The configured local endpoint returned
+  `200 {"ok":true,"confirmation":"unavailable"}`, proving a missing sender does
+  not erase the accepted waitlist state or claim an email was delivered.
+- The protected Vercel preview returned
+  `200 {"ok":true,"confirmation":"sent"}` for `shift9dev@gmail.com`. Resend's
+  Emails dashboard recorded the matching subject as `delivered` immediately.
+- The protected `/flow-state` preview renders the finished signup surface. The
+  browser driver's semantic submit click timed out before dispatch, so the API,
+  provider delivery record, and pure response-state test are the interaction
+  evidence; do not claim a browser click completed.
+
+## Remaining gate
+
+- Kariim's explicit approval to merge green PR #42. Nothing is live until that
+  merge.
+
+## Provider gotcha
+
+- Vercel CLI advertised a free Resend marketplace plan, but provisioning exposed
+  only paid Pro/Scale resources after terms acceptance. Do not select a paid plan.
+  The correct no-monthly-bill path is the existing direct Resend account.
+
+---
+
+# Prior state — `codex/instrument-case-study`
+
+> State of the Instrument redesign branch, written so a cold agent can resume without briefing.
+> `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction.
+> `HANDOFF.md` = repo-wide continuity. **This file = this branch.**
+
+**Last updated:** 2026-08-01
+**Branch:** `codex/instrument-case-study`
+**PR:** #40 — merge authorized by Kariim on 2026-08-01; merge after final green checks
+**Base:** `origin/main` @ `62bdea5` (Flow State merged)
+**Scope:** give Flow State its water-surface direction; make `/instrument` a public lab case study with an easy project-extension path; preserve its technical catalog and distinguish it from Titanium Forge.
+
+## Current focus
+
+- `/flow-state` now uses a full-page, pointer-reactive black-water canvas with
+  subtle refracted pearl/warm light, a black diamond jewel `F` header mark, and
+  the existing logo/waveform/text demo shaped into the same pill language.
+- `/instrument` is its own lab room: the actual Instrument set-piece sits on an
+  open bench with a pointer inspection light and one slow scanner pass. The hero
+  copy is borderless so it does not block the light, and the image masks smoothly
+  into the next section instead of ending on a hard line.
+- The live site is the visual source; earlier docs are context only. The
+  invitation page is not a template and its closing WaveField is not used here.
+- Instrument specimens and surface-voice rows come from
+  `app/instrument/instrument-projects.ts`. A new project page needs one registry
+  entry (name, route, image, copy); the page JSX and CSS do not change.
+- The dense token, type, motion, component, and hook catalog moved intact to
+  `/instrument/reference`. Its stale room count, `/start` accent description,
+  missing Flow State and Instrument rooms, and missing product materials were corrected.
+- `/instrument/reference` now opens with a living archive of all twelve current
+  projects, sourced directly from the Studio reel registry. A sticky numbered
+  index, asymmetric feature frames, project imagery, status, stack, and actions
+  keep the page useful as the catalog grows.
+- Both studio catalogs now identify Instrument as Shift-9's production system
+  and Titanium Forge as the portable component workbench.
+- All Instrument return and action controls use the pearl button family.
+- The floating return control on `/start`, `/flow-state`, and `/instrument` now
+  uses one shared compact ghost-pearl modifier. Instrument page actions are
+  slimmer and capped on mobile instead of filling the viewport by default.
+- The landing gate is back to the original static yarn photograph. There are no
+  split layers, displacement shader, or curtain-motion states; Enter hands
+  directly to the preloaded film. The visible `20s` remains removed, and the
+  split 9 mark keeps its restrained opposing hover.
+- Studio set-piece clips no longer use native hard loops. Two cached video layers
+  crossfade before the decoded end, pause offscreen, and clean up rAF/timers.
+- The studio outro is a physical invitation card with a secondary backing card,
+  private-viewing line, S9 seal, and the existing Shift-9 artwork/settle film.
+- The Studio reel no longer enters through a basic centered title card. Its new
+  asymmetric threshold uses a twelve-stop dolly track and a seamless alternating
+  survey motion sourced from the same canonical roster.
+- Alternating light project rows now pin their headings and links to the dark
+  ink token instead of inheriting the low-contrast title color. The production
+  preview confirms all four Apps titles remain readable on both row materials.
+- Intro and reel media promises are cancellation-safe after teardown, and the
+  intro runtime watchdog now starts on actual playback rather than on mount.
+- Public contact links now consistently use `shift9dev@gmail.com`.
+- Public copy on both pages was audited for clients and partners. Guards reject
+  prototype, draft, TODO, review-note, stale bench-note, and test-suite language.
+- `test:instrument` guards the route split, registry path, product distinction,
+  current reference, lab motion, reduced-motion branch, set-piece media, and listing copy.
+- `test:studio-polish` guards seamless media, the invitation object, split-9
+  hover, the static yarn entrance, ghost controls, reduced motion, and public note cleanup.
+
+## Verification
+
+- Contract green. Changing the Titanium Forge distinction made it fail red with
+  `Instrument must distinguish itself from Titanium Forge`; restoring it passed.
+- `pnpm typecheck`, `pnpm --filter shift9-dev build`, and
+  `pnpm --filter just-a-pinch build` all exit 0. Both Instrument routes prerender.
+- Production preview: `/flow-state`, `/instrument`, and `/instrument/reference`
+  render with no horizontal overflow. Flow State and Instrument were checked at
+  1280px and 390px; their public DOM contains none of the forbidden internal copy.
+- `/`, `/start`, and `/studio` were visually checked in the rebuilt production
+  preview. The visible `20s` and all rendered `prototype note` strings are absent.
+- The rebuilt Apps folder was checked in-browser: light rows use dark project
+  titles and body copy; the full Shift-9 production build exits 0.
+- Every public route was reviewed at desktop scale. The archive and Studio
+  threshold were additionally checked at 390px; all twelve archive links and
+  project titles are present in the public DOM, with no horizontal overflow.
+- The rebuilt entrance shows the original static yarn plate and contains no
+  curtain split, WebGPU renderer, or curtain-motion state.
+- The project archive inspection motion is now a tapered optical wash with a
+  slight image lift, not a bright one-pixel laser line; hover and focus trigger
+  one restrained pass and reduced motion keeps it still.
+
+## Merge authorization
+
+- Kariim explicitly authorized landing PR #40 on `main` on 2026-08-01 after
+  rewinding the yarn entrance to its static version.
+
+## Machine gotcha
+
+- `next dev` can exceed the Windows path limit for `/instrument/reference` in this
+  long generated worktree path. The optimized build and `next start` both work;
+  use the production preview here or a shorter checkout for development mode.
+
+---
+
+## Prior Flow State branch state
+
+> State of the Flow State waitlist branch, written so a cold agent can resume without briefing.
+> `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction.
+> `HANDOFF.md` = repo-wide continuity. **This file = this branch.**
+
+**Last updated:** 2026-08-01
+**Branch:** `claude/flow-state-waitlist`
+**PR:** #39 — merged to `main` on 2026-08-01 after Kariim's authorization
+**Base:** `origin/main` @ `2fa1b4b` (2026-07-29)
+**Scope:** dedicated Flow State page, waitlist capture, studio link, and product-scoped waitlist uniqueness.
+
+## Current focus
+
+- `/flow-state` is a standalone launch page approved by Kariim: titanium/pearl on
+  black, a solid warm-spectrum holofoil `F`, animated waveform, simulated
+  dictation, and no visible project number. The headline remains titanium.
+- The Flow State card in `/studio` now links directly to `/flow-state`.
+- The waitlist posts through `/api/waitlist` with email validation, a honeypot,
+  best-effort per-instance limiting, generic duplicate responses, and source
+  `flow-state`.
+- Supabase migration `20260731_waitlist_email_source_uniqueness.sql` was applied
+  to production. Uniqueness is now `(lower(email), source)`, `source` is required,
+  `waitlist_source_nonempty` rejects blank tags, and the existing insert-only RLS
+  policy is unchanged.
+- A rollback-only production test proved one address can join `pinch-landing` and
+  `flow-state`, while a second `flow-state` insert is rejected. The database still
+  contains only the one pre-existing `mcp-verify` row.
+- Vercel project `shift-9/shift9-dev` now has the checked-in public Supabase URL
+  and publishable anon key configured as encrypted Production and Preview variables.
+
+## Verification
+
+- `pnpm --filter shift9-dev test:flow-state` passes. Its migration assertion was
+  mutation-tested: `source_typo` failed red, restored `source` passed green.
+- Final checks on 2026-07-31: `pnpm typecheck`,
+  `pnpm --filter shift9-dev build`, and
+  `pnpm --filter just-a-pinch build` all exited 0.
+- The page was visually checked at desktop and 390px mobile with no overlap or
+  horizontal overflow; reduced motion has a complete static state.
+- The protected branch preview returned 200 for `/flow-state`. Two real
+  `/api/waitlist` submissions returned `{"ok":true}`; Supabase contained exactly
+  one `flow-state` row, proving duplicate masking and persistence. The synthetic
+  `.invalid` row was then deleted and a zero-row query confirmed cleanup.
+- Holofoil refinement on 2026-08-01: desktop and 390px mobile render the tokenized
+  coral/gold/pearl/jade/rose material with no overflow. Waveform, typed simulation,
+  invalid-email feedback, and the safe no-env state work. Reverting the F to
+  titanium fails the contract; restoring holofoil passes. Full typecheck and both
+  production builds exit 0; independent review has no findings.
+- Updated protected preview: `/flow-state` returned 200; first and duplicate
+  waitlist submissions both returned 200; Supabase stored exactly one
+  `flow-state` row. The synthetic row was deleted and a zero-row query confirmed
+  cleanup before merge.
+
+## Known follow-up
+
+- The route limiter is process-local. Deployment-wide rate limiting needs a
+  shared store, Vercel firewall rule, or verified challenge. The honeypot remains
+  the low-cost protection in this branch.
+- Do not copy a sensitive Vercel variable by running `vercel env pull`: Vercel
+  exports an 11-character placeholder, not the value. That caused a preview 500
+  (`Invalid supabaseUrl`) during this session. Restore these public client values
+  from the checked-in `.env.example`, then redeploy and test the real endpoint.
+
+---
+
+## Prior entry-experience branch context
+
+The remaining notes below describe the earlier entry-experience branch and are
+kept as historical design context; they are not the current branch state.
 
 The entrance used to play a 20-second film and then cut to a desktop UI filling
 the browser. Now the film stops on the frame before the crocheted hand reaches
