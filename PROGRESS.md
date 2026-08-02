@@ -4,6 +4,7 @@
 
 **Last updated:** 2026-08-02
 **Branch:** `claude/flow-state-confirmation-email`
+**PR:** #42 — ready, green, awaiting Kariim's merge approval
 **Base:** `origin/main` @ `92b74d3` (PR #41 merged)
 **Scope:** send one confirmation after Flow State waitlist acceptance and document the private owner workflow.
 
@@ -35,12 +36,18 @@
 - The configured local endpoint returned
   `200 {"ok":true,"confirmation":"unavailable"}`, proving a missing sender does
   not erase the accepted waitlist state or claim an email was delivered.
+- The protected Vercel preview returned
+  `200 {"ok":true,"confirmation":"sent"}` for `shift9dev@gmail.com`. Resend's
+  Emails dashboard recorded the matching subject as `delivered` immediately.
+- The protected `/flow-state` preview renders the finished signup surface. The
+  browser driver's semantic submit click timed out before dispatch, so the API,
+  provider delivery record, and pure response-state test are the interaction
+  evidence; do not claim a browser click completed.
 
 ## Remaining gate
 
-- Push a ready PR, verify the Vercel preview sends the confirmation to
-  `shift9dev@gmail.com`, confirm delivery in Resend and the inbox, then wait for
-  Kariim's explicit merge approval. Nothing is live until that merge.
+- Kariim's explicit approval to merge green PR #42. Nothing is live until that
+  merge.
 
 ## Provider gotcha
 

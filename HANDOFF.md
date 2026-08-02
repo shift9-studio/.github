@@ -53,7 +53,9 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   `RESEND_API_KEY`. The Supabase Auth key was not reused or changed. Supabase
   Table Editor is the private waitlist view; Resend Emails is the delivery view.
   Focused guard, bite proof, typecheck, both production builds, and the local
-  no-mail fallback pass. Preview delivery and Kariim's merge approval remain.
+  no-mail fallback pass. Green PR #42's protected preview returned
+  `confirmation: sent`; Resend recorded the message to `shift9dev@gmail.com` as
+  delivered. Only Kariim's explicit merge approval remains.
 
 - **2026-08-01 - Desktop and conversion follow-up authorized for merge.** Branch
   `codex/fix-theme-tooltip` keeps the Light-theme tooltip above the desktop
