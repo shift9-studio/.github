@@ -43,6 +43,20 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 ## Recent changes
 
+- **2026-08-02 - Flow State confirmation email prepared, not merged.** Branch
+  `claude/flow-state-confirmation-email` sends a Resend confirmation only after
+  the insert-only waitlist accepts or duplicate-masks the address. Delivery is
+  idempotent for 24 hours, bounded by a five-second abort, and failure-safe: the
+  form says the place is saved when mail is unavailable. The existing Resend
+  account already had `shift9.dev` verified; a new sending-only, domain-restricted
+  `Flow State confirmation` key is stored as sensitive Vercel Preview/Production
+  `RESEND_API_KEY`. The Supabase Auth key was not reused or changed. Supabase
+  Table Editor is the private waitlist view; Resend Emails is the delivery view.
+  Focused guard, bite proof, typecheck, both production builds, and the local
+  no-mail fallback pass. Green PR #42's protected preview returned
+  `confirmation: sent`; Resend recorded the message to `shift9dev@gmail.com` as
+  delivered. Only Kariim's explicit merge approval remains.
+
 - **2026-08-01 - Desktop and conversion follow-up authorized for merge.** Branch
   `codex/fix-theme-tooltip` keeps the Light-theme tooltip above the desktop
   controls while removing the redundant Grid/Icons hover tips. Flow State's
