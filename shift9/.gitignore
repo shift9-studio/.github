@@ -12,6 +12,7 @@ build/
 .turbo/
 *.tsbuildinfo
 next-env.d.ts
+.vercel/
 
 # env & os
 .env*.local

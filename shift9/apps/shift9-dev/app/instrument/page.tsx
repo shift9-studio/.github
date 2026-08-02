@@ -140,9 +140,10 @@ export default function InstrumentPage() {
         <div className={s.boundaryCopy}>
           <h2>Instrument documents how Shift-9 builds its own products.</h2>
           <p>
-            Titanium Forge is the separate product for assembling interface
-            systems. Instrument is the proof that the studio has used these
-            decisions on live work.
+            Instrument gives clients and partners a clear view of the decisions
+            behind shipped Shift-9 work: structure, motion, interaction, and the
+            evidence supporting each choice. Titanium Forge is the separate
+            component workbench built from those lessons.
           </p>
         </div>
       </section>
@@ -160,9 +161,6 @@ export default function InstrumentPage() {
           <div className={s.referenceActions}>
             <Link className="s9-pearl" href="/instrument/reference">
               Open technical reference &#8594;
-            </Link>
-            <Link className="s9-pearl-dark" href="/start">
-              Start a project &#8594;
             </Link>
           </div>
         </div>

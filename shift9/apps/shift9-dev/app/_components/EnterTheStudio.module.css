@@ -1669,6 +1669,9 @@
   position: relative;
   z-index: 1;
 }
+.titlerow {
+  z-index: 2;
+}
 .titlerow,
 .searchrow {
   background: rgb(var(--w-bg-rgb) / 0.82);

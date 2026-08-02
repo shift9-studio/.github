@@ -28,6 +28,7 @@ const waitlistMigration = read(
 const waitlistSourceMigration = read(
   "../../supabase/migrations/20260731_waitlist_source_nonempty.sql",
 );
+const deploymentGuide = read("../../DEPLOY.md");
 
 const routeAst = ts.createSourceFile(
   "route.ts",
@@ -152,9 +153,19 @@ assert.match(water, /if \(motionQuery\.matches\) paint\(0\)/, "Reduced-motion wa
 assert.doesNotMatch(water, /rgba?\(/i, "Canvas colors must come from Shift-9 theme tokens");
 assert.match(styles, /prefers-reduced-motion/);
 assert.match(
+  styles,
+  /\.topbar\s*\{[\s\S]{0,220}padding:[^;]*clamp\(11\.75rem,\s*16vw,\s*14rem\)/,
+  "The Flow State header must clear the fixed studio return control",
+);
+assert.match(
   themeTokens,
   /--s9-holofoil:\s*[\s\S]*linear-gradient/i,
   "The Flow State mark needs a tokenized holofoil material",
+);
+assert.match(
+  deploymentGuide,
+  /shift9\.dev[\s\S]*NEXT_PUBLIC_SUPABASE_URL[\s\S]*NEXT_PUBLIC_SUPABASE_ANON_KEY[\s\S]*Flow State beta intake/i,
+  "Shift-9 deployment docs must keep the Flow State intake configuration explicit",
 );
 assert.match(
   styles,

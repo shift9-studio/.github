@@ -46,7 +46,7 @@ directory to `shift9/pnpm-workspace.yaml`).
 | **Root Directory** | `shift9/apps/shift9-dev` |
 | **Framework Preset** | Next.js *(auto)* |
 | **Build / Install / Output** | defaults |
-| **Environment variables** | none required (fully static) |
+| **Environment variables** | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (from §1; required for Flow State beta intake) |
 | **Domain** | `shift9.dev` |
 
 ### Project #2 — `just-a-pinch`

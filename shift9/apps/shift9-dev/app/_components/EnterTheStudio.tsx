@@ -980,10 +980,9 @@ export function EnterTheStudio() {
           </div>
           <div className={s.viewbtn}>
             <span
-              className={`${s.vseg} ${s.tipHost} ${compact ? "" : s.on}`}
+              className={`${s.vseg} ${compact ? "" : s.on}`}
               role="button"
               tabIndex={0}
-              data-tip="Grid view"
               onClick={() => setCompact(false)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") setCompact(false);
@@ -992,10 +991,9 @@ export function EnterTheStudio() {
               &#8862; Grid
             </span>
             <span
-              className={`${s.vseg} ${s.tipHost} ${compact ? s.on : ""}`}
+              className={`${s.vseg} ${compact ? s.on : ""}`}
               role="button"
               tabIndex={0}
-              data-tip="Icon view"
               onClick={() => setCompact(true)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") setCompact(true);
