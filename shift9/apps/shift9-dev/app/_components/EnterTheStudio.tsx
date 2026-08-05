@@ -306,6 +306,17 @@ const FOLDERS: { key: FolderKey; name: string; count: string; glyph: React.React
   },
 ];
 
+/* The services tile. A price tag, because that is the one question this tile
+   answers and the row already has a folder glyph, a person and a logo — a
+   fourth abstract mark would not say which of them it is. Kariim's call,
+   2026-08-05: the desktop gets a door to the offer as well as to the reel. */
+const SERVICES_GLYPH = (
+  <svg viewBox="0 0 24 24">
+    <path d="M20.6 12.6 12 21.2l-8.6-8.6a2 2 0 0 1-.6-1.4V4a1 1 0 0 1 1-1h7.2a2 2 0 0 1 1.4.6l8.2 8.2a1 1 0 0 1 0 1.4z" />
+    <circle cx="7.5" cy="7.5" r="1.5" />
+  </svg>
+);
+
 const ABOUT_GLYPH = (
   <svg viewBox="0 0 24 24">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -1067,6 +1078,25 @@ export function EnterTheStudio() {
               <div className={s.fname}>About</div>
               <div className={s.fcount}>Kariim &#183; Shift-9</div>
             </div>
+
+            {/* The offer, reachable from the desktop rather than only from the
+                far end of the reel. Kariim, 2026-08-05: the services page had
+                nothing linking to it anywhere on the site, so the three cold
+                emails aimed at paid work landed on a reel with no prices and
+                no way to find them. This is the short path for a visitor who
+                arrived already wanting to know what it costs.
+
+                It sits BEFORE the door tile so the door still closes the row,
+                which was his earlier call and still holds. */}
+            <a
+              className={`${s.dicon} ${s.site}`}
+              href="/services"
+              style={{ textDecoration: "none" }}
+            >
+              <div className={`${s.appico} ${s.holo}`}>{SERVICES_GLYPH}</div>
+              <div className={s.fname}>Services</div>
+              <div className={s.fcount}>What it costs</div>
+            </a>
 
             {/* The door tile closes the row rather than opening it — Kariim's call.
                 The folders are what a visitor came to look through, and the

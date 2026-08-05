@@ -1,5 +1,4 @@
 import { WaveField } from "../_components/WaveField";
-import { StartAction } from "./StartAction";
 import s from "./start.module.css";
 
 /* ────────────────────────────────────────────────────────────────────────
@@ -50,14 +49,22 @@ export default function StartPage() {
         </p>
 
         <div className={s.actions}>
-          {/* Was a bare mailto, which does nothing on a machine with no mail
-              client and gives no feedback — so it read as broken rather than
-              unhandled. See StartAction. */}
-          <StartAction
-            email={EMAIL}
-            wrapClassName={s.startWrap}
-            noteClassName={s.copied}
-          />
+          {/* This was a bare mailto, and a bare mailto does nothing at all on
+              a machine with no mail client — Kariim hit exactly that on
+              2026-08-05: "when I click start a project nothing happens."
+
+              It is now the door into the offer instead. His call, same day:
+              the services page goes on the end of Start a project. So the ask
+              leads to what it costs, and the writing-to-Kariim step lives at
+              the bottom of that page where someone has actually read the
+              prices. The address below stays for anyone who would rather skip
+              the reading and just write. */}
+          <a className="s9-pearl" href="/services">
+            <span>Start a project</span>
+            <span className="s9-pearlArrow" aria-hidden="true">
+              &#8594;
+            </span>
+          </a>
 
           <a className="s9-pearl-dark" href="/">
             <span>

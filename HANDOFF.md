@@ -43,6 +43,33 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 ## Recent changes
 
+- **2026-08-05 - the conversion funnel joined up end to end; not merged.** Branch
+  `claude/fix-start-mailto`. Two problems, one chain. (1) `/services` shipped as an
+  orphan - nothing on the site linked to it, so the three outreach emails aimed at paid
+  work landed on a reel with no prices and no way to find them. (2) `/start`'s only
+  button was a bare `mailto:`, which does nothing on a machine with no mail client and
+  gives no feedback, so it read as broken. Kariim, live: *"where is the services page I
+  don't see it and when I click start a project nothing happens."*
+  His call the same day: **the services page goes on the end of Start a project**, plus a
+  door from the desktop. The chain is now
+  `reel -> invitation -> START A PROJECT -> /services (the offer) -> EMAIL ME`,
+  with a second entrance from the desktop's new **Services / "What it costs"** tile,
+  placed before the door tile so the door still closes the row.
+  `/start`'s button is a plain link to `/services`; the writing-to-Kariim step moved to
+  the bottom of the offer, where someone has actually read the prices. `/services`'s hero
+  now sends you DOWN into the offers (`#offers`) instead of back to `/start`, which would
+  have been a loop. `StartAction` moved to `app/_components/` and takes a label.
+  Two defects found by testing rather than reading, both fixed: the first draft set the
+  confirmation only in the clipboard's success callback, so any clipboard failure left the
+  button silently dead again - it is now set synchronously and only upgrades to "copied"
+  when the copy lands; and the confirmation was a flex sibling of the buttons and never
+  painted where anyone could see it - it now shares a wrapper with its own button. The
+  window is 12s, not the desktop tooltip's 2.4s, because here the message IS the fallback
+  address. Verified with real trusted clicks on a production build; a scripted `.click()`
+  does not reproduce it (no user activation, so the clipboard silently refuses) which is
+  exactly what made the first draft look correct. The desktop is locked creative
+  direction - the tile was added on Kariim's explicit yes.
+
 - **2026-08-05 - `/services`, the page the outreach was missing; built, not merged.**
   Branch `claude/services-page`. Kariim sent ten cold emails on 2026-08-05; three of them -
   the three aimed at paid studio work - are signed `shift9.dev/studio`, which is a
