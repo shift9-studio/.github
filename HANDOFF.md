@@ -43,6 +43,57 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 ## Recent changes
 
+- **2026-08-05 - the return-to-desktop flash, and one mail control instead of three.**
+  Same branch, `claude/fix-start-mailto`. Three of Kariim's calls, same day.
+  (1) *"when you click back to desktop from the invitation page I can see frames from the
+  earlier video."* Cause: `EnterTheStudio`'s `mode` initialises to `"gate"` because the
+  server cannot read `sessionStorage`, and the already-seen check ran in a plain
+  `useEffect` - which fires AFTER the browser paints. So the front door and the film's
+  first frame got a paint or two before being flipped to `"desk"`. Moved to
+  `useLayoutEffect` behind an isomorphic guard (React warns if it runs during server
+  render), which runs after the DOM is written but BEFORE paint, so the desk is the first
+  thing that reaches the screen. No other behaviour changed.
+  (2) *"make it so when you click the email address the email client the user uses pops up
+  not copied to clipboard."* The clipboard fallback is gone and `StartAction` is deleted;
+  the control is a plain `mailto:` with no JavaScript in the path, which hands off to
+  whatever the machine has set as its mail handler. **Stated to him and chosen by him:**
+  on a machine whose mail association is missing or broken this does nothing visible.
+  Checked on his own machine - his `mailto` UserChoice is
+  `AppXbx2ce4vcxjdhff3d1ms66qqzk12zn827` with no command registered, which is exactly why
+  it did nothing for him; that is a Windows default-apps setting, not a site bug.
+  (3) *"you don't need an email me and write to shift9dev on the same page directly above
+  each other ever."* The close had an "Email me" button with "or write to
+  shift9dev@gmail.com" immediately beneath it - the same address, the same mailto, twice.
+  The button now carries the address itself, and the line under it is gone. One control,
+  verified: exactly one mailto element in `<main>`.
+
+- **2026-08-05 - the conversion funnel joined up end to end; not merged.** Branch
+  `claude/fix-start-mailto`. Two problems, one chain. (1) `/services` shipped as an
+  orphan - nothing on the site linked to it, so the three outreach emails aimed at paid
+  work landed on a reel with no prices and no way to find them. (2) `/start`'s only
+  button was a bare `mailto:`, which does nothing on a machine with no mail client and
+  gives no feedback, so it read as broken. Kariim, live: *"where is the services page I
+  don't see it and when I click start a project nothing happens."*
+  His call the same day: **the services page goes on the end of Start a project**, plus a
+  door from the desktop. The chain is now
+  `reel -> invitation -> START A PROJECT -> /services (the offer) -> EMAIL ME`,
+  with a second entrance from the desktop's new **Services / "What it costs"** tile,
+  placed before the door tile so the door still closes the row.
+  `/start`'s button is a plain link to `/services`; the writing-to-Kariim step moved to
+  the bottom of the offer, where someone has actually read the prices. `/services`'s hero
+  now sends you DOWN into the offers (`#offers`) instead of back to `/start`, which would
+  have been a loop. `StartAction` moved to `app/_components/` and takes a label.
+  Two defects found by testing rather than reading, both fixed: the first draft set the
+  confirmation only in the clipboard's success callback, so any clipboard failure left the
+  button silently dead again - it is now set synchronously and only upgrades to "copied"
+  when the copy lands; and the confirmation was a flex sibling of the buttons and never
+  painted where anyone could see it - it now shares a wrapper with its own button. The
+  window is 12s, not the desktop tooltip's 2.4s, because here the message IS the fallback
+  address. Verified with real trusted clicks on a production build; a scripted `.click()`
+  does not reproduce it (no user activation, so the clipboard silently refuses) which is
+  exactly what made the first draft look correct. The desktop is locked creative
+  direction - the tile was added on Kariim's explicit yes.
+
 - **2026-08-05 - `/services`, the page the outreach was missing; built, not merged.**
   Branch `claude/services-page`. Kariim sent ten cold emails on 2026-08-05; three of them -
   the three aimed at paid studio work - are signed `shift9.dev/studio`, which is a
@@ -52,7 +103,30 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   Two new files under `app/services/` — plus this continuity entry, which the repo requires in
   the same commit; no other app or package code is touched. Every price, scope line and the
   market-reference disclosure are lifted from the dossier's own offer sheet, read from Drive
-  rather than invented: Interface rescue $1,500-$3,000 fixed; Two-week product sprint
+  rather than invented: Interface rescue - **2026-08-05 - `/start`'s only button did nothing; fixed, not merged.** Branch
+  `claude/fix-start-mailto`. Kariim, on the live site: "when I click start a project
+  nothing happens." He was right, and it was the whole conversion path. The button was a
+  bare `mailto:`, which on a machine with no mail client configured does nothing at all
+  and gives no feedback either way - so it reads as broken, not as unhandled. Every route
+  into the studio funnels through this page, including the three outreach emails aimed at
+  paid work.
+  The repo had already solved this once, on the desktop shell's envelope
+  (`EnterTheStudio.tsx`): keep the href, and also copy the address on click with visible,
+  announced confirmation. This is that pattern moved to the surface where it decides
+  whether a lead converts, in a new `app/start/StartAction.tsx`.
+  Two defects were found while building it, both by testing rather than by reading:
+  (1) the first draft set the message only in the clipboard's success callback, so any
+  clipboard failure - no permission, no user activation, insecure context - left the
+  button silently dead again. The message is now set synchronously on click and never
+  depends on the copy; the wording upgrades to "copied" only if the copy actually lands.
+  (2) The confirmation was a flex sibling of the buttons and never painted where anyone
+  could see it; it now shares a wrapper with the button it belongs to. The window is 12s
+  rather than the desktop tooltip's 2.4s, because here the message IS the fallback
+  address and 2.4s is not long enough to read one.
+  Verified with a real trusted click on a production build: message visible in verdant
+  under the button, address on the clipboard, `role="status" aria-live="polite"`.
+  A scripted `.click()` does NOT reproduce it - no user activation means the clipboard
+  silently refuses, which is exactly what made the first draft look correct.,500-$3,000 fixed; Two-week product sprint
   $4,000-$8,000 fixed; Embedded product partner $3,000-$5,000/month. Built on the
   invitation's obsidian ground with the `/instrument` lattice so the two reading surfaces
   match. No canvas, deliberately - this is a page you read three prices off, and the house
@@ -69,6 +143,30 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   verified under real emulation, all six links live.
   **Open for Kariim:** the page is an orphan - nothing links to it yet, and adding an inbound
   link touches a locked surface, so that is his call.
+- **2026-08-05 - `/start`'s only button did nothing; fixed, not merged.** Branch
+  `claude/fix-start-mailto`. Kariim, on the live site: "when I click start a project
+  nothing happens." He was right, and it was the whole conversion path. The button was a
+  bare `mailto:`, which on a machine with no mail client configured does nothing at all
+  and gives no feedback either way - so it reads as broken, not as unhandled. Every route
+  into the studio funnels through this page, including the three outreach emails aimed at
+  paid work.
+  The repo had already solved this once, on the desktop shell's envelope
+  (`EnterTheStudio.tsx`): keep the href, and also copy the address on click with visible,
+  announced confirmation. This is that pattern moved to the surface where it decides
+  whether a lead converts, in a new `app/start/StartAction.tsx`.
+  Two defects were found while building it, both by testing rather than by reading:
+  (1) the first draft set the message only in the clipboard's success callback, so any
+  clipboard failure - no permission, no user activation, insecure context - left the
+  button silently dead again. The message is now set synchronously on click and never
+  depends on the copy; the wording upgrades to "copied" only if the copy actually lands.
+  (2) The confirmation was a flex sibling of the buttons and never painted where anyone
+  could see it; it now shares a wrapper with the button it belongs to. The window is 12s
+  rather than the desktop tooltip's 2.4s, because here the message IS the fallback
+  address and 2.4s is not long enough to read one.
+  Verified with a real trusted click on a production build: message visible in verdant
+  under the button, address on the clipboard, `role="status" aria-live="polite"`.
+  A scripted `.click()` does NOT reproduce it - no user activation means the clipboard
+  silently refuses, which is exactly what made the first draft look correct.
 
 - **2026-08-02 - Flow State confirmation email prepared, not merged.** Branch
   `claude/flow-state-confirmation-email` sends a Resend confirmation only after

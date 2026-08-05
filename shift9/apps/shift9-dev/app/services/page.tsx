@@ -138,16 +138,19 @@ export default function ServicesPage() {
           </p>
         </Reveal>
 
+        {/* This page is the END of the funnel now, not a stop on the way to
+            it: /start's button leads HERE (Kariim, 2026-08-05 — "the services
+            page should go on the end of start a project"). So the hero sends
+            you DOWN into the offer rather than back to the page you just came
+            from, which would have been a loop. Writing to him is the last
+            thing on the page, after the prices. */}
         <Reveal variant="rise" delay={0.24}>
           <div className={s.actions}>
-            <a className="s9-pearl" href="/start">
-              <span>Start a project</span>
-              <span className="s9-pearlArrow" aria-hidden="true">
-                &#8594;
-              </span>
-            </a>
-            <a className="s9-pearl-dark" href="#offers">
+            <a className="s9-pearl" href="#offers">
               <span>See what it costs</span>
+              <span className="s9-pearlArrow" aria-hidden="true">
+                &#8595;
+              </span>
             </a>
           </div>
         </Reveal>
@@ -269,24 +272,32 @@ export default function ServicesPage() {
           <h2 className={s.sectionTitle}>Send the problem, not a brief.</h2>
         </Reveal>
 
+        {/* The last click on the funnel. Kariim's call, 2026-08-05: this opens
+            the visitor's own mail client and does NOT copy to the clipboard.
+            A plain mailto is exactly that — it hands off to whatever the
+            machine has set as its mail handler, which is the definition of
+            "the email client the user uses". No JavaScript in the path, so
+            right-click → copy address keeps working for anyone who wants it.
+
+            Known and stated to him: on a machine whose mail association is
+            missing or broken, this does nothing visible — that is the
+            behaviour he chose, over the copy-to-clipboard fallback. */}
+        {/* ONE control, not two. This used to be an "Email me" button with
+            "or write to shift9dev@gmail.com" sitting directly under it —
+            the same address, the same mailto, twice in a row. Kariim,
+            2026-08-05: never both on a page, directly above each other.
+            So the button carries the address itself: it shows what you are
+            writing to AND opens your mail client, and there is nothing left
+            to repeat underneath it. */}
         <Reveal variant="rise" delay={0.12}>
           <div className={s.actions}>
-            <a className="s9-pearl" href="/start">
-              <span>Start a project</span>
+            <a className="s9-pearl" href={`mailto:${EMAIL}`}>
+              <span>{EMAIL}</span>
               <span className="s9-pearlArrow" aria-hidden="true">
                 &#8594;
               </span>
             </a>
           </div>
-        </Reveal>
-
-        <Reveal variant="rise" delay={0.18}>
-          <p className={s.address}>
-            or write to{" "}
-            <a className={s.addressLink} href={`mailto:${EMAIL}`}>
-              {EMAIL}
-            </a>
-          </p>
         </Reveal>
       </section>
     </main>

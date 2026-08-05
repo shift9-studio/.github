@@ -26,7 +26,13 @@
    ──────────────────────────────────────────────────────────────────────── */
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useReducedMotionSafe } from "@shift9/motion";
 import { FadeToBlack } from "./FadeToBlack";
 import { AsciiWallpaper } from "./AsciiWallpaper";
@@ -306,12 +312,29 @@ const FOLDERS: { key: FolderKey; name: string; count: string; glyph: React.React
   },
 ];
 
+/* The services tile. A price tag, because that is the one question this tile
+   answers and the row already has a folder glyph, a person and a logo — a
+   fourth abstract mark would not say which of them it is. Kariim's call,
+   2026-08-05: the desktop gets a door to the offer as well as to the reel. */
+const SERVICES_GLYPH = (
+  <svg viewBox="0 0 24 24">
+    <path d="M20.6 12.6 12 21.2l-8.6-8.6a2 2 0 0 1-.6-1.4V4a1 1 0 0 1 1-1h7.2a2 2 0 0 1 1.4.6l8.2 8.2a1 1 0 0 1 0 1.4z" />
+    <circle cx="7.5" cy="7.5" r="1.5" />
+  </svg>
+);
+
 const ABOUT_GLYPH = (
   <svg viewBox="0 0 24 24">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
     <circle cx="12" cy="7" r="4" />
   </svg>
 );
+
+/* useLayoutEffect on the client, useEffect on the server. React warns if
+   useLayoutEffect runs during server rendering, but useEffect is too late for
+   anything that must be decided before the first paint. */
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const THEME_KEY = "s9-desk-theme";
 
@@ -521,8 +544,20 @@ export function EnterTheStudio() {
      you at the desk, not outside the house again.
 
      This has to live apart from the playback effect below — that one cannot
-     run until a video exists, and now no video exists until it is asked for. */
-  useEffect(() => {
+     run until a video exists, and now no video exists until it is asked for.
+
+     LAYOUT effect, not a plain one, and that is the whole fix for a bug
+     Kariim reported on 2026-08-05: coming back from the invitation he saw "a
+     few frames from the earlier video" before landing on the desktop. `mode`
+     initialises to "gate" because the server cannot read sessionStorage, and
+     a plain effect runs AFTER the browser has painted — so the front door and
+     the film's first frame got a paint or two on screen before this flipped
+     them to "desk". useLayoutEffect runs after the DOM is written but BEFORE
+     paint, so the desk is the first thing that ever reaches the screen.
+
+     The isomorphic guard is required: React warns when useLayoutEffect runs
+     during server rendering, and this component is server-rendered. */
+  useIsomorphicLayoutEffect(() => {
     if (
       reducedMotion || introAlreadySeen()
     ) {
@@ -1067,6 +1102,25 @@ export function EnterTheStudio() {
               <div className={s.fname}>About</div>
               <div className={s.fcount}>Kariim &#183; Shift-9</div>
             </div>
+
+            {/* The offer, reachable from the desktop rather than only from the
+                far end of the reel. Kariim, 2026-08-05: the services page had
+                nothing linking to it anywhere on the site, so the three cold
+                emails aimed at paid work landed on a reel with no prices and
+                no way to find them. This is the short path for a visitor who
+                arrived already wanting to know what it costs.
+
+                It sits BEFORE the door tile so the door still closes the row,
+                which was his earlier call and still holds. */}
+            <a
+              className={`${s.dicon} ${s.site}`}
+              href="/services"
+              style={{ textDecoration: "none" }}
+            >
+              <div className={`${s.appico} ${s.holo}`}>{SERVICES_GLYPH}</div>
+              <div className={s.fname}>Services</div>
+              <div className={s.fcount}>What it costs</div>
+            </a>
 
             {/* The door tile closes the row rather than opening it — Kariim's call.
                 The folders are what a visitor came to look through, and the
