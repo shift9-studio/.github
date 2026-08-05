@@ -49,7 +49,8 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   twelve-build reel carrying no price, no offer and no scope. `/start` takes a message but
   answers no commercial question. The dossier (31 Jul 2026) makes this its P0 site: two
   fixed-scope offers, proof, process, price band, availability, direct intake.
-  Two new files under `app/services/`, nothing else touched. Every price, scope line and the
+  Two new files under `app/services/` — plus this continuity entry, which the repo requires in
+  the same commit; no other app or package code is touched. Every price, scope line and the
   market-reference disclosure are lifted from the dossier's own offer sheet, read from Drive
   rather than invented: Interface rescue $1,500-$3,000 fixed; Two-week product sprint
   $4,000-$8,000 fixed; Embedded product partner $3,000-$5,000/month. Built on the
