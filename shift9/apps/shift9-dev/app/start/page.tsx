@@ -1,4 +1,5 @@
 import { WaveField } from "../_components/WaveField";
+import { StartAction } from "./StartAction";
 import s from "./start.module.css";
 
 /* ────────────────────────────────────────────────────────────────────────
@@ -49,12 +50,14 @@ export default function StartPage() {
         </p>
 
         <div className={s.actions}>
-          <a className="s9-pearl" href={`mailto:${EMAIL}`}>
-            <span>Start a project</span>
-            <span className="s9-pearlArrow" aria-hidden="true">
-              &#8594;
-            </span>
-          </a>
+          {/* Was a bare mailto, which does nothing on a machine with no mail
+              client and gives no feedback — so it read as broken rather than
+              unhandled. See StartAction. */}
+          <StartAction
+            email={EMAIL}
+            wrapClassName={s.startWrap}
+            noteClassName={s.copied}
+          />
 
           <a className="s9-pearl-dark" href="/">
             <span>
