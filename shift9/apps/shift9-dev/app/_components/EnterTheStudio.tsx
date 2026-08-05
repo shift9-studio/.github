@@ -26,7 +26,13 @@
    ──────────────────────────────────────────────────────────────────────── */
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useReducedMotionSafe } from "@shift9/motion";
 import { FadeToBlack } from "./FadeToBlack";
 import { AsciiWallpaper } from "./AsciiWallpaper";
@@ -324,6 +330,12 @@ const ABOUT_GLYPH = (
   </svg>
 );
 
+/* useLayoutEffect on the client, useEffect on the server. React warns if
+   useLayoutEffect runs during server rendering, but useEffect is too late for
+   anything that must be decided before the first paint. */
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
 const THEME_KEY = "s9-desk-theme";
 
 /* The opening film is an arrival, and you only arrive once. Every route that
@@ -532,8 +544,20 @@ export function EnterTheStudio() {
      you at the desk, not outside the house again.
 
      This has to live apart from the playback effect below — that one cannot
-     run until a video exists, and now no video exists until it is asked for. */
-  useEffect(() => {
+     run until a video exists, and now no video exists until it is asked for.
+
+     LAYOUT effect, not a plain one, and that is the whole fix for a bug
+     Kariim reported on 2026-08-05: coming back from the invitation he saw "a
+     few frames from the earlier video" before landing on the desktop. `mode`
+     initialises to "gate" because the server cannot read sessionStorage, and
+     a plain effect runs AFTER the browser has painted — so the front door and
+     the film's first frame got a paint or two on screen before this flipped
+     them to "desk". useLayoutEffect runs after the DOM is written but BEFORE
+     paint, so the desk is the first thing that ever reaches the screen.
+
+     The isomorphic guard is required: React warns when useLayoutEffect runs
+     during server rendering, and this component is server-rendered. */
+  useIsomorphicLayoutEffect(() => {
     if (
       reducedMotion || introAlreadySeen()
     ) {

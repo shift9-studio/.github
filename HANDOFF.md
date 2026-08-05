@@ -43,6 +43,30 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 
 ## Recent changes
 
+- **2026-08-05 - the return-to-desktop flash, and one mail control instead of three.**
+  Same branch, `claude/fix-start-mailto`. Three of Kariim's calls, same day.
+  (1) *"when you click back to desktop from the invitation page I can see frames from the
+  earlier video."* Cause: `EnterTheStudio`'s `mode` initialises to `"gate"` because the
+  server cannot read `sessionStorage`, and the already-seen check ran in a plain
+  `useEffect` - which fires AFTER the browser paints. So the front door and the film's
+  first frame got a paint or two before being flipped to `"desk"`. Moved to
+  `useLayoutEffect` behind an isomorphic guard (React warns if it runs during server
+  render), which runs after the DOM is written but BEFORE paint, so the desk is the first
+  thing that reaches the screen. No other behaviour changed.
+  (2) *"make it so when you click the email address the email client the user uses pops up
+  not copied to clipboard."* The clipboard fallback is gone and `StartAction` is deleted;
+  the control is a plain `mailto:` with no JavaScript in the path, which hands off to
+  whatever the machine has set as its mail handler. **Stated to him and chosen by him:**
+  on a machine whose mail association is missing or broken this does nothing visible.
+  Checked on his own machine - his `mailto` UserChoice is
+  `AppXbx2ce4vcxjdhff3d1ms66qqzk12zn827` with no command registered, which is exactly why
+  it did nothing for him; that is a Windows default-apps setting, not a site bug.
+  (3) *"you don't need an email me and write to shift9dev on the same page directly above
+  each other ever."* The close had an "Email me" button with "or write to
+  shift9dev@gmail.com" immediately beneath it - the same address, the same mailto, twice.
+  The button now carries the address itself, and the line under it is gone. One control,
+  verified: exactly one mailto element in `<main>`.
+
 - **2026-08-05 - the conversion funnel joined up end to end; not merged.** Branch
   `claude/fix-start-mailto`. Two problems, one chain. (1) `/services` shipped as an
   orphan - nothing on the site linked to it, so the three outreach emails aimed at paid

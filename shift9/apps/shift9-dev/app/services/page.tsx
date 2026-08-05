@@ -1,5 +1,4 @@
 import { Reveal, RevealGroup, RevealItem } from "../_components/Reveal";
-import { StartAction } from "../_components/StartAction";
 import s from "./services.module.css";
 
 /* ────────────────────────────────────────────────────────────────────────
@@ -273,28 +272,32 @@ export default function ServicesPage() {
           <h2 className={s.sectionTitle}>Send the problem, not a brief.</h2>
         </Reveal>
 
-        {/* The last click on the funnel, and the one that has to work. A bare
-            mailto does nothing on a machine with no mail client and gives no
-            feedback, which is how it came to read as broken — so this control
-            also copies the address and says so. See StartAction. */}
+        {/* The last click on the funnel. Kariim's call, 2026-08-05: this opens
+            the visitor's own mail client and does NOT copy to the clipboard.
+            A plain mailto is exactly that — it hands off to whatever the
+            machine has set as its mail handler, which is the definition of
+            "the email client the user uses". No JavaScript in the path, so
+            right-click → copy address keeps working for anyone who wants it.
+
+            Known and stated to him: on a machine whose mail association is
+            missing or broken, this does nothing visible — that is the
+            behaviour he chose, over the copy-to-clipboard fallback. */}
+        {/* ONE control, not two. This used to be an "Email me" button with
+            "or write to shift9dev@gmail.com" sitting directly under it —
+            the same address, the same mailto, twice in a row. Kariim,
+            2026-08-05: never both on a page, directly above each other.
+            So the button carries the address itself: it shows what you are
+            writing to AND opens your mail client, and there is nothing left
+            to repeat underneath it. */}
         <Reveal variant="rise" delay={0.12}>
           <div className={s.actions}>
-            <StartAction
-              email={EMAIL}
-              label="Email me"
-              wrapClassName={s.startWrap}
-              noteClassName={s.copied}
-            />
-          </div>
-        </Reveal>
-
-        <Reveal variant="rise" delay={0.18}>
-          <p className={s.address}>
-            or write to{" "}
-            <a className={s.addressLink} href={`mailto:${EMAIL}`}>
-              {EMAIL}
+            <a className="s9-pearl" href={`mailto:${EMAIL}`}>
+              <span>{EMAIL}</span>
+              <span className="s9-pearlArrow" aria-hidden="true">
+                &#8594;
+              </span>
             </a>
-          </p>
+          </div>
         </Reveal>
       </section>
     </main>
