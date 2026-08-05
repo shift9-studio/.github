@@ -5,7 +5,7 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-08-01
+**Last updated:** 2026-08-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
 ## Read first - the discovery trap
@@ -42,6 +42,33 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
 - `@shift9/data` - Supabase client, read recipes, and insert-only waitlist capture. Returns `null` when env vars are absent; every consumer carries a static fallback.
 
 ## Recent changes
+
+- **2026-08-05 - `/services`, the page the outreach was missing; built, not merged.**
+  Branch `claude/services-page`. Kariim sent ten cold emails on 2026-08-05; three of them -
+  the three aimed at paid studio work - are signed `shift9.dev/studio`, which is a
+  twelve-build reel carrying no price, no offer and no scope. `/start` takes a message but
+  answers no commercial question. The dossier (31 Jul 2026) makes this its P0 site: two
+  fixed-scope offers, proof, process, price band, availability, direct intake.
+  Two new files under `app/services/` — plus this continuity entry, which the repo requires in
+  the same commit; no other app or package code is touched. Every price, scope line and the
+  market-reference disclosure are lifted from the dossier's own offer sheet, read from Drive
+  rather than invented: Interface rescue $1,500-$3,000 fixed; Two-week product sprint
+  $4,000-$8,000 fixed; Embedded product partner $3,000-$5,000/month. Built on the
+  invitation's obsidian ground with the `/instrument` lattice so the two reading surfaces
+  match. No canvas, deliberately - this is a page you read three prices off, and the house
+  already keeps its canvas on `/start` and its reading surfaces flat. Just a Pinch is left
+  out of the proof section on purpose: the name is under a clearance hold and board item N5
+  is blocked on it.
+  Chief of Staff bounced round 1 on three defects, all fixed and re-measured: a 29px lattice
+  band leaking under the two shorter proof cells (now 0px - the reveal wrapper is the grid
+  cell, not the link inside it); verdant on four step numbers and the availability dot (now
+  zero-chroma, leaving exactly one green element on the page - the email address, matching
+  `/start`); and a close heading that repeated `/start`'s H1 verbatim one click before it.
+  Ship-check green: uncached typecheck, full build with the repo's three contract suites, no
+  `.env` present, zero raw hex/durations/easings, zero overflow at 375px, reduced-motion
+  verified under real emulation, all six links live.
+  **Open for Kariim:** the page is an orphan - nothing links to it yet, and adding an inbound
+  link touches a locked surface, so that is his call.
 
 - **2026-08-02 - Flow State confirmation email prepared, not merged.** Branch
   `claude/flow-state-confirmation-email` sends a Resend confirmation only after
