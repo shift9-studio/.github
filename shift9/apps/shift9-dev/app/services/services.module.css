@@ -1,0 +1,563 @@
+/* ────────────────────────────────────────────────────────────────────────
+   THE OFFER
+
+   The reel says what the studio can do. The invitation asks what you are
+   building. Neither of them says what a thing costs, which is the question
+   a studio lead actually has to answer before they can reply to an email —
+   so it was the one page the site was missing.
+
+   Built on the invitation's ground rather than the Void: obsidian, chalk,
+   and the green reserved for the address and the focus ring. The same faint
+   chalk grid the case study carries, so the two reading surfaces read as
+   one system.
+
+   Every colour is a token. No canvas here on purpose — this is a page
+   someone reads three prices off, and the field that makes the invitation
+   striking is the worst possible ground for a table.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  color: var(--s9-chalk);
+  background: var(--s9-obsidian);
+  font-family: var(--s9-font-text);
+}
+
+/* The same 5-unit grid the case study lays down, at the same 3% — the two
+   pages sit next to each other in the same click and should feel milled from
+   the same block. Masked at both ends so it never terminates on a hard line. */
+.root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(color-mix(in oklab, var(--s9-chalk) 3%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--s9-chalk) 3%, transparent) 1px, transparent 1px);
+  background-size: calc(var(--s9-grid-unit) * 5) calc(var(--s9-grid-unit) * 5);
+  mask-image: linear-gradient(to bottom, transparent, black 18%, black 86%, transparent);
+}
+
+.root * {
+  box-sizing: border-box;
+}
+
+/* The house control sizing for reading surfaces, matching the case study. */
+.root :global(.s9-pearl),
+.root :global(.s9-pearl-dark) {
+  min-height: 2.7rem;
+  padding: 0.82em 1.55em;
+  gap: 0.45em;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+}
+
+.exitPin {
+  position: fixed;
+  z-index: 20;
+  top: clamp(0.75rem, 2.5vw, 1.5rem);
+  left: clamp(0.75rem, 2.5vw, 1.5rem);
+  width: fit-content;
+  min-width: 0;
+  max-width: calc(100vw - 1.5rem);
+}
+
+/* Focus takes the verdant everywhere, per the token file's own note: focus is
+   an action affordance, so it earns the site's only colour. */
+.exitPin:focus-visible,
+.root a:focus-visible {
+  outline: 2px solid var(--s9-verdant);
+  outline-offset: 3px;
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  width: min(var(--s9-maxw), 100%);
+  margin-inline: auto;
+  padding-inline: var(--s9-gutter);
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--s9-chalk) 62%, transparent);
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+
+.hero {
+  display: grid;
+  align-content: center;
+  gap: clamp(1.1rem, 2.4vh, 1.7rem);
+  min-height: min(84svh, 46rem);
+  padding-block: clamp(5rem, 14vh, 9rem) clamp(3rem, 8vh, 5rem);
+}
+
+.headline {
+  margin: 0;
+  max-width: 18ch;
+  font-family: var(--s9-font-display);
+  font-size: var(--s9-text-h2);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  color: var(--s9-chalk);
+}
+
+/* One word in the material the studio is named for — the same treatment the
+   invitation gives "building", so the two headlines are visibly the same
+   family. Declared flat first, so a browser without background-clip: text
+   still gets a legible word rather than an invisible one. */
+.milled {
+  color: var(--s9-chalk);
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .milled {
+    color: transparent;
+    background-image: var(--s9-titanium-gloss), var(--s9-titanium);
+    background-size: 260% 100%, 100% 100%;
+    background-position: -80% 0, 0 0;
+    background-repeat: no-repeat;
+    background-blend-mode: screen, normal;
+    -webkit-background-clip: text;
+    background-clip: text;
+    filter:
+      drop-shadow(0 1px 0 rgb(0 0 0 / 0.55))
+      drop-shadow(0 0 1px rgb(255 255 255 / 0.35))
+      drop-shadow(0 6px 14px rgb(0 0 0 / 0.45));
+    animation: sheen var(--s9-dur-sheen) var(--s9-ease-inout) infinite;
+  }
+}
+
+@keyframes sheen {
+  0% {
+    background-position: -80% 0, 0 0;
+  }
+  55%,
+  100% {
+    background-position: 180% 0, 0 0;
+  }
+}
+
+/* Reduced motion keeps the metal and parks the highlight mid-word: a lit,
+   complete state, not a paused sweep. */
+@media (prefers-reduced-motion: reduce) {
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .milled {
+      animation: none;
+      background-position: 46% 0, 0 0;
+    }
+  }
+}
+
+.lede {
+  max-width: 54ch;
+  margin: 0;
+  font-size: var(--s9-text-lead);
+  line-height: 1.5;
+  color: color-mix(in oklab, var(--s9-chalk) 86%, transparent);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: clamp(0.5rem, 1.6vh, 1.1rem);
+}
+
+/* The availability line. It is a fact with a date on it, so it is set as data
+   rather than as prose — and it is the one piece of copy on the page that goes
+   stale on its own, which the mono face quietly signals. */
+/* The dot aligns to the FIRST line, not to the middle of the block. On a phone
+   this line wraps to two, and centring left the dot floating in the gutter
+   beside the wrap point instead of reading as a status light on the sentence
+   it belongs to. */
+.slot {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.6em;
+  width: fit-content;
+  padding: 0.5em 0.9em;
+  border: 1px solid var(--s9-line);
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--s9-chalk) 78%, transparent);
+}
+
+.slotDot {
+  flex: none;
+  width: 0.45em;
+  height: 0.45em;
+  /* Half a line-height down, less half the dot — puts it on the optical
+     centre of the first line rather than on its cap-height. */
+  margin-top: 0.52em;
+  border-radius: 50%;
+  /* Also neutral, for the same reason as .stepNum — availability is a fact on
+     the page, not something you press. */
+  background: color-mix(in oklab, var(--s9-chalk) 70%, transparent);
+}
+
+/* ── Sections ──────────────────────────────────────────────────────────── */
+
+.section {
+  padding-block: clamp(3.5rem, 9vh, 6.5rem);
+  border-top: 1px solid var(--s9-line-2);
+}
+
+.sectionHead {
+  display: grid;
+  gap: 0.9rem;
+  margin-bottom: clamp(2rem, 5vh, 3.2rem);
+}
+
+.sectionTitle {
+  margin: 0;
+  max-width: 24ch;
+  font-family: var(--s9-font-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--s9-chalk);
+  text-wrap: balance;
+}
+
+.prose {
+  max-width: 60ch;
+  margin: 0;
+  font-size: var(--s9-text-body);
+  line-height: 1.7;
+  color: color-mix(in oklab, var(--s9-chalk) 80%, transparent);
+  text-wrap: pretty;
+}
+
+/* ── The offers ────────────────────────────────────────────────────────── */
+
+/* A hairline lattice rather than three floating cards: one border, shared
+   edges, so the three prices read as one table you compare across instead of
+   three things each asking for attention. */
+.offers {
+  display: grid;
+  gap: 1px;
+  background: var(--s9-line-2);
+  border: 1px solid var(--s9-line-2);
+}
+
+@media (min-width: 60rem) {
+  .offers {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.offer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  padding: clamp(1.5rem, 3vw, 2.2rem);
+  background: var(--s9-obsidian);
+  transition: background var(--s9-dur-base) var(--s9-ease-premium);
+}
+
+.offer:hover {
+  background: color-mix(in oklab, var(--s9-chalk) 3%, var(--s9-obsidian));
+}
+
+.offerTag {
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--s9-chalk) 55%, transparent);
+}
+
+.offerName {
+  margin: 0;
+  font-family: var(--s9-font-display);
+  font-size: clamp(1.25rem, 1rem + 0.9vw, 1.7rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--s9-chalk);
+}
+
+/* The number is the thing on this page. Display face, tabular figures so the
+   two ranges line up down the row, and the only type on the surface allowed to
+   be this size outside the headline. */
+.price {
+  margin: 0;
+  font-family: var(--s9-font-display);
+  font-size: clamp(1.6rem, 1.15rem + 1.6vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--s9-chalk);
+}
+
+.priceUnit {
+  display: block;
+  margin-top: 0.55rem;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--s9-chalk) 60%, transparent);
+}
+
+.offerBody {
+  margin: 0;
+  font-size: var(--s9-text-body);
+  line-height: 1.65;
+  color: color-mix(in oklab, var(--s9-chalk) 80%, transparent);
+  text-wrap: pretty;
+}
+
+.offerList {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin-top: auto;
+  padding-top: 0.4rem;
+}
+
+/* The gap after the marker is deliberate and measured, not decorative: the
+   mono face sets "//" nearly 1.15rem wide at this size, so a 1.15rem indent
+   put the slashes hard against the first letter and the line read as one
+   word — "//scope" rather than "// scope". Everywhere else on the site the
+   marker breathes; this is that same space. */
+.offerList li {
+  position: relative;
+  padding-left: 2rem;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--s9-chalk) 70%, transparent);
+}
+
+/* The marker is brighter than the line it sits on — the token file's own note
+   on why a marker reads as a marker. */
+.offerList li::before {
+  content: "//";
+  position: absolute;
+  left: 0;
+  color: color-mix(in oklab, var(--s9-chalk) 45%, transparent);
+}
+
+/* ── Process ───────────────────────────────────────────────────────────── */
+
+.steps {
+  display: grid;
+  gap: 1px;
+  background: var(--s9-line-2);
+  border-block: 1px solid var(--s9-line-2);
+}
+
+@media (min-width: 48rem) {
+  .steps {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.step {
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+  padding: clamp(1.3rem, 2.6vw, 1.9rem);
+  background: var(--s9-obsidian);
+}
+
+/* Neutral, not verdant. The green is reserved for actions and focus — /start
+   spends it only on the email address, /instrument only on the focus ring.
+   A step number is a label; giving it the site's one colour spends the scarcity
+   that makes the colour mean "press this". */
+.stepNum {
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  letter-spacing: 0.2em;
+  color: color-mix(in oklab, var(--s9-chalk) 52%, transparent);
+}
+
+.stepBody {
+  margin: 0;
+  font-size: var(--s9-text-body);
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--s9-chalk) 82%, transparent);
+  text-wrap: pretty;
+}
+
+/* ── Proof ─────────────────────────────────────────────────────────────── */
+
+.proof {
+  display: grid;
+  gap: 1px;
+  background: var(--s9-line-2);
+  border: 1px solid var(--s9-line-2);
+}
+
+@media (min-width: 52rem) {
+  .proof {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* The reveal wrapper is the grid child, so IT has to be the full-height cell —
+   not the link inside it. Without this the lattice background shows through
+   under the two shorter cells as a hairline band (measured at 29px on desktop),
+   because the anchor only ever grew to its own content. The offers grid never
+   had the bug because there the wrapper carries the card class directly; this
+   makes the two sections consistent. */
+.proofCell {
+  display: grid;
+}
+
+.proofItem {
+  display: grid;
+  gap: 0.7rem;
+  align-content: start;
+  padding: clamp(1.4rem, 2.8vw, 2rem);
+  background: var(--s9-obsidian);
+  color: inherit;
+  text-decoration: none;
+  transition: background var(--s9-dur-base) var(--s9-ease-premium);
+}
+
+.proofItem:hover {
+  background: color-mix(in oklab, var(--s9-chalk) 4%, var(--s9-obsidian));
+}
+
+.proofName {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+  font-family: var(--s9-font-display);
+  font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.3rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--s9-chalk);
+}
+
+.proofArrow {
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  color: color-mix(in oklab, var(--s9-chalk) 50%, transparent);
+  transition: transform var(--s9-dur-fast) var(--s9-ease-out),
+    color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.proofItem:hover .proofArrow,
+.proofItem:focus-visible .proofArrow {
+  transform: translateX(0.2em);
+  color: var(--s9-verdant);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proofArrow {
+    transition: color var(--s9-dur-fast) var(--s9-ease-out);
+  }
+
+  .proofItem:hover .proofArrow,
+  .proofItem:focus-visible .proofArrow {
+    transform: none;
+  }
+}
+
+.proofBody {
+  margin: 0;
+  font-size: var(--s9-text-body);
+  line-height: 1.6;
+  color: color-mix(in oklab, var(--s9-chalk) 76%, transparent);
+  text-wrap: pretty;
+}
+
+/* ── The honest note ───────────────────────────────────────────────────── */
+
+/* Set quieter than the prose and left in the flow rather than boxed off. It is
+   a disclosure, not a disclaimer — it belongs where the prices are read, and
+   hiding it in small print under a rule would be the opposite of the point. */
+.note {
+  max-width: 62ch;
+  margin: 0;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  line-height: 1.75;
+  color: color-mix(in oklab, var(--s9-chalk) 58%, transparent);
+  text-wrap: pretty;
+}
+
+/* ── Close ─────────────────────────────────────────────────────────────── */
+
+.close {
+  display: grid;
+  gap: clamp(1.1rem, 2.4vh, 1.6rem);
+  padding-block: clamp(4rem, 11vh, 7rem) clamp(5rem, 13vh, 8rem);
+  border-top: 1px solid var(--s9-line-2);
+}
+
+/* The final control and its confirmation as one object, so the message cannot
+   be reflowed out of sight by the row it sits in. */
+.startWrap {
+  display: grid;
+  justify-items: start;
+  gap: 0.55rem;
+}
+
+.copied {
+  min-height: 1.35em;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  line-height: 1.35;
+  color: var(--s9-verdant);
+}
+
+.address {
+  margin: 0;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  color: color-mix(in oklab, var(--s9-chalk) 66%, transparent);
+}
+
+/* The green marks the thing you can copy and act on in your own time — the
+   same job it does on the invitation. */
+.addressLink {
+  color: var(--s9-verdant);
+  text-decoration-color: color-mix(in oklab, var(--s9-verdant) 45%, transparent);
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color var(--s9-dur-fast) var(--s9-ease-out);
+}
+
+.addressLink:hover,
+.addressLink:focus-visible {
+  text-decoration-color: var(--s9-verdant);
+}
+
+/* ── Small screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 34rem) {
+  .actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions :global(.s9-pearl),
+  .actions :global(.s9-pearl-dark) {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -184,6 +184,26 @@
    the way back. They used to be defined here; they are on three pages now,
    so they live in one file instead of three. */
 
+/* The copy confirmation. It occupies a full line whether or not it has text,
+   so confirming a copy never nudges the buttons out from under the cursor —
+   and it sits on its own row rather than inside the button strip, because a
+   flex item that appears mid-row would reflow the row it appears in. */
+/* The button and its confirmation, as one object in the actions row. */
+.startWrap {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+}
+
+.copied {
+  min-height: 1.35em;
+  font-family: var(--s9-font-mono);
+  font-size: var(--s9-text-mono);
+  line-height: 1.35;
+  text-align: center;
+  color: var(--s9-verdant);
+}
+
 .address {
   margin: 0;
   font-family: var(--s9-font-mono);
