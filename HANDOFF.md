@@ -167,6 +167,26 @@ Deploy: Vercel, both apps from this repo. See `shift9/DEPLOY.md`.
   under the button, address on the clipboard, `role="status" aria-live="polite"`.
   A scripted `.click()` does NOT reproduce it - no user activation means the clipboard
   silently refuses, which is exactly what made the first draft look correct.
+- **2026-08-05 - `Reveal`'s clip-path variants were silently invisible; fixed, not merged.**
+  Branch `claude/fix-reveal-mask`. Anything wrapped in `<Reveal variant="mask">` or
+  `variant="scan"` stayed clipped to nothing forever - no console error, no warning,
+  just a blank space where a headline should be. Cause, isolated on a production build
+  with four `motion.div`s differing only in what they animate: **`clipPath` never tweens
+  when the variant is driven by `Reveal`'s own `whileInView`.** It is applied at the
+  `hidden` value and left there. `opacity` and `y` both animate fine, which is why
+  `rise` and `fade` always worked. The originally-suspected `y: "0.45em"` string was
+  **not** the cause - `scan` already used a plain number and failed identically, which
+  is what ruled it out. The same variants work through `RevealGroup`/`RevealItem`,
+  where the parent propagates the variant instead of the child watching its own
+  viewport. Fix strips `clipPath` on the `whileInView` path only and leaves the
+  orchestrated path untouched; measured after, all four variants reveal through
+  `Reveal` and the two clip-carrying ones still complete their wipe
+  (`inset(0%)`) through `RevealItem`. The underlying framer-motion cause is
+  deliberately **not** guessed at - the behaviour is measured and the workaround is
+  scoped. `Reveal` currently has no callers on `main`; the first would arrive with the
+  unmerged `/services` page, which is why this was worth fixing rather than deleting.
+  Ship-check green: no lockfile drift, uncached typecheck clean, both apps build with
+  no `.env` present, diff carries no raw hex, durations, easings, `any` or `ts-ignore`.
 
 - **2026-08-02 - Flow State confirmation email prepared, not merged.** Branch
   `claude/flow-state-confirmation-email` sends a Resend confirmation only after
