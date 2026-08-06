@@ -1,6 +1,7 @@
 node_modules/
-package-lock.json
-package.json
+# root-only: workspace package.json files under shift9/ ARE tracked
+/package-lock.json
+/package.json
 *.js.map
 .DS_Store
 .shift9-entry/

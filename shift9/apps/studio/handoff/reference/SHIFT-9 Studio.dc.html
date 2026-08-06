@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>SHIFT-9 — The Uncut Soundstage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Martian+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #000; overflow: hidden; }
+    a { color: #E0E0E0; } a:hover { color: #0033FF; }
+    @keyframes s9pulse { 0%,100% { opacity: 0.9; } 50% { opacity: 0.35; } }
+    @keyframes s9stars { from { background-position: 0 0; } to { background-position: 260px 520px; } }
+    @keyframes s9blobA { from { transform: translate(0,0) scale(1); } to { transform: translate(12%,10%) scale(1.15); } }
+    @keyframes s9blobB { from { transform: translate(0,0) scale(1.1); } to { transform: translate(-10%,-8%) scale(0.95); } }
+    @keyframes s9grain { 0% { transform: translate(0,0); } 25% { transform: translate(-2%,1%); } 50% { transform: translate(1%,-2%); } 75% { transform: translate(-1%,-1%); } 100% { transform: translate(2%,2%); } }
+  </style>
+</helmet>
+<div style="position:fixed;inset:0;background:#000;color:#E0E0E0;font-family:'Martian Mono',monospace" data-screen-label="SHIFT-9">
+  <sc-if value="{{ reduced }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;overflow:auto;padding:clamp(24px,4vw,64px);box-sizing:border-box">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:32px">
+        <div style="font-family:'Instrument Serif',serif;font-size:clamp(28px,3vw,44px);color:#fff;letter-spacing:0.04em">SHIFT-9</div>
+        <div style="font-size:clamp(0.75rem,0.7rem + 0.25vw,0.875rem);color:#666">REDUCED MOTION — STATIC COMPOSITE</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px">
+        <sc-for list="{{ gridProjects }}" as="p" hint-placeholder-count="12">
+          <div style="background:#0a0a0c;border:1px solid #1a1a1e;aspect-ratio:16/10;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#666"><span>{{ p.index }}</span><span style="color:{{ p.statusColor }}">{{ p.status }}</span></div>
+            <div style="font-family:'Instrument Serif',serif;font-size:clamp(1rem,0.85rem + 0.75vw,1.25rem);color:#E0E0E0">{{ p.n }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ motionOk }}" hint-placeholder-val="{{ true }}">
+    <x-import component-from-global-scope="shift9-scene" from="./shift9-scene.js" hint-size="100%,100%" style="position:absolute;inset:0"></x-import>
+    <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.55) 100%)"></div>
+    <div style="position:absolute;inset:-4%;pointer-events:none;opacity:{{ grainOpacity }};animation:s9grain 0.4s steps(4) infinite;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22><filter id=%22n%22><feTurbulence baseFrequency=%220.9%22 numOctaves=%222%22/></filter><rect width=%22160%22 height=%22160%22 filter=%22url(%23n)%22/></svg>')"></div>
+    <sc-if value="{{ letterbox }}" hint-placeholder-val="{{ true }}">
+      <div style="position:absolute;top:0;left:0;right:0;height:6.5vh;background:#000;pointer-events:none"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:6.5vh;background:#000;pointer-events:none"></div>
+    </sc-if>
+    <div style="position:absolute;top:8.5vh;left:3.5vw;right:3.5vw;display:flex;justify-content:space-between;align-items:baseline;pointer-events:none">
+      <div style="font-family:'Instrument Serif',serif;font-size:clamp(20px,1.8vw,28px);color:#fff;letter-spacing:0.06em;white-space:nowrap;animation:s9pulse 3.2s ease-in-out infinite">SHIFT-9</div>
+      <div style="font-size:clamp(0.75rem,0.7rem + 0.25vw,0.875rem);color:#555;letter-spacing:0.12em">THE UNCUT SOUNDSTAGE</div>
+    </div>
+    <div style="position:absolute;bottom:6.5vh;left:0;right:0;height:18vh;background:linear-gradient(to bottom,transparent,rgba(0,0,0,0.65));pointer-events:none"></div>
+    <div style="position:absolute;bottom:8.5vh;left:3.5vw;right:3.5vw;display:flex;justify-content:space-between;align-items:flex-end;pointer-events:none;text-shadow:0 1px 8px rgba(0,0,0,0.9);transition:opacity 0.6s;opacity:{{ runHudOpacity }}">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;gap:12px;align-items:baseline;font-size:clamp(0.75rem,0.7rem + 0.25vw,0.875rem)">
+          <span style="color:#555">{{ hudIndex }} / {{ projectCount }}</span>
+          <span style="color:{{ hudStatusColor }};letter-spacing:0.1em">{{ hudStatus }}</span>
+        </div>
+        <div style="font-family:'Instrument Serif',serif;font-size:clamp(26px,2.6vw,42px);color:#fff;line-height:1;transition:opacity 0.4s;opacity:{{ hudNameOpacity }}">{{ hudName }}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+        <div style="font-size:11px;color:#555;letter-spacing:0.1em;white-space:nowrap">SCROLL TO DOLLY</div>
+        <div style="width:180px;height:2px;background:#1c1c20;position:relative">
+          <div style="position:absolute;left:0;top:0;bottom:0;background:#0033FF;width:{{ progressPct }}"></div>
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:8.5vh;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:14px;pointer-events:none;transition:opacity 0.9s;opacity:{{ idleOpacity }}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;max-width:min(86vw,680px);text-align:center;text-shadow:0 1px 8px rgba(0,0,0,0.9);background:radial-gradient(ellipse at center,rgba(0,0,0,0.82) 40%,rgba(0,0,0,0.55) 75%,transparent 100%);padding:22px 48px;border-radius:6px">
+        <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(18px,1.9vw,26px);color:#d8d8e0;line-height:1.35;text-wrap:pretty">{{ hudTag }}</div>
+        <div style="font-size:11px;letter-spacing:0.08em;color:#7a7a84;line-height:1.6">{{ hudSpec }}</div>
+        <div style="font-size:10px;letter-spacing:0.3em;color:#4d6bff;margin-top:2px">CLICK THE SET FOR THE FULL DOSSIER</div>
+      </div>
+      <div onClick="{{ toggleSets }}" style="pointer-events:auto;cursor:pointer;font-size:10px;letter-spacing:0.25em;color:#8a8a92;border:1px solid #2a2a32;background:rgba(10,10,14,0.8);padding:8px 18px" style-hover="color:#ffffff;border-color:#4d6bff">{{ setsLabel }}</div>
+      <sc-if value="{{ setsOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;max-width:min(86vw,720px);pointer-events:auto;background:rgba(0,0,0,0.75);padding:14px;border:1px solid #1a1a20">
+        <sc-for list="{{ gridProjects }}" as="p" hint-placeholder-count="6">
+          <div onClick="{{ p.jump }}" style="display:flex;flex-direction:column;align-items:center;gap:5px;width:84px;cursor:pointer;transition:opacity 0.25s;opacity:0.72" style-hover="opacity:1">
+            <div style="width:34px;height:34px;border:1px solid #2a2a32;background:rgba(10,10,14,0.7);display:flex;align-items:center;justify-content:center;font-size:10px;color:#8a8a92">{{ p.index }}</div>
+            <div style="font-size:9px;color:#8a8a92;text-align:center;line-height:1.3">{{ p.n }}</div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+      <div style="font-size:11px;color:#3a3a42;letter-spacing:0.35em;white-space:nowrap">STANDING BY — CLICK A SET OR SCROLL TO DOLLY</div>
+    </div>
+    <sc-if value="{{ detailOpen }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Project dossier" style="position:absolute;inset:0;background:rgba(0,0,0,0.94);overflow:auto;font-family:'Martian Mono',monospace;color:#E0E0E0">
+        <div style="max-width:880px;margin:0 auto;padding:11vh 32px 14vh;box-sizing:border-box;display:flex;flex-direction:column;gap:26px">
+          <div onClick="{{ closeDetail }}" style="cursor:pointer;font-size:12px;letter-spacing:0.2em;color:#8a8a92;display:flex;gap:10px;align-items:center;align-self:flex-start" style-hover="color:#ffffff"><span>←</span><span>BACK TO STAGE — ESC</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px">
+            <div style="font-size:12px;color:#555;letter-spacing:0.12em">SET {{ dpIndex }} / {{ projectCount }}</div>
+            <div style="font-size:12px;letter-spacing:0.14em;color:{{ dpStatusColor }}">{{ dpStatus }}</div>
+          </div>
+          <div style="font-family:'Instrument Serif',serif;font-size:clamp(40px,6vw,72px);line-height:1.02;color:#fff">{{ dpName }}</div>
+          <div style="font-family:'Instrument Serif',serif;font-style:italic;font-size:clamp(20px,2.2vw,28px);color:#9a9aa6;line-height:1.35;text-wrap:pretty">{{ dpTag }}</div>
+          <div style="height:1px;background:#1c1c22"></div>
+          <div style="font-size:clamp(0.875rem,0.825rem + 0.25vw,1rem);line-height:1.85;color:#b8b8c0;text-wrap:pretty">{{ dpDesc }}</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px">
+            <sc-for list="{{ dpFacts }}" as="f" hint-placeholder-count="4">
+              <div style="background:#0a0a0e;border:1px solid #1a1a20;padding:16px 18px;display:flex;flex-direction:column;gap:7px">
+                <div style="font-size:10px;letter-spacing:0.18em;color:#555">{{ f.k }}</div>
+                <div style="font-size:12px;line-height:1.6;color:#d0d0d8">{{ f.v }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ dpLink }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ dpLink }}" target="_blank" style="font-size:12px;letter-spacing:0.15em;color:#4d6bff;align-self:flex-start">VISIT LIVE BUILD ↗</a>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ entranceVisible }}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="shift9-entrance" from="./shift9-entrance.js" src="uploads/hf_20260707_001220_68b60563-6b95-4b1f-be4b-cf066af36964.mp4" hint-size="100%,100%" style="position:absolute;inset:0"></x-import>
+    </sc-if>
+    <sc-if value="{{ winVisible }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Windows 11" style="position:absolute;inset:0;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:{{ wpBase }};transition:background 0.5s">
+        <div style="position:absolute;inset:-20%;filter:blur(60px);opacity:0.95;pointer-events:none">
+          <div style="position:absolute;width:60%;height:60%;left:5%;top:8%;border-radius:50%;background:{{ wpBlobA }};animation:s9blobA 10s ease-in-out infinite alternate"></div>
+          <div style="position:absolute;width:55%;height:55%;right:4%;bottom:6%;border-radius:50%;background:{{ wpBlobB }};animation:s9blobB 13s ease-in-out infinite alternate"></div>
+          <div style="position:absolute;width:130%;height:22%;left:-15%;top:40%;transform:rotate(-18deg);background:{{ wpBand }};animation:s9blobB 17s ease-in-out infinite alternate"></div>
+        </div>
+        <div style="position:absolute;inset:0;pointer-events:none;opacity:{{ starOpacity }};animation:s9stars 60s linear infinite;background-repeat:repeat;background-size:260px 260px;background-image:radial-gradient(1.4px 1.4px at 14px 32px,#ffffff,transparent 60%),radial-gradient(1px 1px at 84px 12px,rgba(255,255,255,0.75),transparent 60%),radial-gradient(1.2px 1.2px at 150px 60px,rgba(255,255,255,0.9),transparent 60%),radial-gradient(0.8px 0.8px at 212px 30px,rgba(255,255,255,0.6),transparent 60%),radial-gradient(1px 1px at 44px 118px,rgba(255,255,255,0.8),transparent 60%),radial-gradient(1.6px 1.6px at 118px 150px,#ffffff,transparent 60%),radial-gradient(1px 1px at 196px 124px,rgba(255,255,255,0.7),transparent 60%),radial-gradient(1.1px 1.1px at 26px 208px,rgba(255,255,255,0.85),transparent 60%),radial-gradient(0.8px 0.8px at 106px 232px,rgba(255,255,255,0.6),transparent 60%),radial-gradient(1.3px 1.3px at 178px 198px,#ffffff,transparent 60%),radial-gradient(0.9px 0.9px at 240px 240px,rgba(255,255,255,0.75),transparent 60%)"></div>
+        <div style="position:absolute;top:22px;left:22px;display:flex;flex-direction:column;flex-wrap:wrap;gap:4px;max-height:75%;align-items:flex-start">
+          <sc-for list="{{ deskItems }}" as="it" hint-placeholder-count="4">
+            <div onClick="{{ it.select }}" onDoubleClick="{{ it.open }}" style="display:flex;flex-direction:{{ iconDir }};align-items:center;gap:{{ iconGap }};width:{{ iconW }};padding:8px 6px;border-radius:6px;cursor:pointer;background:{{ it.bg }};box-sizing:border-box" style-hover="background:{{ wHover }}">
+              <sc-if value="{{ it.folder }}" hint-placeholder-val="{{ true }}">
+                <div style="width:44px;height:36px;position:relative;flex-shrink:0">
+                  <div style="position:absolute;left:2px;top:0;width:20px;height:12px;border-radius:3px 3px 0 0;background:#e8b64c"></div>
+                  <div style="position:absolute;left:2px;top:6px;width:40px;height:28px;border-radius:4px;background:linear-gradient(#f6cc66,#e0a83e)"></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ it.app }}" hint-placeholder-val="{{ false }}">
+                <img src="uploads/shift-9icon.png" style="width:44px;height:44px;border-radius:10px;box-shadow:0 4px 16px rgba(53,213,238,0.5);flex-shrink:0" alt="SHIFT-9">
+              </sc-if>
+              <div style="font-size:12px;color:{{ wText }};text-shadow:{{ wIconShadow }};text-align:center;line-height:1.25">{{ it.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ folderOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:min(560px,84vw);background:{{ wWin }};border:1px solid {{ wBorder }};border-radius:8px;box-shadow:0 24px 60px rgba(0,0,0,0.45);overflow:hidden">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid {{ wBorder }}">
+              <div style="font-size:13px;color:{{ wText }};font-weight:600">{{ folderName }}</div>
+              <div onClick="{{ closeFolder }}" style="cursor:pointer;color:{{ wText }};font-size:13px;padding:3px 12px;border-radius:4px" style-hover="background:rgba(232,17,35,0.9);color:#ffffff">✕</div>
+            </div>
+            <div style="max-height:300px;overflow:auto;padding:6px 0">
+              <sc-for list="{{ folderFiles }}" as="f" hint-placeholder-count="5">
+                <div style="display:flex;justify-content:space-between;gap:16px;padding:7px 16px;font-size:12.5px;color:{{ wText }}" style-hover="background:{{ wHover }}">
+                  <span>{{ f.name }}</span><span style="opacity:0.55;white-space:nowrap">{{ f.meta }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:{{ wBar }};backdrop-filter:blur(18px);border-top:1px solid {{ wBorder }};box-sizing:border-box">
+          <div style="width:150px;font-size:11px;color:{{ wText }};opacity:0.6">SHIFT-9 OS · Win 11 Pro</div>
+          <div style="display:flex;gap:14px;align-items:center">
+            <div style="display:grid;grid-template-columns:9px 9px;gap:2px;cursor:pointer"><div style="width:9px;height:9px;background:#4cc2ff;border-radius:1px"></div><div style="width:9px;height:9px;background:#4cc2ff;border-radius:1px"></div><div style="width:9px;height:9px;background:#4cc2ff;border-radius:1px"></div><div style="width:9px;height:9px;background:#4cc2ff;border-radius:1px"></div></div>
+            <div style="width:180px;height:30px;border-radius:15px;background:{{ wHover }};border:1px solid {{ wBorder }};display:flex;align-items:center;padding:0 12px;font-size:11.5px;color:{{ wText }};opacity:0.75;box-sizing:border-box">Search</div>
+            <img src="uploads/shift-9icon.png" onClick="{{ launchStudio }}" style="width:28px;height:28px;border-radius:6px;cursor:pointer" alt="SHIFT-9">
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;font-size:10.5px;color:{{ wText }};width:150px;justify-content:flex-end">
+            <div onClick="{{ toggleView }}" style="cursor:pointer;padding:5px 8px;border-radius:4px;border:1px solid {{ wBorder }};letter-spacing:0.06em;white-space:nowrap" style-hover="background:{{ wHover }}">{{ viewLabel }}</div>
+            <div onClick="{{ toggleTheme }}" style="cursor:pointer;padding:5px 8px;border-radius:4px;border:1px solid {{ wBorder }};letter-spacing:0.06em;white-space:nowrap" style-hover="background:{{ wHover }}">{{ themeLabel }}</div>
+            <div style="text-align:right;line-height:1.35;white-space:nowrap">{{ clockTime }}<br>{{ clockDate }}</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ skipVisible }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ skipIntro }}" style="position:absolute;right:3.5vw;bottom:8.5vh;cursor:pointer;font-size:10px;letter-spacing:0.25em;color:#5a5a64;text-shadow:0 1px 6px #000;font-family:'Martian Mono',monospace;white-space:nowrap" style-hover="color:#ffffff">SKIP INTRO</div>
+    </sc-if>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;letterbox&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Frame&quot;}, &quot;grain&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 0.07, &quot;min&quot;: 0, &quot;max&quot;: 0.2, &quot;step&quot;: 0.01, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Frame&quot;}, &quot;damping&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 0.05, &quot;min&quot;: 0.01, &quot;max&quot;: 0.3, &quot;step&quot;: 0.01, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Dolly physics&quot;}, &quot;sensitivity&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 0.001, &quot;min&quot;: 0.0002, &quot;max&quot;: 0.004, &quot;step&quot;: 0.0002, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Dolly physics&quot;}, &quot;fogFar&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 55, &quot;min&quot;: 25, &quot;max&quot;: 120, &quot;step&quot;: 5, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Atmosphere&quot;}, &quot;forceStaticGrid&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Accessibility&quot;}}">
+class Component extends DCLogic {
+  state = { reduced: false, hud: null, checked: false, open: null, setsOpen: false, stage: 'entrance', winDark: true, winView: 'grid', selected: null, folder: null, now: new Date() };
+  _enter(skip) {
+    this.setState({ stage: 'studio' });
+    const sc = document.querySelector('shift9-scene');
+    if (sc && sc.playIntro) sc.playIntro(skip);
+  }
+  _lock(v) { const sc = document.querySelector('shift9-scene'); if (sc && sc.setLocked) sc.setLocked(v); }
+  _close = () => { this.setState({ open: null }); this._lock(false); };
+  componentDidMount() {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const apply = () => this.setState({ reduced: mq.matches || !!this.props.forceStaticGrid, checked: true });
+    apply();
+    // Manifest #5: hard reload on change is the safest way to stop the loop engine
+    mq.addEventListener('change', e => { if (e.matches) { window.location.reload(); } else { apply(); } });
+    this._hud = e => this.setState({ hud: e.detail });
+    document.addEventListener('shift9-hud', this._hud);
+    this._rdy = () => this.applyTweaks();
+    document.addEventListener('shift9-ready', this._rdy);
+    this._open = e => { const p = (window.SHIFT9_PROJECTS || []).find(x => x.id === e.detail.id); if (p) { this.setState({ open: p }); this._lock(true); } };
+    document.addEventListener('shift9-open', this._open);
+    this._esc = e => { if (e.key === 'Escape') { if (this.state.open) this._close(); else if (this.state.folder) this.setState({ folder: null }); } };
+    addEventListener('keydown', this._esc);
+    this._entOpen = () => this.setState({ stage: 'win' });
+    document.addEventListener('entrance-open', this._entOpen);
+    this._clk = setInterval(() => this.setState({ now: new Date() }), 15000);
+  }
+  componentDidUpdate(prev) {
+    if (prev.forceStaticGrid !== this.props.forceStaticGrid) {
+      const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+      this.setState({ reduced: mq.matches || !!this.props.forceStaticGrid });
+    }
+    this.applyTweaks();
+  }
+  applyTweaks() {
+    const C = window.SHIFT9_CONSTANTS;
+    if (C) {
+      C.VELOCITY_DAMPING = this.props.damping ?? 0.05;
+      C.SCROLL_SENSITIVITY = this.props.sensitivity ?? 0.001;
+    }
+    const sc = document.querySelector('shift9-scene');
+    if (sc && sc.scene && sc.scene.fog) sc.scene.fog.far = this.props.fogFar ?? 55;
+  }
+  componentWillUnmount() {
+    document.removeEventListener('shift9-hud', this._hud);
+    document.removeEventListener('shift9-open', this._open);
+    document.removeEventListener('entrance-open', this._entOpen);
+    removeEventListener('keydown', this._esc);
+    clearInterval(this._clk);
+  }
+  renderVals() {
+    const reduced = this.state.reduced;
+    const h = this.state.hud;
+    const o = this.state.open;
+    const st = this.state.stage, dark = this.state.winDark, grid = this.state.winView === 'grid';
+    const folders = [
+      { id: 'projects', label: 'Projects', folder: true, app: false },
+      { id: 'labs', label: 'Labs', folder: true, app: false },
+      { id: 'renders', label: 'Renders', folder: true, app: false }
+    ];
+    const files = {
+      projects: [['WinFix.s9set', 'IN DEV'], ['Omni-3D.s9set', 'IN DEV'], ['Automation Sys.s9set', 'IN DEV'], ['INSTRUMENT.s9set', 'IN DEV'], ['Titanium Forge.s9set', 'V2 IN DEV'], ['Game Design Forge.s9set', 'IN DEV'], ['Midnight Return.s9set', 'IN DEV'], ['Voxel Arcade BB.s9set', 'IN DEV'], ['Lumen Mapper.s9set', 'IN DEV'], ['Learning App.s9set', 'IN DEV'], ['Flow State.s9set', 'IN DEV'], ['Just a Pinch.s9set', 'LIVE']].map(x => ({ name: x[0], meta: x[1] })),
+      labs: [['xavier-agentic-os', 'private repo'], ['relay', 'repo'], ['claude-eyes', 'private repo'], ['agentkit', 'private repo'], ['second-brain', 'private repo']].map(x => ({ name: x[0], meta: x[1] })),
+      renders: [['01_winfix_whiteroom.png', '8K'], ['05_forge_press.png', '8K'], ['07_midnight_corridor.png', '8K'], ['09_lumen_boxstack.png', '8K'], ['12_pinch_kitchen.png', '8K']].map(x => ({ name: x[0], meta: x[1] }))
+    };
+    const fallback = [['01','WinFix','IN DEV'],['02','Omni-3D','IN DEV'],['03','Automation Sys','IN DEV'],['04','INSTRUMENT','IN DEV'],['05','Titanium Forge','V2 IN DEV'],['06','Game Design Forge','IN DEV'],['07','Midnight Return','IN DEV'],['08','Voxel Arcade BB','IN DEV'],['09','Lumen Mapper','IN DEV'],['10','Learning App','IN DEV'],['11','Flow State','IN DEV'],['12','Just a Pinch','LIVE']].map(x => ({ id: x[0], n: x[1], status: x[2] }));
+    const projects = (window.SHIFT9_PROJECTS || fallback).slice().sort((a, b) => a.id.localeCompare(b.id));
+    return {
+      reduced, motionOk: this.state.checked && !reduced,
+      letterbox: this.props.letterbox ?? true,
+      grainOpacity: this.props.grain ?? 0.07,
+      gridProjects: projects.map(p => ({ ...p, index: p.id.slice(0, 2), statusColor: p.status === 'LIVE' ? '#E0E0E0' : '#0033FF', jump: () => { const el = document.querySelector('shift9-scene'); if (el && el.glideTo && typeof p.z === 'number') el.glideTo(p.z + 13); } })),
+      projectCount: String(projects.length).padStart(2, '0'),
+      hudIndex: h ? h.index : '12',
+      hudName: h ? h.name : 'Just a Pinch',
+      hudStatus: h ? h.status : 'LIVE',
+      hudStatusColor: h && h.status !== 'LIVE' ? '#0033FF' : '#8a8a92',
+      hudNameOpacity: h && h.dist < 22 ? 1 : 0.25,
+      progressPct: ((h ? h.progress : 0) * 100).toFixed(1) + '%',
+      idleOpacity: h && h.idle && h.progress > 0.01 ? 1 : 0,
+      runHudOpacity: h && h.idle && h.progress > 0.01 ? 0.12 : 1,
+      hudTag: (h && h.tag) || '',
+      hudSpec: (h && h.spec) || '',
+      detailOpen: !!o,
+      setsOpen: this.state.setsOpen,
+      setsLabel: this.state.setsOpen ? '▾ HIDE SETS' : '▸ ALL SETS 01–12',
+      toggleSets: () => this.setState(s => ({ setsOpen: !s.setsOpen })),
+      closeDetail: this._close,
+      dpIndex: o ? o.id.slice(0, 2) : '',
+      dpName: o ? o.n : '',
+      dpStatus: o ? o.status : '',
+      dpStatusColor: o && o.status === 'LIVE' ? '#E0E0E0' : '#4d6bff',
+      dpTag: o ? o.tag : '',
+      dpDesc: o ? o.desc : '',
+      dpFacts: o ? (o.facts || []).map(f => ({ k: f[0], v: f[1] })) : [],
+      dpLink: (o && o.link) || false,
+      entranceVisible: st === 'entrance',
+      winVisible: st === 'win',
+      skipVisible: st === 'entrance' || st === 'win',
+      skipIntro: () => this._enter(true),
+      launchStudio: () => this._enter(false),
+      wpBase: dark ? 'radial-gradient(ellipse at 32% 36%,#1c1f26 0%,#0b0c10 52%,#020204 100%)' : 'radial-gradient(ellipse at 32% 36%,#ffffff 0%,#e2e5ea 55%,#c6cad2 100%)',
+      wpBlobA: dark ? 'radial-gradient(circle,rgba(255,255,255,0.30),transparent 70%)' : 'radial-gradient(circle,rgba(90,96,108,0.32),transparent 70%)',
+      wpBlobB: dark ? 'radial-gradient(circle,rgba(175,185,200,0.22),transparent 70%)' : 'radial-gradient(circle,rgba(40,44,52,0.24),transparent 70%)',
+      starOpacity: dark ? 0.95 : 0.3,
+      wpBand: dark ? 'linear-gradient(rgba(255,255,255,0.0),rgba(235,240,250,0.14),rgba(255,255,255,0.0))' : 'linear-gradient(rgba(40,44,52,0.0),rgba(40,44,52,0.12),rgba(40,44,52,0.0))',
+      wBar: dark ? 'rgba(15,18,28,0.82)' : 'rgba(242,246,252,0.85)',
+      wWin: dark ? '#1d2130' : '#ffffff',
+      wText: dark ? '#e8eaf2' : '#1b1d24',
+      wBorder: dark ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.12)',
+      wHover: dark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)',
+      wIconShadow: dark ? '0 1px 4px rgba(0,0,0,0.8)' : '0 1px 3px rgba(255,255,255,0.7)',
+      iconDir: grid ? 'column' : 'row',
+      iconGap: grid ? '6px' : '12px',
+      iconW: grid ? '96px' : '280px',
+      viewLabel: grid ? 'LIST VIEW' : 'ICON VIEW',
+      themeLabel: dark ? 'LIGHT' : 'DARK',
+      clockTime: this.state.now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
+      clockDate: this.state.now.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: 'numeric' }),
+      toggleView: () => this.setState(s => ({ winView: s.winView === 'grid' ? 'list' : 'grid' })),
+      toggleTheme: () => this.setState(s => ({ winDark: !s.winDark })),
+      deskItems: folders.concat([{ id: 's9', label: 'SHIFT-9 Studio', folder: false, app: true }]).map(it => ({
+        ...it,
+        bg: this.state.selected === it.id ? (dark ? 'rgba(77,150,255,0.28)' : 'rgba(0,90,200,0.18)') : 'transparent',
+        select: it.app ? () => this._enter(false) : () => this.setState({ selected: it.id }),
+        open: it.app ? () => this._enter(false) : () => this.setState({ folder: it.id, selected: it.id })
+      })),
+      folderOpen: !!this.state.folder,
+      folderName: (folders.find(f => f.id === this.state.folder) || {}).label || '',
+      folderFiles: files[this.state.folder] || [],
+      closeFolder: () => this.setState({ folder: null })
+    };
+  }
+}
+</script>
+</body>
+</html>
