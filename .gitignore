@@ -5,3 +5,9 @@ package.json
 .DS_Store
 .shift9-entry/
 __pycache__/
+
+# Raw art and build cache. Kariim 2026-08-22: rejected Higgsfield renders were
+# sitting loose in the published site folder. They are parked in
+# Dev/_parked/shift9-rejected-renders. Nothing raw belongs in the live site.
+/Shift9.dev-assets/
+.turbo/
