@@ -47,7 +47,7 @@ assert.match(page, /working design lab/i, "Instrument must identify itself as th
 assert.match(page, /instrumentProjects\.map/, "Instrument specimens must come from the project registry");
 assert.match(projects, /Shift-9 Studio/, "Instrument must register the studio surface");
 assert.match(projects, /Flow State/, "Instrument must register Flow State");
-assert.match(projects, /Just a Pinch/, "Instrument must register Just a Pinch");
+assert.match(projects, /Feelspoon/, "Instrument must register Feelspoon");
 assert.match(projects, /Add one entry here/i, "The project registry must explain the one-entry extension path");
 assert.match(projects, /no page or CSS edit/i, "The registry must keep future projects config-only");
 assert.match(page, /Titanium Forge is the separate[\s\S]{0,80}component workbench/, "Instrument must distinguish itself from Titanium Forge in client-facing language");

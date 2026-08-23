@@ -6,9 +6,9 @@ import { Reveal } from "./Reveal";
    descriptive alt. */
 
 const SCREENS = [
-  { src: "/app/save.png", label: "Save from anywhere", alt: "Just a Pinch app — Save from anywhere: a link, screenshot, or photo becomes a clean, cookable recipe." },
-  { src: "/app/cook.png", label: "Cook hands-free", alt: "Just a Pinch app — Cook hands-free: step-by-step cooking mode with the screen awake and built-in timers." },
-  { src: "/app/plan.png", label: "Plan & shop smart", alt: "Just a Pinch app — Plan and shop smart: build your week, then generate a shopping list from it." },
+  { src: "/app/save.png", label: "Save from anywhere", alt: "Feelspoon app — Save from anywhere: a link, screenshot, or photo becomes a clean, cookable recipe." },
+  { src: "/app/cook.png", label: "Cook hands-free", alt: "Feelspoon app — Cook hands-free: step-by-step cooking mode with the screen awake and built-in timers." },
+  { src: "/app/plan.png", label: "Plan & shop smart", alt: "Feelspoon app — Plan and shop smart: build your week, then generate a shopping list from it." },
 ];
 
 function Phone({ src, alt, label }: { src: string; alt: string; label: string }) {

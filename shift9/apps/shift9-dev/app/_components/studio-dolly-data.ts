@@ -79,7 +79,7 @@ const BASE = "/experience/set-pieces/";
 export const SET_PIECES: SetPiece[] = [
   {
     n: "01",
-    title: "Just a Pinch",
+    title: "Feelspoon",
     /* In closed testing on Android until Kariim flips the switch. The desktop
        folder and this roster disagreed for a while - desktop said IN TESTING,
        the dolly said LIVE - and the desktop was right. */
@@ -91,7 +91,7 @@ export const SET_PIECES: SetPiece[] = [
     clip: `${BASE}01-just-a-pinch.mp4`,
     card: "recipe",
     href: "https://pinch.shift9.dev",
-    appHref: "https://kariimc.github.io/Just-a-pinch/",
+    appHref: "https://kariimc.github.io/Feelspoon/",
     appLabel: "Get the app",
   },
   {

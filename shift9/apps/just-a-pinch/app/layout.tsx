@@ -21,12 +21,12 @@ const mono = Martian_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Just a Pinch — Smart Recipe Organizer & Cooking App",
+  title: "Feelspoon — Smart Recipe Organizer & Cooking App",
   description:
-    "Just a Pinch keeps every recipe you love in one place, then walks you through cooking it — scaled to your servings, with smart swaps when you're missing something.",
+    "Feelspoon keeps every recipe you love in one place, then walks you through cooking it — scaled to your servings, with smart swaps when you're missing something.",
   metadataBase: new URL("https://pinch.shift9.dev"),
   openGraph: {
-    title: "Just a Pinch — Smart Recipe Organizer & Cooking App",
+    title: "Feelspoon — Smart Recipe Organizer & Cooking App",
     description:
       "Every recipe in one place. Guided, step-by-step cooking, scaled to taste, with smart swaps when you're missing an ingredient.",
     type: "website",

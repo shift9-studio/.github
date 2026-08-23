@@ -95,7 +95,7 @@ export default async function Home() {
 
         <div className="mx-auto w-full max-w-[84rem]">
           <MonoLabel decode className="mb-8">
-            JUST A PINCH — IN CLOSED TESTING · ANDROID · LAUNCHING SOON
+            FEELSPOON — IN CLOSED TESTING · ANDROID · LAUNCHING SOON
           </MonoLabel>
 
           <SeasonHeadline
@@ -108,7 +108,7 @@ export default async function Home() {
           />
 
           <p className="mt-8 max-w-xl text-body leading-relaxed text-muted">
-            Just a Pinch keeps every recipe you love in one place — then walks
+            Feelspoon keeps every recipe you love in one place — then walks
             you through cooking it. Scaled to your servings, with smart swaps
             when you&apos;re missing something. The recipes you save are the
             ones you&apos;ll <span className="text-ink">actually</span> make.
@@ -241,7 +241,7 @@ export default async function Home() {
             ]}
           />
           <p className="mt-8 max-w-xl text-body leading-relaxed text-muted">
-            Just a Pinch is in closed testing on Android right now — a small
+            Feelspoon is in closed testing on Android right now — a small
             group of cooks using it every day while we polish the last details.
             Leave your email and we&apos;ll tell you the moment it&apos;s open to
             everyone. No spam, just the one message that matters.
@@ -261,7 +261,7 @@ export default async function Home() {
       <footer className="border-t border-line px-6 py-10 sm:px-10">
         <div className="mx-auto flex max-w-[84rem] flex-wrap items-center justify-between gap-4">
           <MonoLabel marker={false}>
-            © 2026 JUST A PINCH — a Shift-9 product
+            © 2026 FEELSPOON — a Shift-9 product
           </MonoLabel>
           <MonoLabel>build: closed testing · Android</MonoLabel>
         </div>

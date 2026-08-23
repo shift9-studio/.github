@@ -195,7 +195,7 @@ const surfaces = [
     route: "/instrument",
     name: "The case study",
     desc:
-      "A public explanation of how the system holds across Shift-9 Studio, Flow State, and Just a Pinch. The implementation catalog lives one level deeper at /instrument/reference.",
+      "A public explanation of how the system holds across Shift-9 Studio, Flow State, and Feelspoon. The implementation catalog lives one level deeper at /instrument/reference.",
     bar: [
       "var(--s9-obsidian)",
       "var(--s9-titanium)",
@@ -238,7 +238,7 @@ const shared = [
   { name: "DecodeText", desc: "Scramble-to-resolve text. SSR renders the final string, so there is no hydration mismatch and no layout shift." },
   { name: "MonoLabel", desc: "Mono uppercase section marker with an optional // marker." },
   { name: "Skeleton", desc: "Loading placeholders shaped like the layout that follows them." },
-  { name: "SpiceMote", desc: "Just a Pinch's warm cursor — saffron and paprika motes that settle under gravity." },
+  { name: "SpiceMote", desc: "Feelspoon's warm cursor — saffron and paprika motes that settle under gravity." },
   { name: "GrainField", desc: "Editorial film grain for the warm product surface." },
 ];
 

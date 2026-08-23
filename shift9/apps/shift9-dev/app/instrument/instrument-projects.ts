@@ -51,14 +51,14 @@ export const instrumentProjects = [
     image: "/experience/set-pieces/02-flow-state.png",
   },
   {
-    name: "Just a Pinch",
-    specimenLabel: "Specimen 03 / Just a Pinch",
+    name: "Feelspoon",
+    specimenLabel: "Specimen 03 / Feelspoon",
     headline: "Warmth for the kitchen.",
     description:
       "Editorial type, paper texture, and food-first language replace the studio chrome while the interaction rules stay intact.",
     surfaceNote: "Editorial warmth built around cooking.",
     href: "https://pinch.shift9.dev",
-    action: "Visit Just a Pinch ↗",
+    action: "Visit Feelspoon ↗",
     image: "/experience/set-pieces/01-just-a-pinch.png",
     external: true,
   },

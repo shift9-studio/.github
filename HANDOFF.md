@@ -5,7 +5,7 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-08-05
+**Last updated:** 2026-08-23
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
 ## Read first - the discovery trap
@@ -19,6 +19,55 @@ Correct queries:
 
     gh repo list shift9-studio
     gh api '/user/repos?affiliation=owner,collaborator,organization_member'
+
+## 2026-08-23 - the recipe app is Feelspoon everywhere on this site
+
+The app shipped under `Kariimc/Just-a-pinch` was renamed **Feelspoon**. This
+repo was the last place still showing the old name in public.
+
+Changed, user-visible only:
+
+- `shift9-dev` set-piece 01 and the `/instrument` specimen now read **Feelspoon**
+  (title, specimen label, action label, the two prose mentions, and the apps
+  roster entry in `EnterTheStudio`).
+- `apps/just-a-pinch` (serves **pinch.shift9.dev**) - page title, meta
+  description, OG/Twitter titles, the eyebrow banner, both body paragraphs, the
+  footer copyright and the three phone-screenshot alt texts.
+
+**A dead link was the real defect.** The set piece's "Get the app" pointed at
+`https://kariimc.github.io/Just-a-pinch/`, which has returned **404** since the
+app repo was renamed. It now points at `https://kariimc.github.io/Feelspoon/`
+(verified 200). Both live addresses on the card were checked, not assumed.
+
+`scripts/check-instrument.mjs` asserted `/Just a Pinch/` and **failed the build**
+when the roster changed - the guard working exactly as intended. Updated to
+`/Feelspoon/`. Its second assertion pins the asset filename and still passes.
+
+**Deliberately NOT changed** - none of it is ever displayed, and changing it
+buys nothing while risking the video loop and the guard:
+
+- Asset filenames `01-just-a-pinch.png` / `.mp4`, and their entries in
+  `public/experience/assets.json`.
+- The workspace folder and package name `apps/just-a-pinch`.
+- Code comments that explain the warm surface's history.
+
+Proof: `pnpm typecheck` 2/2 pass, `pnpm build` 2/2 pass (it failed first on the
+guard, which is why the guard exists). Both pages were served locally and read
+back from the rendered DOM - studio card heading "Feelspoon", both links
+resolving, **zero** old-name text in `document.body.innerText`; the product page
+renders zero old-name strings in its served HTML.
+
+**Open, and it is Kariim's call in flight:** the subdomain is still
+`pinch.shift9.dev`, and he has chosen to move the product site to the
+**feelspoon.app** domain he already owns at Cloudflare rather than rename the
+subdomain. That cutover is not done here. Note it changes an address that the
+Play Console listing links to, so it is sequenced against the store review.
+
+**Also spotted, not changed:** the studio bio says Feelspoon is "now live on
+Google Play". It is not - the set-piece status is IN TESTING, production track
+is inactive and no AAB has been uploaded. The two statements contradict each
+other on the same page. Wording is Kariim's, so it is flagged rather than
+rewritten.
 
 ## Current state
 

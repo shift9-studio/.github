@@ -159,7 +159,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
     n: "every title is a link; the ones without a project page yet say so when you get there",
     items: [
       {
-        n: "Just a Pinch",
+        n: "Feelspoon",
         s: "IN TESTING",
         sc: "dev",
         d: "Smart recipe organizer + guided cooking app. Save from links, photos, or scratch; cook mode scales servings and suggests swaps. Includes the Recipe Engine — a Supabase-backed content pipeline that seeds and serves the catalog. In closed testing on Android — launching soon.",
@@ -1231,7 +1231,7 @@ export function EnterTheStudio() {
                   </p>
                   <p>
                     Everything here &#8212; the studio itself, and
-                    Just-a-Pinch, my first shipped app, now live on Google
+                    Feelspoon, my first shipped app, now live on Google
                     Play &#8212; was built on a Samsung Galaxy Z Fold and a
                     Steam Deck. No dev machine. No office. A folding phone, a
                     handheld, and a refusal to wait for the right setup.
