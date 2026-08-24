@@ -49,6 +49,14 @@ on all eight rows, a real ArrowDown moving selection AND focus, all sixteen wall
 tiles measured filling their cells, the switches changing `.root`'s class list,
 and Escape closing the film before the window.
 
+**Gemini looked at the live page** (his standing order, 2026-08-21: anything
+visual is inspected by Gemini, nothing else). It reported four things on the
+Portfolio room. Two were a misread of the ragged last row as clipping - measured
+on the live site, the strip has no horizontal overflow and 27px of gap on both
+sides. Two were real and are fixed: long project names were cut mid-word by an
+ellipsis (now clamped to two lines) and the readout's wrapped "BUILT WITH" pair
+sat tighter than the rows around it (line-height 1.75).
+
 **Still open.** Goals and Reports are derived from the roster's own status field;
 real quarterly targets would have to come from Kariim. `pnpm lint` remains broken
 repo-wide (`next lint` was removed in Next 16), so this had typecheck, detector
