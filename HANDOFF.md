@@ -1292,3 +1292,36 @@ comment underneath. Both are his call; neither was done.
 
 Nothing was saved in that modal. The post text was re-fetched afterwards and is
 still clean.
+
+### 2026-08-24 - the correction comment is LIVE on the launch post
+
+Kariim: "do the comment". Posted, and confirmed by re-fetching the post, not
+assumed. The comment sits under `7497541575103688704` carrying the corrected
+image with the LIVE! chip, so the stale picture above it is answered rather than
+deleted. The post kept its 161 impressions and its age.
+
+Comment text, exactly: "Update: Feelspoon is live on Google Play now, free to
+download. The graphic in the post above was made while it was still in review,
+so here is the corrected one."
+
+### How to attach an image to a COMMENT, since this differs from a post
+
+- The comment box's own photo icon is at the RIGHT END of the "Share your
+  support..." field, not on the post's action row. A first attempt clicked the
+  post's Repost button by mistake. Nothing was reposted (a repost needs a
+  confirm dialog and none opened), but check what sits under the pointer.
+- `input[type=file]` DOES NOT EXIST until that icon is clicked, and then takes
+  about EIGHT SECONDS to appear. Count is 0 before, 1 after, with
+  `accept="image/gif,image/jpeg,image/jpg,image/png,image/webp"`.
+- That input is invisible to the accessibility tree. Give it an id, an
+  `aria-label` and a real size with JavaScript, find it by that label, upload,
+  then strip the attributes off again.
+- Image FIRST, then the text. Typing is still banned: set it with
+  `execCommand('insertText')` on the Quill editor and compare character counts.
+  This one matched exactly at 162 characters.
+- The preview thumbnail was checked before submitting, to be sure the PATCHED
+  image went up and not the stale one.
+
+**A published post's image still cannot be swapped.** Unchanged and verified:
+the only Edit control on it is alt text, and there is no file input in the edit
+modal. The comment is the non-destructive answer to that.
