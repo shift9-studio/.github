@@ -1106,3 +1106,60 @@ the table - just never with a hardcoded count (counts drift).
 **Still open from the earlier section:** more LinkedIn posts, the HoopClone image
 (lighting blowout + untextured players must be fixed before recapture), and
 Midnight Return stays out until it has actually been opened in Unity.
+
+### 2026-08-24 (later still) - the profile is now true, and the ship posts exist on disk
+
+**FOUR spots said "final review", not two.** The inventory was taken before the
+first fix, and every one was corrected and then read back from LinkedIn's own
+saved value on a fresh page load (not from the page that was just edited):
+
+1. Experience > Founder, bullet 2 -> "Built and shipped Feelspoon, a recipe app
+   (Expo, React Native, Supabase, Claude-powered capture): closed beta, then live
+   on Google Play."
+2. Projects > Feelspoon, description -> "...live on Google Play as "Feelspoon:
+   Recipe Organizer" after a successful closed beta."
+3. Projects > Feelspoon, the ATTACHED MEDIA CARD (feelspoon.app). This one is easy
+   to miss: it is not in the description field, it is edited through the pencil on
+   the media thumbnail inside the project form, and it carried its own copy of the
+   claim. -> "Live on Google Play, free to download."
+4. Projects > Shift-9 Studio (shift9.dev), last paragraph -> "...now live on
+   Google Play."
+
+**Notify network was OFF before anything was saved.** Read twice off the DOM
+(`aria-checked="false"`) and confirmed on a screenshot showing the grey "Off"
+toggle. Project forms have no such toggle at all; only the Experience form does.
+
+**Three "final review" strings still exist on the profile and were deliberately
+LEFT.** They are inside PUBLISHED POSTS (the launch post and the journey post),
+which were true on the day they were posted. Editing live posts is his call.
+Do not "fix" them without asking.
+
+**He has no About section.** The only "About" in the page text is LinkedIn's own
+footer link. A text search for "About" will mislead you here.
+
+### Method notes worth keeping
+
+- The Experience description is a TipTap contenteditable: select the one paragraph
+  with a Range and `execCommand('insertText')`, then compare paragraph by
+  paragraph. The project and media descriptions are plain `<textarea>`: use the
+  native value setter plus an `input` event. Both were verified by equality
+  against the intended string, not by eye.
+- Clicking Save by coordinate is fragile - the modal scrolls under the click and
+  the first attempt landed in the body. Screenshot, then click the button where
+  the screenshot actually shows it.
+- **`/details/experience/` renders fine. `/details/projects/` still hits the known
+  blank render** (1802 bytes, survives a reload). Verify a project by reopening its
+  edit form on a fresh load and reading the stored value; that is server state.
+
+### The four Feelspoon ship posts were NOT in the notes - they are now
+
+The earlier entry said they had been "given to him as copy-ready text". They
+existed nowhere on disk, only inside a session transcript, one interrupted
+session away from being gone. Recovered and written to
+`Shift9.dev-assets/launch-2026-08/feelspoon-ship/POSTS.md` (LinkedIn, Facebook,
+Instagram, X). **Still unposted. Nothing was placed in any composer.**
+
+**The older `launch-2026-08/POSTS.md` set is now stale**: all three of those posts
+say Feelspoon is "in final review" / "live within the week", and their rendered
+images carry the same claim plus the fused-`fi` wordmark. Do not ship that set as
+it stands.
