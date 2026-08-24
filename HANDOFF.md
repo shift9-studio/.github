@@ -101,9 +101,10 @@ each chip now carries an inset ring at 22% white, the same weight the colour
 swatches upstairs use (the 9% hairline was still invisible on a near-black chip). Last note from the
 same pass: the widened cards stretched their chips wider than the rest, so the
 bar is capped at 17rem and one chip size now holds across every card. The other three grids were put back
-exactly as they were; none of them was ever short a cell. (3) The "$" before the Automation Systems copy on /studio is
-DELIBERATE - card 10 is dressed as a terminal and .terminal .note::before adds a
-shell prompt. Left alone, flagged to him.
+exactly as they were; none of them was ever short a cell. (3) The "$" before the Automation Systems copy on /studio was
+the terminal card's shell prompt (.terminal .note::before). It was deliberate,
+he was told so, and he said remove it - so the rule is gone. The card keeps its
+mono face, its log-block ground and its border; only the prompt marker went.
 
 **Still open.** Goals and Reports are derived from the roster's own status field;
 real quarterly targets would have to come from Kariim. `pnpm lint` remains broken

@@ -1031,10 +1031,6 @@
   font-family: var(--s9-font-mono, ui-monospace, monospace);
   font-size: clamp(1.5rem, 4vw, 2.6rem);
 }
-.terminal .note::before {
-  content: "$ ";
-  color: var(--card-accent);
-}
 .terminal .note {
   font-family: var(--s9-font-mono, ui-monospace, monospace);
   font-size: 0.92rem;
