@@ -2,6 +2,121 @@
 
 > Current branch state. Older branch records remain below as historical context.
 
+---
+
+## UNCOMMITTED ON `main` — the desktop sidebar AND its eight windows, 2026-08-24
+
+**State:** working tree only. Nothing committed, nothing pushed, no PR.
+Four files: `EnterTheStudio.tsx`, `EnterTheStudio.module.css`, and two new ones,
+`RailWindows.tsx` + `RailWindows.module.css`.
+
+**Part two — every rail row opens its own window.** Kariim's instruction, same
+day: "all eight in one pass", "use the impeccable skill and the taste library as
+a ref", and then, after the first pass, "don't make the buttons take you to pages
+that are exactly like my actual studio, I want something different and unique."
+So no two of the eight share a layout:
+
+| Room | Its world | Lifted from |
+|---|---|---|
+| Home | title card: cropped outline wordmark, one artifact with a real cast shadow, four numbered doors | Ten Years Away |
+| Portfolio | footage bleeding full-bleed behind a dense mono spec column; dithered strip of twelve | Hi-ReS! |
+| Media | a wall of sixteen dithered monitors, every seventh one big, only the touched one alive; film opens in an in-window lightbox with native controls | Basement Studio |
+| Products | bento of unequal panels, flagship in the 2x2 with its clip, one panel filled with the studio green | Units |
+| Contacts | a poster — the address IS the page, no form | its own |
+| Settings | instrument panel: A/B/C badges and travelling switches | its own |
+| Goals | one hairline spine with the roster hung off it, unlanded first | its own |
+| Reports | a printed table, figures right-aligned, one oversized total | its own |
+
+**Where the content comes from.** Everything is READ from `SET_PIECES` in
+`studio-dolly-data.ts` — the same roster the studio dolly renders — plus the
+`experience/` plates and clips already in `public/`. The counts on Home, Goals
+and Reports are computed at render. No status, target, date or metric is typed
+anywhere in `RailWindows.tsx`, so none of these screens can drift from the
+folders on the desktop behind them.
+
+**Settings is not a picture of settings.** All three switches are wired to the
+shell's own state: Appearance to the existing theme, Desktop icons to `compact`,
+Motion to a new `calm` class on `.root` that kills animation and keeps every
+colour. All three persist in localStorage (`s9-desk-theme`, `s9-desk-motion`).
+
+**Part one — the rail itself.** The rows were eight `div`s with the highlight
+welded to Portfolio and `cursor: default`. They are now buttons: click selects
+and opens, `aria-current` marks the row, roving `tabIndex` keeps one tab stop,
+Up/Down/Home/End walk the rail with focus following, and the highlight is one
+element measured off the live button and slid on `--s9-ease-snap`. A window
+opened from the rail grows out of the row that opened it (the offset is measured
+at the click and handed to the animation as `--dx`/`--dy`).
+
+**Proof run in a real browser** (`pnpm -C apps/shift9-dev dev --port 3117`,
+desktop reached via SKIP THE INTRO), all after the final edit:
+- `tsc --noEmit` clean.
+- The Impeccable mechanical detector returns `[]` on both new files.
+- All eight rows clicked: highlight `translateY`/`height` matched the selected
+  button's `offsetTop`/`offsetHeight` exactly, every time.
+- A real ArrowDown keydown moved selection AND focus one row on.
+- All eight windows opened and screenshotted, light theme and dark.
+- Media: every one of the sixteen tiles measured — image fills its cell exactly
+  (the 2x2 tiles were letterboxing before the fix).
+- Media: opening a film then pressing Escape closes the film and leaves the
+  window open; the second Escape closes the window.
+- Settings: clicking the switches changes `.root`'s class list (`dark`, `calm`).
+
+**Open, needs Kariim:**
+1. Goals and Reports read honestly but plainly. If he wants real quarterly
+   targets there, they have to come from him — an agent inventing them would be
+   fabrication, so they were derived from the roster's own status field instead.
+2. `pnpm lint` is still broken repo-wide (`next lint` was removed in Next 16),
+   so this has had typecheck, the detector and a live browser pass, but no lint.
+3. `EnterTheStudio.module.css` already had uncommitted edits before this session
+   started; that earlier work is mixed into the same file's diff.
+4. A newer Impeccable (v4.1.1 vs the installed v4.0.2) is available.
+
+<!-- superseded detail below -->
+### earlier note (sidebar only)
+
+**State:** working tree only. Nothing committed, nothing pushed, no PR.
+Two files: `app/_components/EnterTheStudio.tsx` and its `.module.css`.
+
+**What changed.** The desktop's left rail was decorative: eight `div`s with the
+highlight welded to Portfolio and `cursor: default`. It is now real.
+
+- The rows are `<button>`s. Clicking one selects it. `aria-current="page"` marks
+  the selected row and roving `tabIndex` keeps one stop in the tab order.
+- Up / Down walk the rail and wrap, Home / End jump to its ends, and focus
+  follows selection (`onSideKey`).
+- The highlight is ONE element (`.sidePill`) that slides between rows. Its top
+  and height are measured off the live button in an isomorphic layout effect and
+  re-measured by a `ResizeObserver`, so the 900px breakpoint that hides the rail
+  cannot leave it stranded at 0.
+- Micro interactions, all inside `prefers-reduced-motion: no-preference`:
+  pill travels on `--s9-ease-snap` at `--s9-dur-slow`, glyph nudges 1.5px on
+  hover, the chosen row's glyph gets one `glyphPop`, press scales to .985.
+  Hover fill is `color-mix(in srgb, currentColor 9%, transparent)` so one rule
+  serves both themes. Focus ring is the shell blue, inset.
+- The `Kariim — Shift-9` chip keeps `cursor: default` and stays inert.
+
+**Deliberately NOT done — Kariim's instruction, same day:** "I don't want it to
+change anything on the desktop screen." Selecting a row does not filter the icon
+grid, open a window, or alter anything to the right of the rail. The rail's
+appearance is unchanged: same width, padding, radius, `--w-sel` fill, blue text.
+
+**Proof run in a real browser** (`pnpm -C apps/shift9-dev dev --port 3117`, then
+the desktop reached via SKIP THE INTRO):
+- `tsc --noEmit` clean.
+- All eight rows clicked in turn; the pill's `translateY`/`height` matched the
+  selected button's `offsetTop`/`offsetHeight` exactly on every one.
+- A real `keydown` ArrowDown on Portfolio moved both selection and focus to Media.
+
+**Open, needs Kariim:**
+1. Should a chosen row eventually DO something (filter the grid, open a window)?
+   He ruled that out for now. Do not add it without him saying so.
+2. `pnpm lint` is still broken repo-wide (`next lint` was removed in Next 16),
+   so the diff has had typecheck and a live browser pass but no lint.
+3. `EnterTheStudio.module.css` already had uncommitted edits before this session
+   started; that earlier work is now mixed into the same file's diff.
+
+---
+
 **Last updated:** 2026-08-02
 **Branch:** `claude/flow-state-confirmation-email`
 **PR:** #42 — ready, green, awaiting Kariim's merge approval

@@ -39,6 +39,13 @@ import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { Shift9Mark } from "./Shift9Mark";
 import { SHIFT9_LOGO } from "./logo-data";
+import {
+  CINEMA,
+  RAIL_KEYS,
+  RAIL_META,
+  RailWindowBody,
+  type RailKey,
+} from "./RailWindows";
 /* CSS-module class access is typed `string | undefined` under
    noUncheckedIndexedAccess; classList APIs need a plain string. */
 const cls = (name: string): string => (s as Record<string, string>)[name] ?? name;
@@ -377,21 +384,84 @@ const MOON = (
   </svg>
 );
 
-const SIDEBAR: { label: string; glyph: string; on?: boolean }[] = [
-  { label: "Home", glyph: "⌂" },
-  { label: "Portfolio", glyph: "▤", on: true },
-  { label: "Media", glyph: "▶" },
-  { label: "Products", glyph: "◆" },
-  { label: "Contacts", glyph: "✎" },
-  { label: "Settings", glyph: "⚙" },
-  { label: "Goals", glyph: "◉" },
-  { label: "Reports", glyph: "▤" },
+const SIDEBAR: { label: string; glyph: string; key: RailKey; on?: boolean }[] = [
+  { label: "Home", glyph: "⌂", key: "home" },
+  { label: "Portfolio", glyph: "▤", key: "portfolio", on: true },
+  { label: "Media", glyph: "▶", key: "media" },
+  { label: "Products", glyph: "◆", key: "products" },
+  { label: "Contacts", glyph: "✎", key: "contacts" },
+  { label: "Settings", glyph: "⚙", key: "settings" },
+  { label: "Goals", glyph: "◉", key: "goals" },
+  { label: "Reports", glyph: "▤", key: "reports" },
 ];
 
-type OpenWin = FolderKey | "about" | null;
+type OpenWin = FolderKey | "about" | RailKey | null;
+
+const isRailKey = (k: string): k is RailKey => (RAIL_KEYS as string[]).includes(k);
+
+/* Which desktop shelf each project sits on. Built from DATA so Portfolio's
+   filter and the folders on the desktop cannot disagree. */
+const FOLDER_OF: Record<string, FolderKey> = Object.fromEntries(
+  (Object.keys(DATA) as FolderKey[]).flatMap((k) =>
+    DATA[k].items.map((it) => [it.n, k] as const),
+  ),
+);
+
+const MOTION_KEY = "s9-desk-motion";
 
 export function EnterTheStudio() {
   const reducedMotion = useReducedMotionSafe();
+
+  /* ── The sidebar ───────────────────────────────────────────────────────
+     The rail was a painted picture: eight divs with the highlight welded to
+     Portfolio. It now selects, takes the keyboard, and reports itself to a
+     screen reader — without touching the desktop it sits beside.
+
+     The highlight is ONE element that slides between rows rather than a
+     background that blinks off one row and on to another. Its position is
+     measured off the live buttons instead of being computed from padding,
+     so a font swap or a zoom level cannot leave it half a row out. */
+  const [sideIndex, setSideIndex] = useState(() => {
+    const i = SIDEBAR.findIndex((it) => it.on);
+    return i < 0 ? 0 : i;
+  });
+  const sideRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  /* A window opened from the rail grows out of the row that opened it. The
+     offset is measured at the click, because the row's place on screen is the
+     only thing that makes the move read as cause and effect. */
+  const [winFrom, setWinFrom] = useState<{ dx: number; dy: number } | null>(null);
+  const [sidePill, setSidePill] = useState({ top: 0, h: 0, ready: false });
+
+  useIsomorphicLayoutEffect(() => {
+    const place = () => {
+      const el = sideRefs.current[sideIndex];
+      if (!el) return;
+      setSidePill({ top: el.offsetTop, h: el.offsetHeight, ready: true });
+    };
+    place();
+    /* The rail is hidden below 900px and has no size to measure there. Coming
+       back across that line has to re-measure or the highlight stays at 0. */
+    const ro = new ResizeObserver(place);
+    const first = sideRefs.current[0];
+    if (first?.parentElement) ro.observe(first.parentElement);
+    return () => ro.disconnect();
+  }, [sideIndex]);
+
+  /* Up/down walk the rail, Home/End jump to its ends, and focus follows the
+     selection so the keyboard never lands on a row that is not lit. */
+  const onSideKey = (e: React.KeyboardEvent, i: number) => {
+    const last = SIDEBAR.length - 1;
+    let next = i;
+    if (e.key === "ArrowDown") next = i === last ? 0 : i + 1;
+    else if (e.key === "ArrowUp") next = i === 0 ? last : i - 1;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = last;
+    else return;
+    /* Enter and Space are left to the button itself, which fires onClick. */
+    e.preventDefault();
+    setSideIndex(next);
+    sideRefs.current[next]?.focus();
+  };
   const videoRef = useRef<HTMLVideoElement>(null);
   /* The second beat gets its own element rather than sharing the first one's.
      See the playback effect for why — reassigning `src` on a playing video is
@@ -490,6 +560,27 @@ export function EnterTheStudio() {
 
     setTunnel(true);
   }, [router]);
+
+  /* A visitor-set motion preference, kept beside the theme because it behaves
+     like one: chosen here, remembered here, applied to the whole shell. The
+     system-level `prefers-reduced-motion` is honoured separately and always
+     wins; this is for the person whose system does not ask but whose eyes do. */
+  const [calm, setCalmState] = useState(false);
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem(MOTION_KEY) === "calm") setCalmState(true);
+    } catch {
+      /* storage blocked — the choice just does not persist */
+    }
+  }, []);
+  const setCalm = useCallback((v: boolean) => {
+    setCalmState(v);
+    try {
+      window.localStorage.setItem(MOTION_KEY, v ? "calm" : "full");
+    } catch {
+      /* storage blocked — the choice just does not persist */
+    }
+  }, []);
 
   const toggleTheme = useCallback(() => {
     setDark((d) => {
@@ -805,17 +896,26 @@ export function EnterTheStudio() {
     return () => document.removeEventListener("keydown", onKey);
   }, [openWin]);
 
-  const winTitle =
-    openWin === "about" ? "About — Kariim" : openWin ? DATA[openWin].t : "";
-  const winNote =
-    openWin === "about"
+  const isRail = openWin !== null && isRailKey(openWin);
+  const isCinema = isRail && CINEMA.includes(openWin as RailKey);
+
+  const winTitle = isRail
+    ? RAIL_META[openWin as RailKey].title
+    : openWin === "about"
+      ? "About — Kariim"
+      : openWin
+        ? DATA[openWin as FolderKey].t
+        : "";
+  const winNote = isRail
+    ? RAIL_META[openWin as RailKey].note
+    : openWin === "about"
       ? "Available for product, interface, and studio partnerships."
       : openWin
-        ? DATA[openWin].n
+        ? DATA[openWin as FolderKey].n
         : "";
 
   return (
-    <div className={`${s.root} ${dark ? s.dark : ""}`}>
+    <div className={`${s.root} ${dark ? s.dark : ""} ${calm ? s.calm : ""}`}>
       {tunnel ? (
         <FadeToBlack
           onDone={() => {
@@ -1077,11 +1177,38 @@ export function EnterTheStudio() {
         <div className={s.main}>
           <div className={s.side}>
             <div className={s.sideflex}>
-              {SIDEBAR.map((it) => (
-                <div key={it.label} className={`${s.it} ${it.on ? s.on : ""}`}>
+              <div
+                className={`${s.sidePill} ${sidePill.ready ? s.sidePillOn : ""}`}
+                style={{
+                  transform: `translateY(${sidePill.top}px)`,
+                  height: sidePill.h,
+                }}
+                aria-hidden="true"
+              />
+              {SIDEBAR.map((it, i) => (
+                <button
+                  key={it.label}
+                  type="button"
+                  ref={(el) => {
+                    sideRefs.current[i] = el;
+                  }}
+                  className={`${s.it} ${i === sideIndex ? s.on : ""}`}
+                  aria-current={i === sideIndex ? "page" : undefined}
+                  tabIndex={i === sideIndex ? 0 : -1}
+                  onClick={(e) => {
+                    setSideIndex(i);
+                    const r = e.currentTarget.getBoundingClientRect();
+                    setWinFrom({
+                      dx: Math.round(r.left + r.width / 2 - window.innerWidth / 2),
+                      dy: Math.round(r.top + r.height / 2 - window.innerHeight / 2),
+                    });
+                    openWindowNow(it.key);
+                  }}
+                  onKeyDown={(e) => onSideKey(e, i)}
+                >
                   <span className={s.glyph}>{it.glyph}</span>
                   {it.label}
-                </div>
+                </button>
               ))}
               <div className={`${s.it} ${s.me}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1246,17 +1373,50 @@ export function EnterTheStudio() {
         }}
       >
         {openWin && (
-          <div className={s.window} role="dialog" aria-modal="true" aria-label={winTitle}>
+          <div
+            className={`${s.window} ${isCinema ? s.cinemaWin : ""} ${
+              isRail && winFrom ? s.fromRail : ""
+            }`}
+            style={
+              isRail && winFrom
+                ? ({ "--dx": `${winFrom.dx}px`, "--dy": `${winFrom.dy}px` } as React.CSSProperties)
+                : undefined
+            }
+            role="dialog"
+            aria-modal="true"
+            aria-label={winTitle}
+          >
             <div className={s.wtBar}>
               <span className={s.path}>
-                Shift-9 &#8250; Portfolio &#8250; <b>{winTitle}</b>
+                Shift-9 &#8250; {isRail ? "Desktop" : "Portfolio"} &#8250;{" "}
+                <b>{winTitle}</b>
               </span>
               <button type="button" onClick={() => setOpenWin(null)} aria-label="Close">
                 &#10005;
               </button>
             </div>
             <div className={s.wbody}>
-              {openWin === "about" ? (
+              {isRail ? (
+                <RailWindowBody
+                  section={openWin as RailKey}
+                  folderOf={FOLDER_OF}
+                  email={STUDIO_EMAIL}
+                  studioHref={STUDIO_HREF}
+                  onEnterStudio={enterStudio}
+                  dark={dark}
+                  onToggleTheme={toggleTheme}
+                  compact={compact}
+                  onSetCompact={setCompact}
+                  calm={calm}
+                  onSetCalm={setCalm}
+                  onGo={(k) => {
+                    const i = SIDEBAR.findIndex((it) => it.key === k);
+                    if (i >= 0) setSideIndex(i);
+                    setOpenWin(k);
+                  }}
+                  reducedMotion={reducedMotion}
+                />
+              ) : openWin === "about" ? (
                 <div className={s.aboutBody}>
                   <p>I&#8217;m Kariim &#8212; founder of Shift-9.</p>
                   <p>

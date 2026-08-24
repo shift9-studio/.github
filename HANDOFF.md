@@ -5,8 +5,54 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-08-23 (third pass)
+**Last updated:** 2026-08-24
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
+
+## 2026-08-24 - the desktop rail works, and every row opens its own room
+
+**Shipped to `main`.** The left rail on the OS-desktop front door was decorative:
+eight `div`s, `cursor: default`, highlight welded to Portfolio. It is now the
+main way through the site.
+
+**The rail.** Rows are buttons. Click selects and opens. `aria-current` marks the
+row, roving `tabIndex` keeps one tab stop, Up/Down/Home/End walk it with focus
+following. The highlight is ONE element whose top and height are measured off the
+live button (isomorphic layout effect + `ResizeObserver`, so the 900px breakpoint
+that hides the rail cannot strand it at 0) and slid on `--s9-ease-snap`. A window
+opened from the rail grows out of the row that opened it: the offset is measured
+at the click and handed to the animation as `--dx`/`--dy`.
+
+**Eight rooms, no two alike** - `app/_components/RailWindows.tsx` + its module
+CSS, new files. Kariim's instruction, 2026-08-24: "all eight in one pass", "use
+the impeccable skill and the taste library as a ref", then "don't make the
+buttons take you to pages that are exactly like my actual studio, I want
+something different and unique." So each takes its structure from a different
+harvested reference: Home a title card (Ten Years Away), Portfolio footage
+bleeding behind a mono spec column (Hi-ReS!), Media a wall of dithered monitors
+with an in-window lightbox (Basement Studio), Products a bento (Units), Contacts
+a poster, Settings an instrument panel, Goals a spine, Reports a printed table.
+
+**No typed facts.** Every project, status, note, tag, destination and count is
+read from `SET_PIECES` in `studio-dolly-data.ts` and the plates/clips already in
+`public/experience/`. The counts on Home, Goals and Reports are computed at
+render, so nothing here can drift from the desktop folders behind it.
+
+**Settings is wired, not drawn.** Its three switches drive the shell's own state:
+theme, the icon-grid `compact` flag, and a new `calm` class on `.root` that stops
+animation while keeping every colour. Persisted as `s9-desk-theme` and
+`s9-desk-motion`.
+
+**Verified before the commit, in a real browser at localhost:3117:** production
+build green, `tsc --noEmit` clean, the Impeccable mechanical detector returning
+`[]`, the highlight's `translateY`/`height` matching the selected button exactly
+on all eight rows, a real ArrowDown moving selection AND focus, all sixteen wall
+tiles measured filling their cells, the switches changing `.root`'s class list,
+and Escape closing the film before the window.
+
+**Still open.** Goals and Reports are derived from the roster's own status field;
+real quarterly targets would have to come from Kariim. `pnpm lint` remains broken
+repo-wide (`next lint` was removed in Next 16), so this had typecheck, detector
+and a live browser pass but no lint.
 
 ## Read first - the discovery trap
 

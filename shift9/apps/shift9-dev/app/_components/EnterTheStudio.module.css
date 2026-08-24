@@ -981,30 +981,113 @@
   color: var(--w-dim);
 }
 .sideflex {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
 }
+
+/* ---------- THE RAIL ----------
+   One highlight, moved. Two rows swapping backgrounds reads as a flicker;
+   a single panel travelling the distance reads as a machine part landing.
+   It carries no text and no hit area, so it can sit under the rows. */
+.sidePill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  border-radius: 7px;
+  background: var(--w-sel);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.sidePillOn {
+  opacity: 1;
+}
 .side .it {
+  position: relative;
+  z-index: 1;
+  appearance: none;
+  border: 0;
+  background: none;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
   padding: 8px 12px;
   border-radius: 7px;
   margin-bottom: 2px;
-  cursor: default;
+  cursor: pointer;
   display: flex;
   gap: 10px;
   align-items: center;
+  transition:
+    color var(--s9-dur-fast) var(--s9-ease-premium),
+    background-color var(--s9-dur-fast) var(--s9-ease-premium);
+}
+/* Hover is mixed from the row's own colour, so it lands the same weight in
+   both themes without a second pair of tokens to keep in step. */
+.side button.it:hover {
+  color: var(--w-text);
+  background-color: color-mix(in srgb, currentColor 9%, transparent);
+}
+.side .it:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: -1px;
 }
 .side .it.on {
-  background: var(--w-sel);
   color: var(--blue);
   font-weight: 600;
+  background: none;
 }
 .side .glyph {
   width: 14px;
   text-align: center;
   opacity: 0.7;
+  transition:
+    opacity var(--s9-dur-fast) var(--s9-ease-premium),
+    transform var(--s9-dur-fast) var(--s9-ease-premium);
+}
+.side .it:hover .glyph,
+.side .it.on .glyph {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The overshoot curve is what stops the highlight feeling like a slide on
+     a track. It arrives slightly past the row and settles back into it. */
+  .sidePill {
+    transition:
+      transform var(--s9-dur-slow) var(--s9-ease-snap),
+      height var(--s9-dur-base) var(--s9-ease-out),
+      opacity var(--s9-dur-base) var(--s9-ease-out);
+  }
+  .side .it:hover .glyph {
+    transform: translateX(1.5px);
+  }
+  /* The mark on the chosen row gets one small pop, once, as it is chosen. */
+  .side .it.on .glyph {
+    animation: glyphPop var(--s9-dur-slow) var(--s9-ease-snap);
+  }
+  .side button.it:active {
+    transform: scale(0.985);
+  }
+}
+
+@keyframes glyphPop {
+  0% {
+    transform: scale(1);
+  }
+  38% {
+    transform: scale(1.22);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 .side .me {
+  cursor: default;
   margin-top: auto;
   display: flex;
   align-items: center;
@@ -1421,6 +1504,64 @@
     opacity: 1;
   }
 }
+/* A window opened from the rail grows out of the row that opened it, so the
+   cause of the window is visible in the window's arrival. Folder windows keep
+   the plain pop: they are opened from the middle of the desktop and have no
+   single point to come from. */
+.fromRail {
+  animation: popRail 0.44s var(--s9-ease-out) both;
+}
+@keyframes popRail {
+  from {
+    transform: translate(var(--dx, 0), var(--dy, 0)) scale(0.26);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+/* The two film screens are wider and carry their own ground, so the shell
+   hands them the frame and gets out of the way. */
+.cinemaWin {
+  width: min(1180px, 96vw);
+  background: #05070c;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.cinemaWin .wtBar {
+  background: #0a0e15;
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+.cinemaWin .wtBar .path {
+  color: rgba(255, 255, 255, 0.62);
+}
+.cinemaWin .wtBar .path b {
+  color: #fff;
+}
+.cinemaWin .wtBar button {
+  color: rgba(255, 255, 255, 0.62);
+}
+.cinemaWin .wtBar button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ff8080;
+}
+.cinemaWin .note {
+  background: #0a0e15;
+  border-top-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Calm: the visitor asked for the motion to stop, so it stops everywhere,
+   and every colour, border and contrast state stays exactly where it was. */
+.calm *,
+.calm *::before,
+.calm *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
 .wtBar {
   display: flex;
   align-items: center;
