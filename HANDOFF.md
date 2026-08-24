@@ -1325,3 +1325,37 @@ so here is the corrected one."
 **A published post's image still cannot be swapped.** Unchanged and verified:
 the only Edit control on it is alt text, and there is no file input in the edit
 modal. The comment is the non-destructive answer to that.
+
+### 2026-08-24 - the LIVE! chip on the four Feelspoon cards
+
+Kariim: "do the same chip on the feelspoon posts". Done on all four.
+
+**The inline "Live on Google Play" pill was REMOVED from every card.** The chip
+and the pill said the same thing twice. One strong callout per image, same
+decision as the launch set, where the old status block came out from under the
+sticker. If a chip is ever moved, check what is underneath it first.
+
+The chip uses the app's own Hanken Grotesk rather than the studio's Bricolage,
+so it stays inside the Feelspoon system. Shared `.patch` rule in
+`feelspoon-ship/source/fs.css`; each card sets its own size and position.
+
+**Two placements were wrong on the first render and were caught by looking:**
+- Facebook: the chip's top edge cut the last line of the subheading.
+- Instagram: it sat across the phone's back button and top bezel. Moved up into
+  the dead band, where it now rests on the phone's top edge and fills space that
+  was empty anyway.
+
+**A real bug in the renderer, now fixed.** `feelspoon-ship/source/render.sh`
+used `for n in "${@:-li ig fb x}"`. Quoted, that default expands to ONE word, so
+a no-argument run produced a single file literally named `li ig fb x.png` and
+rendered nothing else. It builds an array now.
+
+**Do not trust a green-pixel probe on these cards.** Twice it was used to
+measure the chip's clearance from the canvas edge and twice it returned the
+union of the chip AND the app's own green UI inside the screenshots (the plus
+button, the "Cook with what you have" tile, the checkmarks). The numbers look
+authoritative and are meaningless. Look at the picture.
+
+**The folder README said "NOTHING HERE HAS BEEN POSTED".** That went false the
+moment he posted all four, and has been corrected to say so, plus the fact that
+these images are now NEWER than what is live.
