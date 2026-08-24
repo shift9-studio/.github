@@ -20,6 +20,51 @@ Correct queries:
     gh repo list shift9-studio
     gh api '/user/repos?affiliation=owner,collaborator,organization_member'
 
+## 2026-08-23 - feelspoon.app is attached to the product site, DNS is the last step
+
+Kariim's call this session: the product site moves to **feelspoon.app** rather
+than renaming the `pinch.` subdomain.
+
+**Done, on Vercel, and verified by the API's own response.** Both names are on
+the `just-a-pinch` project (`prj_DruKJia6BmFr5YH29UkHBjgSIt2m`, team
+`team_JQyCKGeeEsZdd7dym2lLxgjY`) and both came back `verified: true`:
+
+- `feelspoon.app`
+- `www.feelspoon.app` -> 308 redirect to the apex
+
+The Vercel dashboard UI could not be clicked: the Chrome window was minimised,
+so `innerWidth/innerHeight` read `0x0`, nothing laid out and the Add-domain
+dialog never opened. Resizing a minimised window does not restore it. The work
+was done instead by calling the dashboard's own endpoint from the page context
+with the session cookie, which is the same action the button performs:
+
+    POST /api/v10/projects/<projectId>/domains?teamId=<teamId>  {"name": "..."}
+
+**Not done - it needs Kariim.** The Cloudflare session has expired
+(`/api/v4/zones` returns 403, code 9300, "User session has expired"). No
+Cloudflare token exists anywhere on the machine: not in the environment, not in
+`cmdkey`, no `.wrangler` config, and `WHAT-HE-HAS.md` does not name one. So the
+DNS records cannot be written from here.
+
+Records Vercel asked for, read live from `/api/v6/domains/feelspoon.app/config`:
+
+| Type | Name | Value | Proxy |
+|---|---|---|---|
+| A | `feelspoon.app` (apex, `@`) | `216.198.79.1` | DNS only |
+| A | `feelspoon.app` (apex, `@`) | `64.29.17.1` | DNS only |
+| CNAME | `www` | `341e22eb25d95fe5.vercel-dns-017.com` | DNS only |
+
+Vercel's rank-2 fallbacks, if the above are ever refused: A `76.76.21.21`,
+CNAME `cname.vercel-dns.com`. **Proxy must be off (grey cloud)** - Cloudflare's
+orange-cloud proxy in front of Vercel breaks certificate issuance.
+
+Nameservers confirmed as Cloudflare's (`albert` and `nucum`), and the domain
+currently resolves to nothing: no A record, `www` NXDOMAIN, no HTTP response.
+
+`pinch.shift9.dev` keeps working throughout - both names point at the same
+project. Whether the old address should 308 to the new one after cutover is
+Kariim's call and is NOT set up.
+
 ## 2026-08-23 (second pass) - the Services tag, and the desktop on narrow screens
 
 ### The price tag was rendering as a black blob
