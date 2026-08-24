@@ -1260,3 +1260,35 @@ by counting blank pixel columns in a guessed window. It reported SEPARATED for
 all four tracking values including the one that visibly fused. A guessed crop
 window is not a measurement. For glyph collisions, render the candidates, stack
 them into one strip, and look.
+
+### 2026-08-24 - the LIVE patch chip, and a claim that had to be corrected
+
+Kariim: "Just put a patch chip over the top that says LIVE! on the Google Play
+Store". Done on all three launch images (`launch-2026-08/source/{li,ig,fb}.html`,
+shared `.patch` rule in `base.css`, delivered files replaced).
+
+The chip is the app's own green `#2E9E57`, a hard white keyline, a real drop
+shadow and a small rotation, so it reads as a sticker applied ON TOP rather than
+part of the layout. **The old status block was DELETED from each file when the
+chip went on.** Leaving it in place left "LIVE NOW, FREE" poking out from behind
+the sticker, which reads as broken rather than layered. If a chip is ever moved,
+check what is underneath it.
+
+### A claim I made that was wrong, and the check that settled it
+
+I told him the picture on a published LinkedIn post "cannot be swapped" BEFORE
+verifying it. Then, inside the post edit modal, an **Edit** button turned out to
+sit on the image itself, which looked like I had been wrong.
+
+Checked it: that button opens **Edit Alt Text** and nothing else. There is no
+file input anywhere in the modal (`input[type=file]` count is 0). So the
+conclusion holds, but it now rests on a look rather than an assumption.
+
+**The state of it:** the launch post `7497541575103688704` has correct TEXT and a
+stale IMAGE. Its picture still reads "In final review with Google Play" and
+"LIVE WITHIN THE WEEK". The only routes are (a) delete and repost, which throws
+away 161 impressions and the post's age, or (b) post the patched image as a
+comment underneath. Both are his call; neither was done.
+
+Nothing was saved in that modal. The post text was re-fetched afterwards and is
+still clean.
