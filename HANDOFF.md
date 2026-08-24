@@ -91,8 +91,14 @@ as "a table missing a chunk of its bottom-right corner", because these cards are
 deliberately edge-to-edge rather than discrete. So the sheet is back and the ROW
 is completed instead - the page renders (4 - n % 4) % 4 filler cells, shown only
 at the four-column layout, where the roster is the only one that can be short.
-The other three grids were put back exactly as they were; none of them was ever
-short a cell. (3) The "$" before the Automation Systems copy on /studio is
+Fillers were not enough either - an obsidian filler still gets framed by the
+sheet's rules, so Gemini still read "two glaringly empty boxes ... the grid lines
+continue through this empty space". Settled shape: nothing fills the row, the
+CARDS of the last row widen to close it (span = cols / remainder, applied only
+where the remainder divides the column count, only at four columns). Gemini also
+caught near-black chips vanishing into the ground in the /soon and entrance bars;
+each chip now carries an inset hairline. The other three grids were put back
+exactly as they were; none of them was ever short a cell. (3) The "$" before the Automation Systems copy on /studio is
 DELIBERATE - card 10 is dressed as a terminal and .terminal .note::before adds a
 shell prompt. Left alone, flagged to him.
 

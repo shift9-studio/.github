@@ -653,12 +653,8 @@
   border: 1px solid var(--s9-hair);
 }
 
-/* Only the four-column layout can be short; at one and two columns the
-   roster divides exactly. */
-.surfaceFill {
-  display: none;
-  background: var(--s9-obsidian);
-}
+/* Only the four-column layout can be short; at one and two columns the roster
+   divides exactly, so the widening is scoped to that breakpoint below. */
 
 @media (min-width: 48rem) {
   .surfaces {
@@ -670,8 +666,8 @@
   .surfaces {
     grid-template-columns: repeat(4, 1fr);
   }
-  .surfaceFill {
-    display: block;
+  .surfaceWide {
+    grid-column: span var(--span, 1);
   }
 }
 
@@ -709,6 +705,10 @@
 
 /* The strip of colours each surface actually runs on — the fastest way to
    see that they are one system and where each one deliberately departs. */
+.surfaceBar span {
+  box-shadow: inset 0 0 0 1px var(--s9-hair);
+}
+
 .surfaceBar {
   margin-top: auto;
   padding-top: 1.1rem;

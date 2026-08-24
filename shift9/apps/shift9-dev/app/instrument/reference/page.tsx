@@ -472,26 +472,35 @@ export default function InstrumentReferencePage() {
           what each room is for — and a system is only worth having if it can
           say where it is allowed to break.
         </p>
+        {/* The grid's hairlines are painted by the sheet behind it, so a last
+            row with unused cells frames empty space and reads as a query that
+            came back short. Nothing is added to fill it: the cards of the last
+            row widen to close it, which only works when the remainder divides
+            the column count - it does at six rooms in four columns, and the
+            fallback is the plain single-column card. */}
         <div className={s.surfaces}>
-          {surfaces.map((f) => (
-            <div key={f.route} className={s.surface}>
+          {surfaces.map((f, i) => {
+            const cols = 4;
+            const rem = surfaces.length % cols;
+            const span = rem && cols % rem === 0 ? cols / rem : 1;
+            const wide = span > 1 && i >= surfaces.length - rem;
+            return (
+            <div
+              key={f.route}
+              className={`${s.surface} ${wide ? s.surfaceWide : ""}`}
+              style={wide ? ({ "--span": span } as React.CSSProperties) : undefined}
+            >
               <span className={s.surfaceRoute}>{f.route}</span>
               <span className={s.surfaceName}>{f.name}</span>
               <span className={s.surfaceDesc}>{f.desc}</span>
               <span className={s.surfaceBar} aria-hidden>
-                {f.bar.map((c, i) => (
-                  <span key={i} style={{ background: c }} />
+                {f.bar.map((c, j) => (
+                  <span key={j} style={{ background: c }} />
                 ))}
               </span>
             </div>
-          ))}
-          {/* The grid's hairlines come from the sheet behind it, so an unused
-              cell in the last row paints as a grey block. These complete the
-              four-column row; they are hidden at every narrower layout, where
-              the roster divides exactly. */}
-          {Array.from({ length: (4 - (surfaces.length % 4)) % 4 }).map((_, i) => (
-            <span key={`fill-${i}`} className={s.surfaceFill} aria-hidden />
-          ))}
+            );
+          })}
         </div>
       </section>
 
