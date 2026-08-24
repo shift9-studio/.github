@@ -705,8 +705,12 @@
 
 /* The strip of colours each surface actually runs on — the fastest way to
    see that they are one system and where each one deliberately departs. */
+/* The bars carry the actual grounds each room runs on, and several of those
+   ARE near-black. At the hairline's 9% they vanished into the page and the
+   remaining chips read as if the row were indented by mistake. This ring is
+   the same weight the colour swatches upstairs already use. */
 .surfaceBar span {
-  box-shadow: inset 0 0 0 1px var(--s9-hair);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
 }
 
 .surfaceBar {
