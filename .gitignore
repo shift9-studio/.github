@@ -11,3 +11,6 @@ __pycache__/
 # Dev/_parked/shift9-rejected-renders. Nothing raw belongs in the live site.
 /Shift9.dev-assets/
 .turbo/
+
+# Session-generated environment probe, machine-specific, never shared
+.claude/env-facts.local.md
