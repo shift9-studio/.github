@@ -717,6 +717,10 @@
   margin-top: auto;
   padding-top: 1.1rem;
   display: flex;
+  /* The last row's cards are wider, and a bar that simply fills its card made
+     those chips read as a different size from the rest. Capping the bar keeps
+     one chip size across every card, whatever width the card is. */
+  max-width: 17rem;
   height: 2.4rem;
   gap: 2px;
 }

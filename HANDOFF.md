@@ -98,7 +98,9 @@ CARDS of the last row widen to close it (span = cols / remainder, applied only
 where the remainder divides the column count, only at four columns). Gemini also
 caught near-black chips vanishing into the ground in the /soon and entrance bars;
 each chip now carries an inset ring at 22% white, the same weight the colour
-swatches upstairs use (the 9% hairline was still invisible on a near-black chip). The other three grids were put back
+swatches upstairs use (the 9% hairline was still invisible on a near-black chip). Last note from the
+same pass: the widened cards stretched their chips wider than the rest, so the
+bar is capped at 17rem and one chip size now holds across every card. The other three grids were put back
 exactly as they were; none of them was ever short a cell. (3) The "$" before the Automation Systems copy on /studio is
 DELIBERATE - card 10 is dressed as a terminal and .terminal .note::before adds a
 shell prompt. Left alone, flagged to him.
