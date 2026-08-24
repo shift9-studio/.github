@@ -5,7 +5,7 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-08-23
+**Last updated:** 2026-08-23 (second pass)
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
 ## Read first - the discovery trap
@@ -19,6 +19,64 @@ Correct queries:
 
     gh repo list shift9-studio
     gh api '/user/repos?affiliation=owner,collaborator,organization_member'
+
+## 2026-08-23 (second pass) - the Services tag, and the desktop on narrow screens
+
+### The price tag was rendering as a black blob
+
+`.appico` had a rule for `img` and none for `svg`. The Services tile is the
+only one holding an inline glyph rather than an image, so its `<svg>` fell back
+to the browser's replaced-element default of 300x150 and to `fill: currentColor`
+- a huge black tag clipped by the tile's `overflow: hidden`. It shipped that way.
+
+Fixed with `.appico.glyph` + `.appico.glyph svg`, mirroring `.aboutico svg`
+(38px, `fill: none`, white 1.9 stroke) plus a blue face so the tile is not
+transparent while the holo layers sit at rest. Gemini, looking at the render:
+"sits fully inside the blue rounded square. It does not overflow, nor is it
+clipped."
+
+### The desktop ran off the edge of a folding phone's cover screen
+
+Measured, not guessed, on a 280px viewport (Galaxy Fold outer display):
+
+| | before | after |
+|---|---|---|
+| elements past the right edge | 13 | 0 |
+| `.desktop` scrollWidth vs client | 340 / 280 | 280 / 280 |
+| `.taskbar` scrollWidth vs client | 340 / 280 | 280 / 280 |
+
+Two separate causes:
+
+1. `.dicon` was a fixed `width: 160px` while its grid columns were
+   `minmax(0, 160px)` and did shrink. The tile did not follow the column, so
+   the right-hand column simply left the screen. Now `width: 100%;
+   max-width: 160px`.
+2. The top row and taskbar needed 340px. The four nav words (Home, About,
+   Accounts, Log in) are set dressing and already `aria-hidden`, so they are
+   dropped below 22.5rem, and `.clock` stops being absolutely positioned (it
+   had been sitting on top of the taskbar icons).
+
+**The new `@media (max-width: 22.5rem)` block is deliberately the LAST thing in
+the file.** An earlier copy placed higher up was silently overridden by the
+`max-width: 768px` block that targets the same selectors, and the computed
+styles proved it (padding still read `26px 18px`). If these rules ever stop
+working, check what sits below them before editing the values.
+
+Verified at 280, 320, 344, 390, 540, 673, 768 and 1440: horizontal page
+overflow 0 and zero elements past the right edge at every one. Gemini on the
+enlarged 280px render: six tiles, right column "fully visible with a margin",
+top-right button fully visible.
+
+**A trap worth keeping.** A 280px-wide screenshot is too small for a vision
+model to judge; it reported the right column as sliced off when the measured
+geometry said otherwise. Enlarging the same image 3x reversed the verdict.
+Measure geometry with the DOM, and enlarge before asking anything to look.
+
+### Also
+
+- The studio bio said Feelspoon was "now live on Google Play" while the card
+  above it read IN TESTING. It is in testing; no app file has been uploaded.
+  Now "now in testing on Google Play".
 
 ## 2026-08-23 - the recipe app is Feelspoon everywhere on this site
 

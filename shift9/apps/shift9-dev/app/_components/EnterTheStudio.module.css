@@ -1127,6 +1127,30 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
   transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, border-radius 0.3s ease;
 }
+/* The Services tile is the ONLY .appico holding a glyph instead of an image,
+   and only `.appico img` ever had a rule. An inline <svg> with a viewBox and
+   no width/height falls back to the replaced-element default (300x150) and to
+   `fill: currentColor`, so the price tag rendered as a giant black shape
+   clipped by the tile's `overflow: hidden` - which is exactly what shipped.
+   Sized, centred and stroked here to match `.aboutico svg`, with a face of its
+   own so the tile is not transparent while the holo layers sit at rest. */
+.appico.glyph {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(155deg, #4d8fe0 0%, #1f5fb4 58%, #123f7d 100%);
+}
+.appico.glyph svg {
+  position: relative;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .appico img {
   position: relative;
   z-index: 2;
@@ -1593,6 +1617,16 @@
   .grid.compact {
     grid-template-columns: repeat(3, minmax(0, 96px));
     gap: 18px 14px;
+  }
+  /* The columns are minmax(0, ...) so they shrink, but .dicon was a fixed
+     160px and did not, so on a narrow cover screen the tiles simply ran off
+     the right edge. Measured on a 280px viewport (the Fold's outer display):
+     13 elements past the right edge, the whole second column among them.
+     Letting the tile track its column fixes every width at once. */
+  .grid .dicon {
+    width: 100%;
+    max-width: 160px;
+    justify-self: center;
   }
   .window {
     width: 100vw;
@@ -2461,4 +2495,69 @@
   box-shadow:
     0 0 0 2px var(--w-bg),
     0 0 0 4px var(--blue);
+}
+
+
+/* ---------------------------------------------------------------------------
+   Cover screens, split-screen windows and the narrowest phones.
+
+   22.5rem = 360px. It sits AT THE END of this file on purpose: the
+   `max-width: 768px` block above it targets the same selectors, and an earlier
+   copy of these rules was silently overridden by it. Measured on a 280px
+   viewport (the Galaxy Fold's outer display) before and after:
+
+     before  .desktop scrollWidth 340 vs clientWidth 280   (60px off-screen)
+             .taskbar scrollWidth 340 vs clientWidth 280
+             13 elements past the right edge
+     after   0 / 0 / 0
+
+   The four nav words in the top row are set dressing and already aria-hidden,
+   so dropping them at this width costs nothing and is what buys the room. The
+   clock stops being absolutely positioned, which is what had it sitting on top
+   of the taskbar icons.
+   --------------------------------------------------------------------------- */
+@media (max-width: 22.5rem) {
+  .inert {
+    display: none;
+  }
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 10px;
+    /* Extra bottom padding: the grid scrolls on a short cover screen, and
+       without it the last row of labels ends flush against the taskbar. */
+    padding: 18px 10px 28px;
+  }
+  .grid.compact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 6px;
+  }
+  .grid .dicon {
+    max-width: 100%;
+    padding: 10px 2px 8px;
+  }
+  .grid .fname {
+    font-size: 12px;
+  }
+  .grid .fcount {
+    font-size: 10px;
+  }
+  .taskbar {
+    gap: 10px;
+    justify-content: flex-start;
+    padding: 0 8px;
+  }
+  .clock {
+    position: static;
+    right: auto;
+    margin-left: auto;
+    min-width: 0;
+    font-size: 10px;
+  }
+  .themeBtn {
+    padding: 5px 8px;
+  }
+  .helpdot {
+    right: 12px;
+    bottom: 58px;
+  }
 }

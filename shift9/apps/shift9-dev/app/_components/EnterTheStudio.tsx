@@ -1117,7 +1117,7 @@ export function EnterTheStudio() {
               href="/services"
               style={{ textDecoration: "none" }}
             >
-              <div className={`${s.appico} ${s.holo}`}>{SERVICES_GLYPH}</div>
+              <div className={`${s.appico} ${s.glyph} ${s.holo}`}>{SERVICES_GLYPH}</div>
               <div className={s.fname}>Services</div>
               <div className={s.fcount}>What it costs</div>
             </a>
@@ -1231,7 +1231,7 @@ export function EnterTheStudio() {
                   </p>
                   <p>
                     Everything here &#8212; the studio itself, and
-                    Feelspoon, my first shipped app, now live on Google
+                    Feelspoon, my first shipped app, now in testing on Google
                     Play &#8212; was built on a Samsung Galaxy Z Fold and a
                     Steam Deck. No dev machine. No office. A folding phone, a
                     handheld, and a refusal to wait for the right setup.
