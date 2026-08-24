@@ -93,8 +93,21 @@ translate: 0 0`, opening inward. The rise-and-fade `transform` is untouched.
 Measured at 1920/1440/1280: bubble spans end 26px clear of the edge at every
 width. Gemini confirmed the full address is readable and inside the screen.
 
-**STATE: COMMITTED, NOT YET ON THE PUBLIC SITE.** Kariim poked the sandbox,
-approved, and asked for it to go up. Commit `e3c988b` on `main` carries six
+**STATE: LIVE AND VERIFIED on shift9.dev.** Kariim gave permission and `763d0ba`
+went up. Checked on the public site afterwards, not assumed: the opening film
+file returns **5,878,131** bytes; both beats run to their natural end at 8 Mbps
+(22.1s), 5 Mbps (31.0s) and 3 Mbps (40.4s) through real Chrome with throttling;
+the email tooltip fits with 26px clear at 1920, 1440 and 1280, and Gemini
+confirmed the whole address is readable and inside the screen.
+
+**One thing found while looking, NOT fixed and NOT asked for.** Gemini's sweep of
+the live desktop flagged the folder labels ("Apps", "Games", "Tools", "About"
+and their subtext) as low contrast: dark grey text sitting straight on the dense
+dark grey ASCII wallpaper. Real, but outside what Kariim asked for, so it was
+left alone and put to him as a question. If he says yes, the fix is a subtle
+shadow, a blur behind the text, or a semi-transparent pill under the labels.
+
+Commit `e3c988b` carries six
 files: `HANDOFF.md`, `EnterTheStudio.tsx`, `EnterTheStudio.module.css` (the
 tooltip anchor), `check-studio-polish.mjs`, and the two re-encoded opening
 `.mp4`s. The temporary `Try-The-Fixed-Intro.cmd` sandbox launcher was deleted
