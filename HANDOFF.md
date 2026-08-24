@@ -106,6 +106,13 @@ the terminal card's shell prompt (.terminal .note::before). It was deliberate,
 he was told so, and he said remove it - so the rule is gone. The card keeps its
 mono face, its log-block ground and its border; only the prompt marker went.
 
+Kariim, same day: on /instrument/reference "to the left the entire thing is cut
+off at the bottom". Reproduced at 1920x760, 1536x700 and 1920x640: the left
+column runs 713-890px tall and was `position: sticky`, so on a laptop-height
+window it was pinned taller than the screen and the numbered register at its
+foot could never be scrolled to. It now sticks only above a 62rem-tall viewport
+and is capped at the screen height even there.
+
 **Still open.** Goals and Reports are derived from the roster's own status field;
 real quarterly targets would have to come from Kariim. `pnpm lint` remains broken
 repo-wide (`next lint` was removed in Next 16), so this had typecheck, detector

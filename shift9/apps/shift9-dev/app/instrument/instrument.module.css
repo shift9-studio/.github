@@ -628,9 +628,21 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .archiveHeader {
-    position: sticky;
-    top: 2.25rem;
+  /* Sticky only where there is room for it. This column runs 826-890px tall
+     depending on how the paragraph wraps, so on a laptop showing ~760px of
+     page it was pinned taller than the screen: the numbered register at its
+     foot sat below the fold and no amount of scrolling could reach it,
+     because sticking is exactly what stops it moving. It now sticks only on
+     a tall viewport, and is capped even there so a longer register can never
+     do the same thing again. */
+  @media (min-height: 62rem) {
+    .archiveHeader {
+      position: sticky;
+      top: 2.25rem;
+      max-height: calc(100dvh - 4.5rem);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
   }
 
   .projectFeature .projectCopy {
