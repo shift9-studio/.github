@@ -100,6 +100,33 @@ file returns **5,878,131** bytes; both beats run to their natural end at 8 Mbps
 the email tooltip fits with 26px clear at 1920, 1440 and 1280, and Gemini
 confirmed the whole address is readable and inside the screen.
 
+## 2026-08-24 - the desktop tile labels are one colour now
+
+Kariim: "make them the same color like the other labels", pointing at the blue
+"Services" label. `.dicon.site .fname` and `.dicon.site .fcount` in
+`EnterTheStudio.module.css` were forcing `color: var(--blue)` on the two
+live-site tiles (Services and Shift9.dev) while the four folder tiles used
+`--w-txt`. Both colour overrides removed; the heavier font weights stay, so those
+two still sit slightly forward. Nothing else touched.
+
+Verified by reading computed colour off the live DOM in both themes, not by eye:
+all six `.fname` come back identical, `rgb(232,234,240)` in dark and
+`rgb(31,35,40)` in light. Typecheck clean, full build clean, all three guard
+files pass, 14 pages generate.
+
+**Method note worth keeping.** A first Gemini pass on the full-page screenshot
+reported "About is black, the rest are white" and called the row a styling bug.
+That was wrong. The computed colours were identical, and a 2x zoomed crop of just
+the label row had Gemini agree all six are the same. **On a busy background, a
+full-page vision pass misreads label colour. Crop and zoom before believing it**,
+and check computed style alongside.
+
+**Found at zoom, NOT fixed, NOT asked for.** The "About" label sits 4px higher
+than "Services" and "Shift9.dev" (443.77 vs 447.77). Not the labels: all three
+tiles share the same top, height, padding and border, so the cause is the About
+tile using `.aboutico` where the others use `.appico`, and that icon being 4px
+shorter. Pre-dates this change. Put to Kariim as a question.
+
 **One thing found while looking, NOT fixed and NOT asked for.** Gemini's sweep of
 the live desktop flagged the folder labels ("Apps", "Games", "Tools", "About"
 and their subtext) as low contrast: dark grey text sitting straight on the dense

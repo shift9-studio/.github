@@ -1161,9 +1161,15 @@
 .dicon.site:hover .appico {
   transform: scale(1.06);
 }
+/* Kariim, 2026-08-24: same colour as every other label. The blue was doing the
+   work of marking these two tiles as the live-site route, but the tiles already
+   carry that on their own — the blue border, the tinted panel, the pulse and the
+   glow on the icon all say it without recolouring the words. Two label colours
+   in one row of tiles read as two kinds of thing when they are not, and the
+   blue lost contrast against the ASCII wallpaper besides. The heavier weight
+   stays, so they still sit slightly forward of the folders. */
 .dicon.site .fname {
   font-weight: 650;
-  color: var(--blue);
 }
 
 /* compelling primary CTA on the shift9.dev tile */
@@ -1181,7 +1187,6 @@
   box-shadow: 0 6px 20px rgba(11, 107, 214, 0.42);
 }
 .dicon.site .fcount {
-  color: var(--blue);
   font-weight: 600;
 }
 @keyframes sitepulse {
