@@ -1163,3 +1163,56 @@ Instagram, X). **Still unposted. Nothing was placed in any composer.**
 say Feelspoon is "in final review" / "live within the week", and their rendered
 images carry the same claim plus the fused-`fi` wordmark. Do not ship that set as
 it stands.
+
+### 2026-08-24 - the four ship posts now have images
+
+Kariim, mid-session: "Can I have some cool images in the post also". He chose
+**pure Feelspoon** over the Shift-9 card system, and one image per surface
+rather than one resized four ways.
+
+**Four images exist, all four posts are still UNPOSTED.** One folder per
+surface under `Shift9.dev-assets/launch-2026-08/feelspoon-ship/`:
+`01-linkedin` (1200x1200), `02-facebook` (1200x630), `03-instagram` (1080x1350),
+`04-x` (1600x900). Each holds `post.md` and `image.png`. The folder README
+carries the full method and, more usefully, the list of Gemini claims that were
+MEASURED AND REJECTED so nobody re-fixes them.
+
+**Nothing in the art is invented.** Colours are copied verbatim from
+`just-a-pinch/mobile/src/theme/index.ts`; the faces are the app's own Newsreader
+and Hanken Grotesk, loaded from the app's own node_modules; the screens are the
+real Play Store screenshots from `mobile/store/screenshots/phone/`; the mark is
+the real `play-icon-512.png`. New pipeline at `feelspoon-ship/source/`, rendered
+by `source/render.sh` (2x then downsample, which is what keeps the type clean).
+
+### Three things worth not rediscovering
+
+- **A shared `.phone{left:calc(50% - w)}` rule silently stacks the flankers
+  BEHIND the hero.** Cost a full render round on the Instagram card: the right
+  phone was invisible and looked like a missing asset. Each device sets its own
+  left/right now.
+- **Increasing a container's height does NOT move devices anchored to its
+  bottom.** Tried it twice to close a dead band and nothing moved. Change the
+  device heights or their `bottom`, not the box.
+- **A rotated phone throws its corners out by about
+  `(h*sin θ + w*(1-cos θ)) / 2`.** Two cards clipped the canvas edge before this
+  was computed instead of guessed. `source/` has the arithmetic.
+
+### Gemini claims that were measured and REJECTED - do not re-fix
+
+Written down because all three are confident, specific, and wrong, and the next
+session will otherwise burn a round on each:
+- **"Clipped by the left/right/top edge"**, raised against all four cards.
+  A dark-pixel scan of the border rows returns **zero** on every edge except the
+  bottom, where the bleed is deliberate. It grades the bleed as clipping.
+- **"The X feature dividers are unevenly spaced."** Both gutters measure exactly
+  **70px**. It is seeing the ragged right edge of each column's text.
+- **"iPhone hardware / Dynamic Island on an Android app."** There is no notch
+  element in the markup. It is reading the app's own in-screen buttons.
+
+It WAS right about one thing that eyeballing missed: at `line-height:1.04` the
+headline's descenders and ascenders touched at **0px** on the X card. Measured,
+fixed to `1.14`, re-measured at 13px. Trust it on collisions, check it on crops.
+
+**Still open, unchanged:** the HoopClone image (arena lighting blowout and
+untextured players before any recapture), and Midnight Return stays off LinkedIn
+until it has actually been opened in Unity.
