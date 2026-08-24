@@ -69,6 +69,15 @@ thumbnail label now carries its own gradient ground (like the Media wall's
 labels) instead of relying on a text shadow, and the readout rows were given
 real padding rather than only a taller line-height on the value.
 
+Third look: Gemini still called three things wrong - names unreadable over the
+artwork, the BUILT WITH pair squished, and the foot line's descenders clipped.
+Each was measured on the live page rather than argued with. The label carries a
+scrim, sits inside its card with 8.5px under the text; the readout's value runs
+at an 18.05px line-height with 9px to the row's rule; the foot line is an 11px
+text run in a 37px box with 10px padding and no clipping. None of the three
+reproduce, so nothing further was changed on that pass. The two findings that
+DID reproduce (the ellipsis and the wrapped-row spacing) are the ones fixed.
+
 **Still open.** Goals and Reports are derived from the roster's own status field;
 real quarterly targets would have to come from Kariim. `pnpm lint` remains broken
 repo-wide (`next lint` was removed in Next 16), so this had typecheck, detector
