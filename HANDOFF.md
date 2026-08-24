@@ -57,6 +57,12 @@ sides. Two were real and are fixed: long project names were cut mid-word by an
 ellipsis (now clamped to two lines) and the readout's wrapped "BUILT WITH" pair
 sat tighter than the rows around it (line-height 1.75).
 
+Gemini also looked at the Media room: grid clean, but the printed indices
+jumped (06, 07, then the far-right big tile as 08, then back to the bottom
+left). True - `grid-auto-flow: dense` backfills the holes a 2x2 tile leaves, so
+DOM order and reading order differ. The indices are gone; the name was the only
+part carrying information.
+
 **Still open.** Goals and Reports are derived from the roster's own status field;
 real quarterly targets would have to come from Kariim. `pnpm lint` remains broken
 repo-wide (`next lint` was removed in Next 16), so this had typecheck, detector

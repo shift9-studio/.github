@@ -482,10 +482,11 @@ function Media({ reducedMotion }: Pick<RailWindowProps, "reducedMotion">) {
               play={hover === r.id}
               reducedMotion={reducedMotion}
             />
-            <span className={s.screenLabel}>
-              <i>{String(i + 1).padStart(2, "0")}</i>
-              {r.title}
-            </span>
+            {/* No index here. The wall backfills its gaps (grid-auto-flow:
+                dense), so a printed number would count in an order the eye
+                does not read, and the name is the only thing worth carrying
+                anyway. */}
+            <span className={s.screenLabel}>{r.title}</span>
           </button>
         ))}
       </div>
