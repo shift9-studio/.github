@@ -2405,6 +2405,23 @@
   transform: translateY(0);
 }
 
+/* ── THE ONE TIP THAT CANNOT BE CENTRED ───────────────────────────────────
+   Every other tooltip has room either side of it. The email button does not:
+   it is fixed 26px from the right edge and is 38px wide, so its centre sits
+   45px from the edge — and the bubble is the studio address, about 150px of
+   nowrap text. Centred, 75px of it lands past the right edge and the address
+   is cut off mid-word, which is what Kariim saw on 2026-08-23.
+
+   Anchored to its own right edge instead, so it opens inward across the
+   desktop where there is always room. Only `left`/`right` and the horizontal
+   `translate` change; the rise-and-fade `transform` above is untouched, so it
+   still arrives the same way as every other tip. */
+.desktop .helpdot[data-tip]::after {
+  left: auto;
+  right: 0;
+  translate: 0 0;
+}
+
 /* Anything in the taskbar points its tooltip up out of the bar; anything in
    the title row points down. Same bubble, opposite side. */
 .desktop [data-tip-below]::after {

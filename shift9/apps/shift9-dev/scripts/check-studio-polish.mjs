@@ -52,7 +52,16 @@ assert.doesNotMatch(
   "The Grid and Icons controls must not show redundant hover tips",
 );
 assert.match(entrance, /setMode\("desk"\)[\s\S]{0,180}setLoading\(false\)/, "Every terminal intro path must canonicalize desktop state");
-assert.match(entrance, /onPlaying[\s\S]{0,180}runtimeBail = setTimeout\(enterDesk, 26000\)/, "The intro runtime must begin when playback begins");
+/* The safety net still arms on `playing` and not a frame earlier — that part
+   of the original rule is untouched. What changed on 2026-08-23 is what the
+   net measures. A flat 26s stopwatch against a 20.1s film cut the film off
+   part-way through on any line too slow to stream it in real time, which is
+   the fault Kariim reported: the intro "not playing" and the site jumping to
+   the desktop. It now watches film actually shown, so a slow line is allowed
+   to finish and only a genuinely stuck one gives up. */
+assert.match(entrance, /onPlaying[\s\S]{0,220}stallWatch = setInterval\(/, "The intro safety net must arm when playback begins");
+assert.match(entrance, /vid\.currentTime \+ \(videoBRef\.current\?\.currentTime \?\? 0\)/, "The safety net must measure film shown across both beats, not wall-clock time");
+assert.doesNotMatch(entrance, /setTimeout\(enterDesk, 26000\)/, "The flat 26s stopwatch that cut the film short must stay removed");
 assert.match(entrance, /let cancelled = false[\s\S]*?beatB[\s\S]*?\.then\(\(\) => \{[\s\S]{0,120}if \(cancelled\) return/, "Late intro media promises must not mutate a cleaned-up scene");
 assert.match(entrance, /beatB[\s\S]*?\.play\(\)[\s\S]*?\.then\([\s\S]*?beatB\.classList\.add/, "Beat B must play before it is revealed");
 assert.match(mark, /shift9-mark-light/, "The Shift-9 mark must expose its light half");

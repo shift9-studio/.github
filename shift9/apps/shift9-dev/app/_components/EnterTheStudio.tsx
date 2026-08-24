@@ -573,7 +573,7 @@ export function EnterTheStudio() {
     const desk = deskRef.current;
     if (!vid || !stage || !desk) return;
     let cancelled = false;
-    let runtimeBail: ReturnType<typeof setTimeout> | null = null;
+    let stallWatch: ReturnType<typeof setInterval> | null = null;
 
     startVid();
 
@@ -584,10 +584,45 @@ export function EnterTheStudio() {
        `playing` rather than `loadeddata`: data arriving is not the same as
        the picture moving, and dropping the gate a beat early is how you get
        a flash of black between the door and the film. */
+    /* ── WHY THIS IS A STALL WATCH AND NOT A STOPWATCH ─────────────────────
+       This used to be a flat 26-second wall-clock cap that dropped straight
+       to the desktop, on a 20.1s film. It assumes the film takes as long to watch as it does
+       to run, which is only true when the line is fast enough to stream it in
+       real time. On a slower line playback pauses to buffer, the film falls
+       behind the clock, and at 26 seconds the visitor is yanked to the
+       desktop part-way through — the film "not playing" and the site
+       "jumping to the homescreen", reported 2026-08-23.
+
+       A timer cannot tell a slow line from a dead one. Progress can. Both
+       beats' currentTime only ever moves forward, so their sum is a
+       monotonic clock of how much film has actually been shown. If that sum
+       stops moving for GIVE_UP, playback is genuinely stuck and the desktop
+       is the right place to be. If it is still creeping, the film is being
+       watched — slowly — and cutting it off is the bug, not the safeguard.
+
+       Summed, not maxed: at the join beat one holds at 10.04 while beat two
+       restarts at 0, so a max would read as frozen for the whole second beat
+       and bail every time. */
+    const STALL_TICK = 1000;
+    const STALL_GIVE_UP = 12000;
     const onPlaying = () => {
       if (cancelled) return;
       clearTimeout(loadBail);
-      if (runtimeBail === null) runtimeBail = setTimeout(enterDesk, 26000);
+      if (stallWatch === null) {
+        let furthest = -1;
+        let stuckFor = 0;
+        stallWatch = setInterval(() => {
+          if (cancelled) return;
+          const shown = vid.currentTime + (videoBRef.current?.currentTime ?? 0);
+          if (shown > furthest + 0.05) {
+            furthest = shown;
+            stuckFor = 0;
+            return;
+          }
+          stuckFor += STALL_TICK;
+          if (stuckFor >= STALL_GIVE_UP) enterDesk();
+        }, STALL_TICK);
+      }
       setLoading(false);
     };
     vid.addEventListener("loadeddata", onLoaded);
@@ -721,7 +756,7 @@ export function EnterTheStudio() {
     return () => {
       cancelled = true;
       clearTimeout(loadBail);
-      if (runtimeBail !== null) clearTimeout(runtimeBail);
+      if (stallWatch !== null) clearInterval(stallWatch);
       vid.removeEventListener("loadeddata", onLoaded);
       vid.removeEventListener("playing", onPlaying);
       vid.removeEventListener("error", onFail);

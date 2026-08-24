@@ -5,7 +5,7 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-08-23 (second pass)
+**Last updated:** 2026-08-23 (third pass)
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
 ## Read first - the discovery trap
@@ -19,6 +19,98 @@ Correct queries:
 
     gh repo list shift9-studio
     gh api '/user/repos?affiliation=owner,collaborator,organization_member'
+
+## 2026-08-23 (third pass) - the shift9.dev opening film, fixed but NOT deployed
+
+Kariim reported: "shift9.dev is not playing the opening video it is glitching
+right to the homescreen."
+
+**Reproduced and root-caused. Two faults, stacked.**
+
+1. **Asset bitrate.** `01-03-approach-entry-hall-v4.mp4` was 24,906,455 bytes for
+   10.04s = **19.8 Mbps**. Beat two was 13,633,089 bytes = 10.9 Mbps. Measured
+   against the LIVE site through Chrome with CDP throttling at 8 Mbps: playback
+   advanced 0.35s then stalled ~2s, repeating. After 26s of wall time it had
+   shown **3.56s** of a 20.1s film. faststart was already correct; codec was
+   already h264/avc1/yuv420p. Bitrate alone was the fault.
+2. **A wall-clock cap in the player.** `EnterTheStudio.tsx` armed
+   `setTimeout(enterDesk, 26000)` on the first `playing` event. A flat 26s cap on
+   a 20.1s film means any line too slow to stream in real time gets yanked to the
+   desktop part-way through. That is the "glitching right to the homescreen".
+
+**What changed (4 files, all in `apps/shift9-dev`):**
+
+- `public/experience/opening/01-03-approach-entry-hall-v4.mp4` - re-encoded.
+  24.9MB -> 5.88MB (19.8 -> 4.68 Mbps). libx264 high, preset slow, crf 21,
+  maxrate 4500k, bufsize 9000k, yuv420p, +faststart, -an.
+- `public/experience/opening/04-desk-mouse-screen-v5.mp4` - same recipe.
+  13.6MB -> 3.88MB (10.9 -> 3.10 Mbps).
+  Both: duration 10.041667s unchanged, 241 frames unchanged, dimensions
+  unchanged (1924x1076 and 1928x1076), 24fps unchanged. Originals backed up (see
+  "originals" below).
+- `app/_components/EnterTheStudio.tsx` - the 26s stopwatch is replaced by a
+  stall watch. Every 1s it reads `vid.currentTime + videoBRef.currentTime` (SUM,
+  not max: at the join beat one holds at 10.04 while beat two restarts at 0, so a
+  max reads as frozen for the whole second beat and would bail every time). If
+  that sum has not moved for 12s, playback is genuinely stuck and it drops to the
+  desktop. A slow line is now allowed to finish. The net still arms on `playing`
+  and not a frame earlier, which was the original rule.
+- `scripts/check-studio-polish.mjs` - the build-time guard asserted the exact old
+  line and failed the build. Rewritten to assert the new mechanism, plus a
+  `doesNotMatch` so the flat stopwatch cannot come back. NOTE: that doesNotMatch
+  scans the component source, so no comment in `EnterTheStudio.tsx` may contain
+  the literal `setTimeout(enterDesk, 26000)` - it will fail the build. That
+  already bit once this session.
+
+**Also added:** `apps/shift9-dev/Try-The-Fixed-Intro.cmd` - a double-click that
+runs the site on port 3942 for Kariim to poke. Untracked; delete or commit as
+preferred.
+
+**Proof (rebuilt site, real Chrome via playwright-core, CDP throttling):**
+
+| Line | Result |
+| :-- | :-- |
+| 50 Mbps | both beats ran to the end, 20.9s |
+| 12 Mbps | both beats ran to the end, 21.8s |
+| 8 Mbps  | both beats ran to the end, 22.8s |
+| 5 Mbps  | both beats ran to the end, 28.8s |
+| 3 Mbps  | both beats ran to the end, 39.9s |
+
+Before the change, 8 Mbps was the stuttering mess described above and 5/3 Mbps
+were cut off by the 26s cap. `npm run build` passes, including all
+`check-studio-polish.mjs` assertions. Gemini compared original vs re-encoded
+frames at t=2/5/8 on both beats and found no visible loss; Gemini also watched a
+recording of the fixed intro at 8 Mbps and reported smooth playback, a clean join,
+and a natural settle into the desktop.
+
+**Fifth file, same session:** `app/_components/EnterTheStudio.module.css`. Kariim
+spotted it in the sandbox: hovering the round email button bottom-right showed a
+tooltip cut off by the right edge. The button is `position: fixed; right: 26px`
+and 38px wide, so its centre is 45px from the edge, while the bubble is the
+studio address at 147px nowrap. Centred, 28px of it fell off a 1920px screen.
+Now `.desktop .helpdot[data-tip]::after` anchors `right: 0; left: auto;
+translate: 0 0`, opening inward. The rise-and-fade `transform` is untouched.
+Measured at 1920/1440/1280: bubble spans end 26px clear of the edge at every
+width. Gemini confirmed the full address is readable and inside the screen.
+
+**STATE: DEPLOYED on Kariim's word after he poked the sandbox.** The live site still serves the
+24,906,455-byte original - confirmed by curl after the local change. The working
+tree is dirty with the four files above. Kariim's standing rule is that he pokes a
+real-form sandbox before approval, so this stops at local proof.
+
+**NEXT STEP:** none outstanding. After deploy the live opening file was confirmed
+at 5,878,131 bytes, not 24,906,455.
+
+**Originals, if the re-encode is ever rejected:** backed up this session to the
+session scratchpad at
+`AppData/Local/Temp/claude/C--Users-Kariim/7a1996f0-0370-4b80-a3d2-02c6cc1b212c/scratchpad/originals/`.
+That path is temporary. If the re-encode is not approved quickly, restore from
+git instead: the originals are still the committed versions on `main`, so
+`git checkout -- apps/shift9-dev/public/experience/opening/` brings them back.
+
+**Open question for Kariim:** none blocking. He may want beat one lighter still
+(a 3.5 Mbps encode was made and Gemini flagged "minor softening in the finest
+details", so it was rejected in favour of keeping quality).
 
 ## 2026-08-23 - feelspoon.app is LIVE
 
