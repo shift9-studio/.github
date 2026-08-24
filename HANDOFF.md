@@ -1359,3 +1359,51 @@ authoritative and are meaningless. Look at the picture.
 **The folder README said "NOTHING HERE HAS BEEN POSTED".** That went false the
 moment he posted all four, and has been corrected to say so, plus the fact that
 these images are now NEWER than what is live.
+
+### 2026-08-24 - correction comments, and where Kariim stopped it
+
+Three comments are LIVE, each carrying the newer chipped image, each verified
+after posting rather than assumed:
+1. **LinkedIn, studio launch post** `7497541575103688704` - the corrected launch
+   image with the LIVE! chip.
+2. **LinkedIn, Feelspoon ship post** `7497710522394398720` - the chipped
+   LinkedIn card.
+3. **Facebook, Feelspoon ship post** - the chipped Facebook card. Confirmed on
+   screen showing "Kariim Chiles - 1m - Author" with the chip visible.
+
+**STOPPED BY KARIIM, and correctly:** "they all say it's live already anyway and
+I don't want to post this on the page for my faceless youtube page on X".
+
+- **X is NOT his personal account.** `x.com/bringupdesk` is the faceless YouTube
+  brand. Nothing was posted there. It also shows **0 posts**, so there was never
+  a Feelspoon post on X to correct. Do not treat X as a surface for his personal
+  product launches without asking.
+- **Instagram was not touched.** Worth knowing for next time: Instagram comments
+  are TEXT ONLY, so the chip could not have gone on as a comment there anyway. A
+  new post or a story is the only route.
+
+### Left open on purpose, with the reason
+
+The **Facebook studio launch post** ("The studio is open", posted ~15 hours
+before this) was not checked for a stale image. He called a stop while it was
+still on the list, and its text already reads correctly. If it is ever picked
+up: same method as the Facebook comment above.
+
+### The Facebook comment method, which differs from LinkedIn's
+
+- The file input is ALREADY in the DOM (three of them). Do not click the camera
+  icon hoping to create one; find the input by walking UP from the
+  `[aria-label="Attach a photo or video"]` button until an ancestor contains an
+  `input[type=file]`. That is the comment's own input; the other two belong to
+  the post composer and the cover photo.
+- **The ref goes stale fast.** Facebook re-renders, and an upload ref captured
+  before a screenshot failed with "Element is no longer in the document".
+  Re-label and upload back to back, with nothing in between.
+- **A near miss worth remembering.** The text was set on
+  `document.querySelector('[contenteditable="true"]')` while the page had
+  scrolled to the top, where the "What's on your mind?" POST composer also
+  lives. It happened to land in the comment box, but that selector could just as
+  easily have typed into a post composer. Target the comment box by its
+  `aria-label`, never by "the first contenteditable".
+- Confirmation that a photo really attached is the presence of a **"Remove
+  photo"** control. `img[src^="blob:"]` returns nothing on Facebook.
