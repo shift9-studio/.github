@@ -90,7 +90,7 @@ export const SET_PIECES: SetPiece[] = [
     plate: `${BASE}01-just-a-pinch.png`,
     clip: `${BASE}01-just-a-pinch.mp4`,
     card: "recipe",
-    href: "https://pinch.shift9.dev",
+    href: "https://feelspoon.app",
     appHref: "https://kariimc.github.io/Feelspoon/",
     appLabel: "Get the app",
   },

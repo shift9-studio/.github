@@ -57,7 +57,7 @@ export const instrumentProjects = [
     description:
       "Editorial type, paper texture, and food-first language replace the studio chrome while the interaction rules stay intact.",
     surfaceNote: "Editorial warmth built around cooking.",
-    href: "https://pinch.shift9.dev",
+    href: "https://feelspoon.app",
     action: "Visit Feelspoon ↗",
     image: "/experience/set-pieces/01-just-a-pinch.png",
     external: true,

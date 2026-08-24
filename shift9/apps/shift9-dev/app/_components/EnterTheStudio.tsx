@@ -164,7 +164,7 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
         sc: "dev",
         d: "Smart recipe organizer + guided cooking app. Save from links, photos, or scratch; cook mode scales servings and suggests swaps. Includes the Recipe Engine — a Supabase-backed content pipeline that seeds and serves the catalog. In closed testing on Android — launching soon.",
         tags: ["React Native", "TypeScript", "Supabase", "Android · iOS soon"],
-        h: "https://pinch.shift9.dev",
+        h: "https://feelspoon.app",
       },
       {
         n: "Flow State",

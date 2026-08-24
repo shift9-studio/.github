@@ -20,7 +20,7 @@ Correct queries:
     gh repo list shift9-studio
     gh api '/user/repos?affiliation=owner,collaborator,organization_member'
 
-## 2026-08-23 - feelspoon.app is attached to the product site, DNS is the last step
+## 2026-08-23 - feelspoon.app is LIVE
 
 Kariim's call this session: the product site moves to **feelspoon.app** rather
 than renaming the `pinch.` subdomain.
@@ -64,6 +64,31 @@ currently resolves to nothing: no A record, `www` NXDOMAIN, no HTTP response.
 `pinch.shift9.dev` keeps working throughout - both names point at the same
 project. Whether the old address should 308 to the new one after cutover is
 Kariim's call and is NOT set up.
+
+> **CLOSED the same session.** Kariim signed in to Cloudflare and the three
+> records below were written through the dashboard's own API from the page
+> session. The zone had **zero** existing records, so nothing was overwritten.
+> `feelspoon.app` returns **200** and serves the product site: title
+> "Feelspoon - Smart Recipe Organizer & Cooking App", **zero** occurrences of
+> the old name. `www` returns **308** to the apex. `pinch.shift9.dev` still
+> returns 200 - both names point at the same project, so nothing broke.
+>
+> TLS was not instant: the apex returned a connection error for roughly 75
+> seconds after DNS landed while Vercel issued the certificate. That is normal;
+> do not go changing records during it.
+>
+> The three portfolio links that pointed at `pinch.shift9.dev` now point at
+> `https://feelspoon.app`.
+>
+> **A measurement note worth keeping.** Gemini reported the phone layout's
+> headline and body text as "cut off on the right edge". Measured, it is not:
+> page overflow 0 at 280/344/390/673, and **zero** elements with clipped text
+> (`overflow: hidden` plus `scrollWidth > clientWidth`). The `h1` fits exactly
+> (client 342 = scroll 342, right edge 366 inside a 390 viewport). The single
+> element wider than the viewport is the full-bleed hero `<img>` with
+> `object-cover`, which is supposed to be clipped. Vision is good at "is the
+> brand right"; it is unreliable about edges. Measure edges with the DOM.
+
 
 ## 2026-08-23 (second pass) - the Services tag, and the desktop on narrow screens
 
