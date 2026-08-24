@@ -792,3 +792,317 @@ rather than resolving it by hand.
   For the public Supabase client values, use the checked-in `.env.example`, then
   redeploy and verify `/api/waitlist` end to end.
 - Branch `claude/...`; PR ready-for-review; never push to `main`; never self-merge.
+
+---
+
+## 2026-08-24 - LinkedIn presence rebuilt (profile, company page, projects, posts)
+
+**This section is about Kariim's LinkedIn, not this repo's code.** It is here because
+the one open task lands on `profile/README.md` in this repo. Resume cold from this.
+
+### What is live now (all verified on the page, not assumed)
+
+**Company Page created:** Shift-9 Studios, `linkedin.com/company/143514928`,
+slug `shift9-studios`, website `shift9.dev`, Software Development, 0-1 employees,
+Privately Held. Logo is the real site logomark, rendered 400x400 from
+`shift9/apps/shift9-dev/app/icon.svg`. About section carries the monorepo /
+design-system / build-fails-on-quality-checks story.
+Kariim created the page himself (agents cannot create accounts).
+
+**Experience entry relinked.** The Founder role now points at the real company page,
+so the logo shows instead of a grey square. Two false claims were corrected in it:
+it said Feelspoon was "successfully launched on Google Play" (it is in final review)
+and cited a "426-skill" AI system (that count is long dead; the fresh setup has ~40).
+"Notify network" was switched OFF before saving so connections were not pinged.
+
+**Projects: 2 -> 10.** Each is technical, honest, and associated with Shift-9 Studios.
+- Shift-9 Studio (shift9.dev) - pre-existing, description rewritten + image added
+- Feelspoon - pre-existing, untouched
+- Shift-9 Control Plane - live war-room screenshot
+- Flow State - real product pill graphic
+- ReadingLand - real felt-letters land art
+- Vespermesh - live UI screenshot reading a real repo
+- HoopClone - TEXT ONLY, no image (see below)
+- Titanium Forge Pro (= the `neon-forge` / `neon-forge-ui` workbench)
+- Omni3D
+- WHome
+
+**Posts.** Kariim published the Flow State post himself. A Shift-9 studio post and a
+Control Plane post were drafted in the composer; the studio launch image
+(`Shift9.dev-assets/launch-2026-08/source/li-studio.html` -> `out/li-studio.png`)
+was rendered this session and used.
+
+### OPEN - do this next
+
+1. **`profile/README.md` has two dead claims** (this repo, `Kariimc/.github` profile):
+   - line 52: links `Kariimc/relay`. Kariim DELETED that repo on 2026-08-22 because
+     agents had written his internals onto a public page. Dead link, must go.
+   - line 51: `my-skills` described as "a 420-skill AI agent operating system".
+     That repo is the frozen archive and the count is stale. Rewrite without a number
+     (counts drift - never hardcode inventory).
+2. **More LinkedIn posts** - Kariim's words: "do some more posts in linkedin".
+3. **HoopClone has no usable image.** The game runs and was captured twice this
+   session (driver: `hoopclone/tools/godot/screenshot.gd`, godot at `~/bin/godot`,
+   env `HOOP_SHOT_OUT` / `HOOP_WARMUP` / `HOOP_HOLD` / `HOOP_RES`). Both frames were
+   rejected on sight: a large blown-out white patch swallows half the court, players
+   are untextured mannequins with no kit, and a "LIVE BUILD" debug banner sits top-left.
+   Fix arena lighting + put kit on players, then recapture.
+4. **Midnight Return was deliberately NOT added.** Its own README says it has never
+   been opened in Unity - no .meta, no ProjectSettings, nothing compiled. Do not
+   present it as a shipped project.
+
+### Gotchas that cost real time this session - do not rediscover these
+
+- **LinkedIn's image uploader jams** ("Loading" forever) if you attach the picture
+  AFTER typing the post text. Attach the image FIRST, then type. This is the pinned
+  method; five other routes failed (two direct uploads, a change event, a simulated
+  drag-drop, and a clipboard write that froze the renderer for 45s).
+- **Typing via simulated keystrokes DROPS CHARACTERS** ("shred" for "shared",
+  "Epo" for "Expo"). Set field values directly through the page instead
+  (native value setter + an input event), then screenshot to confirm.
+- **`/details/projects/` renders BLANK** repeatedly (verified 4+ times, ~1.4KB of
+  chrome only). Verify project state from the MAIN profile instead - scroll down and
+  read the "Projects (N)" heading.
+- **Headless screenshots of the control plane come out blank** unless view
+  transitions are disabled first: inject `*{view-transition-name:none !important}`.
+  Plain Chrome `--screenshot` also fails on it; drive it with playwright-core
+  (available in `shift9-control-plane/node_modules`) and wait ~6s after networkidle.
+- **Vespermesh had no deps installed.** `npm install` then `npm run dev` serves on
+  `127.0.0.1:3000`. It was installed and the server was stopped again this session.
+
+### Scratch files (temporary folder, safe to delete)
+
+Capture/crop scripts and the finished images live in this session's scratchpad under
+`AppData/Local/Temp/claude/...`. Nothing in any project repo was modified this session.
+
+---
+
+## 2026-08-24 (later) - LinkedIn round 2: five posts, five images, a new banner
+
+Resumed the LinkedIn handoff above. Kariim, mid-session: "put them and the images
+into separate posts", then "I think I need a new banner too".
+
+**OPEN item 1 is CLOSED.** `profile/README.md` had two dead claims. The `relay` row
+is gone (`gh repo view Kariimc/relay` returns "Could not resolve to a Repository" -
+he deleted it on 2026-08-22, so the link was 404). `my-skills` no longer carries a
+hardcoded count; it reads "An archived AI agent operating system". Counts drift.
+
+**OPEN item 2 is DRAFTED, not published.** One folder per post, copy and image
+together, under `Shift9.dev-assets/launch-2026-08/linkedin-r2/`:
+`00-banner`, `01-shift9dev`, `02-feelspoon`, `03-vespermesh`, `04-instrument`,
+`05-omni3d`. Each post folder holds `post.md` (how to post it, the copy, and what
+the image is) and `image.png`. The folder README carries the pinned
+attach-image-first rule and the re-render commands.
+
+**Items 3 and 4 unchanged.** HoopClone still needs arena lighting and player kit
+before a recapture. Midnight Return still stays off LinkedIn.
+
+### The images, and what looked at them
+
+His standing order of 2026-08-21 is that anything visual is inspected by Gemini and
+nothing else. Every image below went through `tools/see.mjs` in the control plane,
+and iterated until the named defects were gone.
+
+- **Three product cards** (Feelspoon, Instrument, Omni3D) are rendered, not
+  screenshotted: `source/r2-*.html` + `source/card.css`, on the launch set's own
+  `base.css` (live shift9.dev tokens, the site's three faces, the titanium
+  wordmark), over the real set-piece plates from `public/experience/set-pieces`.
+  All three: **Gemini PASS**. Render with
+  `W=1200 H=1200 bash source/render-r2.sh r2-feelspoon r2-instrument r2-omni3d`.
+- **The banner** (`source/banner.html` + `banner.css`, background composited in
+  Python from the Lumen plate) is 1584x396. **Gemini PASS**, checked specifically
+  against the profile-photo overlap and LinkedIn's side crop: no text at risk.
+  Render with `W=1584 H=396 bash source/render-r2.sh banner`.
+- **Two screenshots.** shift9.dev's Home room, and Vespermesh running against its
+  own repository. Gemini will not PASS a raw UI screenshot whatever the crop; it
+  grades them as social graphics and parks them around 5 to 6 out of 10. Every
+  specific defect it named AND that reproduced was fixed: on the site shot the
+  blurred sidebar, muddy ground, small text, low-contrast footer, breadcrumb
+  clutter and wide margins; on Vespermesh the empty placeholder states, the toast
+  overlay and a cut card row. Two claims did NOT reproduce and were measured rather
+  than argued with: the "STATE / BUILT WITH" headers ARE left-aligned with their
+  values, and the wordmark's baseline DOES sit on the footer baseline.
+
+### Fixes that came out of that loop and are now in the source
+
+- `.card h1` at 94px: Bricolage at wght 800 fuses `fi` and `fr`. Easing the tracking
+  did not clear it; the headlines were rewritten to avoid those pairs ("Cook it out
+  loud", "The engine votes before you do"). Worth knowing before writing new copy.
+- The titanium wordmark had the same `fi` collision in "shift9.dev" itself, on every
+  card and on the launch set already shipped. Fixed with `letter-spacing:.004em` on
+  `.card .wordmark`. **The launch set in `POSTS.md` still carries the old fused
+  wordmark and has not been re-rendered.**
+- Plates are trimmed to their subject by `source/plates/` copies, not used raw, or
+  the card shows a black band where the render's own empty ground sits.
+
+### Loose ends, written down rather than left
+
+- **Vespermesh data, not the post:** plan steps 01 and 02 repeat their own title word
+  for word in the description underneath. Visible in `03-vespermesh/image.png`.
+- **A mission was created in the local Vespermesh database** to get a populated
+  screenshot. The product labels that action PLAN ONLY / REVERSIBLE / NO MERGE and
+  nothing ran. The dev server was started and stopped again; port 3000 confirmed
+  free (`curl` returns 000).
+- **The launch set's wordmark**, above.
+
+### 2026-08-24, later still - Titanium Forge added, and two posts loaded by hand
+
+Kariim: "just do vespermesh for now", then "do titanium forge".
+
+**A sixth post now exists.** `linkedin-r2/06-titanium-forge/` with `post.md` and
+`image.png`. Card built the same way as the others: `source/r2-forge.html` on
+`card.css`, over the real `08-titanium-forge` set-piece, trimmed to its subject.
+**Gemini: PASS, 7/10.** The folder README index was extended to name it.
+
+Copy was ground-truthed against `neon-forge-ui/ARCHITECTURE.md` and the running
+site `hidden-glow-736.higgsfield.app`, which answered 200 on 2026-08-24. No
+component count is quoted; the registry is spread over seven files and drifts.
+
+**Two posts were loaded into LinkedIn's composer and NEITHER was posted.** Both
+stopped at the Post button, which is his call, not an agent's.
+
+The method that works, through the Chrome connector on his signed-in browser:
+1. Go straight to `linkedin.com/sharing/compose`; hunting the feed's button races
+   with whatever he is doing in the same window.
+2. Click the image icon, then WAIT. The hidden `input[type=file]` does not exist
+   for about eight seconds while the Editor shows "Loading".
+3. That input is invisible to the accessibility tree, so `file_upload` cannot see
+   it. Give it an id, an `aria-label` and a real size with JavaScript, find it by
+   that label, upload, then strip the attributes off again.
+4. Image first, Next, THEN the text. Typing is still banned: set the text with
+   `document.execCommand('insertParagraph'|'insertText')` on the TipTap editor,
+   one call per paragraph, then compare the result to the source string character
+   by character. Both posts matched exactly, 715 and 698 characters.
+
+**The Titanium Forge copy was rewritten, and the reason matters.** The first
+version was written in plain words. Kariim, same day: "why didn't you put all the
+technical stuff in the post for titanium-forge". The plain-words rule governs how
+agents talk to HIM. It does not govern what his audience reads, and his audience
+is technical. Do not carry that rule into published copy again.
+
+The rewrite leads on the design decisions rather than the stack: components are
+data not modules, the snippet is the copyable artifact so it must be standalone
+runnable TSX, the registry is an additive chain where the newest layer can patch
+an older component's snippet, duplicate slugs are deliberate overrides where the
+last spread wins, and the trap that slug is a join key in three places and a typo
+degrades silently to "Demo coming soon" with no build error. Sources:
+`neon-forge-ui/ARCHITECTURE.md`, which is itself ground-truthed against the code.
+Still no component count quoted; the architecture notes give the same instruction.
+
+**The Vespermesh copy was rewritten the same way**, off the project's own README:
+provenance on every fact, append-only event history in local SQLite, resume from
+the last verified node with no duplicate execution, repository and web content
+treated as untrusted data and never as instructions, deterministic checks before
+model judgment, and a missing or uncontained runner shown as BLOCKED rather than
+dressed as a success. It also states out loud what the tool does NOT do yet, which
+is straight out of the README's own "what is not finished yet" section.
+
+**He posted Titanium Forge himself** at about 05:20 on 2026-08-24. Confirmed on his
+activity page, not assumed.
+
+**The new banner was already on his profile** when this session went to apply it;
+he had done it himself. Verified on the live profile, and his photo sits clear of
+every line, which is what the empty left 430px was for.
+
+**Omni3D was rewritten as a technical post and TAGGED.** Five company pages, each
+resolved through LinkedIn's own picker so it lands on a real page and not on plain
+text: Unity, NVIDIA, Epic Games, Autodesk, Hugging Face. Verified in the DOM: five
+`data-type="mention"` spans and zero leftover "@" characters.
+
+NO INDIVIDUAL PEOPLE WERE TAGGED. He asked for "leaders in that space", and that
+is deliberately left open: tagging a real human notifies them, and choosing which
+strangers to notify is his call. Ask him for names rather than guessing.
+
+**How to tag, because this took several wrong turns.** The mention only commits if
+it is typed with real keystrokes into a FOCUSED editor and then chosen from the
+dropdown. Setting focus from JavaScript is not enough; synthetic typing goes
+nowhere. Click the editor line with a real mouse click first, measured off the
+paragraph's own bounding box AFTER scrolling it into view, because the composer
+scrolls under you and a stale coordinate lands outside the editor and destroys
+earlier text. After a dropdown pick the caret DOES stay in the editor, so the next
+", @Name" can be typed straight away. Also: "@Unity" finds the game engine
+("Company - Software Development"); "@Unity Technologies" does NOT, it returns a
+defence contractor and an IT consultancy.
+
+**THREE POSTS ARE NOW LIVE**, all posted by Kariim himself, all confirmed on his
+activity page rather than assumed: Titanium Forge, Vespermesh, and the journey
+post. Round 2 still has these unposted and ready in their folders: `00-banner`
+(never applied to his profile), `01-shift9dev`, `02-feelspoon`, `04-instrument`,
+`05-omni3d`.
+
+The journey post grew twice on his instruction after the first load: a line about
+still learning fast, then two paragraphs on the learning system and the
+automations. Both additions were verified before they were written, not recalled.
+The live post is the final wording; the folder's `post.md` matches it.
+
+**A seventh post exists: `07-the-journey`.** He asked for a post about his
+technical journey. Because that is exactly the kind of post that invites
+invention, every number in it was COUNTED on 2026-08-24 and the counting method
+is recorded in the post's own file:
+- first commit in any repo under `Dev` is 2026-06-08 in `just-a-pinch`
+- 8 June to 24 August inclusive is 78 days
+- 33 folders under `Dev` carry real git history
+- 69 distinct calendar days across them have at least one commit
+- the "pwd, ls, cd" phase one, the two-hours-a-week pace and the "get a coding
+  job" goal are quoted from `Dev/my-coding-journey/LEARNING_PLAN.md`, dated
+  2026-06-24, and Phase 2 in that file is genuinely still unticked
+
+The total across those repos is 2211 commits, and it is deliberately NOT in the
+post, because many carry an agent as the author and quoting it would read as
+personal output. The post says out loud that he did not hand-type most of it.
+Do not add that number later.
+
+Card: `source/r2-journey.html`, plate is the studio's own opening shot "The
+Approach". **Gemini: PASS.**
+
+**He posted Vespermesh himself** at about 05:55, and Titanium Forge at about
+05:20, both on 2026-08-24. Confirmed on his activity page.
+
+**A second browser tab does not work for this.** LinkedIn's Media button will not
+open its Editor in a BACKGROUND tab; the click registers as hover and the file
+input is never created. It has to be the fronted tab. Also: clicking the Media
+button twice in a row fails the same way, because the pointer is already on it.
+Click elsewhere, hover away, then click it.
+
+**The Vespermesh draft did not survive.** The tab moved to his profile and back;
+LinkedIn kept nothing. It has to be reloaded from its folder if he wants it.
+
+**Not committed.** The `HANDOFF.md` and `profile/README.md` edits are in the working
+tree, unpushed. Everything under `Shift9.dev-assets/` is NOT in git and is not meant
+to be: `.gitignore` line 12 excludes it, which is where the launch set already lives.
+Look on disk, not in the repo.
+
+### 2026-08-24 (later) - Feelspoon SHIPPED, and what that breaks
+
+**Feelspoon is LIVE on Google Play.** Verified on the store page, not assumed:
+listing title is **"Feelspoon: Recipe Organizer"**, publisher Kariim Chiles,
+free with in-app purchases, 10+ downloads at time of writing.
+Link: `play.google.com/store/apps/details?id=com.justapinch.app`
+(store id is still the old `com.justapinch.app` - the app was renamed, the id was not).
+
+**THIS MAKES TWO THINGS ON HIS PROFILE FALSE.** Both were written earlier the same
+day, when "final review" was still true. Kariim was told; he had not said go yet.
+Fix both:
+1. Experience > Founder role, bullet 2: says Feelspoon went "through a successful
+   closed beta and into final Google Play review". It has shipped. Rewrite.
+2. Projects > the Feelspoon entry (the pre-existing one, not one of the 8 added
+   today): also says final review. Rewrite.
+   When editing Experience, switch "Notify network" OFF first unless he wants the
+   network pinged.
+
+**Four launch posts were written and given to him as copy-ready text** (LinkedIn,
+Facebook, Instagram, X). They were NOT placed in any composer and NOT posted.
+The LinkedIn one leads on the serverless build and the deleted Express server;
+the other three are plain-language. If he wants them placed, the LinkedIn composer
+is the only one this session was signed in to.
+
+**`profile/README.md` fixes are DONE but UNSAVED.** Someone (not this session)
+removed the stale "420-skill" count and deleted the dead `Kariimc/relay` row while
+this session was running. The edit is sitting uncommitted in the working tree.
+It needs committing or it will be lost. Kariim's stated intent: he plans to make
+the skills system a public open-source repo at some point, so the entry stays in
+the table - just never with a hardcoded count (counts drift).
+
+**Still open from the earlier section:** more LinkedIn posts, the HoopClone image
+(lighting blowout + untextured players must be fixed before recapture), and
+Midnight Return stays out until it has actually been opened in Unity.
