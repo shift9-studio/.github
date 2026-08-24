@@ -1407,3 +1407,42 @@ up: same method as the Facebook comment above.
   `aria-label`, never by "the first contenteditable".
 - Confirmation that a photo really attached is the presence of a **"Remove
   photo"** control. `img[src^="blob:"]` returns nothing on Facebook.
+
+### 2026-08-24 - the Facebook studio post: picture AND text were both stale
+
+Checked on Kariim's ask. **A previous entry in this file said its text "already
+reads correctly". That was wrong** - it was confused with the LinkedIn post.
+Both the picture and the words were stale.
+
+- **Picture**: the old launch card, reading "A recipe app. In final review with
+  Google Play." and "LIVE WITHIN THE WEEK". Seen full size in the photo viewer.
+- **Text**: "First product out: Feelspoon, a recipe app in final review with
+  Google Play."
+
+**Done:** a comment now carries the corrected card (LIVE! chip, "Out now on
+Google Play"), with the line "Update: Feelspoon is out of review. It is live on
+Google Play now, free to download." Verified on screen.
+
+**STILL OPEN: the post's own text.** Facebook DOES offer an Edit control on a
+post, unlike LinkedIn's image. But its editor could not be driven by script.
+
+### Facebook's post editor defeats execCommand - do not retry the same way
+
+Two attempts, both of which APPENDED instead of replacing, corrupting the
+caption in the box:
+1. Range over the one stale line, then `insertText`. Result: the old line
+   survived and the new text landed at the very end, after `www.feelspoon.app`.
+2. `selectNodeContents` on the whole editor, `execCommand('delete')`, then
+   re-inserting all six lines. Result: the entire original caption survived and
+   a full second copy was appended, newlines collapsed.
+
+Both were CANCELLED, and cancellation was verified each time by re-reading the
+post text. Nothing corrupted was ever saved. It is a Lexical-style editor that
+ignores a scripted Range; the caret stays at the end whatever the selection says.
+
+**The by-hand fix, which is 30 seconds.** Open Chrome, go to
+`facebook.com/kariim.chiles`, find the post "The studio is open." from
+2026-08-24, click **Edit**, and in the last paragraph change
+"a recipe app in final review with Google Play" to
+"a recipe app, live on Google Play now and free to download",
+then click **Done Editing**. No admin rights, no terminal.
