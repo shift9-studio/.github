@@ -1216,3 +1216,47 @@ fixed to `1.14`, re-measured at 13px. Trust it on collisions, check it on crops.
 **Still open, unchanged:** the HoopClone image (arena lighting blowout and
 untextured players before any recapture), and Midnight Return stays off LinkedIn
 until it has actually been opened in Unity.
+
+### 2026-08-24 (final) - published posts corrected, old launch set no longer lies
+
+**Pushed.** `profile/README.md` is live on the public page; the dead `relay` link
+and the stale skill count are gone. Verified by fetching the raw file, not by
+trusting the push output.
+
+**All SEVEN published LinkedIn posts are now clean.** Two carried false claims
+after Feelspoon shipped and both were edited in place, then re-checked by
+fetching each post fresh:
+- `7497677099810377728` (the journey post): "in final review with Google Play"
+  -> "live on Google Play".
+- `7497541575103688704` (the launch post): two lines, "in final review with
+  Google Play" and "hits Google Play within the week", both rewritten.
+Method: LinkedIn post edit is a Quill editor. Select the one paragraph with a
+Range and `execCommand('insertText')`, then compare paragraph counts before and
+after so a stray newline cannot slip in.
+
+**ONE THING CANNOT BE FIXED BY EDITING.** The launch post's ATTACHED IMAGE still
+reads "A recipe app. In final review with Google Play." and "LIVE WITHIN THE
+WEEK". Confirmed on screen, not assumed. LinkedIn's post editor changes text
+only; media on a published post cannot be swapped. The only route is delete and
+repost, which throws away 161 impressions and the post's age. That is Kariim's
+call and it was put to him rather than done.
+
+**The old launch set no longer lies.** `launch-2026-08/POSTS.md` copy was already
+corrected; the three images were re-rendered to match and the delivered
+`shift9-launch-*.png` files replaced.
+
+### Two type faults were in the SHIPPED launch images and are now fixed
+
+- **wght 800 Bricolage fused the r and f in "surfaces"** on the LinkedIn card.
+  Tracking `-.025em` -> `-.012em`, chosen by rendering four values and LOOKING at
+  the r/f junction each time. The headline dropped 122px -> 110px, because at the
+  looser tracking "Product surfaces." wrapped mid-word into "surf / aces.",
+  which is worse than the fuse it was fixing.
+- **The wordmark had the same fuse** in "shift9.dev". Fixed with
+  `letter-spacing:.004em` scoped to the wordmark.
+
+**A measurement lesson worth keeping.** A first attempt tried to detect the fuse
+by counting blank pixel columns in a guessed window. It reported SEPARATED for
+all four tracking values including the one that visibly fused. A guessed crop
+window is not a measurement. For glyph collisions, render the candidates, stack
+them into one strip, and look.
