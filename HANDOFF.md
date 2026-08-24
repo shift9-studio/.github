@@ -121,11 +121,30 @@ the label row had Gemini agree all six are the same. **On a busy background, a
 full-page vision pass misreads label colour. Crop and zoom before believing it**,
 and check computed style alongside.
 
-**Found at zoom, NOT fixed, NOT asked for.** The "About" label sits 4px higher
-than "Services" and "Shift9.dev" (443.77 vs 447.77). Not the labels: all three
-tiles share the same top, height, padding and border, so the cause is the About
-tile using `.aboutico` where the others use `.appico`, and that icon being 4px
-shorter. Pre-dates this change. Put to Kariim as a question.
+**Then Kariim: "About was shorter than the others idk why but it also is a lot
+bigger than the others when I click to turn on the icon grid."** Both real, both
+the same root cause, both fixed in `EnterTheStudio.module.css`:
+
+- `.aboutico` was `76px / 10px margin / 19px radius` against `.appico`'s
+  `78 / 12 / 18`. That put its label exactly 4px above its two row-mates. The
+  old comment justified 76 as matching `.fico`, which was right when About sat
+  in a folder row and is not any more. Now matches `.appico` exactly.
+- `.grid.compact` (the Icons view) shrinks `.fico` and `.appico` to 52px.
+  `.aboutico` was never in that selector list, so About alone stayed at full
+  size. `.grid.compact .aboutico` added alongside `.appico`.
+
+Measured after, on the real glyph boxes rather than element boxes: all three
+bottom-row labels sit at glyph top 448.77 with identical colour, weight, size
+and family; all six faces are 78px in Grid and 52px in Icons.
+
+**The vision tool misread this row twice.** On the full desktop shot it said
+"About is black, the rest white"; on the bottom-row shot it said About was lower
+and off-white. Both wrong, both against the dense ASCII wallpaper. **Trust the
+computed values over a vision pass on this page**, and crop tight before asking.
+
+**Found while looking, NOT fixed, NOT asked for.** In Icons view the grid is
+`repeat(5, 112px)` with six tiles, so Shift9.dev is orphaned alone on a second
+row. Pre-dates all of this and is a layout choice, not a bug. Put to Kariim.
 
 **One thing found while looking, NOT fixed and NOT asked for.** Gemini's sweep of
 the live desktop flagged the folder labels ("Apps", "Games", "Tools", "About"

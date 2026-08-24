@@ -1234,7 +1234,14 @@
   align-items: center;
   justify-content: center;
 }
-.grid.compact .appico {
+/* Icons view shrinks every tile face to 52px. `.aboutico` was never in this
+   list, so About alone stayed at full size and towered over the row — Kariim,
+   2026-08-24: "it also is a lot bigger than the others when I click to turn on
+   the icon grid". It is a separate class from `.appico` because its face is
+   drawn rather than an image, but it is the same object on the desktop and
+   shrinks with everything else. */
+.grid.compact .appico,
+.grid.compact .aboutico {
   width: 52px;
   height: 52px;
   margin-bottom: 9px;
@@ -1934,12 +1941,18 @@
    as the shift9.dev door so the grid reads as apps-and-folders rather than a
    wall of identical yellow. */
 .aboutico {
-  /* Same 76px block height as .fico so the App tile's label sits on the same
-     baseline as the folders' — a taller icon would break the grid's rows. */
-  width: 76px;
-  height: 76px;
-  margin: 0 auto 10px;
-  border-radius: 19px;
+  /* Matches .appico exactly — 78px, 12px gap, 18px radius. It used to be
+     76/10/19, chosen to line up with .fico, and that was the right call while
+     About shared a row with folders. It does not any more: its row is About,
+     Services and Shift9.dev, and those two are .appico. Being 2px smaller with
+     2px less gap put its label 4px above theirs, which is what Kariim saw on
+     2026-08-24 — "About was shorter than the others". Within-row alignment is
+     the one that is visible; the folders sit in their own row above, far enough
+     away that nothing reads against them. */
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 12px;
+  border-radius: 18px;
   position: relative;
   display: grid;
   place-items: center;
