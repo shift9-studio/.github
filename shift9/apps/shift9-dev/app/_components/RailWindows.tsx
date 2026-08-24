@@ -563,19 +563,31 @@ function Products({ reducedMotion }: Pick<RailWindowProps, "reducedMotion">) {
         </div>
       </article>
 
+      {/* The small cells carry their own plate. An empty panel with the name
+          sunk to the floor reads as an image that failed to load, and the one
+          thing these cards are never short of is artwork. */}
       {rest.map((p, i) => (
         <a
           key={p.n}
-          className={`${s.bentoCell} ${i === 0 ? s.bentoCellSig : ""}`}
+          className={s.bentoCell}
           href={p.href ?? p.appHref ?? "#"}
           {...(p.href?.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
         >
-          <span className={s.bentoNo}>{String(i + 2).padStart(2, "0")}</span>
+          <Plate
+            plate={p.plate}
+            clip={p.clip}
+            alt=""
+            play={false}
+            reducedMotion={reducedMotion}
+          />
           <span className={s.bentoArrow} aria-hidden="true">
             &#8599;
           </span>
-          <h3>{p.title}</h3>
-          <Status p={p} />
+          <span className={s.bentoFace}>
+            <span className={s.bentoNo}>{String(i + 2).padStart(2, "0")}</span>
+            <h3>{p.title}</h3>
+            <Status p={p} />
+          </span>
         </a>
       ))}
 

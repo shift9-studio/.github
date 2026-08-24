@@ -78,6 +78,18 @@ text run in a 37px box with 10px padding and no clipping. None of the three
 reproduce, so nothing further was changed on that pass. The two findings that
 DID reproduce (the ellipsis and the wrapped-row spacing) are the ones fixed.
 
+Kariim spotted three more on the live site, 2026-08-24. (1) The Products room's
+small cells were empty boxes with the name sunk to the floor - Gemini confirmed
+"massive empty voids ... looks like an image failed to load". They now carry
+their own plate, so the space is filled by the work. (2) The reference page's
+grids drew their hairlines with a coloured sheet behind the grid, which paints
+every unused cell of the last row as a solid grey block; six rooms in a
+four-column grid left two. All four grids (.swatches, .archiveNav, .projectGrid,
+.surfaces) now ring each cell instead, so an empty cell is nothing at all
+whatever the count. (3) The "$" before the Automation Systems copy on /studio is
+DELIBERATE - card 10 is dressed as a terminal and .terminal .note::before adds a
+shell prompt. Left alone, flagged to him.
+
 **Still open.** Goals and Reports are derived from the roster's own status field;
 real quarterly targets would have to come from Kariim. `pnpm lint` remains broken
 repo-wide (`next lint` was removed in Next 16), so this had typecheck, detector
