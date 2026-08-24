@@ -63,6 +63,12 @@ left). True - `grid-auto-flow: dense` backfills the holes a 2x2 tile leaves, so
 DOM order and reading order differ. The indices are gone; the name was the only
 part carrying information.
 
+Second look, after those two fixes: Gemini said the wrapped names now sat on
+the artwork and the readout row was still tight. Both fixed properly - the
+thumbnail label now carries its own gradient ground (like the Media wall's
+labels) instead of relying on a text shadow, and the readout rows were given
+real padding rather than only a taller line-height on the value.
+
 **Still open.** Goals and Reports are derived from the roster's own status field;
 real quarterly targets would have to come from Kariim. `pnpm lint` remains broken
 repo-wide (`next lint` was removed in Next 16), so this had typecheck, detector
