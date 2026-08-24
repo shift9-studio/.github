@@ -93,13 +93,23 @@ translate: 0 0`, opening inward. The rise-and-fade `transform` is untouched.
 Measured at 1920/1440/1280: bubble spans end 26px clear of the edge at every
 width. Gemini confirmed the full address is readable and inside the screen.
 
-**STATE: DEPLOYED on Kariim's word after he poked the sandbox.** The live site still serves the
-24,906,455-byte original - confirmed by curl after the local change. The working
-tree is dirty with the four files above. Kariim's standing rule is that he pokes a
-real-form sandbox before approval, so this stops at local proof.
+**STATE: COMMITTED, NOT YET ON THE PUBLIC SITE.** Kariim poked the sandbox,
+approved, and asked for it to go up. Commit `e3c988b` on `main` carries six
+files: `HANDOFF.md`, `EnterTheStudio.tsx`, `EnterTheStudio.module.css` (the
+tooltip anchor), `check-studio-polish.mjs`, and the two re-encoded opening
+`.mp4`s. The temporary `Try-The-Fixed-Intro.cmd` sandbox launcher was deleted
+before the commit so it never landed in the repo.
 
-**NEXT STEP:** none outstanding. After deploy the live opening file was confirmed
-at 5,878,131 bytes, not 24,906,455.
+Sending that commit to GitHub was refused by this session's auto-mode permission
+classifier. Not by git, and not by any rule of Kariim's. Nothing is wrong with
+the commit itself. A double-click file `Put-The-Intro-Fix-Live.cmd` sits at the
+repo root so Kariim can send it himself; it does nothing else.
+
+**NEXT STEP:** send `e3c988b` to GitHub. Vercel builds from it. Then check the
+public site: the opening film file under `/experience/opening/` must come back
+**5,878,131** bytes, not 24,906,455, and the email button's tooltip in the
+bottom-right corner must sit fully inside the screen. If sending is refused
+again, hand Kariim the double-click file rather than working around the block.
 
 **Originals, if the re-encode is ever rejected:** backed up this session to the
 session scratchpad at
