@@ -200,21 +200,16 @@
 
 /* ── Colour ─────────────────────────────────────────────────────────────── */
 
-/* Hairlines are drawn by each cell, not by a coloured sheet behind the grid.
-   The sheet technique paints every UNUSED cell of the last row as a solid
-   grey block - six rooms in a four-column grid left two of them sitting there
-   looking like content that failed to load. A ring on each cell gives the
-   same single-pixel rule between neighbours and leaves an empty cell as
-   nothing at all, whatever the count. */
 .swatches {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
   gap: 1px;
+  background: var(--s9-hair);
+  border: 1px solid var(--s9-hair);
 }
 
 .swatch {
   background: var(--s9-obsidian);
-  box-shadow: 0 0 0 1px var(--s9-hair);
   padding: 0;
 }
 
@@ -394,6 +389,8 @@
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 1px;
   margin-top: 2rem;
+  border: 1px solid var(--s9-hair);
+  background: var(--s9-hair);
 }
 
 .archiveNav a {
@@ -401,7 +398,6 @@
   min-height: 2.6rem;
   place-items: center;
   background: var(--s9-obsidian);
-  box-shadow: 0 0 0 1px var(--s9-hair);
   font-family: var(--s9-font-mono);
   font-size: 0.62rem;
   letter-spacing: 0.12em;
@@ -422,13 +418,14 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 1px;
+  border: 1px solid var(--s9-hair);
+  background: var(--s9-hair);
 }
 
 .projectCard {
   min-width: 0;
   scroll-margin-top: 2.25rem;
   background: var(--s9-obsidian);
-  box-shadow: 0 0 0 1px var(--s9-hair);
 }
 
 .projectMedia {
@@ -643,9 +640,24 @@
 
 /* ── Surfaces ───────────────────────────────────────────────────────────── */
 
+/* The sheet behind the grid is what draws the hairlines, so any cell of the
+   last row that has no card in it paints as a solid grey block. Six rooms in
+   four columns left two of them looking like content that failed to load.
+   The page completes the row with fillers instead (see the .surfaceFill
+   count in reference/page.tsx) rather than giving up the sheet, which is
+   what makes these read as one table of rooms. */
 .surfaces {
   display: grid;
   gap: 1px;
+  background: var(--s9-hair);
+  border: 1px solid var(--s9-hair);
+}
+
+/* Only the four-column layout can be short; at one and two columns the
+   roster divides exactly. */
+.surfaceFill {
+  display: none;
+  background: var(--s9-obsidian);
 }
 
 @media (min-width: 48rem) {
@@ -658,11 +670,13 @@
   .surfaces {
     grid-template-columns: repeat(4, 1fr);
   }
+  .surfaceFill {
+    display: block;
+  }
 }
 
 .surface {
   background: var(--s9-obsidian);
-  box-shadow: 0 0 0 1px var(--s9-hair);
   padding: 1.6rem 1.3rem 1.8rem;
   display: flex;
   flex-direction: column;

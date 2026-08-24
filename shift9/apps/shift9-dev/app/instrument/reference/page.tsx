@@ -485,6 +485,13 @@ export default function InstrumentReferencePage() {
               </span>
             </div>
           ))}
+          {/* The grid's hairlines come from the sheet behind it, so an unused
+              cell in the last row paints as a grey block. These complete the
+              four-column row; they are hidden at every narrower layout, where
+              the roster divides exactly. */}
+          {Array.from({ length: (4 - (surfaces.length % 4)) % 4 }).map((_, i) => (
+            <span key={`fill-${i}`} className={s.surfaceFill} aria-hidden />
+          ))}
         </div>
       </section>
 

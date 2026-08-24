@@ -86,7 +86,13 @@ grids drew their hairlines with a coloured sheet behind the grid, which paints
 every unused cell of the last row as a solid grey block; six rooms in a
 four-column grid left two. All four grids (.swatches, .archiveNav, .projectGrid,
 .surfaces) now ring each cell instead, so an empty cell is nothing at all
-whatever the count. (3) The "$" before the Automation Systems copy on /studio is
+whatever the count. Gemini's check on that first attempt: the grey was gone but the grid then read
+as "a table missing a chunk of its bottom-right corner", because these cards are
+deliberately edge-to-edge rather than discrete. So the sheet is back and the ROW
+is completed instead - the page renders (4 - n % 4) % 4 filler cells, shown only
+at the four-column layout, where the roster is the only one that can be short.
+The other three grids were put back exactly as they were; none of them was ever
+short a cell. (3) The "$" before the Automation Systems copy on /studio is
 DELIBERATE - card 10 is dressed as a terminal and .terminal .note::before adds a
 shell prompt. Left alone, flagged to him.
 
