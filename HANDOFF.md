@@ -8,6 +8,36 @@
 **Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-05 - Flow State switches to Kariim's Ripple (html-in-canvas)
+
+**Branch:** `feat/flow-state-photoreal-water` (PR #47).
+
+Kariim reported Flow State still wasn't water on the feat-intro-room-explore
+preview (that branch still has the old 2D line waves). He provided `Ripple.tsx`
+and said USE IT.
+
+**What changed.** The page no longer mounts `<WaterSurface />`. A client
+`FlowStateShell.tsx` wraps the whole page in `<Ripple>` (hover trigger, ambient
+`interval={2.8}`, tuned amplitude/refraction/shine). `page.tsx` stays a server
+component and only renders `<FlowStateShell>…</FlowStateShell>`. Obsidian
+backdrop lives *inside* the Ripple content so there is something to refract.
+`.rippleRoot` is full-viewport with `isolation: isolate`.
+
+**WaterSurface.tsx** is left on disk but unused, so nobody confuses it for the
+live effect. Delete later if desired.
+
+**Chrome note.** Full page-bend refraction needs the experimental html-in-canvas
+feature (`drawElementImage` / `layoutsubtree`). Without it, Ripple falls back to
+normal DOM + glint-only overlays — still better than fake line waves on
+hover/click, and ambient interval keeps water alive.
+
+**Preview:** use this branch (`feat/flow-state-photoreal-water`), NOT
+`feat-intro-room-explore`. Local: `http://127.0.0.1:3947/flow-state` when the
+dev server is up.
+
+**Checks:** `node scripts/check-flow-state.mjs` updated to assert Ripple shell
+and passes.
+
 ## 2026-09-05 - Flow State water was invisible (stacking + contrast)
 
 **Branch:** `feat/flow-state-photoreal-water` (PR #47).

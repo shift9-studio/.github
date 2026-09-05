@@ -19,7 +19,8 @@ const page = read("app/flow-state/page.tsx");
 const form = read("app/flow-state/WaitlistForm.tsx");
 const payload = read("app/flow-state/waitlist-payload.ts");
 const demo = read("app/flow-state/FlowStateDemo.tsx");
-const water = read("app/flow-state/WaterSurface.tsx");
+const water = read("app/flow-state/Ripple.tsx");
+const shell = read("app/flow-state/FlowStateShell.tsx");
 const styles = read("app/flow-state/flow-state.module.css");
 const dolly = read("app/_components/studio-dolly-data.ts");
 const themeTokens = read("../../packages/theme/tokens.css");
@@ -219,7 +220,9 @@ assert.match(
   "The studio Flow State entry must open the dedicated page",
 );
 assert.match(page, /Local Windows Dictation/i);
-assert.match(page, /<WaterSurface/, "Flow State must keep the full-page water surface");
+assert.match(page, /<FlowStateShell/, "Flow State must wrap the page in the Ripple shell");
+assert.match(shell, /<Ripple/, "FlowStateShell must mount the photoreal Ripple effect");
+assert.doesNotMatch(page, /WaterSurface/, "Flow State page must not mount the old WaterSurface canvas");
 assert.match(page, /logoJewel/, "Flow State must keep the jewel-F header mark");
 assert.match(form, /aria-live="polite"/);
 assert.match(form, /type="email"/);
@@ -236,12 +239,13 @@ assert.doesNotMatch(
   "The Resend key must stay in server environment configuration",
 );
 assert.match(demo, /useReducedMotionSafe/);
-assert.match(water, /prefers-reduced-motion: reduce/, "The water surface must respect reduced motion");
-assert.match(water, /requestAnimationFrame/, "The water surface must render a live ripple field");
-assert.match(water, /cancelAnimationFrame/, "The water animation loop must terminate cleanly");
-assert.match(water, /\(pointer: fine\)/, "Water interaction must run only for fine pointers");
-assert.match(water, /pointerQuery\.matches\s*&&\s*!motionQuery\.matches/, "Water interaction must stop for reduced motion");
-assert.match(water, /if \(motionQuery\.matches\) paint\(0\)/, "Reduced-motion water must repaint after resize");
+assert.match(water, /prefers-reduced-motion: reduce/, "The Ripple effect must respect reduced motion");
+assert.match(water, /requestAnimationFrame/, "Ripple must render a live ripple field");
+assert.match(water, /cancelAnimationFrame/, "The Ripple animation loop must terminate cleanly");
+assert.match(water, /drawElementImage/, "Ripple must use html-in-canvas drawElementImage when available");
+assert.match(water, /layoutsubtree/, "Ripple source canvas must opt into layoutsubtree capture");
+assert.match(shell, /trigger=["']hover["']/, "Flow State Ripple should wake on hover");
+assert.match(shell, /interval=\{2\.8\}/, "Flow State Ripple should keep ambient ripples alive");
 assert.doesNotMatch(water, /rgba?\(/i, "Canvas colors must come from Shift-9 theme tokens");
 assert.match(styles, /prefers-reduced-motion/);
 assert.match(
