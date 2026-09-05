@@ -8,19 +8,26 @@
 **Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
-## 2026-09-05 - Room Explore visual leap (textures + shaders)
+## 2026-09-05 - Room Explore Pass-2 (enclosed shell + HDRI + soft shadows)
 
-**Branch:** `feat/intro-room-explore` (PR #48). Same day as v1 explore; this pass is visuals only.
+**Branch:** `feat/intro-room-explore` (PR #48).
 
-**Why.** Kariim critique: props misplaced vs the opening desk film; untextured gray boxes fail the Site-of-the-Year / film bar. Questopia harness pattern (baked day/night + `blendLighten` lightmap) is the bar â€” we do not have a Blender-baked hero GLB yet, so this ships an honest interim leap.
+**Why.** Critique scored Room Explore ~4/10: desk in black void on checkerboard, hard shadows, toy boxes, missing lived-in film props. Widget on biggest miss was skipped ? treated as all of it. Quality bar: harness-3d + threejs-webgl + Shader Tech Pass-2 recipe (never skip enclosed room + HDRI + soft shadows).
 
-**What changed.** `RoomExplore.tsx` rebuilds the room from the `04-desk` film still: light oak desk, dual monitors (ultrawide + portrait), speakers, mesh chair, printer on tool cabinet with pegboard + tube light, whitebox Lumen cubes on the right, gallery posters from set-piece plates. Procedural canvas maps for wood / dark floor / paint / metal / calibration grid. Custom `ShaderMaterial`s: screen glow (scan + blendLighten) fed by desk still / set-piece textures; Lumen projection shader mixes grid albedo with `04-lumen.png` and trip pass when mapped. Filmic ACES exposure dialed down so textures read; soft vignette overlay. Interaction API unchanged (printer / Lumen / stubs / sit-down). Beat rates untouched (A 1.0, B `ROOM_WALK_PLAYBACK_RATE = 1.45`).
+**What shipped.**
+- Enclosed film-tight shell: floor + 3 walls + front closer + ceiling + baseboards + left window glow + gallery posters. No checkerboard void.
+- HDRI ? PMREM: Poly Haven `studio_small_09_1k.hdr` via RGBELoader; `RoomEnvironment` fallback; `environmentIntensity` ~0.85; dim blurred env background; ACESFilmic exposure 1.0.
+- Soft shadows: PCFSoft, map 2048, radius 4, blurSamples 8, tight shadow camera to desk AABB; contact shadow plane under desk/chair.
+- Screen presence: RectAreaLight + soft Spot on ultrawide; screen ShaderMaterial `toneMapped` + `uBright` scanlines.
+- Real maps: Poly Haven concrete floor + plaster wall (CC0). CC0 Khronos SheenChair GLB as chair.
+- Printer bay + Lumen whitebox stack + posters remain (film placement, tighter room). Interactions unchanged. Beat rates untouched (A 1.0 / B 1.45).
 
-**Assets.** Added `public/experience/opening/04-desk-still.jpg` (frame from desk film) for monitor shader reference. No fake baked GLB path.
+**Meshy.** Spent **45** credits (balance 3070 ? 3025) on image-to-3D from `04-desk-still` crops (desk/printer/lumen). Results were melted/non-manifold — **not mounted**. Credits noted in `public/experience/room/CREDITS.md`. Need isolated orthographic refs or Blender bake for hero GLBs.
 
-**Still needed from Kariim.** One authored room GLB matching the film desk/room with Cycles-baked diffuse (+ optional day/night + lightmap) for true SOTY. Until then this stays procedural geometry with film-matched placement and shaders.
+**Still king.** Full Blender authored room + Cycles bake (questopia pattern) remains the SOTY finish line.
 
-**Checks.** `check-studio-polish.mjs` pass. Did not touch Flow State / intro beat rates.
+**Checks.** `tsc --noEmit` clean; `check-studio-polish.mjs` pass.
+
 ## 2026-09-05 - intro walk speed/skip + Room Explore v1
 
 **Branch:** `feat/intro-room-explore` (from `origin/main`). Parallel work may be on
