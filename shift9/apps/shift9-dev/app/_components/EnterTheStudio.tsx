@@ -168,9 +168,9 @@ const DATA: Record<"apps" | "games" | "tools", Folder> = {
     items: [
       {
         n: "Feelspoon",
-        s: "IN TESTING",
-        sc: "dev",
-        d: "Smart recipe organizer + guided cooking app. Save from links, photos, or scratch; cook mode scales servings and suggests swaps. Includes the Recipe Engine — a Supabase-backed content pipeline that seeds and serves the catalog. In closed testing on Android — launching soon.",
+        s: "LIVE",
+        sc: "live",
+        d: "Smart recipe organizer + guided cooking app. Save from links, photos, or scratch; cook mode scales servings and suggests swaps. Includes the Recipe Engine — a Supabase-backed content pipeline that seeds and serves the catalog. Live on Google Play and at feelspoon.app.",
         tags: ["React Native", "TypeScript", "Supabase", "Android · iOS soon"],
         h: "https://feelspoon.app",
       },
@@ -1530,8 +1530,8 @@ export function EnterTheStudio() {
                   </p>
                   <p>
                     Everything here &#8212; the studio itself, and
-                    Feelspoon, my first shipped app, now in testing on Google
-                    Play &#8212; was built on a Samsung Galaxy Z Fold and a
+                    Feelspoon, my first shipped app, live on Google Play and
+                    feelspoon.app &#8212; was built on a Samsung Galaxy Z Fold and a
                     Steam Deck. No dev machine. No office. A folding phone, a
                     handheld, and a refusal to wait for the right setup.
                   </p>

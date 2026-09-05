@@ -8,6 +8,7 @@
 **Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+
 ## 2026-09-05 - Room Explore Pass-2 (enclosed shell + HDRI + soft shadows)
 
 **Branch:** `feat/intro-room-explore` (PR #48).
@@ -66,6 +67,12 @@ After two prop interactions, a cue points at `/studio`.
 
 **How to try.** Open shift9.dev front door → Enter (or Skip) → on the desktop click
 **Stand up** → walk to the printer and Lumen rings → Sit down to return.
+## 2026-09-05 - Feelspoon LIVE synced onto Room Explore branch
+
+Feelspoon is live on Google Play and at feelspoon.app. Roster / About / dolly /
+marketing page no longer say closed testing. Synced from main (#49 / aa31e33)
+onto `feat/intro-room-explore` so the PR #48 preview Apps list matches production.
+Room Explore Pass-2 work above is unchanged.
 
 ## 2026-08-24 - the desktop rail works, and every row opens its own room
 
