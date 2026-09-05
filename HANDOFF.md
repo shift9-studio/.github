@@ -8,6 +8,23 @@
 **Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-05 - Feelspoon hero CTA pointed at Google Play
+
+The orange hero button on feelspoon.app said "Open Feelspoon" and linked to
+`https://feelspoon.app` — a self-link on the marketing site, so the CTA felt broken.
+
+**Fix**
+- `shift9/apps/just-a-pinch/app/page.tsx` — primary CTA is now **Get on Google Play**,
+  href `https://play.google.com/store/apps/details?id=com.justapinch.app` with
+  `target="_blank"`. "See how it works" (`#how`) unchanged.
+- `shift9/packages/ui/src/MagneticButton.tsx` — passes through `target` / `rel`,
+  and defaults `rel="noopener noreferrer"` when `target="_blank"`.
+
+Package id confirmed from growth kit / HANDOFF (`com.justapinch.app`). No separate
+web-app primary: product Live path is Play. Did not touch Room Explore / Flow State.
+
+**Branch:** `fix/feelspoon-open-cta` off `main`.
+
 ## 2026-09-05 - Feelspoon is LIVE (roster + marketing copy)
 
 Feelspoon is live on Google Play and at feelspoon.app. Public status on
