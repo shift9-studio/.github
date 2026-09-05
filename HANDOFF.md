@@ -17,7 +17,10 @@
 way to leave the HTML desktop and look around the 3D room that matches the opening
 film. Old plan was still viewpoints + hotspots; Kariim wants live explore.
 
-**Intro.** Playback rate is `1.35` on both opening beats. Film Skip is labeled
+**Intro.** Kariim feedback: the beginning walk-in (approach + entry hall) was
+already fine — only the part after he is walking into the room felt slow. Beat A
+(`01-03-approach-entry-hall`) plays at natural `1.0`; beat B (desk / room walk,
+`04-desk-mouse-screen`) uses `ROOM_WALK_PLAYBACK_RATE = 1.45`. Film Skip is labeled
 "Skip to desk". After a first full watch, `localStorage` key `s9-intro-skip-pref`
 lets later "Enter the studio" presses jump straight to the desk (first-time
 viewers still get the film). Session skip via `s9-intro-seen` is unchanged.

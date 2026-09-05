@@ -378,9 +378,10 @@ function markSkipPref(): void {
   }
 }
 
-/* Walk-to-desk felt slow at 1x. 1.35 keeps the beats readable and lands
-   seated sooner without turning the film into a skim. */
-const INTRO_PLAYBACK_RATE = 1.35;
+/* Kariim: the walk-in at the start (approach + entry hall) was already
+   fine at natural speed. Only the part after he is walking into the room —
+   the desk beat — felt slow. Leave beat A at 1x; speed only beat B. */
+const ROOM_WALK_PLAYBACK_RATE = 1.45;
 
 function introAlreadySeen(): boolean {
   try {
@@ -677,11 +678,9 @@ export function EnterTheStudio() {
     vid.muted = true;
     vid.setAttribute("muted", "");
     vid.playsInline = true;
-    try {
-      vid.playbackRate = INTRO_PLAYBACK_RATE;
-    } catch {
-      /* some browsers refuse mid-load; the playing handler retries */
-    }
+    /* Beat A (approach + entry hall): leave at natural 1x — Kariim said
+       the beginning walk-in was already good. */
+    vid.playbackRate = 1;
     vid.play().catch(() => enterDesk());
   }, [enterDesk]);
 
@@ -825,8 +824,10 @@ export function EnterTheStudio() {
       if (!beatB) return;
       beatB.muted = true;
       beatB.playsInline = true;
+      /* Beat B only: walking into the room / desk felt slow; nudge this
+         take up so the sit-down arrives sooner. */
       try {
-        beatB.playbackRate = INTRO_PLAYBACK_RATE;
+        beatB.playbackRate = ROOM_WALK_PLAYBACK_RATE;
       } catch {
         /* ignore */
       }
@@ -885,6 +886,11 @@ export function EnterTheStudio() {
       /* Reveal only once playback has actually started. A resolved play()
          keeps the held final frame covering a slow decoder instead of
          dissolving onto an empty or poster-only second layer. */
+      try {
+        beatB.playbackRate = ROOM_WALK_PLAYBACK_RATE;
+      } catch {
+        /* ignore */
+      }
       beatB
         .play()
         .then(() => {
