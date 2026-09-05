@@ -5,8 +5,32 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-08-24
+**Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
+
+## 2026-09-05 - Flow State page gets photoreal interactive water
+
+**Branch:** `feat/flow-state-photoreal-water` (PR open / pending merge).
+
+Kariim hated the old Flow State backdrop: a 2D canvas drawing faint sine-wave
+strokes that looked like neon lines, not water. That whole renderer is gone.
+
+**What replaced it.** `WaterSurface.tsx` is now a full-viewport WebGL2
+heightfield. The GPU runs a ripple simulation (previous + current height maps),
+builds normals from the height field, then shades soft caustics, Fresnel, and a
+dark-studio refraction look using Shift-9 void/pearl/obsidian tokens. No Three.js
+dependency was added.
+
+**Mouse.** Fine pointers push decaying fingertip ripples; dragging makes a larger
+wake. Idle water still breathes gently. `prefers-reduced-motion: reduce` freezes
+to a still photoreal plate and turns interaction off.
+
+**UI.** `flow-state.module.css` thins the header, demo, metrics, and waitlist
+panels into glass/pearl cards so the liquid stays the hero. Waitlist form and
+API contracts are unchanged.
+
+**Checks run on this machine:** `node scripts/check-flow-state.mjs`,
+`check-studio-polish.mjs`, and `check-instrument.mjs` all passed.
 
 ## 2026-08-24 - the desktop rail works, and every row opens its own room
 
