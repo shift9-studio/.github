@@ -35,6 +35,7 @@ import {
 } from "react";
 import { useReducedMotionSafe } from "@shift9/motion";
 import { FadeToBlack } from "./FadeToBlack";
+import { RoomExplore } from "./RoomExplore";
 import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { Shift9Mark } from "./Shift9Mark";
@@ -355,6 +356,32 @@ const THEME_KEY = "s9-desk-theme";
    a new arrival and should get the film. */
 const INTRO_KEY = "s9-intro-seen";
 
+/* After a first full watch, later visits may jump straight to the desk.
+   localStorage on purpose: the preference survives a new tab. First-time
+   viewers still get the film; this only flips once they have actually seen
+   the walk-in end-to-end (or asked Skip after that). */
+const SKIP_PREF_KEY = "s9-intro-skip-pref";
+
+function skipPrefOn(): boolean {
+  try {
+    return window.localStorage.getItem(SKIP_PREF_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function markSkipPref(): void {
+  try {
+    window.localStorage.setItem(SKIP_PREF_KEY, "1");
+  } catch {
+    /* storage blocked */
+  }
+}
+
+/* Walk-to-desk felt slow at 1x. 1.35 keeps the beats readable and lands
+   seated sooner without turning the film into a skim. */
+const INTRO_PLAYBACK_RATE = 1.35;
+
 function introAlreadySeen(): boolean {
   try {
     return window.sessionStorage.getItem(INTRO_KEY) === "1";
@@ -483,7 +510,7 @@ export function EnterTheStudio() {
      watching the film, and at the desk. Holding this as one flag per concern
      is what made the old code need an "autoplay was blocked" fallback state
      that looked like a fourth. */
-  const [mode, setMode] = useState<"gate" | "film" | "desk">("gate");
+  const [mode, setMode] = useState<"gate" | "film" | "desk" | "room">("gate");
   const [compact, setCompact] = useState(false);
   const [openWin, setOpenWin] = useState<OpenWin>(null);
   /* True from the moment Enter is pressed until the film can actually play.
@@ -618,13 +645,23 @@ export function EnterTheStudio() {
     }
   }, []);
 
+  const standUp = useCallback(() => {
+    setOpenWin(null);
+    setMode("room");
+  }, []);
+
+  const sitDown = useCallback(() => {
+    setMode("desk");
+  }, []);
+
   /* Tab title follows the room. The route metadata stays "Enter the Studio"
      for the gate and the film; once the desk is up, the tab should name the
      place the visitor is actually in — without rewriting the route. */
   useEffect(() => {
-    if (mode !== "desk") return;
+    if (mode !== "desk" && mode !== "room") return;
     const previous = document.title;
-    document.title = "Shift-9 — Studio Desktop";
+    document.title =
+      mode === "room" ? "Shift-9 — Room Explore" : "Shift-9 — Studio Desktop";
     return () => {
       document.title = previous;
     };
@@ -640,6 +677,11 @@ export function EnterTheStudio() {
     vid.muted = true;
     vid.setAttribute("muted", "");
     vid.playsInline = true;
+    try {
+      vid.playbackRate = INTRO_PLAYBACK_RATE;
+    } catch {
+      /* some browsers refuse mid-load; the playing handler retries */
+    }
     vid.play().catch(() => enterDesk());
   }, [enterDesk]);
 
@@ -783,6 +825,11 @@ export function EnterTheStudio() {
       if (!beatB) return;
       beatB.muted = true;
       beatB.playsInline = true;
+      try {
+        beatB.playbackRate = INTRO_PLAYBACK_RATE;
+      } catch {
+        /* ignore */
+      }
       beatB
         .play()
         .then(() => {
@@ -824,6 +871,7 @@ export function EnterTheStudio() {
         setTimeout(() => {
           wake.classList.remove(cls("dim"));
           glow.classList.remove(cls("on"));
+          markSkipPref(); /* full walk watched — later visits may skip */
           enterDesk();
         }, 1320),
       );
@@ -1038,6 +1086,7 @@ export function EnterTheStudio() {
                 type="button"
                 className={s.skipGate}
                 onClick={() => {
+                  if (introAlreadySeen() || skipPrefOn()) markSkipPref();
                   setMode("desk");
                   enterDesk();
                 }}
@@ -1085,10 +1134,11 @@ export function EnterTheStudio() {
             className={s.skip}
             onClick={(e) => {
               e.stopPropagation();
+              if (introAlreadySeen() || skipPrefOn()) markSkipPref();
               enterDesk();
             }}
           >
-            SKIP &#8594;
+            Skip to desk &#8594;
           </button>
         ) : null}
       </div>
@@ -1135,6 +1185,15 @@ export function EnterTheStudio() {
                 that still looked clickable. */}
             <span className={s.inert} aria-hidden>Home</span>
             <span className={s.inert} aria-hidden>About</span>
+            <button
+              type="button"
+              className={`${s.standUp} ${s.tipHost}`}
+              onClick={standUp}
+              data-tip="Leave the desktop and look around the room"
+              data-tip-below=""
+            >
+              Stand up
+            </button>
             <button
               type="button"
               className={`${s.themeBtn} ${s.tipHost}`}
@@ -1338,6 +1397,15 @@ export function EnterTheStudio() {
             is the fastest path and it keeps right-click → copy working. The
             click also puts the address on the clipboard and says so, so the
             button always does something the visitor can see. */}
+        <button
+          type="button"
+          className={s.standUpFab}
+          onClick={standUp}
+          aria-label="Stand up and explore the room"
+        >
+          Stand up · explore room
+        </button>
+
         <a
           className={s.helpdot}
           href={`mailto:${STUDIO_EMAIL}`}
@@ -1386,6 +1454,14 @@ export function EnterTheStudio() {
           <Clock className={s.clock} />
         </div>
       </div>
+
+      {mode === "room" ? (
+        <RoomExplore
+          onSitDown={sitDown}
+          reducedMotion={reducedMotion || calm}
+          studioHref={STUDIO_HREF}
+        />
+      ) : null}
 
       {/* FOLDER WINDOW */}
       <div

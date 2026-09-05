@@ -5,8 +5,44 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-08-24
+**Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
+
+## 2026-09-05 - intro walk speed/skip + Room Explore v1
+
+**Branch:** `feat/intro-room-explore` (from `origin/main`). Parallel work may be on
+`feat/flow-state-photoreal-water` — do not mix those files into this branch.
+
+**Why.** The walk-to-desk film felt slow, and after the character sits there was no
+way to leave the HTML desktop and look around the 3D room that matches the opening
+film. Old plan was still viewpoints + hotspots; Kariim wants live explore.
+
+**Intro.** Playback rate is `1.35` on both opening beats. Film Skip is labeled
+"Skip to desk". After a first full watch, `localStorage` key `s9-intro-skip-pref`
+lets later "Enter the studio" presses jump straight to the desk (first-time
+viewers still get the film). Session skip via `s9-intro-seen` is unchanged.
+`prefers-reduced-motion` still bypasses the film.
+
+**Stand up.** Desktop chrome has **Stand up** (title row) and a floating
+**Stand up · explore room** control. That mounts `RoomExplore` over the shell.
+
+**Room Explore (WebGL / three).** Free look (pointer drag) + WASD/arrows move.
+Dark chiaroscuro lighting matching the film mood. Visible hotspot labels.
+Way back: **Sit down → desktop**, or Esc / interact with the desk.
+
+**Interactive (shipped):**
+- **3D printer** — tap/E → short print animation of the Shift-9 mark → souvenir badge
+- **Lumen** — tap through calibration corners on the box stack → mapped colour pass
+
+**Stubs (delight + coming soon):** INSTRUMENT, arcade, Omni-3D hologram, automation arm.
+After two prop interactions, a cue points at `/studio`.
+
+**Files.** `RoomExplore.tsx` + module CSS (new); `EnterTheStudio.tsx` / `.module.css`
+(mode `room`, skip pref, playback rate, Stand up); `three` + `@types/three`;
+`check-studio-polish.mjs` asserts the above.
+
+**How to try.** Open shift9.dev front door → Enter (or Skip) → on the desktop click
+**Stand up** → walk to the printer and Lumen rings → Sit down to return.
 
 ## 2026-08-24 - the desktop rail works, and every row opens its own room
 

@@ -1,0 +1,290 @@
+/* Room Explore — live WebGL walkaround after the desktop. */
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #05070c;
+  color: #f4f3ee;
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  overflow: hidden;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: grab;
+}
+
+.canvas:active {
+  cursor: grabbing;
+}
+
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.topBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(
+    to bottom,
+    rgb(5 7 12 / 0.78) 0%,
+    rgb(5 7 12 / 0.2) 70%,
+    transparent 100%
+  );
+}
+
+.title {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(244 243 238 / 0.72);
+}
+
+.title strong {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: #f8fafc;
+  font-family: var(--s9-font-display, system-ui, sans-serif);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  pointer-events: auto;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  background: rgb(10 14 22 / 0.72);
+  color: #f4f3ee;
+  border-radius: 999px;
+  padding: 0.55rem 0.95rem;
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  border-color: color-mix(in oklab, var(--s9-signal, #7dd3fc) 70%, white);
+  color: #fff;
+  outline: none;
+}
+
+.btnPrimary {
+  border-color: color-mix(in oklab, var(--s9-signal, #7dd3fc) 55%, transparent);
+  background: color-mix(in oklab, var(--s9-signal, #7dd3fc) 18%, rgb(10 14 22 / 0.8));
+}
+
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 1.4rem;
+  transform: translateX(-50%);
+  max-width: min(36rem, calc(100% - 2rem));
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  background: rgb(10 14 22 / 0.78);
+  backdrop-filter: blur(10px);
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  color: rgb(244 243 238 / 0.86);
+}
+
+.hint kbd {
+  display: inline-block;
+  padding: 0.08rem 0.35rem;
+  margin: 0 0.08rem;
+  border-radius: 4px;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  background: rgb(255 255 255 / 0.06);
+  font: inherit;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+}
+
+.toast {
+  position: absolute;
+  left: 50%;
+  top: 5.5rem;
+  transform: translateX(-50%);
+  max-width: min(28rem, calc(100% - 2rem));
+  padding: 0.75rem 1.1rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--s9-signal, #7dd3fc) 45%, transparent);
+  background: rgb(8 16 28 / 0.88);
+  color: #f8fafc;
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  line-height: 1.45;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.45);
+  animation: toastIn 280ms ease both;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.badges {
+  position: absolute;
+  left: 1.1rem;
+  bottom: 5.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  pointer-events: none;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: rgb(10 14 22 / 0.7);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(244 243 238 / 0.78);
+}
+
+.badgeOn {
+  border-color: color-mix(in oklab, var(--s9-signal, #7dd3fc) 55%, transparent);
+  color: #e8f7ff;
+}
+
+.dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.28);
+}
+
+.badgeOn .dot {
+  background: var(--s9-signal, #7dd3fc);
+  box-shadow: 0 0 10px color-mix(in oklab, var(--s9-signal, #7dd3fc) 70%, transparent);
+}
+
+.hotspotLabel {
+  position: absolute;
+  transform: translate(-50%, -120%);
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.22);
+  background: rgb(8 12 20 / 0.82);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+.hotspotLabelNear {
+  border-color: color-mix(in oklab, var(--s9-signal, #7dd3fc) 60%, white);
+  color: #fff;
+  box-shadow: 0 0 18px color-mix(in oklab, var(--s9-signal, #7dd3fc) 28%, transparent);
+}
+
+.crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgb(255 255 255 / 0.35);
+  border-radius: 50%;
+  opacity: 0.55;
+}
+
+.studioCue {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 5.4rem;
+  max-width: 16rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--s9-signal, #7dd3fc) 40%, transparent);
+  background: rgb(8 16 28 / 0.88);
+  pointer-events: auto;
+}
+
+.studioCue p {
+  margin: 0 0 0.55rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  color: rgb(244 243 238 / 0.88);
+}
+
+.studioCue a {
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in oklab, var(--s9-signal, #7dd3fc) 70%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}
+
+@media (max-width: 40rem) {
+  .topBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .badges {
+    bottom: 7.2rem;
+  }
+
+  .studioCue {
+    left: 1.1rem;
+    right: 1.1rem;
+    bottom: 7.2rem;
+    max-width: none;
+  }
+}

@@ -2755,6 +2755,79 @@
   }
 }
 
+
+/* ── Stand up — exit the desktop into live room explore ───────────────── */
+.standUp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--blue) 45%, var(--w-line));
+  background: color-mix(in oklab, var(--blue) 12%, var(--w-panel));
+  color: var(--blue);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.standUp:hover,
+.standUp:focus-visible {
+  color: #fff;
+  background: var(--blue);
+  border-color: var(--blue);
+  outline: none;
+}
+.standUp:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue);
+}
+
+.standUpFab {
+  position: fixed;
+  left: 22px;
+  bottom: 64px;
+  z-index: 12;
+  appearance: none;
+  border: 1px solid rgba(11, 107, 214, 0.4);
+  background: rgb(var(--w-panel-rgb) / 0.92);
+  color: var(--blue);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgb(var(--w-shadow) / 0.28);
+  backdrop-filter: blur(10px);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.standUpFab:hover,
+.standUpFab:focus-visible {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+  outline: none;
+}
+.standUpFab:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--w-bg),
+    0 0 0 4px var(--blue),
+    0 8px 22px rgb(var(--w-shadow) / 0.28);
+}
+
+@media (max-width: 22.5rem) {
+  .standUpFab {
+    left: 12px;
+    bottom: 58px;
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+}
+
 /* Screen-reader supplement for the desktop H1 — the visible lockup is the
    brand mark; this names the place without changing the chrome. */
 .visuallyHidden {

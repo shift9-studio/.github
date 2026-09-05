@@ -87,4 +87,16 @@ for (const [name, page] of [
 }
 assert.match(pearl, /\.s9-pearl-dark\.s9-pearl-ghost/, "The ghost-pearl material must stay shared");
 
+
+const room = await read("../app/_components/RoomExplore.tsx");
+assert.match(room, /WebGLRenderer/, "Room explore must use WebGL");
+assert.match(room, /printer/, "Room explore must include the 3D printer prop");
+assert.match(room, /lumen/i, "Room explore must include the Lumen prop");
+assert.match(room, /onSitDown/, "Room explore must offer a way back to the desktop");
+assert.match(entrance, /INTRO_PLAYBACK_RATE/, "Intro walk-in must expose a tightened playback rate");
+assert.match(entrance, /SKIP_PREF_KEY/, "Intro must remember skip preference after a full watch");
+assert.match(entrance, /standUp/, "Desktop must expose Stand up into room explore");
+assert.match(entrance, /mode === "room"/, "Entrance must mount room explore mode");
+assert.match(entrance, /Skip to desk/, "Film skip control must clearly jump to the desk");
+
 console.log("Studio loops, invitation, entrance, and ghost controls: pass");
