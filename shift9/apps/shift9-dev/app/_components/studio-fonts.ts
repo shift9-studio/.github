@@ -48,34 +48,34 @@ import { display as bricolage, text as instrument } from "../fonts";
    Hence the repetition below. */
 
 /* ── The reading faces ─────────────────────────────────────────────────── */
-const plex = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500"], display: "swap" });
-const nunito = Nunito({ subsets: ["latin"], display: "swap" });
+const plex = IBM_Plex_Sans({ subsets: ["latin"], weight: ["400", "500"], preload: false, display: "swap" });
+const nunito = Nunito({ subsets: ["latin"], preload: false, display: "swap" });
 
 /* ── The display faces, one per project ────────────────────────────────── */
 /* 01 · warm, edible */
-const fraunces = Fraunces({ subsets: ["latin"], axes: ["SOFT", "WONK"], display: "swap" });
+const fraunces = Fraunces({ subsets: ["latin"], axes: ["SOFT", "WONK"], preload: false, display: "swap" });
 /* 02 · signal processing */
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], display: "swap" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], preload: false, display: "swap" });
 /* 03 · soft, for children */
-const baloo = Baloo_2({ subsets: ["latin"], display: "swap" });
+const baloo = Baloo_2({ subsets: ["latin"], preload: false, display: "swap" });
 /* 04 · instrument panel */
-const saira = Saira_Condensed({ subsets: ["latin"], weight: ["600", "700"], display: "swap" });
+const saira = Saira_Condensed({ subsets: ["latin"], weight: ["600", "700"], preload: false, display: "swap" });
 /* 05 · arcade cabinet marquee */
-const bungee = Bungee({ subsets: ["latin"], weight: "400", display: "swap" });
+const bungee = Bungee({ subsets: ["latin"], weight: "400", preload: false, display: "swap" });
 /* 06 · strange, nocturnal */
-const syne = Syne({ subsets: ["latin"], display: "swap" });
+const syne = Syne({ subsets: ["latin"], preload: false, display: "swap" });
 /* 07 · engineering R&D */
-const chakra = Chakra_Petch({ subsets: ["latin"], weight: ["600", "700"], display: "swap" });
+const chakra = Chakra_Petch({ subsets: ["latin"], weight: ["600", "700"], preload: false, display: "swap" });
 /* 08 · a design system */
-const familjen = Familjen_Grotesk({ subsets: ["latin"], display: "swap" });
+const familjen = Familjen_Grotesk({ subsets: ["latin"], preload: false, display: "swap" });
 /* 10 · the terminal */
-const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["700"], display: "swap" });
+const jetbrains = JetBrains_Mono({ subsets: ["latin"], weight: ["700"], preload: false, display: "swap" });
 /* 11 · 3D viewport chrome */
-const michroma = Michroma({ subsets: ["latin"], weight: "400", display: "swap" });
+const michroma = Michroma({ subsets: ["latin"], weight: "400", preload: false, display: "swap" });
 /* 12 · plain system utility. One instance serves both roles on this card -
    Archivo is the display face and the reading face, which is the joke: the
    dialog card only works if the type is honest. */
-const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], display: "swap" });
+const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], preload: false, display: "swap" });
 
 export type ProjectFont = { display: string; text: string };
 
