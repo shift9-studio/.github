@@ -311,13 +311,13 @@ export function WaterSurface() {
       if (!textures || !framebuffers || !simProgram) return;
       const program = simProgram;
       ctx.useProgram(program);
-      ctx.bindFramebuffer(ctx.FRAMEBUFFER, framebuffers[writeIndex]);
+      ctx.bindFramebuffer(ctx.FRAMEBUFFER, framebuffers[writeIndex] ?? null);
       ctx.viewport(0, 0, simW, simH);
       ctx.activeTexture(ctx.TEXTURE0);
-      ctx.bindTexture(ctx.TEXTURE_2D, textures[prevIndex]);
+      ctx.bindTexture(ctx.TEXTURE_2D, textures[prevIndex] ?? null);
       ctx.uniform1i(ctx.getUniformLocation(program, "uPrev"), 0);
       ctx.activeTexture(ctx.TEXTURE1);
-      ctx.bindTexture(ctx.TEXTURE_2D, textures[readIndex]);
+      ctx.bindTexture(ctx.TEXTURE_2D, textures[readIndex] ?? null);
       ctx.uniform1i(ctx.getUniformLocation(program, "uCurr"), 1);
       ctx.uniform2f(ctx.getUniformLocation(program, "uTexel"), 1 / simW, 1 / simH);
       ctx.uniform2f(
@@ -353,7 +353,7 @@ export function WaterSurface() {
       ctx.viewport(0, 0, ctx.drawingBufferWidth, ctx.drawingBufferHeight);
       ctx.useProgram(program);
       ctx.activeTexture(ctx.TEXTURE0);
-      ctx.bindTexture(ctx.TEXTURE_2D, textures[readIndex]);
+      ctx.bindTexture(ctx.TEXTURE_2D, textures[readIndex] ?? null);
       ctx.uniform1i(ctx.getUniformLocation(program, "uHeight"), 0);
       ctx.uniform2f(ctx.getUniformLocation(program, "uTexel"), 1 / simW, 1 / simH);
       ctx.uniform2f(ctx.getUniformLocation(program, "uResolution"), width, height);

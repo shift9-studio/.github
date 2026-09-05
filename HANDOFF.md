@@ -29,6 +29,8 @@ to a still photoreal plate and turns interaction off.
 panels into glass/pearl cards so the liquid stays the hero. Waitlist form and
 API contracts are unchanged.
 
+**Vercel preview fix (same branch).** Deploy `dpl_2V13CAz1V69LA2umgPhvn4Y3ki6j` failed TypeScript: indexed `framebuffers`/`textures` access is `T | undefined`, but WebGL `bindFramebuffer`/`bindTexture` want `T | null`. Fixed with `?? null` on those four binds in `WaterSurface.tsx`. Local `next build` now typechecks clean. Not a GLSL/SWC issue.
+
 **Checks run on this machine:** `node scripts/check-flow-state.mjs`,
 `check-studio-polish.mjs`, and `check-instrument.mjs` all passed.
 
