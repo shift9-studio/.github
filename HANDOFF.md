@@ -8,6 +8,27 @@
 **Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-05 - Flow State water was invisible (stacking + contrast)
+
+**Branch:** `feat/flow-state-photoreal-water` (PR #47).
+
+Kariim reported no water/ripples on Flow State. Two separate facts:
+
+1. **Live shift9.dev still serves the old 2D WaterSurface** until PR #47 merges.
+2. **On this branch, CSS hid the WebGL canvas.** `.root` had a solid obsidian
+   background with `isolation: isolate`, and `.waterSurface` was `z-index: -2`,
+   so the canvas painted *behind* the opaque root fill. Pointer listeners on
+   `window` still ran; you just could not see ripples.
+
+**Fix.** `.root` background is transparent. Dark fill moved to a dedicated
+`.backdrop` layer at `z-index: -1`. Canvas sits at `z-index: 0`. Soft vignette
+`::after` is `z-index: 1`. Topbar/composition are `position: relative; z-index: 2`
+(exit pin stays at 3). `WaterSurface.tsx` lifts body/highlight/studio shade and
+idle/drop amplitudes so the teal-pearl pool reads on first glance against
+obsidian; reduced-motion fallback unchanged.
+
+**Checks:** `node scripts/check-flow-state.mjs` passed after the change.
+
 ## 2026-09-05 - Flow State page gets photoreal interactive water
 
 **Branch:** `feat/flow-state-photoreal-water` (PR open / pending merge).

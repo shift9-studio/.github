@@ -136,13 +136,14 @@ void main() {
   vec3 body = mix(uDeep, uMid, smoothstep(0.15, 0.7, depth));
   body = mix(body, uShallow, smoothstep(0.55, 1.0, 1.0 - depth + abs(h) * 0.35));
   float cau = caustic(refrUv * vec2(uResolution.x / max(uResolution.y, 1.0), 1.0) + n.xz * 0.4, uTime * (1.0 - uStill * 0.85));
-  body += uHighlight * cau * (0.08 + fresnel * 0.12);
-  body += uStudio * 0.12;
+  body += uHighlight * cau * (0.16 + fresnel * 0.2);
+  body += uStudio * 0.18;
   float foam = smoothstep(0.045, 0.12, abs(hx) + abs(hy));
-  vec3 color = mix(body, env, fresnel * 0.72 + 0.08);
-  color = mix(color, uHighlight, foam * 0.18);
-  float vignette = smoothstep(1.15, 0.25, length((uv - vec2(0.5, 0.42)) * vec2(1.15, 1.0)));
-  color *= 0.72 + vignette * 0.28;
+  vec3 color = mix(body, env, fresnel * 0.78 + 0.12);
+  color = mix(color, uHighlight, foam * 0.28);
+  float vignette = smoothstep(1.2, 0.2, length((uv - vec2(0.5, 0.42)) * vec2(1.15, 1.0)));
+  color *= 0.88 + vignette * 0.22;
+  color = pow(max(color, 0.0), vec3(0.92));
   float grain = fract(sin(dot(uv * uResolution + uTime * 11.0, vec2(12.9898, 78.233))) * 43758.5453);
   color += (grain - 0.5) * 0.012;
   fragColor = vec4(color, 1.0);
@@ -164,11 +165,17 @@ export function WaterSurface() {
     });
 
     const tokens = getComputedStyle(document.documentElement);
-    const deep = hexToVec3(tokens.getPropertyValue("--s9-void-2"), [0.043, 0.067, 0.125]);
-    const mid = hexToVec3(tokens.getPropertyValue("--s9-void"), [0.059, 0.09, 0.165]);
-    const shallow = hexToVec3(tokens.getPropertyValue("--s9-surface"), [0.075, 0.11, 0.192]);
-    const highlight = hexToVec3(tokens.getPropertyValue("--s9-pearl"), [0.788, 0.82, 0.863]);
-    const studio = hexToVec3(tokens.getPropertyValue("--s9-obsidian"), [0, 0, 0]);
+    const deep = hexToVec3(tokens.getPropertyValue("--s9-void-2"), [0.043, 0.067, 0.125]).map((c) => Math.min(1, c * 1.35 + 0.02)) as Vec3;
+    const mid = hexToVec3(tokens.getPropertyValue("--s9-void"), [0.059, 0.09, 0.165]).map((c) => Math.min(1, c * 1.45 + 0.03)) as Vec3;
+    const shallow = hexToVec3(tokens.getPropertyValue("--s9-surface"), [0.075, 0.11, 0.192]).map((c) => Math.min(1, c * 1.55 + 0.04)) as Vec3;
+    const highlight = hexToVec3(tokens.getPropertyValue("--s9-pearl"), [0.788, 0.82, 0.863]).map((c) => Math.min(1, c * 1.08)) as Vec3;
+    // Lift studio fill off pure black so reflections read on obsidian pages.
+    const studioRaw = hexToVec3(tokens.getPropertyValue("--s9-obsidian"), [0, 0, 0]);
+    const studio: Vec3 = [
+      Math.min(1, studioRaw[0] * 0.35 + mid[0] * 0.55 + 0.02),
+      Math.min(1, studioRaw[1] * 0.35 + mid[1] * 0.55 + 0.04),
+      Math.min(1, studioRaw[2] * 0.35 + mid[2] * 0.55 + 0.08),
+    ];
 
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const pointerQuery = window.matchMedia("(pointer: fine)");
@@ -190,7 +197,7 @@ export function WaterSurface() {
     let prevIndex = 2;
     let dropRadius = 0;
     let dropStrength = 0;
-    let idleAmp = 0.00012;
+    let idleAmp = 0.00018;
     let damp = 0.985;
     let spread = 0.5;
 
@@ -203,7 +210,7 @@ export function WaterSurface() {
       const aspect = cssW / Math.max(1, cssH);
       simW = Math.max(96, Math.round(target * Math.min(1.6, aspect)));
       simH = Math.max(72, Math.round(target / Math.min(1.6, aspect)));
-      idleAmp = weak ? 0.00008 : 0.00014;
+      idleAmp = weak ? 0.00014 : 0.00022;
       damp = weak ? 0.978 : 0.987;
       spread = 0.5;
     }
@@ -457,8 +464,8 @@ export function WaterSurface() {
       pointer.y = ny;
       pointer.active = true;
       const pressing = event.buttons > 0;
-      dropRadius = pressing ? 0.055 + speed * 0.04 : 0.028 + speed * 0.02;
-      dropStrength = pressing ? 0.045 + speed * 0.08 : 0.012 + speed * 0.035;
+      dropRadius = pressing ? 0.065 + speed * 0.05 : 0.034 + speed * 0.028;
+      dropStrength = pressing ? 0.07 + speed * 0.1 : 0.022 + speed * 0.05;
       if (motionQuery.matches) paint(0);
     }
 

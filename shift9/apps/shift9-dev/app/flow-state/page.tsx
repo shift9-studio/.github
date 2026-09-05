@@ -21,6 +21,7 @@ export const metadata: Metadata = {
 export default function FlowStatePage() {
   return (
     <main className={s.root}>
+      <div className={s.backdrop} aria-hidden="true" />
       <WaterSurface />
       <a className={`s9-pearl-dark s9-pearl-ghost ${s.exitPin}`} href="/studio#set-02">
         &#8592; The studio
