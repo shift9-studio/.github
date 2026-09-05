@@ -492,6 +492,8 @@ export function EnterTheStudio() {
   const [loading, setLoading] = useState(false);
   /* Which folder is mid-open, so its lid can lift before the window arrives. */
   const [opening, setOpening] = useState<string | null>(null);
+  /* Keyboard focus highlight only — Enter/click always open in one step. */
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const folderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -615,6 +617,18 @@ export function EnterTheStudio() {
       desk.style.opacity = "1";
     }
   }, []);
+
+  /* Tab title follows the room. The route metadata stays "Enter the Studio"
+     for the gate and the film; once the desk is up, the tab should name the
+     place the visitor is actually in — without rewriting the route. */
+  useEffect(() => {
+    if (mode !== "desk") return;
+    const previous = document.title;
+    document.title = "Shift-9 — Studio Desktop";
+    return () => {
+      document.title = previous;
+    };
+  }, [mode]);
 
   /* Playback now always follows a click, so the browser has no reason to
      refuse it and there is no autoplay-blocked state to design for. The one
@@ -1103,23 +1117,24 @@ export function EnterTheStudio() {
           {/* Just the wordmark. The icon used to sit here too, which with a
               drawn 9 in the word was the same mark twice in one lockup; it
               earns its keep on the front door instead, where it has a job. */}
-          <span className={s.brand}>
+          <h1 className={s.brand} aria-hidden={mode !== "desk" ? true : undefined}>
             <span className={s.brandWord}>
               Shift-
               <Shift9Mark className={s.brandMark ?? ""} size={26} />
             </span>
-          </span>
+            {mode === "desk" ? (
+              <span className={s.visuallyHidden}>Studio Desktop</span>
+            ) : null}
+          </h1>
           <div className={s.navlinks}>
             {/* Set dressing. This is a picture of an operating system, and a
                 browser chrome without a nav row does not read as one — but
-                these have never gone anywhere and never will, so they are
-                hidden from assistive tech (which would otherwise announce
-                four links that do not exist) and demoted visually so they
-                stop looking like the real controls beside them. */}
+                Home/About have never gone anywhere, so they stay as chrome
+                only: hidden from assistive tech and demoted visually.
+                Accounts/Log in were removed entirely — unimplemented controls
+                that still looked clickable. */}
             <span className={s.inert} aria-hidden>Home</span>
             <span className={s.inert} aria-hidden>About</span>
-            <span className={s.inert} aria-hidden>Accounts</span>
-            <span className={s.inert} aria-hidden>Log in</span>
             <button
               type="button"
               className={`${s.themeBtn} ${s.tipHost}`}
@@ -1223,14 +1238,21 @@ export function EnterTheStudio() {
             {FOLDERS.map((f) => (
               <div
                 key={f.key}
-                className={`${s.dicon} ${opening === f.key ? s.diconOpening : ""}`}
+                className={`${s.dicon} ${opening === f.key ? s.diconOpening : ""} ${selectedFolder === f.key ? s.sel : ""}`}
                 data-f={f.key}
                 role="button"
                 tabIndex={0}
-                onClick={() => openFolder(f.key)}
+                aria-selected={selectedFolder === f.key}
+                onFocus={() => setSelectedFolder(f.key)}
+                onClick={() => {
+                  setSelectedFolder(f.key);
+                  openFolder(f.key);
+                }}
                 onKeyDown={(e) => {
+                  /* One keypress opens. Do not require a prior select step. */
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
+                    setSelectedFolder(f.key);
                     openFolder(f.key);
                   }
                 }}

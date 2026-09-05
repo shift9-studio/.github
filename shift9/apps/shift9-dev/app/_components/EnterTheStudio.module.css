@@ -890,6 +890,7 @@
   gap: 11px;
   font-weight: 600;
   font-size: 18px;
+  margin: 0;
 }
 .brandWord {
   display: inline-flex;
@@ -1609,9 +1610,11 @@
   color: var(--w-light-row-text);
   background: var(--w-light-row);
 }
-.item:nth-child(even) h3,
-.item:nth-child(even) h3 a {
+.item:nth-child(even) h3 {
   color: var(--w-light-row-text);
+}
+.item:nth-child(even) h3 a {
+  color: var(--blue);
 }
 .item:last-child {
   border-bottom: none;
@@ -1630,17 +1633,30 @@
   font-weight: 650;
   margin-bottom: 3px;
 }
-/* A linked title is the only affordance in the row, so it has to look like one
-   without turning the list into a wall of blue. */
+/* Linked project titles must clear WCAG AA on both dark and light rows.
+   Inherited ink + a hairline border failed that on the light stripe; studio
+   blue is the CTA token (6.05:1 on the light desktop ground) and keeps the
+   titles reading as links rather than inert text. */
 .item h3 a {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid var(--w-line);
-  transition: border-color var(--s9-dur-fast) var(--s9-ease-out);
+  color: var(--blue);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  border-bottom: none;
+  transition:
+    color var(--s9-dur-fast) var(--s9-ease-out),
+    text-decoration-thickness var(--s9-dur-fast) var(--s9-ease-out);
 }
-.item h3 a:hover,
+.item h3 a:hover {
+  color: var(--blue-hover);
+  text-decoration-thickness: 2px;
+}
 .item h3 a:focus-visible {
-  border-bottom-color: currentColor;
+  color: var(--blue-hover);
+  text-decoration-thickness: 2px;
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 .item p {
   font-size: 13px;
@@ -2423,11 +2439,12 @@
 
    Held back rather than removed: without them the chrome stops reading as a
    desktop. They just no longer claim to be interactive. Paired with
-   aria-hidden in the markup so nothing announces four links to nowhere. */
+   aria-hidden in the markup so nothing announces dressing as links. */
 .inert {
-  opacity: 0.55;
+  opacity: 0.38;
   cursor: default;
   user-select: none;
+  pointer-events: none;
 }
 
 /* ── The theme switch ────────────────────────────────────────────────────
@@ -2736,4 +2753,18 @@
     right: 12px;
     bottom: 58px;
   }
+}
+
+/* Screen-reader supplement for the desktop H1 — the visible lockup is the
+   brand mark; this names the place without changing the chrome. */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

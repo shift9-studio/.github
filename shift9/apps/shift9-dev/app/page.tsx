@@ -8,11 +8,15 @@ export const metadata: Metadata = {
   title: "Shift-9 — Enter the Studio",
   description:
     "Enter the Shift-9 studio. A design + engineering studio building brands, products, and the systems that run them.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Shift-9 — Enter the Studio",
     description:
       "A design + engineering studio building brands, products, and the systems that run them.",
     type: "website",
+    url: "https://www.shift9.dev",
     images: ["/poster.jpg"],
   },
 };

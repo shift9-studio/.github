@@ -20,12 +20,16 @@ export const metadata: Metadata = {
   title: "Shift-9 — Design + Engineering Studio",
   description:
     "Code execution in motion. Shift-9 designs and ships brands, products, and the systems that run them.",
-  metadataBase: new URL("https://shift9.dev"),
+  metadataBase: new URL("https://www.shift9.dev"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Shift-9 — Design + Engineering Studio",
     description:
       "Code execution in motion. We design and ship brands, products, and the systems behind them.",
     type: "website",
+    url: "https://www.shift9.dev",
   },
 };
 

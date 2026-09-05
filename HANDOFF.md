@@ -1446,3 +1446,19 @@ ignores a scripted Range; the caret stays at the end whatever the selection says
 "a recipe app in final review with Google Play" to
 "a recipe app, live on Google Play now and free to download",
 then click **Done Editing**. No admin rights, no terminal.
+
+### 2026-09-05 - SEO / a11y polish on shift9.dev (PR branch)
+
+Branch: `fix/seo-a11y-polish`. Additive fixes for the live site, no redesign.
+
+**Done in `shift9/apps/shift9-dev`:**
+1. App Router `robots.ts` + `sitemap.ts` (live was 404ing both).
+2. `metadataBase` / canonical / OG URL prefer `https://www.shift9.dev`.
+3. After desk mode, `document.title` leaves "Enter the Studio"; desktop gets a semantic H1 (hidden from AT during the cinematic gate/film).
+4. Project fonts in `studio-fonts.ts` set `preload: false` — only the house stack stays critical first-paint.
+5. `public/poster.jpg` resized to 1200×675 OG size and compressed (~174KB, was ~586KB).
+6. Desktop folders: single Enter/Space/click opens (no select-then-open gate); `.sel` is focus highlight only.
+7. Header Accounts / Log in removed; remaining Home/About dressing further de-emphasized.
+8. Modal project title links: studio blue + underline + clearer `:focus-visible` for WCAG AA.
+
+**Verified:** `check-studio-polish`, `check-flow-state`, `check-instrument` all pass on the laptop checkout.
