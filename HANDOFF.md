@@ -5,8 +5,27 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-08-24
+**Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
+
+## 2026-09-05 - Feelspoon is LIVE (roster + marketing copy)
+
+Feelspoon is live on Google Play and at feelspoon.app. Public status on
+shift9.dev and the feelspoon marketing page no longer say closed testing.
+
+**Files**
+- `shift9/apps/shift9-dev/app/_components/EnterTheStudio.tsx` — Feelspoon folder
+  item `s: "LIVE"` / `sc: "live"`, description + About blurb updated.
+- `shift9/apps/shift9-dev/app/_components/studio-dolly-data.ts` — status LIVE,
+  comment + note aligned with Google Play / feelspoon.app.
+- `shift9/apps/just-a-pinch/app/page.tsx` — hero label, CTA, get-section copy,
+  and footer build line no longer say closed testing / launching soon.
+
+**Left alone:** Flow State beta / shipping copy. Room Explore WIP stays on
+`feat/intro-room-explore` (not this branch).
+
+**Branch:** `fix/feelspoon-live-status` off `main`.
+
 
 ## 2026-08-24 - the desktop rail works, and every row opens its own room
 
