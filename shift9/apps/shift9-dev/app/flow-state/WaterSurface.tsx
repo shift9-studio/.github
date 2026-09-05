@@ -368,6 +368,7 @@ export function WaterSurface() {
     }
 
     function paintFallback() {
+      if (!canvas) return;
       if (gl) {
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -405,6 +406,7 @@ export function WaterSurface() {
     }
 
     function resize() {
+      if (!canvas) return;
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.style.width = `${width}px`;
