@@ -95,7 +95,7 @@ export default async function Home() {
 
         <div className="mx-auto w-full max-w-[84rem]">
           <MonoLabel decode className="mb-8">
-            FEELSPOON — IN CLOSED TESTING · ANDROID · LAUNCHING SOON
+            FEELSPOON — LIVE ON GOOGLE PLAY · ANDROID · FEELSPOON.APP
           </MonoLabel>
 
           <SeasonHeadline
@@ -115,7 +115,7 @@ export default async function Home() {
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <MagneticButton href="#get">Get early access</MagneticButton>
+            <MagneticButton href="https://play.google.com/store/apps/details?id=com.justapinch.app" target="_blank">Get on Google Play</MagneticButton>
             <MagneticButton href="#how" variant="ghost">
               See how it works
             </MagneticButton>
@@ -241,10 +241,9 @@ export default async function Home() {
             ]}
           />
           <p className="mt-8 max-w-xl text-body leading-relaxed text-muted">
-            Feelspoon is in closed testing on Android right now — a small
-            group of cooks using it every day while we polish the last details.
-            Leave your email and we&apos;ll tell you the moment it&apos;s open to
-            everyone. No spam, just the one message that matters.
+            Feelspoon is live on Google Play and at feelspoon.app — save
+            recipes, cook hands-free, and plan the week. Leave your email if
+            you want product updates; no spam, just the messages that matter.
           </p>
           <div className="mt-12">
             <WaitlistForm />
@@ -263,7 +262,7 @@ export default async function Home() {
           <MonoLabel marker={false}>
             © 2026 FEELSPOON — a Shift-9 product
           </MonoLabel>
-          <MonoLabel>build: closed testing · Android</MonoLabel>
+          <MonoLabel>build: live · Google Play · feelspoon.app</MonoLabel>
         </div>
       </footer>
     </main>

@@ -80,12 +80,11 @@ export const SET_PIECES: SetPiece[] = [
   {
     n: "01",
     title: "Feelspoon",
-    /* In closed testing on Android until Kariim flips the switch. The desktop
-       folder and this roster disagreed for a while - desktop said IN TESTING,
-       the dolly said LIVE - and the desktop was right. */
-    status: "IN TESTING",
+    /* Live on Google Play and feelspoon.app. Keep this roster aligned with the
+       desktop folder status (LIVE / live). */
+    status: "LIVE",
     resolution: "resolved",
-    note: "Smart recipe organizer and guided cooking app. Save from links, photos or scratch; cook mode scales servings and suggests swaps. The Recipe Engine behind it is a Supabase-backed pipeline that seeds and serves the catalog.",
+    note: "Smart recipe organizer and guided cooking app. Save from links, photos or scratch; cook mode scales servings and suggests swaps. Live on Google Play and at feelspoon.app. The Recipe Engine behind it is a Supabase-backed pipeline that seeds and serves the catalog.",
     tags: ["React Native", "TypeScript", "Supabase", "Android \u00b7 iOS soon"],
     plate: `${BASE}01-just-a-pinch.png`,
     clip: `${BASE}01-just-a-pinch.mp4`,

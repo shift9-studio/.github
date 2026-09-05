@@ -85,6 +85,41 @@ API contracts are unchanged.
 **Checks run on this machine:** `node scripts/check-flow-state.mjs`,
 `check-studio-polish.mjs`, and `check-instrument.mjs` all passed.
 
+## 2026-09-05 - Feelspoon hero CTA pointed at Google Play
+
+The orange hero button on feelspoon.app said "Open Feelspoon" and linked to
+`https://feelspoon.app` — a self-link on the marketing site, so the CTA felt broken.
+
+**Fix**
+- `shift9/apps/just-a-pinch/app/page.tsx` — primary CTA is now **Get on Google Play**,
+  href `https://play.google.com/store/apps/details?id=com.justapinch.app` with
+  `target="_blank"`. "See how it works" (`#how`) unchanged.
+- `shift9/packages/ui/src/MagneticButton.tsx` — passes through `target` / `rel`,
+  and defaults `rel="noopener noreferrer"` when `target="_blank"`.
+
+Package id confirmed from growth kit / HANDOFF (`com.justapinch.app`). No separate
+web-app primary: product Live path is Play. Did not touch Room Explore / Flow State.
+
+**Branch:** `fix/feelspoon-open-cta` off `main`.
+
+## 2026-09-05 - Feelspoon is LIVE (roster + marketing copy)
+
+Feelspoon is live on Google Play and at feelspoon.app. Public status on
+shift9.dev and the feelspoon marketing page no longer say closed testing.
+
+**Files**
+- `shift9/apps/shift9-dev/app/_components/EnterTheStudio.tsx` — Feelspoon folder
+  item `s: "LIVE"` / `sc: "live"`, description + About blurb updated.
+- `shift9/apps/shift9-dev/app/_components/studio-dolly-data.ts` — status LIVE,
+  comment + note aligned with Google Play / feelspoon.app.
+- `shift9/apps/just-a-pinch/app/page.tsx` — hero label, CTA, get-section copy,
+  and footer build line no longer say closed testing / launching soon.
+
+**Left alone:** Flow State beta / shipping copy. Room Explore WIP stays on
+`feat/intro-room-explore` (not this branch).
+
+**Branch:** `fix/feelspoon-live-status` off `main`.
+
 ## 2026-08-24 - the desktop rail works, and every row opens its own room
 
 **Shipped to `main`.** The left rail on the OS-desktop front door was decorative:
