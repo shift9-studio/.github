@@ -288,3 +288,16 @@
     max-width: none;
   }
 }
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 42%,
+    rgb(5 7 12 / 0.32) 78%,
+    rgb(5 7 12 / 0.7) 100%
+  );
+}

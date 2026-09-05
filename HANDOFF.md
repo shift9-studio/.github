@@ -8,6 +8,19 @@
 **Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-05 - Room Explore visual leap (textures + shaders)
+
+**Branch:** `feat/intro-room-explore` (PR #48). Same day as v1 explore; this pass is visuals only.
+
+**Why.** Kariim critique: props misplaced vs the opening desk film; untextured gray boxes fail the Site-of-the-Year / film bar. Questopia harness pattern (baked day/night + `blendLighten` lightmap) is the bar — we do not have a Blender-baked hero GLB yet, so this ships an honest interim leap.
+
+**What changed.** `RoomExplore.tsx` rebuilds the room from the `04-desk` film still: light oak desk, dual monitors (ultrawide + portrait), speakers, mesh chair, printer on tool cabinet with pegboard + tube light, whitebox Lumen cubes on the right, gallery posters from set-piece plates. Procedural canvas maps for wood / dark floor / paint / metal / calibration grid. Custom `ShaderMaterial`s: screen glow (scan + blendLighten) fed by desk still / set-piece textures; Lumen projection shader mixes grid albedo with `04-lumen.png` and trip pass when mapped. Filmic ACES exposure dialed down so textures read; soft vignette overlay. Interaction API unchanged (printer / Lumen / stubs / sit-down). Beat rates untouched (A 1.0, B `ROOM_WALK_PLAYBACK_RATE = 1.45`).
+
+**Assets.** Added `public/experience/opening/04-desk-still.jpg` (frame from desk film) for monitor shader reference. No fake baked GLB path.
+
+**Still needed from Kariim.** One authored room GLB matching the film desk/room with Cycles-baked diffuse (+ optional day/night + lightmap) for true SOTY. Until then this stays procedural geometry with film-matched placement and shaders.
+
+**Checks.** `check-studio-polish.mjs` pass. Did not touch Flow State / intro beat rates.
 ## 2026-09-05 - intro walk speed/skip + Room Explore v1
 
 **Branch:** `feat/intro-room-explore` (from `origin/main`). Parallel work may be on
