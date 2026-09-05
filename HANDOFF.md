@@ -8,6 +8,21 @@
 **Last updated:** 2026-09-05
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-05 - Vercel TS: Ripple pruneRipples undefined guard
+
+**Branch:** `fix/flow-state-ripple-ts`.
+
+Production deploy for merged PR #47 failed TypeScript under
+`noUncheckedIndexedAccess`: `ripples[i]` in `pruneRipples` is
+`Wave | undefined`, so `rp.age += delta` errored. Added
+`if (!rp) continue;` before use. The render loop already guarded with
+`rp ?`.
+
+Preview then failed on `uniforms.uContent` (Record indexed access is
+`T | undefined`, but WebGL expects `WebGLUniformLocation | null`).
+Replaced the loose uniforms Record with a typed `requireUniform` map.
+Local `tsc --noEmit` passes.
+
 ## 2026-09-05 - Flow State switches to Kariim's Ripple (html-in-canvas)
 
 **Branch:** `feat/flow-state-photoreal-water` (PR #47).

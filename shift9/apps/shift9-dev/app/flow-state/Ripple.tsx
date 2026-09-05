@@ -218,15 +218,28 @@ export function createRipple(
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
 
-  const uniforms: Record<string, WebGLUniformLocation> = {};
-  const count = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
-  for (let i = 0; i < count; i++) {
-    const info = gl.getActiveUniform(program, i)!;
-    uniforms[info.name.replace("[0]", "")] = gl.getUniformLocation(
-      program,
-      info.name,
-    )!;
+  function requireUniform(name: string): WebGLUniformLocation {
+    const location = gl!.getUniformLocation(program, name);
+    if (!location) {
+      throw new Error(`Ripple: missing uniform ${name}`);
+    }
+    return location;
   }
+  const uniforms = {
+    uContent: requireUniform("uContent"),
+    uResolution: requireUniform("uResolution"),
+    uRipples: requireUniform("uRipples"),
+    uCount: requireUniform("uCount"),
+    uSpeed: requireUniform("uSpeed"),
+    uWavelength: requireUniform("uWavelength"),
+    uWidth: requireUniform("uWidth"),
+    uDecay: requireUniform("uDecay"),
+    uRefraction: requireUniform("uRefraction"),
+    uDispersion: requireUniform("uDispersion"),
+    uShine: requireUniform("uShine"),
+    uHasContent: requireUniform("uHasContent"),
+    uMaxX: requireUniform("uMaxX"),
+  };
 
   const quad = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, quad);
@@ -314,6 +327,7 @@ export function createRipple(
     const width = config.wavelength * Math.max(config.rings, 1) * 0.5;
     for (let i = ripples.length - 1; i >= 0; i--) {
       const rp = ripples[i];
+      if (!rp) continue;
       rp.age += delta;
       const gone =
         rp.age * speedPx > diag + width * 3 ||
