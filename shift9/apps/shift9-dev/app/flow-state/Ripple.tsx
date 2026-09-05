@@ -314,6 +314,7 @@ export function createRipple(
     const width = config.wavelength * Math.max(config.rings, 1) * 0.5;
     for (let i = ripples.length - 1; i >= 0; i--) {
       const rp = ripples[i];
+      if (!rp) continue;
       rp.age += delta;
       const gone =
         rp.age * speedPx > diag + width * 3 ||
