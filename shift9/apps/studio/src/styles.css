@@ -1,0 +1,151 @@
+/* SHIFT-9 Studio — shell styles. Values are the reference's inline styles, verbatim. */
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource/martian-mono/300.css';
+@import '@fontsource/martian-mono/400.css';
+@import '@fontsource/martian-mono/500.css';
+
+/* _typography.scss fluid ramps (Asset Manifest #1) */
+:root {
+  --text-h1: clamp(1rem, 0.85rem + 0.75vw, 1.25rem);
+  --text-body: clamp(0.875rem, 0.825rem + 0.25vw, 1rem);
+  --text-ui: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --accent-blue: #0033FF;
+  --ui-fg: #E0E0E0;
+}
+
+html, body { height: 100%; }
+body { margin: 0; background: #000; overflow: hidden; }
+a { color: #E0E0E0; } a:hover { color: #0033FF; }
+#app { position: fixed; inset: 0; background: #000; color: #E0E0E0; font-family: 'Martian Mono', monospace; }
+
+@keyframes s9pulse { 0%,100% { opacity: 0.9; } 50% { opacity: 0.35; } }
+@keyframes s9stars { from { background-position: 0 0; } to { background-position: 260px 520px; } }
+@keyframes s9blobA { from { transform: translate(0,0) scale(1); } to { transform: translate(12%,10%) scale(1.15); } }
+@keyframes s9blobB { from { transform: translate(0,0) scale(1.1); } to { transform: translate(-10%,-8%) scale(0.95); } }
+
+/* ── reduced-motion static composite grid ── */
+.s9-static { position: absolute; inset: 0; overflow: auto; padding: clamp(24px,4vw,64px); box-sizing: border-box; }
+.s9-static-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 32px; }
+.s9-static-logo { font-family: 'Instrument Serif', serif; font-size: clamp(28px,3vw,44px); color: #fff; letter-spacing: 0.04em; }
+.s9-static-note { font-size: var(--text-ui); color: #666; }
+.s9-static-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2px; }
+.s9-static-card { background: #0a0a0c; border: 1px solid #1a1a1e; aspect-ratio: 16/10; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
+.s9-static-card-top { display: flex; justify-content: space-between; font-size: 11px; color: #666; }
+.s9-static-card-name { font-family: 'Instrument Serif', serif; font-size: var(--text-h1); color: #E0E0E0; }
+
+/* ── frame overlays ── */
+.s9-canvas-host { position: absolute; inset: 0; }
+.s9-canvas-host canvas { display: block; width: 100%; height: 100%; cursor: pointer; }
+.s9-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%); }
+.s9-letterbox-top { position: absolute; top: 0; left: 0; right: 0; height: 6.5vh; background: #000; pointer-events: none; }
+.s9-letterbox-bottom { position: absolute; bottom: 0; left: 0; right: 0; height: 6.5vh; background: #000; pointer-events: none; }
+
+/* ── HUD ── */
+.s9-hud-top { position: absolute; top: 8.5vh; left: 3.5vw; right: 3.5vw; display: flex; justify-content: space-between; align-items: baseline; pointer-events: none; }
+.s9-logo { font-family: 'Instrument Serif', serif; font-size: clamp(20px,1.8vw,28px); color: #fff; letter-spacing: 0.06em; white-space: nowrap; animation: s9pulse 3.2s ease-in-out infinite; }
+.s9-tagline { font-size: var(--text-ui); color: #555; letter-spacing: 0.12em; }
+.s9-hud-fade { position: absolute; bottom: 6.5vh; left: 0; right: 0; height: 18vh; background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.65)); pointer-events: none; }
+.s9-hud-bottom { position: absolute; bottom: 8.5vh; left: 3.5vw; right: 3.5vw; display: flex; justify-content: space-between; align-items: flex-end; pointer-events: none; text-shadow: 0 1px 8px rgba(0,0,0,0.9); transition: opacity 0.6s; }
+.s9-hud-left { display: flex; flex-direction: column; gap: 6px; }
+.s9-hud-meta { display: flex; gap: 12px; align-items: baseline; font-size: var(--text-ui); }
+.s9-hud-index { color: #555; }
+.s9-hud-status { letter-spacing: 0.1em; }
+.s9-hud-name { font-family: 'Instrument Serif', serif; font-size: clamp(26px,2.6vw,42px); color: #fff; line-height: 1; transition: opacity 0.4s; }
+.s9-hud-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.s9-hud-scroll { font-size: 11px; color: #555; letter-spacing: 0.1em; white-space: nowrap; }
+.s9-progress { width: 180px; height: 2px; background: #1c1c20; position: relative; }
+.s9-progress-fill { position: absolute; left: 0; top: 0; bottom: 0; background: #0033FF; }
+.s9-audio-toggle { pointer-events: auto; cursor: pointer; font-size: 10px; letter-spacing: 0.2em; color: #555; }
+.s9-audio-toggle:hover { color: #fff; }
+
+/* ── idle overlay ── */
+.s9-idle { position: absolute; bottom: 8.5vh; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; pointer-events: none; transition: opacity 0.9s; }
+.s9-dossier-scrim { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: min(86vw, 680px); text-align: center; text-shadow: 0 1px 8px rgba(0,0,0,0.9); background: radial-gradient(ellipse at center, rgba(0,0,0,0.82) 40%, rgba(0,0,0,0.55) 75%, transparent 100%); padding: 22px 48px; border-radius: 6px; }
+.s9-idle-tag { font-family: 'Instrument Serif', serif; font-style: italic; font-size: clamp(18px,1.9vw,26px); color: #d8d8e0; line-height: 1.35; text-wrap: pretty; }
+.s9-idle-spec { font-size: 11px; letter-spacing: 0.08em; color: #7a7a84; line-height: 1.6; }
+.s9-idle-cta { font-size: 10px; letter-spacing: 0.3em; color: #4d6bff; margin-top: 2px; }
+.s9-sets-toggle { pointer-events: auto; cursor: pointer; font-size: 10px; letter-spacing: 0.25em; color: #8a8a92; border: 1px solid #2a2a32; background: rgba(10,10,14,0.8); padding: 8px 18px; }
+.s9-sets-toggle:hover { color: #ffffff; border-color: #4d6bff; }
+.s9-sets-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 10px; max-width: min(86vw, 720px); pointer-events: auto; background: rgba(0,0,0,0.75); padding: 14px; border: 1px solid #1a1a20; }
+.s9-set-chip { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 84px; cursor: pointer; transition: opacity 0.25s; opacity: 0.72; }
+.s9-set-chip:hover { opacity: 1; }
+.s9-set-chip-num { width: 34px; height: 34px; border: 1px solid #2a2a32; background: rgba(10,10,14,0.7); display: flex; align-items: center; justify-content: center; font-size: 10px; color: #8a8a92; }
+.s9-set-chip-name { font-size: 9px; color: #8a8a92; text-align: center; line-height: 1.3; }
+.s9-idle-standby { font-size: 11px; color: #3a3a42; letter-spacing: 0.35em; white-space: nowrap; }
+
+/* ── dossier detail page ── */
+.s9-detail { position: absolute; inset: 0; background: rgba(0,0,0,0.94); overflow: auto; font-family: 'Martian Mono', monospace; color: #E0E0E0; }
+.s9-detail-inner { max-width: 880px; margin: 0 auto; padding: 11vh 32px 14vh; box-sizing: border-box; display: flex; flex-direction: column; gap: 26px; }
+.s9-detail-back { cursor: pointer; font-size: 12px; letter-spacing: 0.2em; color: #8a8a92; display: flex; gap: 10px; align-items: center; align-self: flex-start; }
+.s9-detail-back:hover { color: #ffffff; }
+.s9-detail-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.s9-detail-set { font-size: 12px; color: #555; letter-spacing: 0.12em; }
+.s9-detail-status { font-size: 12px; letter-spacing: 0.14em; }
+.s9-detail-name { font-family: 'Instrument Serif', serif; font-size: clamp(40px,6vw,72px); line-height: 1.02; color: #fff; }
+.s9-detail-tag { font-family: 'Instrument Serif', serif; font-style: italic; font-size: clamp(20px,2.2vw,28px); color: #9a9aa6; line-height: 1.35; text-wrap: pretty; }
+.s9-detail-rule { height: 1px; background: #1c1c22; }
+.s9-detail-desc { font-size: var(--text-body); line-height: 1.85; color: #b8b8c0; text-wrap: pretty; }
+.s9-detail-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2px; }
+.s9-fact { background: #0a0a0e; border: 1px solid #1a1a20; padding: 16px 18px; display: flex; flex-direction: column; gap: 7px; }
+.s9-fact-k { font-size: 10px; letter-spacing: 0.18em; color: #555; }
+.s9-fact-v { font-size: 12px; line-height: 1.6; color: #d0d0d8; }
+.s9-detail-link { font-size: 12px; letter-spacing: 0.15em; color: #4d6bff; align-self: flex-start; text-decoration: none; }
+
+/* ── entrance ── */
+.s9-entrance { position: absolute; inset: 0; background: #000; overflow: hidden; }
+.s9-entrance video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.s9-entrance canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; }
+.s9-hint { position: absolute; left: 50%; bottom: 9vh; transform: translateX(-50%); font: 11px 'Martian Mono', monospace; letter-spacing: 0.35em; color: #8a8a92; opacity: 0; transition: opacity 1s; pointer-events: none; text-shadow: 0 1px 6px #000; white-space: nowrap; }
+.s9-skip { position: absolute; right: 3.5vw; bottom: 8.5vh; cursor: pointer; font-size: 10px; letter-spacing: 0.25em; color: #5a5a64; text-shadow: 0 1px 6px #000; font-family: 'Martian Mono', monospace; white-space: nowrap; }
+.s9-skip:hover { color: #ffffff; }
+
+/* ── Windows 11 screen ── */
+.s9-win { position: absolute; inset: 0; overflow: hidden; font-family: 'Segoe UI', system-ui, sans-serif; transition: background 0.5s; }
+.s9-win-blobs { position: absolute; inset: -20%; filter: blur(60px); opacity: 0.95; pointer-events: none; }
+.s9-win-blob-a { position: absolute; width: 60%; height: 60%; left: 5%; top: 8%; border-radius: 50%; animation: s9blobA 10s ease-in-out infinite alternate; }
+.s9-win-blob-b { position: absolute; width: 55%; height: 55%; right: 4%; bottom: 6%; border-radius: 50%; animation: s9blobB 13s ease-in-out infinite alternate; }
+.s9-win-band { position: absolute; width: 130%; height: 22%; left: -15%; top: 40%; transform: rotate(-18deg); animation: s9blobB 17s ease-in-out infinite alternate; }
+.s9-win-stars { position: absolute; inset: 0; pointer-events: none; animation: s9stars 60s linear infinite; background-repeat: repeat; background-size: 260px 260px;
+  background-image:
+    radial-gradient(1.4px 1.4px at 14px 32px, #ffffff, transparent 60%),
+    radial-gradient(1px 1px at 84px 12px, rgba(255,255,255,0.75), transparent 60%),
+    radial-gradient(1.2px 1.2px at 150px 60px, rgba(255,255,255,0.9), transparent 60%),
+    radial-gradient(0.8px 0.8px at 212px 30px, rgba(255,255,255,0.6), transparent 60%),
+    radial-gradient(1px 1px at 44px 118px, rgba(255,255,255,0.8), transparent 60%),
+    radial-gradient(1.6px 1.6px at 118px 150px, #ffffff, transparent 60%),
+    radial-gradient(1px 1px at 196px 124px, rgba(255,255,255,0.7), transparent 60%),
+    radial-gradient(1.1px 1.1px at 26px 208px, rgba(255,255,255,0.85), transparent 60%),
+    radial-gradient(0.8px 0.8px at 106px 232px, rgba(255,255,255,0.6), transparent 60%),
+    radial-gradient(1.3px 1.3px at 178px 198px, #ffffff, transparent 60%),
+    radial-gradient(0.9px 0.9px at 240px 240px, rgba(255,255,255,0.75), transparent 60%); }
+.s9-win-icons { position: absolute; top: 22px; left: 22px; display: flex; flex-direction: column; flex-wrap: wrap; gap: 4px; max-height: 75%; align-items: flex-start; }
+.s9-win-icon { display: flex; align-items: center; padding: 8px 6px; border-radius: 6px; cursor: pointer; box-sizing: border-box; background: transparent; }
+.s9-win-folder-glyph { width: 44px; height: 36px; position: relative; flex-shrink: 0; }
+.s9-win-folder-tab { position: absolute; left: 2px; top: 0; width: 20px; height: 12px; border-radius: 3px 3px 0 0; background: #e8b64c; }
+.s9-win-folder-body { position: absolute; left: 2px; top: 6px; width: 40px; height: 28px; border-radius: 4px; background: linear-gradient(#f6cc66, #e0a83e); }
+.s9-win-app-icon { width: 44px; height: 44px; border-radius: 10px; box-shadow: 0 4px 16px rgba(53,213,238,0.5); flex-shrink: 0; }
+.s9-win-icon-label { font-size: 12px; text-align: center; line-height: 1.25; }
+.s9-win-window { position: absolute; left: 50%; top: 42%; transform: translate(-50%,-50%); width: min(560px, 84vw); border-radius: 8px; box-shadow: 0 24px 60px rgba(0,0,0,0.45); overflow: hidden; border: 1px solid transparent; }
+.s9-win-window-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; }
+.s9-win-window-title { font-size: 13px; font-weight: 600; }
+.s9-win-close { cursor: pointer; font-size: 13px; padding: 3px 12px; border-radius: 4px; }
+.s9-win-close:hover { background: rgba(232,17,35,0.9); color: #ffffff; }
+.s9-win-files { max-height: 300px; overflow: auto; padding: 6px 0; }
+.s9-win-file { display: flex; justify-content: space-between; gap: 16px; padding: 7px 16px; font-size: 12.5px; }
+.s9-win-file span:last-child { opacity: 0.55; white-space: nowrap; }
+.s9-win-taskbar { position: absolute; left: 0; right: 0; bottom: 0; height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; backdrop-filter: blur(18px); box-sizing: border-box; }
+.s9-win-oslabel { width: 150px; font-size: 11px; opacity: 0.6; }
+.s9-win-center { display: flex; gap: 14px; align-items: center; }
+.s9-win-start { display: grid; grid-template-columns: 9px 9px; gap: 2px; cursor: pointer; }
+.s9-win-start div { width: 9px; height: 9px; background: #4cc2ff; border-radius: 1px; }
+.s9-win-search { width: 180px; height: 30px; border-radius: 15px; display: flex; align-items: center; padding: 0 12px; font-size: 11.5px; opacity: 0.75; box-sizing: border-box; border: 1px solid transparent; }
+.s9-win-tb-icon { width: 28px; height: 28px; border-radius: 6px; cursor: pointer; }
+.s9-win-tray { display: flex; gap: 6px; align-items: center; font-size: 10.5px; width: 150px; justify-content: flex-end; }
+.s9-win-tray-btn { cursor: pointer; padding: 5px 8px; border-radius: 4px; border: 1px solid transparent; letter-spacing: 0.06em; white-space: nowrap; }
+.s9-win-clock { text-align: right; line-height: 1.35; white-space: nowrap; }
+
+/* ── tweaks (dev/debug panel, toggled with backquote) ── */
+.s9-tweaks { position: absolute; top: 10px; right: 10px; z-index: 60; background: rgba(8,8,12,0.92); border: 1px solid #2a2a32; padding: 14px 16px; font: 10px 'Martian Mono', monospace; color: #8a8a92; display: flex; flex-direction: column; gap: 8px; width: 220px; }
+.s9-tweaks label { display: flex; justify-content: space-between; align-items: center; gap: 8px; letter-spacing: 0.08em; }
+.s9-tweaks input[type=range] { width: 110px; accent-color: #0033FF; }
