@@ -115,7 +115,7 @@ export default async function Home() {
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <MagneticButton href="https://feelspoon.app">Open Feelspoon</MagneticButton>
+            <MagneticButton href="https://play.google.com/store/apps/details?id=com.justapinch.app" target="_blank">Get on Google Play</MagneticButton>
             <MagneticButton href="#how" variant="ghost">
               See how it works
             </MagneticButton>

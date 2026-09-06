@@ -12,6 +12,10 @@ export interface MagneticButtonProps {
   variant?: "primary" | "ghost";
   className?: string;
   arrow?: boolean;
+  /** Passed through to the underlying anchor when href is set. */
+  target?: React.HTMLAttributeAnchorTarget;
+  /** Passed through to the underlying anchor when href is set. Defaults to noopener noreferrer when target is _blank. */
+  rel?: string;
 }
 
 type Side = "left" | "right";
@@ -34,7 +38,11 @@ export function MagneticButton({
   variant = "primary",
   className,
   arrow = true,
+  target,
+  rel,
 }: MagneticButtonProps) {
+  const anchorRel =
+    rel ?? (target === "_blank" ? "noopener noreferrer" : undefined);
   const { ref, x, y, bind } = useMagnetic<HTMLElement>(0.4, 120);
   const [fill, setFill] = React.useState<{ on: boolean; origin: Side }>({
     on: false,
@@ -110,6 +118,8 @@ export function MagneticButton({
       <motion.a
         ref={ref as React.Ref<HTMLAnchorElement>}
         href={href}
+        target={target}
+        rel={anchorRel}
         className={cls}
         style={{ x, y }}
         onPointerMove={bind.onPointerMove}

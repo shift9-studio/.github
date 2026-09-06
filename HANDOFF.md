@@ -5,9 +5,18 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-09-05
+**Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-06 - Room Explore synced with main (PR #48 merge prep)
+
+**Branch:** `feat/intro-room-explore` (PR #48).
+
+Merged `origin/main` into this branch so Room Explore can ship without dropping
+Flow State Ripple / FlowStateShell, Feelspoon LIVE + Google Play CTA, capsule
+polish, or MagneticButton `target` pass-through. Intro beat rates stay A 1.0 /
+B 1.45. Honest gap remains: Site-of-the-Year finish still needs Kariim's
+Blender-baked hero GLB later.
 
 ## 2026-09-05 - Room Explore Pass-2 (enclosed shell + HDRI + soft shadows)
 
@@ -23,7 +32,7 @@
 - Real maps: Poly Haven concrete floor + plaster wall (CC0). CC0 Khronos SheenChair GLB as chair.
 - Printer bay + Lumen whitebox stack + posters remain (film placement, tighter room). Interactions unchanged. Beat rates untouched (A 1.0 / B 1.45).
 
-**Meshy.** Spent **45** credits (balance 3070 ? 3025) on image-to-3D from `04-desk-still` crops (desk/printer/lumen). Results were melted/non-manifold � **not mounted**. Credits noted in `public/experience/room/CREDITS.md`. Need isolated orthographic refs or Blender bake for hero GLBs.
+**Meshy.** Spent **45** credits (balance 3070 ? 3025) on image-to-3D from `04-desk-still` crops (desk/printer/lumen). Results were melted/non-manifold � **not mounted**. Credits noted in `public/experience/room/CREDITS.md`. Need isolated orthographic refs or Blender bake for hero GLBs.
 
 **Still king.** Full Blender authored room + Cycles bake (questopia pattern) remains the SOTY finish line.
 
@@ -73,6 +82,157 @@ Feelspoon is live on Google Play and at feelspoon.app. Roster / About / dolly /
 marketing page no longer say closed testing. Synced from main (#49 / aa31e33)
 onto `feat/intro-room-explore` so the PR #48 preview Apps list matches production.
 Room Explore Pass-2 work above is unchanged.
+
+
+## 2026-09-06 - Flow State demo capsule type polish
+
+**Branch:** `fix/flow-state-type-polish`.
+
+Kariim said the rest of `/flow-state` looks good; only the stadium demo
+capsule felt unfinished (clipped buffer text, cramped mono labels,
+redundant Ctrl+Win footer, loose column rhythm).
+
+**What changed (demo only).** `FlowStateDemo.tsx` + demo selectors in
+`flow-state.module.css`. Buffer copy is now `Stay in the thought.` and
+fits the local-buffer pill. Labels share `--demo-cols` with the rail so
+Armed / Capture / Local buffer line up with F-mark, waveform, and app
+sim. Footer is Standby / On-device mic / Never uploaded (no hotkey
+repeat). F-mark gets jewel-style inner ring; waveform sits in a quiet
+glass well. Ripple / FlowStateShell / waitlist / headline untouched.
+WaterSurface stays unused.
+
+**Checks:** `node scripts/check-flow-state.mjs` passes.
+**Local preview:** `http://127.0.0.1:3010/flow-state` when the branch
+dev server is up.
+
+
+## 2026-09-05 - Vercel TS: Ripple pruneRipples undefined guard
+
+**Branch:** `fix/flow-state-ripple-ts`.
+
+Production deploy for merged PR #47 failed TypeScript under
+`noUncheckedIndexedAccess`: `ripples[i]` in `pruneRipples` is
+`Wave | undefined`, so `rp.age += delta` errored. Added
+`if (!rp) continue;` before use. The render loop already guarded with
+`rp ?`.
+
+Preview then failed on `uniforms.uContent` (Record indexed access is
+`T | undefined`, but WebGL expects `WebGLUniformLocation | null`).
+Replaced the loose uniforms Record with a typed `requireUniform` map.
+Local `tsc --noEmit` passes.
+
+## 2026-09-05 - Flow State switches to Kariim's Ripple (html-in-canvas)
+
+**Branch:** `feat/flow-state-photoreal-water` (PR #47).
+
+Kariim reported Flow State still wasn't water on the feat-intro-room-explore
+preview (that branch still has the old 2D line waves). He provided `Ripple.tsx`
+and said USE IT.
+
+**What changed.** The page no longer mounts `<WaterSurface />`. A client
+`FlowStateShell.tsx` wraps the whole page in `<Ripple>` (hover trigger, ambient
+`interval={2.8}`, tuned amplitude/refraction/shine). `page.tsx` stays a server
+component and only renders `<FlowStateShell>…</FlowStateShell>`. Obsidian
+backdrop lives *inside* the Ripple content so there is something to refract.
+`.rippleRoot` is full-viewport with `isolation: isolate`.
+
+**WaterSurface.tsx** is left on disk but unused, so nobody confuses it for the
+live effect. Delete later if desired.
+
+**Chrome note.** Full page-bend refraction needs the experimental html-in-canvas
+feature (`drawElementImage` / `layoutsubtree`). Without it, Ripple falls back to
+normal DOM + glint-only overlays — still better than fake line waves on
+hover/click, and ambient interval keeps water alive.
+
+**Preview:** use this branch (`feat/flow-state-photoreal-water`), NOT
+`feat-intro-room-explore`. Local: `http://127.0.0.1:3947/flow-state` when the
+dev server is up.
+
+**Checks:** `node scripts/check-flow-state.mjs` updated to assert Ripple shell
+and passes.
+
+## 2026-09-05 - Flow State water was invisible (stacking + contrast)
+
+**Branch:** `feat/flow-state-photoreal-water` (PR #47).
+
+Kariim reported no water/ripples on Flow State. Two separate facts:
+
+1. **Live shift9.dev still serves the old 2D WaterSurface** until PR #47 merges.
+2. **On this branch, CSS hid the WebGL canvas.** `.root` had a solid obsidian
+   background with `isolation: isolate`, and `.waterSurface` was `z-index: -2`,
+   so the canvas painted *behind* the opaque root fill. Pointer listeners on
+   `window` still ran; you just could not see ripples.
+
+**Fix.** `.root` background is transparent. Dark fill moved to a dedicated
+`.backdrop` layer at `z-index: -1`. Canvas sits at `z-index: 0`. Soft vignette
+`::after` is `z-index: 1`. Topbar/composition are `position: relative; z-index: 2`
+(exit pin stays at 3). `WaterSurface.tsx` lifts body/highlight/studio shade and
+idle/drop amplitudes so the teal-pearl pool reads on first glance against
+obsidian; reduced-motion fallback unchanged.
+
+**Checks:** `node scripts/check-flow-state.mjs` passed after the change.
+
+## 2026-09-05 - Flow State page gets photoreal interactive water
+
+**Branch:** `feat/flow-state-photoreal-water` (PR open / pending merge).
+
+Kariim hated the old Flow State backdrop: a 2D canvas drawing faint sine-wave
+strokes that looked like neon lines, not water. That whole renderer is gone.
+
+**What replaced it.** `WaterSurface.tsx` is now a full-viewport WebGL2
+heightfield. The GPU runs a ripple simulation (previous + current height maps),
+builds normals from the height field, then shades soft caustics, Fresnel, and a
+dark-studio refraction look using Shift-9 void/pearl/obsidian tokens. No Three.js
+dependency was added.
+
+**Mouse.** Fine pointers push decaying fingertip ripples; dragging makes a larger
+wake. Idle water still breathes gently. `prefers-reduced-motion: reduce` freezes
+to a still photoreal plate and turns interaction off.
+
+**UI.** `flow-state.module.css` thins the header, demo, metrics, and waitlist
+panels into glass/pearl cards so the liquid stays the hero. Waitlist form and
+API contracts are unchanged.
+
+**Vercel preview fix (same branch).** Deploy `dpl_2V13CAz1V69LA2umgPhvn4Y3ki6j` failed TypeScript: indexed `framebuffers`/`textures` access is `T | undefined`, but WebGL `bindFramebuffer`/`bindTexture` want `T | null`. Fixed with `?? null` on those four binds in `WaterSurface.tsx`. Local `next build` now typechecks clean. Not a GLSL/SWC issue. Follow-up: Vercel then failed on `canvas` possibly null inside nested `paintFallback`/`resize` (narrowing lost in closures); added `if (!canvas) return` guards. `tsc --noEmit` clean.
+
+**Checks run on this machine:** `node scripts/check-flow-state.mjs`,
+`check-studio-polish.mjs`, and `check-instrument.mjs` all passed.
+
+## 2026-09-05 - Feelspoon hero CTA pointed at Google Play
+
+The orange hero button on feelspoon.app said "Open Feelspoon" and linked to
+`https://feelspoon.app` — a self-link on the marketing site, so the CTA felt broken.
+
+**Fix**
+- `shift9/apps/just-a-pinch/app/page.tsx` — primary CTA is now **Get on Google Play**,
+  href `https://play.google.com/store/apps/details?id=com.justapinch.app` with
+  `target="_blank"`. "See how it works" (`#how`) unchanged.
+- `shift9/packages/ui/src/MagneticButton.tsx` — passes through `target` / `rel`,
+  and defaults `rel="noopener noreferrer"` when `target="_blank"`.
+
+Package id confirmed from growth kit / HANDOFF (`com.justapinch.app`). No separate
+web-app primary: product Live path is Play. Did not touch Room Explore / Flow State.
+
+**Branch:** `fix/feelspoon-open-cta` off `main`.
+
+## 2026-09-05 - Feelspoon is LIVE (roster + marketing copy)
+
+Feelspoon is live on Google Play and at feelspoon.app. Public status on
+shift9.dev and the feelspoon marketing page no longer say closed testing.
+
+**Files**
+- `shift9/apps/shift9-dev/app/_components/EnterTheStudio.tsx` — Feelspoon folder
+  item `s: "LIVE"` / `sc: "live"`, description + About blurb updated.
+- `shift9/apps/shift9-dev/app/_components/studio-dolly-data.ts` — status LIVE,
+  comment + note aligned with Google Play / feelspoon.app.
+- `shift9/apps/just-a-pinch/app/page.tsx` — hero label, CTA, get-section copy,
+  and footer build line no longer say closed testing / launching soon.
+
+**Left alone:** Flow State beta / shipping copy. Room Explore WIP stays on
+`feat/intro-room-explore` (not this branch).
+
+**Branch:** `fix/feelspoon-live-status` off `main`.
+
 
 ## 2026-08-24 - the desktop rail works, and every row opens its own room
 
