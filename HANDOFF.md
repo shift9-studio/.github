@@ -22,7 +22,9 @@ Second pass after walking the Pass-4 room. Arcade stays gone. Remaining faults:
   desk / film camera, not the door or the back wall.
 - Meshy `desk.glb` / `monitors.glb` / `printer.glb` were 132-byte LFS pointers
   on preview. They are now **real git blobs** so Vercel actually ships them.
-  Hunyuan enclosed printer + flat monitor remain as fallbacks.
+  The printer on the left cabinet uses the isolated Bambu `enclosed_printer.glb`
+  (Meshy `printer.glb` was reconstructed from a still that already includes the
+  cabinet, so stacking it read as a black cube).
 
 Intro beat rates unchanged (A 1.0 / B 1.45). Printer + Lumen interaction APIs stay.
 
