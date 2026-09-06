@@ -66,6 +66,8 @@ unchanged. Lumen stays whitebox cubes (film product).
 
 **Layout correction** is in Pass-4 above (no projector, Omni off the left wall).
 
+**Verified 2026-09-06 ~1:20pm ET (local next start after rebuild):** Room Explore mounts; hotspots DESK / 3D PRINTER / LUMEN; no arcade cabinet; Games wall screen on right; printer on left surface; Lumen two-cube stack left of desk. Screenshots under shift9/apps/shift9-dev/.polish-shots/room-pass3/ (01-room-spawn, 02-room-left-printer-lumen, 03-room-right-wall). Local LFS note: desk/monitors/printer.glb may be pointer files until git lfs checkout. PR #48 not merged.
+
 
 ## 2026-09-06 - Room Explore synced with main (PR #48 merge prep)
 
