@@ -2260,14 +2260,11 @@ export function RoomExplore({
     };
 
     const tryInteract = () => {
-      const near = nearestHotspot();
-      if (!near) {
-        raycaster.setFromCamera(ndc, camera);
-        const hits = raycaster.intersectObjects(collectHitProxies(), false);
-        if (!hits.length) {
-          showToast("Move closer to a glowing ring, then click or press E");
-          return;
-        }
+      /* Crosshair vs invisible boxes first — never pick by distance onto the
+         wrong stub (spawn used to fire INSTRUMENT while looking at the desk). */
+      raycaster.setFromCamera(ndc, camera);
+      const hits = raycaster.intersectObjects(collectHitProxies(), false);
+      if (hits.length) {
         let obj: THREE.Object3D | null = hits[0]!.object;
         let found: PropId | null = null;
         while (obj) {
@@ -2280,8 +2277,14 @@ export function RoomExplore({
           if (found) break;
           obj = obj.parent;
         }
-        if (!found) return;
-        runProp(found);
+        if (found) {
+          runProp(found);
+          return;
+        }
+      }
+      const near = nearestHotspot();
+      if (!near) {
+        showToast("Move closer to a glowing ring, then click or press E");
         return;
       }
       runProp(near.id);

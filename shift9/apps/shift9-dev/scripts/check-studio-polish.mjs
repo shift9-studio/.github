@@ -103,6 +103,7 @@ assert.match(room, /deskHit/, "Desk interaction must use an invisible hit proxy"
 assert.match(room, /printerHit/, "Printer interaction must use an invisible hit proxy");
 assert.match(room, /lumenHit/, "Lumen interaction must use an invisible hit proxy");
 assert.match(room, /hitProxy/, "Clicks must hit invisible box proxies, not reconstructed meshes");
+assert.match(room, /collectHitProxies/, "E / click must raycast the invisible boxes before falling back to nearest distance");
 assert.match(room, /mesh\.raycast = \(\) => \{\}/, "The reconstructed room mesh must not own raycasts");
 assert.match(room, /leftTable/, "The left workbench is its own group, stretched in X only");
 assert.match(room, /FILM_LEFT/, "Left workbench stretch is X-only against the film, not a uniform room scale");
