@@ -246,31 +246,48 @@
 }
 
 .demo {
+  --demo-cols: 3.35rem minmax(5.5rem, 0.62fr) minmax(13.5rem, 1.55fr);
+  --demo-inline: clamp(0.85rem, 1.8vw, 1.35rem);
   position: relative;
   margin: 0;
-  padding: clamp(1.25rem, 3vw, 2rem);
-  border: 1px solid color-mix(in oklab, var(--s9-pearl) 19%, transparent);
+  padding: clamp(1.1rem, 2.4vw, 1.65rem) clamp(1rem, 2.2vw, 1.5rem);
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 18%, transparent);
   border-radius: 999px;
   background:
-    linear-gradient(115deg, color-mix(in oklab, var(--s9-pearl) 10%, transparent), transparent 38%),
-    color-mix(in oklab, var(--s9-obsidian) 34%, color-mix(in oklab, var(--s9-pearl) 5%, transparent));
+    linear-gradient(115deg, color-mix(in oklab, var(--s9-pearl) 9%, transparent), transparent 40%),
+    color-mix(in oklab, var(--s9-obsidian) 36%, color-mix(in oklab, var(--s9-pearl) 5%, transparent));
   box-shadow:
-    inset 0 1px 0 color-mix(in oklab, var(--s9-chalk) 14%, transparent),
-    0 1.6rem 5rem color-mix(in oklab, var(--s9-obsidian) 40%, transparent);
+    inset 0 1px 0 color-mix(in oklab, var(--s9-chalk) 12%, transparent),
+    0 1.4rem 4.5rem color-mix(in oklab, var(--s9-obsidian) 38%, transparent);
   backdrop-filter: blur(1.25rem) saturate(130%);
 }
 
 .demoLabels,
 .demoFooter {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  padding-inline: 1rem;
+  grid-template-columns: var(--demo-cols);
+  align-items: end;
+  gap: 0.85rem;
+  padding-inline: var(--demo-inline);
   font-family: var(--s9-font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.13em;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--s9-chalk) 46%, transparent);
+  color: color-mix(in oklab, var(--s9-chalk) 52%, transparent);
+}
+
+.demoLabels {
+  padding-bottom: 0.85rem;
+}
+
+.demoFooter {
+  align-items: start;
+  padding-top: 0.85rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: color-mix(in oklab, var(--s9-chalk) 42%, transparent);
 }
 
 .demoLabels span:nth-child(2),
@@ -286,73 +303,91 @@
 .demoRail {
   position: relative;
   display: grid;
-  grid-template-columns: 3.5rem minmax(7rem, 0.75fr) minmax(12rem, 1.25fr);
+  grid-template-columns: var(--demo-cols);
   align-items: center;
-  gap: 1rem;
-  min-height: 5.75rem;
-  margin: 0.75rem 0;
-  padding: 0.65rem;
-  border-block: 1px solid color-mix(in oklab, var(--s9-pearl) 11%, transparent);
+  gap: 0.85rem;
+  min-height: 5.5rem;
+  margin: 0;
+  padding: 0.85rem var(--demo-inline);
+  border-block: 1px solid color-mix(in oklab, var(--s9-pearl) 12%, transparent);
 }
 
 .demoRail::before {
   content: "";
   position: absolute;
-  left: 1.75rem;
-  right: 1rem;
+  left: calc(var(--demo-inline) + 1.55rem);
+  right: calc(var(--demo-inline) + 0.35rem);
   top: 50%;
   height: 1px;
-  background: color-mix(in oklab, var(--s9-pearl) 18%, transparent);
+  background: color-mix(in oklab, var(--s9-pearl) 14%, transparent);
+  pointer-events: none;
 }
 
 .fMark {
   position: relative;
   z-index: 1;
-  width: 3.15rem;
-  height: 3.15rem;
+  width: 3.05rem;
+  height: 3.05rem;
   display: grid;
   place-items: center;
+  justify-self: start;
   transform: rotate(45deg);
-  border: 1px solid color-mix(in oklab, var(--s9-pearl) 32%, transparent);
-  border-radius: 0.55rem;
-  background: var(--s9-obsidian);
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 38%, transparent);
+  border-radius: 0.5rem;
+  background:
+    linear-gradient(145deg, color-mix(in oklab, var(--s9-pearl) 12%, transparent), transparent 46%),
+    var(--s9-obsidian);
   box-shadow:
-    inset 0 0 0 0.35rem color-mix(in oklab, var(--s9-chalk) 3%, transparent),
-    0 0 1.4rem color-mix(in oklab, var(--s9-pearl) 10%, transparent);
+    inset 0 0 0 1px color-mix(in oklab, var(--s9-chalk) 8%, transparent),
+    0 0 1.35rem color-mix(in oklab, var(--s9-pearl) 12%, transparent);
+}
+
+.fMark::before {
+  content: "";
+  position: absolute;
+  inset: 0.38rem;
+  border: 1px solid color-mix(in oklab, var(--s9-chalk) 12%, transparent);
+  border-radius: 0.28rem;
+  pointer-events: none;
 }
 
 .fMark span {
+  position: relative;
+  z-index: 1;
   transform: rotate(-45deg);
   font-family: var(--s9-font-display);
-  font-size: 2rem;
+  font-size: 1.85rem;
   font-weight: 900;
+  line-height: 1;
   color: var(--s9-holofoil-fallback);
 }
 
 .waveform {
   position: relative;
   z-index: 1;
-  height: 4.25rem;
+  height: 3.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.28rem;
-  padding-inline: 0.9rem;
-  border-inline: 1px solid color-mix(in oklab, var(--s9-pearl) 10%, transparent);
-  background: color-mix(in oklab, var(--s9-obsidian) 68%, transparent);
+  gap: 0.22rem;
+  padding-inline: 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 12%, transparent);
+  border-radius: 0.85rem;
+  background: color-mix(in oklab, var(--s9-obsidian) 72%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--s9-chalk) 8%, transparent);
 }
 
 .waveBar {
   display: block;
-  flex: 0 0 0.18rem;
-  width: 0.18rem;
-  height: 70%;
-  min-height: 0.3rem;
+  flex: 0 0 0.16rem;
+  width: 0.16rem;
+  height: 68%;
+  min-height: 0.28rem;
   border-radius: 999px;
-  background: var(--s9-pearl);
+  background: color-mix(in oklab, var(--s9-pearl) 88%, transparent);
   transform-origin: center;
   animation: listen var(--s9-dur-slow) var(--s9-ease-inout) infinite alternate;
-  box-shadow: 0 0 0.55rem color-mix(in oklab, var(--s9-pearl) 34%, transparent);
+  box-shadow: 0 0 0.45rem color-mix(in oklab, var(--s9-pearl) 28%, transparent);
 }
 
 .waveBar:nth-child(3n) {
@@ -361,70 +396,79 @@
 }
 
 .waveBar:nth-child(3n + 1) {
-  height: 38%;
+  height: 36%;
   animation-duration: var(--s9-dur-premium);
 }
 
 .waveBar:nth-child(4n) {
-  height: 58%;
+  height: 56%;
   animation-duration: var(--s9-dur-base);
+}
+
+.waveBar:nth-child(5n) {
+  height: 78%;
 }
 
 .appSim {
   position: relative;
   z-index: 1;
   min-width: 0;
-  min-height: 4.25rem;
+  min-height: 3.85rem;
   overflow: hidden;
-  border: 1px solid color-mix(in oklab, var(--s9-pearl) 14%, transparent);
+  border: 1px solid color-mix(in oklab, var(--s9-pearl) 16%, transparent);
   border-radius: 999px;
-  background: color-mix(in oklab, var(--s9-obsidian) 75%, transparent);
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--s9-pearl) 6%, transparent), transparent 40%),
+    color-mix(in oklab, var(--s9-obsidian) 78%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--s9-chalk) 10%, transparent);
 }
 
 .appSimHeader {
-  min-height: 1.45rem;
+  min-height: 1.35rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  padding-inline: 1rem;
+  gap: 0.65rem;
+  padding-inline: 1.05rem;
   border-bottom: 1px solid color-mix(in oklab, var(--s9-pearl) 10%, transparent);
   font-family: var(--s9-font-mono);
-  font-size: 0.5rem;
-  letter-spacing: 0.1em;
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: color-mix(in oklab, var(--s9-chalk) 52%, transparent);
+  color: color-mix(in oklab, var(--s9-chalk) 48%, transparent);
 }
 
 .appSimHeader span:last-child {
-  color: var(--s9-pearl);
+  color: color-mix(in oklab, var(--s9-pearl) 86%, transparent);
 }
 
 .typedLine {
-  min-height: 2.8rem;
+  min-height: 2.5rem;
   display: flex;
   align-items: center;
   overflow: hidden;
-  padding-inline: 1rem;
+  padding-inline: 1.05rem;
   font-family: var(--s9-font-text);
-  font-size: clamp(0.75rem, 1vw, 1rem);
+  font-size: clamp(0.84rem, 1.05vw, 1.02rem);
   font-weight: 650;
+  letter-spacing: -0.015em;
   white-space: nowrap;
 }
 
 .typedCopy {
   display: inline-block;
+  max-width: 100%;
   clip-path: inset(0 100% 0 0);
-  animation: typeIn var(--s9-dur-sheen) steps(33, end) infinite;
+  animation: typeIn var(--s9-dur-sheen) steps(22, end) infinite;
 }
 
 .typedCopy::after {
   content: "";
   display: inline-block;
   width: 1px;
-  height: 1.15rem;
-  margin-left: 0.2rem;
-  vertical-align: -0.25rem;
+  height: 1.05rem;
+  margin-left: 0.18rem;
+  vertical-align: -0.22rem;
   background: var(--s9-pearl);
 }
 
@@ -704,11 +748,20 @@
   .intakeStatus { display: none; }
   .story { padding-top: 4rem; }
   .headline { font-size: clamp(3.75rem, 18vw, 6rem); }
-  .demo { border-radius: 1.35rem; }
-  .demoRail { grid-template-columns: 3rem minmax(0, 1fr); gap: 0.7rem; padding-inline: 0.25rem; }
+  .demo {
+    --demo-cols: 2.85rem minmax(0, 1fr);
+    --demo-inline: 0.7rem;
+    border-radius: 1.35rem;
+  }
+  .demoRail { gap: 0.7rem; }
   .appSim { grid-column: 1 / -1; }
   .demoLabels,
-  .demoFooter { padding-inline: 0; font-size: 0.5rem; }
+  .demoFooter {
+    grid-template-columns: var(--demo-cols);
+    font-size: 0.54rem;
+  }
+  .demoLabels span:last-child,
+  .demoFooter span:last-child { display: none; }
   .metrics { grid-template-columns: 1fr; }
   .metrics > div { border-right: 0; border-bottom: 1px solid color-mix(in oklab, var(--s9-pearl) 10%, transparent); }
   .metrics > div:last-child { border-bottom: 0; }

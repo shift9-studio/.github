@@ -5,8 +5,30 @@
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.
 > `PROGRESS.md` = the active branch state in detail.
 
-**Last updated:** 2026-09-05
+**Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
+
+## 2026-09-06 - Flow State demo capsule type polish
+
+**Branch:** `fix/flow-state-type-polish`.
+
+Kariim said the rest of `/flow-state` looks good; only the stadium demo
+capsule felt unfinished (clipped buffer text, cramped mono labels,
+redundant Ctrl+Win footer, loose column rhythm).
+
+**What changed (demo only).** `FlowStateDemo.tsx` + demo selectors in
+`flow-state.module.css`. Buffer copy is now `Stay in the thought.` and
+fits the local-buffer pill. Labels share `--demo-cols` with the rail so
+Armed / Capture / Local buffer line up with F-mark, waveform, and app
+sim. Footer is Standby / On-device mic / Never uploaded (no hotkey
+repeat). F-mark gets jewel-style inner ring; waveform sits in a quiet
+glass well. Ripple / FlowStateShell / waitlist / headline untouched.
+WaterSurface stays unused.
+
+**Checks:** `node scripts/check-flow-state.mjs` passes.
+**Local preview:** `http://127.0.0.1:3010/flow-state` when the branch
+dev server is up.
+
 
 ## 2026-09-05 - Vercel TS: Ripple pruneRipples undefined guard
 
