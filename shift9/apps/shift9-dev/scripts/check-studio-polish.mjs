@@ -105,7 +105,7 @@ assert.match(room, /enclosed_printer\.glb/, "Room explore must mount a reconstru
 assert.match(room, /flat_monitor\.glb/, "Room explore must mount a reconstructed monitor GLB");
 assert.doesNotMatch(room, /arcadeCab/, "The backwards arcade cabinet must stay removed");
 assert.match(room, /"games"/, "Games is a wall-mounted monitor, not an arcade cabinet");
-assert.match(room, /lumen\.position\.set\(\s*-1\./, "Lumen boxes sit directly left of the desk");
+assert.match(room, /lumen\.position\.set\(\s*1\./, "Lumen boxes sit immediately right of the desk, matching the film still");
 assert.match(room, /printer\.position\.set\(\s*-2\./, "Printer sits on a surface left of the desk");
 assert.match(entrance, /ROOM_WALK_PLAYBACK_RATE/, "Only the room-walk (desk) beat is sped up");
 assert.match(entrance, /vid\.playbackRate = 1/, "Approach/entry beat stays at natural 1x");

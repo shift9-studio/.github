@@ -8,6 +8,24 @@
 **Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-06 - Room Explore matches the opening film still
+
+**Branch:** `feat/intro-room-explore` (PR #48). Do not merge.
+
+Kariim sent the opening desk plate (`04-desk-still.jpg`) plus the two old
+WebGL critique frames. Match the film, not those toy frames:
+
+- Dark navy walls + dark hardwood floor. HDRI is reflections only (no grey
+  studio backdrop). Lighting is pools: warm monitor bar, cool printer tube,
+  blue bias behind the screens.
+- Printer bay **left** of the desk (metal cabinet, wood top, pegboard, tube).
+- Lumen **two grid cubes immediately right** of the desk (film still).
+- Dual monitors on one black arm: ultrawide + portrait + light bar.
+- Games stays a flush TV on the far right wall. Arcade stays gone.
+- Dark Aeron-ish chair. Silver keyboard, white pots. No neon floor stripe.
+
+Intro rates A 1.0 / B 1.45. Printer + Lumen APIs unchanged.
+
 ## 2026-09-06 - Room Explore Pass-4b (Kariim walk-through layout, take 2)
 
 **Branch:** `feat/intro-room-explore` (PR #48). Do not merge — Kariim rescore.

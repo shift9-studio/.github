@@ -2,11 +2,9 @@
 
 /* ------------------------------------------------------------------------
    ROOM EXPLORE - live WebGL walkaround of the Shift-9 studio room.
-   Photoreal Meshy + Hunyuan GLBs, not CSS boxes. Layout from Kariim's walk:
-   printer on a cabinet LEFT of the desk, Lumen grid cubes immediately LEFT
-   of the desk, games as a wall-mounted monitor on the RIGHT wall.
-   No arcade cabinet. Props face into the room (toward the desk / -Z).
-   HDRI + ACES + soft PCF shadows stay on.
+   Match opening film plate 04-desk-still — not the old toy WebGL frames.
+   Dark navy room, oak desk, printer bay LEFT, Lumen cubes RIGHT of the desk,
+   gallery / Games TV on the far right wall. No arcade. HDRI + ACES stay on.
    ------------------------------------------------------------------------ */
 
 import {
@@ -482,7 +480,7 @@ export function RoomExplore({
     renderer.setSize(mount.clientWidth, mount.clientHeight, false);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+    renderer.toneMappingExposure = 0.88;
     renderer.shadowMap.enabled = !reducedMotion;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -522,19 +520,19 @@ export function RoomExplore({
       }),
     );
     const floorMat = trackMat(
-      makeMat(0xffffff, {
+      makeMat(0x2a2218, {
         map: floorMap,
-        roughness: 0.9,
-        metalness: 0.05,
-        envMapIntensity: 0.85,
+        roughness: 0.72,
+        metalness: 0.08,
+        envMapIntensity: 0.45,
       }),
     );
     const wallMat = trackMat(
-      makeMat(0xffffff, {
+      makeMat(0x121820, {
         map: wallMap,
-        roughness: 0.94,
+        roughness: 0.96,
         metalness: 0.02,
-        envMapIntensity: 0.55,
+        envMapIntensity: 0.22,
       }),
     );
     const metalMat = trackMat(
@@ -605,12 +603,15 @@ export function RoomExplore({
       }
     };
 
+    /* Film floor is dark hardwood, not the light concrete that made the old
+       WebGL frames read as a grey toy box. Wood albedo is multiplied dark. */
     applyPBR(floorMat, {
-      map: "/experience/room/concrete_floor.jpg",
-      normalMap: "/experience/room/concrete_floor_nor.jpg",
-      roughnessMap: "/experience/room/concrete_floor_rough.jpg",
-      repeat: 4,
+      map: "/experience/room/wood_table_diff.jpg",
+      normalMap: "/experience/room/wood_table_nor.jpg",
+      roughnessMap: "/experience/room/wood_table_rough.jpg",
+      repeat: 6,
     });
+    /* Navy multiply over plaster so walls stay film-dark, not light grey. */
     applyPBR(wallMat, {
       map: "/experience/room/plaster_wall.jpg",
       normalMap: "/experience/room/plaster_wall_nor.jpg",
@@ -687,15 +688,13 @@ export function RoomExplore({
     /* -- HDRI → PMREM (Pass-2). RoomEnvironment fallback if HDR fails. -- */
     const pmrem = new THREE.PMREMGenerator(renderer);
     pmrem.compileEquirectangularShader();
-    const applyEnv = (tex: THREE.Texture, asBackground: boolean) => {
+    const applyEnv = (tex: THREE.Texture, _asBackground: boolean) => {
       const env = pmrem.fromEquirectangular(tex).texture;
       scene.environment = env;
-      (scene as THREE.Scene & { environmentIntensity?: number }).environmentIntensity = 0.85;
-      if (asBackground) {
-        scene.background = env;
-        scene.backgroundBlurriness = 0.35;
-        scene.backgroundIntensity = 0.22;
-      }
+      (scene as THREE.Scene & { environmentIntensity?: number }).environmentIntensity = 0.4;
+      /* Film plate is a dark room. HDRI is for reflections only — using it as
+         the backdrop washed the old frames into a grey toy studio. */
+      scene.background = new THREE.Color(0x0a0d14);
       tex.dispose();
     };
     const applyRoomFallback = () => {
@@ -715,11 +714,11 @@ export function RoomExplore({
     );
 
     /* -- Lighting: warm key + soft shadows tight to desk AABB ------------ */
-    scene.add(new THREE.AmbientLight(0x1a2233, 0.18));
-    const hemi = new THREE.HemisphereLight(0x8a9bb8, 0x0a0c12, 0.28);
+    scene.add(new THREE.AmbientLight(0x121820, 0.08));
+    const hemi = new THREE.HemisphereLight(0x3a4a62, 0x080a10, 0.14);
     scene.add(hemi);
 
-    const key = new THREE.DirectionalLight(0xfff1dd, 2.6);
+    const key = new THREE.DirectionalLight(0xffe8c8, 1.85);
     key.position.set(1.6, 4.2, 2.4);
     key.castShadow = !reducedMotion;
     key.shadow.mapSize.set(2048, 2048);
@@ -754,10 +753,15 @@ export function RoomExplore({
     printerGlow.position.set(-2.55, 1.55, -2.45);
     scene.add(printerGlow);
 
-    const lumenBeam = new THREE.SpotLight(0xffffff, 1.8, 10, 0.34, 0.55, 1.35);
-    lumenBeam.position.set(-1.15, 3.15, -1.15);
-    lumenBeam.target.position.set(-1.48, 0.7, -2.52);
+    const lumenBeam = new THREE.SpotLight(0xffffff, 1.6, 10, 0.34, 0.55, 1.35);
+    lumenBeam.position.set(1.15, 3.15, -1.15);
+    lumenBeam.target.position.set(1.72, 0.55, -2.4);
     scene.add(lumenBeam, lumenBeam.target);
+
+    /* Cool bias light behind the monitors — film blue halo on the back wall */
+    const bias = new THREE.PointLight(0x3d6cff, 1.25, 4.2, 2);
+    bias.position.set(0.1, 1.4, -3.45);
+    scene.add(bias);
 
     /* RectArea + spot on ultrawide — screen presence */
     const screenRect = new THREE.RectAreaLight(0x9ec5ff, 6.5, 1.15, 0.5);
@@ -769,7 +773,7 @@ export function RoomExplore({
     screenSpot.target.position.set(0, 0.85, -2.55);
     scene.add(screenSpot, screenSpot.target);
 
-    const fill = new THREE.PointLight(0x9bb4d8, 0.28, 14, 2);
+    const fill = new THREE.PointLight(0x6a7a94, 0.12, 14, 2);
     fill.position.set(0, 2.5, 1.8);
     scene.add(fill);
 
@@ -839,7 +843,7 @@ export function RoomExplore({
       trackMat(
         makeMat(0xe8f2ff, {
           emissive: 0xc8dcff,
-          emissiveIntensity: 1.8,
+          emissiveIntensity: 0.55,
           roughness: 0.35,
           metalness: 0.1,
         }),
@@ -865,16 +869,7 @@ export function RoomExplore({
     contactShadow.position.set(0, 0.015, -2.55);
     scene.add(contactShadow);
 
-    /* Accent floor stripe - studio stage mark */
-    const stripe = new THREE.Mesh(
-      new THREE.PlaneGeometry(7.5, 0.06),
-      trackMat(
-        makeMat(0x3b93f0, { emissive: 0x1d4f91, emissiveIntensity: 0.35 }),
-      ),
-    );
-    stripe.rotation.x = -Math.PI / 2;
-    stripe.position.set(0, 0.012, 0.85);
-    scene.add(stripe);
+    /* Film floor has no neon stage stripe — that read as the old toy frames. */
 
     /* Gallery posters on right wall - set-piece plates (lived-in film match) */
     const posterUrls = [
@@ -1078,6 +1073,21 @@ export function RoomExplore({
     const monitorPlastic = trackMat(
       makeMat(0x14181e, { roughness: 0.42, metalness: 0.35, envMapIntensity: 1.1 }),
     );
+    /* Single black pole-arm — film dual-monitor mount */
+    const armPole = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.022, 0.024, 0.62, 12),
+      blackMetal,
+    );
+    armPole.position.set(0.22, 1.06, -0.34);
+    armPole.castShadow = true;
+    desk.add(armPole);
+    const armBar = new THREE.Mesh(
+      new THREE.BoxGeometry(1.15, 0.03, 0.03),
+      blackMetal,
+    );
+    armBar.position.set(0.22, 1.36, -0.32);
+    desk.add(armBar);
+
     const ultraBezel = new THREE.Mesh(
       new THREE.BoxGeometry(1.28, 0.62, 0.05),
       monitorBezel,
@@ -1166,14 +1176,20 @@ export function RoomExplore({
     matPad.position.set(0, 0.785, 0.12);
     desk.add(matPad);
     const keyboard = new THREE.Mesh(
-      new THREE.BoxGeometry(0.42, 0.02, 0.14),
-      trackMat(makeMat(0x3a4048, { roughness: 0.55, metalness: 0.2 })),
+      new THREE.BoxGeometry(0.42, 0.012, 0.13),
+      trackMat(makeMat(0xc5c8ce, { roughness: 0.35, metalness: 0.45 })),
     );
     keyboard.position.set(-0.05, 0.8, 0.15);
     desk.add(keyboard);
+    const dial = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.028, 0.03, 0.018, 20),
+      trackMat(makeMat(0x2a2e34, { roughness: 0.4, metalness: 0.5 })),
+    );
+    dial.position.set(-0.32, 0.8, 0.12);
+    desk.add(dial);
     const mouse = new THREE.Mesh(
       new THREE.BoxGeometry(0.07, 0.025, 0.11),
-      trackMat(makeMat(0x4a5058, { roughness: 0.45 })),
+      trackMat(makeMat(0x2a2e34, { roughness: 0.4 })),
     );
     mouse.position.set(0.32, 0.8, 0.14);
     desk.add(mouse);
@@ -1183,7 +1199,7 @@ export function RoomExplore({
     for (const px of [-0.85, -0.68]) {
       const pot = new THREE.Mesh(
         new THREE.CylinderGeometry(0.04, 0.035, 0.06, 10),
-        trackMat(makeMat(0x6a7078, { roughness: 0.7 })),
+        trackMat(makeMat(0xe6e4de, { roughness: 0.55 })),
       );
       pot.position.set(px, 0.81, -0.15);
       plantFallback.add(pot);
@@ -1211,38 +1227,50 @@ export function RoomExplore({
       });
     }
 
-    /* Chair - mesh-ish Aeron silhouette */
+    /* Chair — dark Aeron-ish mesh, not a rectangular slab (old WebGL frame) */
     const chair = new THREE.Group();
-    chair.position.set(0, 0, 0.85);
-    const seat = new THREE.Mesh(
-      new THREE.BoxGeometry(0.52, 0.06, 0.5),
-      trackMat(makeMat(0x1a1f28, { roughness: 0.7 })),
+    chair.position.set(0, 0, 0.92);
+    const meshMat = trackMat(makeMat(0x1a1c20, { roughness: 0.78, metalness: 0.08 }));
+    const star = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.22, 0.24, 0.04, 5),
+      blackMetal,
     );
+    star.position.y = 0.06;
+    chair.add(star);
+    const post = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.03, 0.035, 0.38, 10),
+      blackMetal,
+    );
+    post.position.y = 0.26;
+    chair.add(post);
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.05, 0.46), meshMat);
     seat.position.y = 0.48;
+    seat.scale.set(1, 1, 0.92);
     seat.castShadow = true;
     chair.add(seat);
     const backrest = new THREE.Mesh(
-      new THREE.BoxGeometry(0.5, 0.7, 0.06),
-      trackMat(makeMat(0x1a1f28, { roughness: 0.65, wireframe: false })),
+      new THREE.BoxGeometry(0.46, 0.58, 0.05),
+      meshMat,
     );
-    backrest.position.set(0, 0.9, -0.22);
+    backrest.position.set(0, 0.86, -0.2);
+    backrest.rotation.x = -0.12;
     backrest.castShadow = true;
     chair.add(backrest);
-    const meshPanel = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.42, 0.58),
-      trackMat(
-        new THREE.MeshStandardMaterial({
-          color: 0x2a3140,
-          wireframe: true,
-          roughness: 0.5,
-          metalness: 0.2,
-          transparent: true,
-          opacity: 0.55,
-        }),
-      ),
+    const lumbar = new THREE.Mesh(
+      new THREE.TorusGeometry(0.09, 0.018, 8, 16, Math.PI),
+      blackMetal,
     );
-    meshPanel.position.set(0, 0.9, -0.188);
-    chair.add(meshPanel);
+    lumbar.position.set(0, 0.62, -0.16);
+    lumbar.rotation.y = Math.PI;
+    chair.add(lumbar);
+    for (const x of [-0.22, 0.22]) {
+      const arm = new THREE.Mesh(
+        new THREE.BoxGeometry(0.05, 0.28, 0.08),
+        blackMetal,
+      );
+      arm.position.set(x, 0.64, 0.02);
+      chair.add(arm);
+    }
     desk.add(chair);
 
     /* Speakers on stands - film left/right of desk */
@@ -1273,20 +1301,9 @@ export function RoomExplore({
     mkSpeaker(-1.45);
     mkSpeaker(1.45);
 
-    tryGltf(
-      "/experience/room/monitors.glb",
-      (root) => {
-        fitGltf(root, new THREE.Vector3(1.7, 0.95, 0.55), "bottom");
-        root.position.set(0.05, 0.78, -0.22);
-        ultraBezel.visible = false;
-        portBezel.visible = false;
-        lightBar.visible = false;
-        ultraScreen.position.set(-0.15, 1.28, -0.18);
-        portScreen.position.set(0.85, 1.32, -0.18);
-        desk.add(root);
-      },
-      mountHunyuanDeskMonitors,
-    );
+    /* Film wants ultrawide + portrait + light bar. Meshy monitors.glb is a
+       landscape pair that hides the bar — skip it and keep the film layout. */
+    mountHunyuanDeskMonitors();
     /* Keep the dark Aeron-ish chair. office_chair.glb is Khronos SheenChair
        (orange lounge silhouette) and reads as the wrong film object. */
 
@@ -1334,14 +1351,19 @@ export function RoomExplore({
 
     tryGltf("/experience/room/cabinet/drawer_cabinet_2k.gltf", (root) => {
       printerFurniture.visible = false;
+      paintGltf(root, cabinetMat);
       fitGltfToFloor(root, { width: 1.2, depth: 0.7, height: 0.82 });
       printer.add(root);
+      const woodTop = new THREE.Mesh(new THREE.BoxGeometry(1.22, 0.04, 0.76), woodMat);
+      woodTop.position.y = 0.8;
+      woodTop.castShadow = true;
+      printer.add(woodTop);
     });
 
     /* Enclosed printer body — Hunyuan mesh from isolated Bambu product ref */
     const printerShell = trackMat(
       new THREE.MeshPhysicalMaterial({
-        color: 0xb4b8bf,
+        color: 0x3a424c,
         metalness: 0.62,
         roughness: 0.34,
         clearcoat: 0.18,
@@ -1459,7 +1481,7 @@ export function RoomExplore({
         new THREE.MeshBasicMaterial({
           color: 0x4db8ff,
           transparent: true,
-          opacity: 0.35,
+          opacity: 0.12,
           side: THREE.DoubleSide,
         }),
       ),
@@ -1483,17 +1505,17 @@ export function RoomExplore({
       position: new THREE.Vector3(-2.55, 1.45, -2.55),
     });
 
-    /* -- Lumen: two film grid cubes DIRECTLY left of the main desk ------ */
+    /* -- Lumen: two film grid cubes IMMEDIATELY RIGHT of the main desk --- */
     const lumen = new THREE.Group();
-    lumen.position.set(-1.58, 0, -2.48);
+    lumen.position.set(1.72, 0, -2.4);
 
     const boxes = new THREE.Group();
     boxes.name = "lumenBoxes";
     const stack: THREE.Mesh[] = [];
-    /* Film: two modest stacked cubes (chair-scale), not a 1.5m CSS tower */
+    /* Film still: two large pale cubes with a faint white grid, chair-height */
     const layout: [number, number, number, number, number, number][] = [
-      [0.44, 0.44, 0.44, 0.0, 0.22, 0.0],
-      [0.36, 0.36, 0.36, 0.02, 0.62, 0.02],
+      [0.56, 0.56, 0.56, 0.0, 0.28, 0.0],
+      [0.48, 0.48, 0.48, 0.03, 0.8, 0.03],
     ];
     for (const [w, h, d, x, y, z] of layout) {
       const lm = trackMat(createLumenMaterial(gridMap, lumenProjectTex));
@@ -1524,7 +1546,7 @@ export function RoomExplore({
       id: "lumen",
       label: "Lumen",
       prompt: "Aim / calibrate the projection",
-      position: new THREE.Vector3(-1.58, 0.72, -2.48),
+      position: new THREE.Vector3(1.72, 0.7, -2.4),
     });
 
     /* -- Stub props - richer silhouettes, film/docs-faithful ----------- */
@@ -1679,7 +1701,7 @@ export function RoomExplore({
       "omni",
       "Omni-3D",
       "Coming soon - hologram glitch",
-      [2.85, 0, -2.55],
+      [3.25, 0, 1.15],
       (g) => {
         /* Face the desk / spawn, not the back wall */
         g.rotation.y = Math.PI;
@@ -1878,10 +1900,10 @@ export function RoomExplore({
         return;
       }
       const corners = [
-        new THREE.Vector3(-0.22, 0.04, 0.22),
-        new THREE.Vector3(0.22, 0.04, 0.22),
-        new THREE.Vector3(0.2, 0.8, 0.2),
-        new THREE.Vector3(-0.16, 0.8, -0.16),
+        new THREE.Vector3(-0.28, 0.04, 0.28),
+        new THREE.Vector3(0.28, 0.04, 0.28),
+        new THREE.Vector3(0.27, 1.04, 0.27),
+        new THREE.Vector3(-0.21, 1.04, -0.21),
       ];
       if (lumenStep < 4) {
         const dot = calDots[lumenStep];
