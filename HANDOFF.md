@@ -25,7 +25,8 @@ table/workbench to the **left** of the main desk.
   Draco+WebP, 338 KB, regular git blob.
 - RoomExplore mounts `room.glb` as `heroRoom` and **hides** BoxGeometry desk /
   chair / speakers / printer cabinet / pegboard / isolated Meshy-Hunyuan
-  furniture once it lands.
+  furniture once it lands. The still is lifted as emissive albedo so ACES
+  does not crush the plate.
 - Printer souvenir (nozzle + mark), Lumen two-cube stack (right of desk), and
   Games wall TV stay as interaction proxies at the film spots.
 
