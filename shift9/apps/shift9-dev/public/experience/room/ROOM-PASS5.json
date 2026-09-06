@@ -1,0 +1,16 @@
+{
+  "source_still": "public/experience/opening/04-desk-still.jpg",
+  "persistence": "locked plate → image-to-3d shape → still projected as albedo (same rule as locking a character from a still)",
+  "generator": "tencent/Hunyuan3D-2 /shape_generation",
+  "space": "https://tencent-hunyuan3d-2.hf.space",
+  "rembg": false,
+  "textured_generation": "generation_all NameError — shape only, then planar still projection",
+  "meshy": "MESHY_API_KEY absent this run; no Meshy spend",
+  "depth_anything": "Depth-Anything-V2 succeeded on the plate (2.5D relief). Not mounted; Hunyuan had real volume.",
+  "workbench": "1.72m wood+cabinet+pegboard extension to the LEFT of the reconstructed bay",
+  "output": "room.glb",
+  "bytes": 337556,
+  "compress": "gltf-transform optimize, Draco + WebP",
+  "scaled_extents_m": [5.345, 3.2, 2.714],
+  "bbox_with_bench_x": [-4.313, 2.673]
+}

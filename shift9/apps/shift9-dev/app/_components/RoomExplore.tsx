@@ -2,9 +2,10 @@
 
 /* ------------------------------------------------------------------------
    ROOM EXPLORE - live WebGL walkaround of the Shift-9 studio room.
-   Match opening film plate 04-desk-still — not the old toy WebGL frames.
-   Dark navy room, oak desk, printer bay LEFT, Lumen cubes RIGHT of the desk,
-   gallery / Games TV on the far right wall. No arcade. HDRI + ACES stay on.
+   Hero is ONE room GLB generated from the locked opening plate
+   (04-desk-still) — same persistence as locking a character from a still.
+   BoxGeometry furniture hides when that mesh lands. Printer / Lumen / Games
+   stay as interaction proxies aligned to the film. Left workbench is longer.
    ------------------------------------------------------------------------ */
 
 import {
@@ -925,7 +926,8 @@ export function RoomExplore({
       gamesScreenMat,
     ];
 
-        /* Hero GLBs — Meshy clean-still i2-3d + CC0 chair under public/experience/room */
+    /* Hero: one whole-room GLB from the locked film still. Separate Meshy
+       desk/monitor/printer boxes are fallbacks only if room.glb misses. */
     const gltfLoader = new GLTFLoader();
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath(
@@ -1026,7 +1028,26 @@ export function RoomExplore({
       root.position.y -= box2.min.y;
     };
 
-    /* -- Desk (photoreal GLB first; film-matched dual monitors on top) -- */
+    /* -- Whole-room hero from 04-desk-still (Hunyuan shape + still albedo) -- */
+    let roomHeroOn = false;
+    const hideForRoomHero: THREE.Object3D[] = [];
+    const hideIfRoom = (obj: THREE.Object3D) => {
+      hideForRoomHero.push(obj);
+      if (roomHeroOn) obj.visible = false;
+    };
+    const mountRoomHero = (root: THREE.Group) => {
+      if (roomHeroOn) return;
+      roomHeroOn = true;
+      root.name = "heroRoom";
+      /* Pre-scaled in ROOM-PASS5: reconstructed bay + longer left workbench.
+         Sit on the back wall, facing the stand-up spawn. */
+      root.position.set(0.15, 0, BACK_Z + 0.02);
+      scene.add(root);
+      for (const o of hideForRoomHero) o.visible = false;
+    };
+    tryGltf("/experience/room/room.glb", mountRoomHero);
+
+    /* -- Desk (fallback boxes / isolated GLBs if the room hero misses) -- */
     const desk = new THREE.Group();
     desk.position.set(0, 0, -2.75);
 
@@ -1052,14 +1073,15 @@ export function RoomExplore({
 
     let deskGltfOn = false;
     const mountDeskGltf = (root: THREE.Group) => {
-      if (deskGltfOn) return;
+      if (roomHeroOn || deskGltfOn) return;
       deskGltfOn = true;
       deskBody.visible = false;
       fitGltfToFloor(root, { width: 2.55, depth: 1.12, height: 0.76 });
       root.position.z += 0.02;
       desk.add(root);
+      hideIfRoom(root);
     };
-    /* Meshy clean-still desk first; CC0 desks only if Meshy fails to land */
+    /* Isolated furniture GLBs — skipped by mountDeskGltf once room.glb lands */
     tryGltf("/experience/room/desk.glb", mountDeskGltf, () => {
       tryGltf("/experience/room/office_desk.glb", mountDeskGltf, () => {
         tryGltf("/experience/room/desk/wooden_table_02_2k.gltf", mountDeskGltf);
@@ -1131,7 +1153,9 @@ export function RoomExplore({
       desk.add(root);
     };
     const mountHunyuanDeskMonitors = () => {
+      if (roomHeroOn) return;
       tryGltf("/experience/room/flat_monitor.glb", (root) => {
+        if (roomHeroOn) return;
         ultraBezel.visible = false;
         mountDeskMonitor(root, {
           x: -0.15,
@@ -1140,8 +1164,10 @@ export function RoomExplore({
           width: 1.28,
           height: 0.72,
         });
+        hideIfRoom(root);
       });
       tryGltf("/experience/room/flat_monitor.glb", (root) => {
+        if (roomHeroOn) return;
         portBezel.visible = false;
         mountDeskMonitor(root, {
           x: 0.85,
@@ -1151,6 +1177,7 @@ export function RoomExplore({
           width: 0.42,
           height: 0.78,
         });
+        hideIfRoom(root);
       });
     };
 
@@ -1308,6 +1335,7 @@ export function RoomExplore({
        (orange lounge silhouette) and reads as the wrong film object. */
 
 
+    hideIfRoom(desk);
     scene.add(desk);
     interactives.set("desk", desk);
     hotspots.push({
@@ -1348,16 +1376,20 @@ export function RoomExplore({
     bench.receiveShadow = true;
     printerFurniture.add(bench);
     printer.add(printerFurniture);
+    hideIfRoom(printerFurniture);
 
     tryGltf("/experience/room/cabinet/drawer_cabinet_2k.gltf", (root) => {
+      if (roomHeroOn) return;
       printerFurniture.visible = false;
       paintGltf(root, cabinetMat);
       fitGltfToFloor(root, { width: 1.2, depth: 0.7, height: 0.82 });
       printer.add(root);
+      hideIfRoom(root);
       const woodTop = new THREE.Mesh(new THREE.BoxGeometry(1.22, 0.04, 0.76), woodMat);
       woodTop.position.y = 0.8;
       woodTop.castShadow = true;
       printer.add(woodTop);
+      hideIfRoom(woodTop);
     });
 
     /* Enclosed printer body — Hunyuan mesh from isolated Bambu product ref */
@@ -1381,7 +1413,9 @@ export function RoomExplore({
     frame.castShadow = true;
     frame.name = "printerBoxFrame";
     printer.add(frame);
+    hideIfRoom(frame);
     const mountEnclosedPrinter = (root: THREE.Group) => {
+      if (roomHeroOn) return;
       frame.visible = false;
       glass.visible = false;
       bed.visible = false;
@@ -1391,6 +1425,7 @@ export function RoomExplore({
       root.position.y += 0.78;
       root.rotation.y = Math.PI * 0.08;
       printer.add(root);
+      hideIfRoom(root);
     };
 
     /* Glass door suggestion */
@@ -1409,6 +1444,7 @@ export function RoomExplore({
     glass.position.set(0, 1.18, 0.32);
     glass.name = "printerBoxGlass";
     printer.add(glass);
+    hideIfRoom(glass);
 
     const bed = new THREE.Mesh(
       new THREE.BoxGeometry(0.48, 0.03, 0.45),
@@ -1417,6 +1453,7 @@ export function RoomExplore({
     bed.position.set(0, 0.92, 0);
     bed.name = "printerBoxBed";
     printer.add(bed);
+    hideIfRoom(bed);
 
     const gantry = new THREE.Mesh(
       new THREE.BoxGeometry(0.55, 0.04, 0.06),
@@ -1425,6 +1462,7 @@ export function RoomExplore({
     gantry.position.set(0, 1.42, 0);
     gantry.name = "printerBoxGantry";
     printer.add(gantry);
+    hideIfRoom(gantry);
 
     const nozzle = new THREE.Mesh(
       new THREE.CylinderGeometry(0.025, 0.012, 0.1, 10),
@@ -1449,6 +1487,7 @@ export function RoomExplore({
     );
     peg.position.set(0, 2.15, -0.28);
     printer.add(peg);
+    hideIfRoom(peg);
     for (let row = 0; row < 4; row++) {
       for (let col = 0; col < 5; col++) {
         const bin = new THREE.Mesh(
@@ -1457,6 +1496,7 @@ export function RoomExplore({
         );
         bin.position.set(-0.4 + col * 0.2, 1.95 + row * 0.18, -0.2);
         printer.add(bin);
+        hideIfRoom(bin);
       }
     }
 
@@ -1474,6 +1514,7 @@ export function RoomExplore({
     tube.rotation.z = Math.PI / 2;
     tube.position.set(0, 2.65, 0.1);
     printer.add(tube);
+    hideIfRoom(tube);
 
     const printerHalo = new THREE.Mesh(
       new THREE.RingGeometry(0.55, 0.68, 32),
@@ -1489,6 +1530,7 @@ export function RoomExplore({
     printerHalo.rotation.x = -Math.PI / 2;
     printerHalo.position.y = 0.02;
     printer.add(printerHalo);
+    hideIfRoom(printerHalo);
 
     /* Isolated Bambu mesh on the cabinet — Meshy printer.glb was built from a
        still that already includes the cabinet, so stacking it here reads as a

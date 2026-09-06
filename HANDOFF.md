@@ -8,6 +8,38 @@
 **Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-06 - Whole-room GLB from the locked desk still
+
+**Branch:** `feat/intro-room-explore` (PR #48). Do not merge.
+
+Kariim: Room Explore still read as blocky CSS. He wants the **whole room** as
+one 3D asset from the opening film plate — same persistence as locking a
+character from a still — not a kit of box props. Also lengthen the
+table/workbench to the **left** of the main desk.
+
+**What shipped**
+- `public/experience/room/room.glb` — one hero mesh from `04-desk-still.jpg`.
+  Shape: Hunyuan3D-2 `/shape_generation` (public HF space, rembg off).
+  Albedo: the locked film still, planar-projected (the plate is not redrawn).
+  Left workbench extended +1.72 m (wood + cabinet + pegboard).
+  Draco+WebP, 338 KB, regular git blob.
+- RoomExplore mounts `room.glb` as `heroRoom` and **hides** BoxGeometry desk /
+  chair / speakers / printer cabinet / pegboard / isolated Meshy-Hunyuan
+  furniture once it lands.
+- Printer souvenir (nozzle + mark), Lumen two-cube stack (right of desk), and
+  Games wall TV stay as interaction proxies at the film spots.
+
+**Honest**
+- `MESHY_API_KEY` was not in this environment. No Meshy credits spent.
+  Hunyuan `/generation_all` (native texture) crashed `NameError` on the space,
+  so albedo is the still projected onto the shape — not a Meshy PBR bake.
+- The mesh is a reconstructed bay, not a Blender-authored walk-around interior.
+  Sides/back will look like a 3D scan, not a questopia lightmap. Kariim's
+  Cycles bake is still the Site-of-the-Year finish.
+- Depth-Anything-V2 also built a 2.5D relief of the plate; not mounted.
+
+Intro rates A 1.0 / B 1.45. Printer + Lumen APIs unchanged.
+
 ## 2026-09-06 - Room Explore matches the opening film still
 
 **Branch:** `feat/intro-room-explore` (PR #48). Do not merge.
