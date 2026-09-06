@@ -2185,6 +2185,20 @@ export function RoomExplore({
       return best;
     };
 
+    const propFromProxyHit = (): PropId | null => {
+      raycaster.setFromCamera(ndc, camera);
+      const hits = raycaster.intersectObjects(collectHitProxies(), false);
+      if (!hits.length) return null;
+      let obj: THREE.Object3D | null = hits[0]!.object;
+      while (obj) {
+        for (const [id, root] of interactives) {
+          if (obj === root) return id as PropId;
+        }
+        obj = obj.parent;
+      }
+      return null;
+    };
+
     const startPrint = () => {
       if (propsRef.current.printer !== "idle") return;
       printActive = true;
@@ -2262,25 +2276,10 @@ export function RoomExplore({
     const tryInteract = () => {
       /* Crosshair vs invisible boxes first — never pick by distance onto the
          wrong stub (spawn used to fire INSTRUMENT while looking at the desk). */
-      raycaster.setFromCamera(ndc, camera);
-      const hits = raycaster.intersectObjects(collectHitProxies(), false);
-      if (hits.length) {
-        let obj: THREE.Object3D | null = hits[0]!.object;
-        let found: PropId | null = null;
-        while (obj) {
-          for (const [id, root] of interactives) {
-            if (obj === root) {
-              found = id as PropId;
-              break;
-            }
-          }
-          if (found) break;
-          obj = obj.parent;
-        }
-        if (found) {
-          runProp(found);
-          return;
-        }
+      const aimed = propFromProxyHit();
+      if (aimed) {
+        runProp(aimed);
+        return;
       }
       const near = nearestHotspot();
       if (!near) {
@@ -2364,7 +2363,9 @@ export function RoomExplore({
         y: number;
         near: boolean;
       }[] = [];
-      const near = nearestHotspot();
+      const aimed = propFromProxyHit();
+      const near =
+        (aimed && hotspots.find((h) => h.id === aimed)) || nearestHotspot();
       setNearId(near?.id ?? null);
       for (const h of hotspots) {
         const v = h.position.clone().project(camera);
