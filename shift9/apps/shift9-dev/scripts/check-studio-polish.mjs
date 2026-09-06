@@ -99,6 +99,12 @@ assert.match(room, /office_desk\.glb|wooden_table_02/, "Room explore must mount 
 assert.match(room, /office_chair\.glb/, "Room explore must mount the Khronos chair GLB");
 assert.match(room, /drawer_cabinet/, "Room explore must mount the Poly Haven printer-bay cabinet");
 assert.match(room, /wood_table_diff\.jpg/, "Room explore must use Poly Haven wood PBR, not a gray box");
+assert.match(room, /enclosed_printer\.glb/, "Room explore must mount a reconstructed enclosed printer GLB");
+assert.match(room, /flat_monitor\.glb/, "Room explore must mount a reconstructed monitor GLB");
+assert.doesNotMatch(room, /arcadeCab/, "The backwards arcade cabinet must stay removed");
+assert.match(room, /"games"/, "Games is a wall-mounted monitor, not an arcade cabinet");
+assert.match(room, /lumen\.position\.set\(\s*-1\./, "Lumen boxes sit directly left of the desk");
+assert.match(room, /printer\.position\.set\(\s*-2\./, "Printer sits on a surface left of the desk");
 assert.match(entrance, /ROOM_WALK_PLAYBACK_RATE/, "Only the room-walk (desk) beat is sped up");
 assert.match(entrance, /vid\.playbackRate = 1/, "Approach/entry beat stays at natural 1x");
 assert.match(entrance, /SKIP_PREF_KEY/, "Intro must remember skip preference after a full watch");

@@ -8,6 +8,25 @@
 **Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-06 - Room Explore Pass-4 (Kariim walk-through layout)
+
+**Branch:** `feat/intro-room-explore` (PR #48). Do not merge — Kariim rescore.
+
+Kariim walked Room Explore as a user. Arcade was backwards facing the wall.
+Entrance props read as off. Layout is now film + walk-through:
+
+- Arcade cabinet **removed**. Games is a wall-mounted monitor on the **right** wall.
+- 3D printer sits on the cabinet **left of the main desk**, same depth as the desk.
+- Lumen is **two** film grid cubes **directly left of the desk** (no junk pile,
+  no overhead projector silhouette).
+- Instrument / arm / Omni face **into the room**. Omni is off the left-entrance
+  and scaled down so it is not a weird “Lumen” blob.
+- Hero props: Meshy isolated-still GLBs (`desk.glb` / `monitors.glb` / `printer.glb`)
+  plus Hunyuan fallbacks from isolated product photos (`enclosed_printer.glb`,
+  `flat_monitor.glb`). Not film-still crops.
+
+Intro beat rates unchanged (A 1.0 / B 1.45). Printer + Lumen interaction APIs stay.
+
 ## 2026-09-06 - Room Explore Pass-3 (Meshy + CC0 photoreal heroes)
 
 **Branch:** `feat/intro-room-explore` (PR #48). DO NOT MERGE without Kariim.
@@ -25,11 +44,7 @@ Critique stayed ~4/10 on toy / CSS-box heroes. Pass-3 mounts real meshes:
 ACES / soft shadows / printer+Lumen hooks / intro beat rates A 1.0 / B 1.45
 unchanged. Lumen stays whitebox cubes (film product).
 
-**Layout correction (Kariim walkthrough, same day).** Arcade cabinet removed (was
-backwards into the wall) → wall-mounted Games monitor on the RIGHT. Printer bay
-tucked on a surface LEFT of the main desk. Lumen projection boxes sit DIRECTLY
-LEFT of the main desk (simplified two-cube stack + small overhead projector).
-Entrance-side stubs (INSTRUMENT / Omni / Arm) rotated to face into the room.
+**Layout correction** is in Pass-4 above (no projector, Omni off the left wall).
 
 
 ## 2026-09-06 - Room Explore synced with main (PR #48 merge prep)
