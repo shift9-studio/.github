@@ -3,7 +3,8 @@
 import { useReducedMotionSafe } from "@shift9/motion";
 import s from "./flow-state.module.css";
 
-const WAVE_BARS = Array.from({ length: 13 }, (_, index) => index);
+const WAVE_BARS = Array.from({ length: 15 }, (_, index) => index);
+const BUFFER_LINE = "Stay in the thought.";
 
 export function FlowStateDemo() {
   const reducedMotion = useReducedMotionSafe();
@@ -37,20 +38,18 @@ export function FlowStateDemo() {
 
         <div className={s.appSim}>
           <div className={s.appSimHeader}>
-            <span>Notes.exe / active</span>
-            <span>Text inserted</span>
+            <span>Notes.exe</span>
+            <span>Inserted</span>
           </div>
           <div className={s.typedLine}>
-            <span className={s.typedCopy}>
-              Flow State keeps me in the thought.
-            </span>
+            <span className={s.typedCopy}>{BUFFER_LINE}</span>
           </div>
         </div>
       </div>
 
       <div className={s.demoFooter} aria-hidden="true">
-        <span>Ctrl + Win</span>
-        <span>Mic waveform</span>
+        <span>Standby</span>
+        <span>On-device mic</span>
         <span>Never uploaded</span>
       </div>
     </figure>
