@@ -39,6 +39,7 @@ import { AsciiWallpaper } from "./AsciiWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { Shift9Mark } from "./Shift9Mark";
 import { SHIFT9_LOGO } from "./logo-data";
+import { DEV_LOG } from "./dev-log-data";
 import {
   CINEMA,
   RAIL_KEYS,
@@ -160,7 +161,12 @@ type Folder = { t: string; n: string; items: Item[] };
 
 /* Canonical content — copied verbatim from the frozen prototype / HANDOFF §6.
    Do not rewrite, reorder, or upgrade a status (contract §18 guardrail). */
-const DATA: Record<"apps" | "games" | "tools", Folder> = {
+const DATA: Record<"apps" | "games" | "tools" | "devlog", Folder> = {
+  devlog: {
+    t: "Dev Log",
+    n: "Dated notes from the studio — newest first. Work in progress is labeled plainly.",
+    items: DEV_LOG,
+  },
   apps: {
     t: "Apps",
     n: "every title is a link; the ones without a project page yet say so when you get there",
@@ -401,8 +407,8 @@ const isRailKey = (k: string): k is RailKey => (RAIL_KEYS as string[]).includes(
 
 /* Which desktop shelf each project sits on. Built from DATA so Portfolio's
    filter and the folders on the desktop cannot disagree. */
-const FOLDER_OF: Record<string, FolderKey> = Object.fromEntries(
-  (Object.keys(DATA) as FolderKey[]).flatMap((k) =>
+const FOLDER_OF: Record<string, Exclude<FolderKey, "devlog">> = Object.fromEntries(
+  (["apps", "games", "tools"] as const).flatMap((k) =>
     DATA[k].items.map((it) => [it.n, k] as const),
   ),
 );
@@ -1268,6 +1274,24 @@ export function EnterTheStudio() {
               </div>
             ))}
 
+            <div
+              className={s.dicon}
+              data-f="devlog"
+              role="button"
+              tabIndex={0}
+              onClick={() => openWindowNow("devlog")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openWindowNow("devlog");
+                }
+              }}
+            >
+              <div className={s.devlogBook} aria-hidden="true">/9</div>
+              <div className={s.fname}>Dev Log</div>
+              <div className={s.fcount}>{DEV_LOG.length} {DEV_LOG.length === 1 ? "entry" : "entries"}</div>
+            </div>
+
             {/* About is a person, not a directory — it gets a real app tile. */}
             <div
               className={`${s.dicon} ${s.about}`}
@@ -1410,14 +1434,18 @@ export function EnterTheStudio() {
           >
             <div className={s.wtBar}>
               <span className={s.path}>
-                Shift-9 &#8250; {isRail ? "Desktop" : "Portfolio"} &#8250;{" "}
+                Shift-9 &#8250; {isRail || openWin === "devlog" ? "Desktop" : "Portfolio"} &#8250;{" "}
                 <b>{winTitle}</b>
               </span>
               <button type="button" onClick={() => setOpenWin(null)} aria-label="Close">
                 &#10005;
               </button>
             </div>
-            <div className={s.wbody}>
+            <div
+              className={s.wbody}
+              data-lenis-prevent={openWin === "devlog" ? true : undefined}
+              tabIndex={openWin === "devlog" ? 0 : undefined}
+            >
               {isRail ? (
                 <RailWindowBody
                   section={openWin as RailKey}

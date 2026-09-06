@@ -1,3 +1,11 @@
+# Dev Log publication — September 6, 2026
+
+Approved by Kariim for publication: green book desktop icon and native Dev Log reader with 42 public editorial entries. Based on production main 04f0587; unfinished Stand up / Room Explore work is expressly excluded.
+
+Cursor retains future editorial updates. Add public entries to shift9/apps/shift9-dev/app/_components/dev-log-data.ts using existing fields; preserve historical dates and explicit prototype/in-progress labels. Never copy private raw logs wholesale. Entries sort newest first.
+
+Checks: TypeScript, Flow State, Instrument and Studio polish passed. Local browser verified all42 entries and scrolling. User approved design and five additional stories. Separate source review found no blocking issue. Publication status is pending deployment verification.
+
 # HANDOFF - shift9-studio/.github
 
 > Continuity doc. Any agent must be able to resume cold from this file with zero briefing.
