@@ -13,12 +13,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/instrument",
     "/instrument/reference",
     "/soon",
+    "/privacy.html",
+    "/data-deletion.html",
   ];
 
   return routes.map((path) => ({
     url: `${SITE}${path}`,
     lastModified: now,
     changeFrequency: path === "" || path === "/studio" ? "weekly" : "monthly",
-    priority: path === "" ? 1 : path === "/studio" ? 0.9 : 0.7,
+    priority:
+      path === ""
+        ? 1
+        : path === "/studio"
+          ? 0.9
+          : path.endsWith(".html")
+            ? 0.3
+            : 0.7,
   })) as MetadataRoute.Sitemap;
 }
