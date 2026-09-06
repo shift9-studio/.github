@@ -1039,6 +1039,27 @@ export function RoomExplore({
       if (roomHeroOn) return;
       roomHeroOn = true;
       root.name = "heroRoom";
+      /* The still is the locked plate — lift it as emissive albedo so ACES
+         does not crush the film into a dark blob. */
+      root.traverse((obj) => {
+        const mesh = obj as THREE.Mesh;
+        if (!mesh.isMesh) return;
+        const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        for (const m of mats) {
+          const sm = m as THREE.MeshStandardMaterial;
+          if (!sm || !("color" in sm)) continue;
+          if (sm.map) {
+            sm.map.colorSpace = THREE.SRGBColorSpace;
+            sm.emissiveMap = sm.map;
+            sm.emissive = new THREE.Color(0xffffff);
+            sm.emissiveIntensity = 0.72;
+            sm.color.set(0xffffff);
+            sm.roughness = 0.82;
+            sm.metalness = 0.04;
+          }
+          sm.needsUpdate = true;
+        }
+      });
       /* Pre-scaled in ROOM-PASS5: reconstructed bay + longer left workbench.
          Sit on the back wall, facing the stand-up spawn. */
       root.position.set(0.15, 0, BACK_Z + 0.02);
