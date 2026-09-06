@@ -87,4 +87,31 @@ for (const [name, page] of [
 }
 assert.match(pearl, /\.s9-pearl-dark\.s9-pearl-ghost/, "The ghost-pearl material must stay shared");
 
+
+const room = await read("../app/_components/RoomExplore.tsx");
+assert.match(room, /WebGLRenderer/, "Room explore must use WebGL");
+assert.match(room, /printer/, "Room explore must include the 3D printer prop");
+assert.match(room, /lumen/i, "Room explore must include the Lumen prop");
+assert.match(room, /onSitDown/, "Room explore must offer a way back to the desktop");
+assert.match(room, /ACESFilmicToneMapping/, "Room explore must keep ACES tone mapping");
+assert.match(room, /studio_small_09_1k\.hdr/, "Room explore must load the Poly Haven studio HDRI");
+assert.match(room, /office_desk\.glb|wooden_table_02/, "Room explore must mount a real desk GLB");
+assert.match(room, /office_chair\.glb/, "Room explore must keep the chair GLB path documented");
+assert.match(room, /RIGHT_X - 0\.045/, "Games wall TV must sit flush on the right wall");
+assert.doesNotMatch(room, /lumenHalo/, "Lumen must not wear a CSS floor-halo ring");
+assert.match(room, /drawer_cabinet/, "Room explore must mount the Poly Haven printer-bay cabinet");
+assert.match(room, /wood_table_diff\.jpg/, "Room explore must use Poly Haven wood PBR, not a gray box");
+assert.match(room, /enclosed_printer\.glb/, "Room explore must mount a reconstructed enclosed printer GLB");
+assert.match(room, /flat_monitor\.glb/, "Room explore must mount a reconstructed monitor GLB");
+assert.doesNotMatch(room, /arcadeCab/, "The backwards arcade cabinet must stay removed");
+assert.match(room, /"games"/, "Games is a wall-mounted monitor, not an arcade cabinet");
+assert.match(room, /lumen\.position\.set\(\s*-1\./, "Lumen boxes sit directly left of the desk");
+assert.match(room, /printer\.position\.set\(\s*-2\./, "Printer sits on a surface left of the desk");
+assert.match(entrance, /ROOM_WALK_PLAYBACK_RATE/, "Only the room-walk (desk) beat is sped up");
+assert.match(entrance, /vid\.playbackRate = 1/, "Approach/entry beat stays at natural 1x");
+assert.match(entrance, /SKIP_PREF_KEY/, "Intro must remember skip preference after a full watch");
+assert.match(entrance, /standUp/, "Desktop must expose Stand up into room explore");
+assert.match(entrance, /mode === "room"/, "Entrance must mount room explore mode");
+assert.match(entrance, /Skip to desk/, "Film skip control must clearly jump to the desk");
+
 console.log("Studio loops, invitation, entrance, and ghost controls: pass");

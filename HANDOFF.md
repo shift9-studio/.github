@@ -8,6 +8,143 @@
 **Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-06 - Room Explore Pass-4b (Kariim walk-through layout, take 2)
+
+**Branch:** `feat/intro-room-explore` (PR #48). Do not merge — Kariim rescore.
+
+Second pass after walking the Pass-4 room. Arcade stays gone. Remaining faults:
+
+- Games was a desktop-monitor GLB (stand = “pole in the room”). It is now a
+  **flush 65" wall TV** on the right wall (`RIGHT_X - 0.045`), no floor halo.
+- Lumen two-cube stack was a 1.5m CSS tower with an orange ring. Now
+  **chair-scale** pale-grey 3×3 film cubes directly left of the desk, no halo.
+- Entrance props (instrument / arm / Omni) face **into the room** toward the
+  desk / film camera, not the door or the back wall.
+- Meshy `desk.glb` / `monitors.glb` / `printer.glb` were 132-byte LFS pointers
+  on preview. They are now **real git blobs** so Vercel actually ships them.
+  The printer on the left cabinet uses the isolated Bambu `enclosed_printer.glb`
+  (Meshy `printer.glb` was reconstructed from a still that already includes the
+  cabinet, so stacking it read as a black cube).
+
+Intro beat rates unchanged (A 1.0 / B 1.45). Printer + Lumen interaction APIs stay.
+
+## 2026-09-06 - Room Explore Pass-4 (Kariim walk-through layout)
+
+**Branch:** `feat/intro-room-explore` (PR #48). Do not merge — Kariim rescore.
+
+Kariim walked Room Explore as a user. Arcade was backwards facing the wall.
+Entrance props read as off. Layout is now film + walk-through:
+
+- Arcade cabinet **removed**. Games is a wall-mounted monitor on the **right** wall.
+- 3D printer sits on the cabinet **left of the main desk**, same depth as the desk.
+- Lumen is **two** film grid cubes **directly left of the desk** (no junk pile,
+  no overhead projector silhouette).
+- Instrument / arm / Omni face **into the room**. Omni is off the left-entrance
+  and scaled down so it is not a weird “Lumen” blob.
+- Hero props: Meshy isolated-still GLBs (`desk.glb` / `monitors.glb` / `printer.glb`)
+  plus Hunyuan fallbacks from isolated product photos (`enclosed_printer.glb`,
+  `flat_monitor.glb`). Not film-still crops.
+
+Intro beat rates unchanged (A 1.0 / B 1.45). Printer + Lumen interaction APIs stay.
+
+## 2026-09-06 - Room Explore Pass-3 (Meshy + CC0 photoreal heroes)
+
+**Branch:** `feat/intro-room-explore` (PR #48). DO NOT MERGE without Kariim.
+
+Critique stayed ~4/10 on toy / CSS-box heroes. Pass-3 mounts real meshes:
+
+1. **Meshy clean-still path (this agent):** isolated white-bg product stills via HF
+   FLUX → Meshy image-to-3d for desk / monitors / printer (90 credits, 3025→2935).
+   HF Gradio i2-3d tried first; spaces reset. Draco+WebP GLBs under
+   `public/experience/room/{desk,monitors,printer}.glb`.
+2. **CC0 path (parallel agent):** Poly Haven drawer cabinet + plants + PBR maps,
+   Open Robotics office desk fallback, real SheenChair + HDRI binaries (were
+   132-byte LFS pointers so preview never lit).
+
+ACES / soft shadows / printer+Lumen hooks / intro beat rates A 1.0 / B 1.45
+unchanged. Lumen stays whitebox cubes (film product).
+
+**Layout correction** is in Pass-4 above (no projector, Omni off the left wall).
+
+**Verified 2026-09-06 ~1:20pm ET (local next start after rebuild):** Room Explore mounts; hotspots DESK / 3D PRINTER / LUMEN; no arcade cabinet; Games wall screen on right; printer on left surface; Lumen two-cube stack left of desk. Screenshots under shift9/apps/shift9-dev/.polish-shots/room-pass3/ (01-room-spawn, 02-room-left-printer-lumen, 03-room-right-wall). Local LFS note: desk/monitors/printer.glb may be pointer files until git lfs checkout. PR #48 not merged.
+
+
+## 2026-09-06 - Room Explore synced with main (PR #48 merge prep)
+
+**Branch:** `feat/intro-room-explore` (PR #48).
+
+Merged `origin/main` into this branch so Room Explore can ship without dropping
+Flow State Ripple / FlowStateShell, Feelspoon LIVE + Google Play CTA, capsule
+polish, or MagneticButton `target` pass-through. Intro beat rates stay A 1.0 /
+B 1.45. Honest gap remains: Site-of-the-Year finish still needs Kariim's
+Blender-baked hero GLB later.
+
+## 2026-09-05 - Room Explore Pass-2 (enclosed shell + HDRI + soft shadows)
+
+**Branch:** `feat/intro-room-explore` (PR #48).
+
+**Why.** Critique scored Room Explore ~4/10: desk in black void on checkerboard, hard shadows, toy boxes, missing lived-in film props. Widget on biggest miss was skipped ? treated as all of it. Quality bar: harness-3d + threejs-webgl + Shader Tech Pass-2 recipe (never skip enclosed room + HDRI + soft shadows).
+
+**What shipped.**
+- Enclosed film-tight shell: floor + 3 walls + front closer + ceiling + baseboards + left window glow + gallery posters. No checkerboard void.
+- HDRI ? PMREM: Poly Haven `studio_small_09_1k.hdr` via RGBELoader; `RoomEnvironment` fallback; `environmentIntensity` ~0.85; dim blurred env background; ACESFilmic exposure 1.0.
+- Soft shadows: PCFSoft, map 2048, radius 4, blurSamples 8, tight shadow camera to desk AABB; contact shadow plane under desk/chair.
+- Screen presence: RectAreaLight + soft Spot on ultrawide; screen ShaderMaterial `toneMapped` + `uBright` scanlines.
+- Real maps: Poly Haven concrete floor + plaster wall (CC0). CC0 Khronos SheenChair GLB as chair.
+- Printer bay + Lumen whitebox stack + posters remain (film placement, tighter room). Interactions unchanged. Beat rates untouched (A 1.0 / B 1.45).
+
+**Meshy.** Spent **45** credits (balance 3070 ? 3025) on image-to-3D from `04-desk-still` crops (desk/printer/lumen). Results were melted/non-manifold � **not mounted**. Credits noted in `public/experience/room/CREDITS.md`. Need isolated orthographic refs or Blender bake for hero GLBs.
+
+**Still king.** Full Blender authored room + Cycles bake (questopia pattern) remains the SOTY finish line.
+
+**Checks.** `tsc --noEmit` clean; `check-studio-polish.mjs` pass.
+
+## 2026-09-05 - intro walk speed/skip + Room Explore v1
+
+**Branch:** `feat/intro-room-explore` (from `origin/main`). Parallel work may be on
+`feat/flow-state-photoreal-water` — do not mix those files into this branch.
+
+**Why.** The walk-to-desk film felt slow, and after the character sits there was no
+way to leave the HTML desktop and look around the 3D room that matches the opening
+film. Old plan was still viewpoints + hotspots; Kariim wants live explore.
+
+**Intro.** Kariim feedback: the beginning walk-in (approach + entry hall) was
+already fine — only the part after he is walking into the room felt slow. Beat A
+(`01-03-approach-entry-hall`) plays at natural `1.0`; beat B (desk / room walk,
+`04-desk-mouse-screen`) uses `ROOM_WALK_PLAYBACK_RATE = 1.45`. Film Skip is labeled
+"Skip to desk". After a first full watch, `localStorage` key `s9-intro-skip-pref`
+lets later "Enter the studio" presses jump straight to the desk (first-time
+viewers still get the film). Session skip via `s9-intro-seen` is unchanged.
+`prefers-reduced-motion` still bypasses the film.
+
+**Stand up.** Desktop chrome has **Stand up** (title row) and a floating
+**Stand up · explore room** control. That mounts `RoomExplore` over the shell.
+
+**Room Explore (WebGL / three).** Free look (pointer drag) + WASD/arrows move.
+Dark chiaroscuro lighting matching the film mood. Visible hotspot labels.
+Way back: **Sit down → desktop**, or Esc / interact with the desk.
+
+**Interactive (shipped):**
+- **3D printer** — tap/E → short print animation of the Shift-9 mark → souvenir badge
+- **Lumen** — tap through calibration corners on the box stack → mapped colour pass
+
+**Stubs (delight + coming soon):** INSTRUMENT, arcade, Omni-3D hologram, automation arm.
+After two prop interactions, a cue points at `/studio`.
+
+**Files.** `RoomExplore.tsx` + module CSS (new); `EnterTheStudio.tsx` / `.module.css`
+(mode `room`, skip pref, playback rate, Stand up); `three` + `@types/three`;
+`check-studio-polish.mjs` asserts the above.
+
+**How to try.** Open shift9.dev front door → Enter (or Skip) → on the desktop click
+**Stand up** → walk to the printer and Lumen rings → Sit down to return.
+## 2026-09-05 - Feelspoon LIVE synced onto Room Explore branch
+
+Feelspoon is live on Google Play and at feelspoon.app. Roster / About / dolly /
+marketing page no longer say closed testing. Synced from main (#49 / aa31e33)
+onto `feat/intro-room-explore` so the PR #48 preview Apps list matches production.
+Room Explore Pass-2 work above is unchanged.
+
+
 ## 2026-09-06 - Flow State demo capsule type polish
 
 **Branch:** `fix/flow-state-type-polish`.
@@ -156,6 +293,7 @@ shift9.dev and the feelspoon marketing page no longer say closed testing.
 `feat/intro-room-explore` (not this branch).
 
 **Branch:** `fix/feelspoon-live-status` off `main`.
+
 
 ## 2026-08-24 - the desktop rail works, and every row opens its own room
 

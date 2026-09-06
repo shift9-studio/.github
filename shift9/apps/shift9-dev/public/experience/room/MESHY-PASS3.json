@@ -1,0 +1,29 @@
+{
+  "before": 3025,
+  "after": 2935,
+  "spent": 90,
+  "summary": [
+    {
+      "name": "desk",
+      "id": "01a07788-af7d-7572-b831-37658a24cef1",
+      "credits": 30,
+      "bytes": 78189272,
+      "thumb": "yes"
+    },
+    {
+      "name": "monitors",
+      "id": "01a07788-b172-7011-9a8a-4d65305d1116",
+      "credits": 30,
+      "bytes": 77176476,
+      "thumb": "yes"
+    },
+    {
+      "name": "printer",
+      "id": "01a07788-b34e-727f-a85e-ac2aadfadd8a",
+      "credits": 30,
+      "bytes": 80054004,
+      "thumb": "yes"
+    }
+  ],
+  "source": "meshy-2 image-to-3d from clean stills"
+}
