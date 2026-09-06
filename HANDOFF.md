@@ -8,30 +8,29 @@
 **Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
-## 2026-09-06 - Room Explore Pass-3 (photoreal GLBs, not CSS boxes)
+## 2026-09-06 - Room Explore Pass-3 (Meshy + CC0 photoreal heroes)
 
-**Branch:** `feat/intro-room-explore` (PR #48). Do not merge — Kariim rescore.
+**Branch:** `feat/intro-room-explore` (PR #48). DO NOT MERGE without Kariim.
 
-Critique stayed ~4/10: hero props still read as toy / CSS boxes. Pass-3 replaces
-the desk, printer bay, chair, and succulents with downloaded photoreal meshes
-and full PBR maps. No more Meshy film-crop GLBs.
+Critique stayed ~4/10 on toy / CSS-box heroes. Pass-3 mounts real meshes:
 
-**What shipped**
-- Desk: Open Robotics Fuel office desk GLB (CC-BY) with Poly Haven
-  `wooden_table_02` as fallback. Procedural T-leg box hides when the GLB lands.
-- Printer bay: Poly Haven `drawer_cabinet` GLB under the printer.
-- Chair: real Khronos SheenChair binary (was a 132-byte LFS pointer before).
-- Plants: Poly Haven `potted_plant_04`.
-- PBR maps: wood_table_001, metal_plate, concrete + plaster normals/roughness.
-- HDRI `studio_small_09` stored as a real file, not an LFS pointer, so preview
-  actually gets image-based lighting. ACES + soft PCF shadows unchanged.
-- Intro beat rates unchanged (A 1.0 / B 1.45). Printer + Lumen APIs unchanged.
+1. **Meshy clean-still path (this agent):** isolated white-bg product stills via HF
+   FLUX → Meshy image-to-3d for desk / monitors / printer (90 credits, 3025→2935).
+   HF Gradio i2-3d tried first; spaces reset. Draco+WebP GLBs under
+   `public/experience/room/{desk,monitors,printer}.glb`.
+2. **CC0 path (parallel agent):** Poly Haven drawer cabinet + plants + PBR maps,
+   Open Robotics office desk fallback, real SheenChair + HDRI binaries (were
+   132-byte LFS pointers so preview never lit).
 
-**Honest leftover.** A CC0 photoreal enclosed 3D-printer chassis and dual
-ultrawide/portrait monitor GLBs are not on Poly Haven / Khronos. Sketchfab and
-BlenderKit have them but their download APIs need a login. Screens stay
-emissive shader planes on the desk; Lumen stays white calibration cubes (that
-is the film product). Kariim bake still the Site-of-the-Year finish.
+ACES / soft shadows / printer+Lumen hooks / intro beat rates A 1.0 / B 1.45
+unchanged. Lumen stays whitebox cubes (film product).
+
+**Layout correction (Kariim walkthrough, same day).** Arcade cabinet removed (was
+backwards into the wall) → wall-mounted Games monitor on the RIGHT. Printer bay
+tucked on a surface LEFT of the main desk. Lumen projection boxes sit DIRECTLY
+LEFT of the main desk (simplified two-cube stack + small overhead projector).
+Entrance-side stubs (INSTRUMENT / Omni / Arm) rotated to face into the room.
+
 
 ## 2026-09-06 - Room Explore synced with main (PR #48 merge prep)
 

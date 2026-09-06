@@ -2,10 +2,10 @@
 
 /* ------------------------------------------------------------------------
    ROOM EXPLORE - live WebGL walkaround of the Shift-9 studio room.
-   Hero furniture is downloaded photoreal GLBs (Poly Haven / Khronos), not
-   gray CSS boxes. Desk, printer cabinet, chair, succulents carry real PBR
-   maps. Dual monitors keep emissive film screens. Lumen stays whitebox
-   cubes (that is the product). HDRI + ACES + soft PCF shadows stay on.
+   Pass-3 hero furniture: Meshy desk/monitors/printer from clean isolated
+   product stills (Draco GLB), plus Poly Haven cabinet/plants/PBR maps and
+   Khronos SheenChair. Dual monitors keep emissive film screens. Lumen stays
+   whitebox cubes (that is the product). HDRI + ACES + soft PCF shadows stay.
    ------------------------------------------------------------------------ */
 
 import {
@@ -18,6 +18,7 @@ import {
 import * as THREE from "three";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { RectAreaLightUniformsLib } from "three/examples/jsm/lights/RectAreaLightUniformsLib.js";
 import s from "./RoomExplore.module.css";
@@ -756,9 +757,9 @@ export function RoomExplore({
     printerGlow.position.set(-2.85, 1.5, -1.0);
     scene.add(printerGlow);
 
-    const lumenBeam = new THREE.SpotLight(0xffffff, 1.8, 12, 0.32, 0.55, 1.35);
-    lumenBeam.position.set(3.6, 3.2, 2.0);
-    lumenBeam.target.position.set(2.9, 0.85, 0.45);
+    const lumenBeam = new THREE.SpotLight(0xffffff, 1.6, 10, 0.38, 0.55, 1.35);
+    lumenBeam.position.set(-1.1, 2.85, -1.4);
+    lumenBeam.target.position.set(-1.35, 0.7, -2.35);
     scene.add(lumenBeam, lumenBeam.target);
 
     /* RectArea + spot on ultrawide — screen presence */
@@ -932,8 +933,13 @@ export function RoomExplore({
       arcadeScreenMat,
     ];
 
-    /* Optional hero GLBs — Meshy / CC0 under public/experience/room/ */
+        /* Hero GLBs — Meshy clean-still i2-3d + CC0 chair under public/experience/room */
     const gltfLoader = new GLTFLoader();
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath(
+      "https://www.gstatic.com/draco/versioned/decoders/1.5.7/",
+    );
+    gltfLoader.setDRACOLoader(dracoLoader);
     const hardenGltfMats = (root: THREE.Object3D) => {
       root.traverse((obj) => {
         const mesh = obj as THREE.Mesh;
@@ -950,6 +956,29 @@ export function RoomExplore({
           sm.needsUpdate = true;
         }
       });
+    };
+    const fitGltf = (
+      root: THREE.Object3D,
+      targetSize: THREE.Vector3,
+      yAlign: "bottom" | "center" = "bottom",
+    ) => {
+      const box = new THREE.Box3().setFromObject(root);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const sx = targetSize.x / Math.max(size.x, 1e-4);
+      const sy = targetSize.y / Math.max(size.y, 1e-4);
+      const sz = targetSize.z / Math.max(size.z, 1e-4);
+      const s = Math.min(sx, sy, sz);
+      root.scale.setScalar(s);
+      box.setFromObject(root);
+      const size2 = box.getSize(new THREE.Vector3());
+      const center2 = box.getCenter(new THREE.Vector3());
+      root.position.x -= center2.x;
+      root.position.z -= center2.z;
+      if (yAlign === "bottom") root.position.y -= box.min.y;
+      else root.position.y -= center2.y;
+      void size2;
+      void center;
     };
     const tryGltf = (
       url: string,
@@ -1027,6 +1056,8 @@ export function RoomExplore({
       root.position.z += 0.02;
       desk.add(root);
     };
+    /* Meshy clean-still desk first; CC0 desks only if Meshy fails to land */
+    tryGltf("/experience/room/desk.glb", mountDeskGltf);
     tryGltf("/experience/room/office_desk.glb", mountDeskGltf);
     tryGltf("/experience/room/desk/wooden_table_02_2k.gltf", mountDeskGltf);
 
@@ -1191,6 +1222,16 @@ export function RoomExplore({
     mkSpeaker(-1.45);
     mkSpeaker(1.45);
 
+    tryGltf("/experience/room/monitors.glb", (root) => {
+      fitGltf(root, new THREE.Vector3(1.7, 0.95, 0.55), "bottom");
+      root.position.set(0.05, 0.78, -0.22);
+      ultraBezel.visible = false;
+      portBezel.visible = false;
+      lightBar.visible = false;
+      ultraScreen.position.set(-0.15, 1.28, -0.18);
+      portScreen.position.set(0.85, 1.32, -0.18);
+      desk.add(root);
+    });
     /* Khronos SheenChair — real GLB, hide the box chair when it lands */
     tryGltf("/experience/room/office_chair.glb", (root) => {
       chair.visible = false;
@@ -1199,6 +1240,7 @@ export function RoomExplore({
       root.rotation.y = Math.PI;
       desk.add(root);
     });
+
 
     scene.add(desk);
     interactives.set("desk", desk);
@@ -1211,7 +1253,8 @@ export function RoomExplore({
 
     /* -- 3D Printer bay (left) — Poly Haven drawer cabinet GLB + printer -- */
     const printer = new THREE.Group();
-    printer.position.set(-3.35, 0, -1.15);
+    /* Film: printer on side desk LEFT of main desk, facing into room */
+    printer.position.set(-2.15, 0, -2.55);
 
     const printerFurniture = new THREE.Group();
     printerFurniture.name = "printerFurniture";
@@ -1351,8 +1394,18 @@ export function RoomExplore({
     printerHalo.position.y = 0.02;
     printer.add(printerHalo);
 
-    /* Nudge printer bay into tighter film room */
-    printer.position.set(-2.85, 0, -1.05);
+    tryGltf("/experience/room/printer.glb", (root) => {
+      /* Meshy kept the metal gantry; keep procedural cabinet/bench/pegboard */
+      fitGltf(root, new THREE.Vector3(0.85, 0.9, 0.7), "bottom");
+      root.position.set(0, 0.78, 0);
+      frame.visible = false;
+      glass.visible = false;
+      bed.visible = false;
+      gantry.visible = false;
+      printer.add(root);
+    });
+
+    printer.rotation.y = 0; /* face +Z into room / toward entrance */
 
     scene.add(printer);
     interactives.set("printer", printer);
@@ -1360,24 +1413,25 @@ export function RoomExplore({
       id: "printer",
       label: "3D Printer",
       prompt: "Print a Shift-9 souvenir",
-      position: new THREE.Vector3(-2.85, 1.45, -1.05),
+      position: new THREE.Vector3(-2.15, 1.45, -2.15),
     });
 
-    /* -- Lumen - whitebox stack (film right) + overhead projector ------ */
+    /* -- Lumen projection boxes DIRECTLY left of main desk (Kariim layout) -- */
     const lumen = new THREE.Group();
-    lumen.position.set(2.95, 0, 0.45);
+    lumen.position.set(-1.35, 0, -2.35);
 
+    /* Compact ceiling projector above the stack — not a floating side prop */
     const projector = new THREE.Mesh(
-      new THREE.BoxGeometry(0.42, 0.24, 0.52),
+      new THREE.BoxGeometry(0.28, 0.14, 0.36),
       trackMat(
         makeMat(0x151a22, { map: metalMap, metalness: 0.55, roughness: 0.32 }),
       ),
     );
-    projector.position.set(0.95, 2.85, 1.55);
+    projector.position.set(0.15, 2.55, 0.35);
     projector.castShadow = true;
     lumen.add(projector);
     const lens = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.06, 0.08, 0.08, 16),
+      new THREE.CylinderGeometry(0.045, 0.055, 0.06, 16),
       trackMat(
         makeMat(0x111820, {
           emissive: 0xfff8e8,
@@ -1388,19 +1442,17 @@ export function RoomExplore({
       ),
     );
     lens.rotation.x = Math.PI / 2;
-    lens.position.set(0.95, 2.75, 1.25);
+    lens.position.set(0.15, 2.42, 0.12);
     lumen.add(lens);
 
     const boxes = new THREE.Group();
     boxes.name = "lumenBoxes";
     const stack: THREE.Mesh[] = [];
-    /* Film: large grid cubes - two big + supporting stack */
+    /* Film: two large grid cubes + one small — tight stack beside desk */
     const layout: [number, number, number, number, number, number][] = [
-      [0.85, 0.85, 0.85, 0.15, 0.425, 0.1],
-      [0.7, 0.7, 0.7, -0.55, 0.35, 0.2],
-      [0.45, 0.55, 0.45, 0.55, 0.28, -0.35],
-      [0.4, 0.35, 0.4, -0.15, 1.05, 0.05],
-      [0.32, 0.32, 0.32, 0.35, 0.95, -0.25],
+      [0.78, 0.78, 0.78, 0.05, 0.39, 0.05],
+      [0.62, 0.62, 0.62, -0.35, 0.31, 0.18],
+      [0.36, 0.36, 0.36, 0.28, 0.96, -0.05],
     ];
     for (const [w, h, d, x, y, z] of layout) {
       const lm = trackMat(createLumenMaterial(gridMap, lumenProjectTex));
@@ -1446,7 +1498,7 @@ export function RoomExplore({
       id: "lumen",
       label: "Lumen",
       prompt: "Aim / calibrate the projection",
-      position: new THREE.Vector3(2.95, 1.35, 0.45),
+      position: new THREE.Vector3(-1.35, 1.2, -1.95),
     });
 
     /* -- Stub props - richer silhouettes, film/docs-faithful ----------- */
@@ -1491,8 +1543,9 @@ export function RoomExplore({
       "instrument",
       "INSTRUMENT",
       "Coming soon - a short pulse",
-      [-1.8, 0, 3.1],
+      [-2.6, 0, 2.15],
       (g) => {
+        g.rotation.y = Math.PI; /* face into room toward desk (−Z) */
         const body = new THREE.Mesh(
           new THREE.BoxGeometry(1.55, 0.22, 0.62),
           trackMat(
@@ -1533,53 +1586,36 @@ export function RoomExplore({
       0x4dabf7,
     );
 
+    /* Games: wall-mounted monitor on RIGHT wall (arcade cabinet removed — was backwards) */
     mkStub(
       "arcade",
-      "Arcade",
-      "Coming soon - cabinet flicker",
-      [1.9, 0, 3.2],
+      "Games",
+      "Coming soon - wall play screen",
+      [3.55, 0, -1.15],
       (g) => {
-        const cab = new THREE.Mesh(
-          new THREE.BoxGeometry(0.78, 1.65, 0.7),
-          trackMat(
-            makeMat(0x141018, {
-              emissive: 0xff5c28,
-              emissiveIntensity: 0.12,
-              roughness: 0.55,
-              metalness: 0.25,
-            }),
-          ),
+        g.rotation.y = -Math.PI / 2; /* face into room (−X), not the wall */
+        const mount = new THREE.Mesh(
+          new THREE.BoxGeometry(0.9, 0.55, 0.08),
+          trackMat(makeMat(0x1a1f28, { metalness: 0.45, roughness: 0.4 })),
         );
-        cab.position.y = 0.82;
-        cab.castShadow = true;
-        cab.name = "arcadeCab";
-        g.add(cab);
-        /* Marquee */
-        const marque = new THREE.Mesh(
-          new THREE.BoxGeometry(0.78, 0.18, 0.12),
-          trackMat(
-            makeMat(0x0a1020, {
-              emissive: 0x29b6f6,
-              emissiveIntensity: 0.7,
-            }),
-          ),
+        mount.position.set(0, 1.55, -0.02);
+        g.add(mount);
+        const bezel = new THREE.Mesh(
+          new THREE.BoxGeometry(1.15, 0.72, 0.06),
+          trackMat(makeMat(0x0e1116, { roughness: 0.35, metalness: 0.4 })),
         );
-        marque.position.set(0, 1.72, 0.2);
-        g.add(marque);
+        bezel.position.set(0, 1.55, 0.02);
+        bezel.castShadow = true;
+        bezel.name = "arcadeCab";
+        g.add(bezel);
         const screen = new THREE.Mesh(
-          new THREE.PlaneGeometry(0.52, 0.4),
+          new THREE.PlaneGeometry(1.02, 0.58),
           arcadeScreenMat,
         );
-        screen.position.set(0, 1.2, 0.36);
+        /* Group faces into room (−X); plane default +Z becomes room-facing */
+        screen.position.set(0, 1.55, 0.06);
         screen.name = "arcadeScreen";
         g.add(screen);
-        const control = new THREE.Mesh(
-          new THREE.BoxGeometry(0.7, 0.08, 0.35),
-          trackMat(makeMat(0x1a1520, { roughness: 0.6 })),
-        );
-        control.position.set(0, 0.72, 0.4);
-        control.rotation.x = -0.35;
-        g.add(control);
       },
       0xff7043,
     );
@@ -1588,8 +1624,9 @@ export function RoomExplore({
       "omni",
       "Omni-3D",
       "Coming soon - hologram glitch",
-      [-4.15, 0, 1.9],
+      [-3.6, 0, 0.35],
       (g) => {
+        g.rotation.y = Math.PI / 2; /* face into room (+X toward desk) */
         const ped = new THREE.Mesh(
           new THREE.CylinderGeometry(0.38, 0.45, 0.18, 24),
           trackMat(
@@ -1637,8 +1674,9 @@ export function RoomExplore({
       "arm",
       "Automation Arm",
       "Coming soon - one precise nod",
-      [4.35, 0, 1.35],
+      [3.45, 0, 0.55],
       (g) => {
+        g.rotation.y = -Math.PI / 2; /* face into room (−X toward desk) */
         const base = new THREE.Mesh(
           new THREE.CylinderGeometry(0.3, 0.36, 0.2, 20),
           trackMat(
@@ -1879,7 +1917,7 @@ export function RoomExplore({
         return;
       }
       if (id === "arcade") {
-        stubPeek("arcade", "Arcade flickers neon - playable cabinet soon");
+        stubPeek("arcade", "Wall screen wakes - playable games soon");
         return;
       }
       if (id === "omni") {
@@ -2048,6 +2086,7 @@ export function RoomExplore({
       canvas.removeEventListener("pointermove", onPointerMove);
       canvas.removeEventListener("click", onClick);
       if (toastTimer.current) clearTimeout(toastTimer.current);
+      dracoLoader.dispose();
       renderer.dispose();
       pmrem.dispose();
       if (scene.environment) scene.environment.dispose();
