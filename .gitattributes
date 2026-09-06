@@ -1,2 +1,2 @@
-shift9/apps/shift9-dev/public/experience/room/*.glb filter=lfs diff=lfs merge=lfs -text
-shift9/apps/shift9-dev/public/experience/room/*.hdr filter=lfs diff=lfs merge=lfs -text
+# Room Explore hero assets stay as regular git blobs so Vercel/preview
+# always gets the real HDRI and GLBs (LFS pointers were shipping as 132-byte files).

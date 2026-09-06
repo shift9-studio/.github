@@ -2,11 +2,10 @@
 
 /* ------------------------------------------------------------------------
    ROOM EXPLORE - live WebGL walkaround of the Shift-9 studio room.
-   Visuals aim at the opening desk film: light oak desk, dual monitors,
-   printer on tool cabinet + pegboard, whitebox Lumen cubes, gallery wall,
-   textured floor/walls, custom screen + projection shaders (questopia-
-   style blendLighten). Still procedural geometry until a Blender-baked
-   hero GLB lands - honest about that gap.
+   Hero furniture is downloaded photoreal GLBs (Poly Haven / Khronos), not
+   gray CSS boxes. Desk, printer cabinet, chair, succulents carry real PBR
+   maps. Dual monitors keep emissive film screens. Lumen stays whitebox
+   cubes (that is the product). HDRI + ACES + soft PCF shadows stay on.
    ------------------------------------------------------------------------ */
 
 import {
@@ -514,11 +513,14 @@ export function RoomExplore({
     const gridMap = trackTex(makeCalibGridMap());
 
     const woodMat = trackMat(
-      makeMat(0xffffff, {
+      new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
         map: woodMap,
-        roughness: 0.62,
-        metalness: 0.04,
-        envMapIntensity: 1,
+        roughness: 0.42,
+        metalness: 0.02,
+        clearcoat: 0.22,
+        clearcoatRoughness: 0.38,
+        envMapIntensity: 1.05,
       }),
     );
     const floorMat = trackMat(
@@ -561,35 +563,80 @@ export function RoomExplore({
       makeMat(0x1a1d24, { roughness: 0.25, metalness: 0.8, envMapIntensity: 1 }),
     );
 
-    /* Real PBR maps when present (Poly Haven CC0 under /experience/room/) */
-    const applyRoomMap = (
-      url: string,
+    /* Real PBR maps (Poly Haven CC0 under /experience/room/) */
+    const loaderTex = new THREE.TextureLoader();
+    const applyPBR = (
       mat: THREE.MeshStandardMaterial,
-      repeat: number,
-      asColor = true,
+      spec: {
+        map?: string;
+        normalMap?: string;
+        roughnessMap?: string;
+        repeat: number;
+      },
     ) => {
-      loaderTex.load(
-        url,
-        (t) => {
-          t.colorSpace = asColor ? THREE.SRGBColorSpace : THREE.LinearSRGBColorSpace;
-          t.wrapS = t.wrapT = THREE.RepeatWrapping;
-          t.repeat.set(repeat, repeat);
-          t.anisotropy = renderer.capabilities.getMaxAnisotropy();
-          trackTex(t);
-          mat.map = t;
-          mat.needsUpdate = true;
-        },
-        undefined,
-        () => {
-          /* keep procedural canvas map */
-        },
-      );
+      const load = (url: string, asColor: boolean, assign: (t: THREE.Texture) => void) => {
+        loaderTex.load(
+          url,
+          (t) => {
+            t.colorSpace = asColor ? THREE.SRGBColorSpace : THREE.NoColorSpace;
+            t.wrapS = t.wrapT = THREE.RepeatWrapping;
+            t.repeat.set(spec.repeat, spec.repeat);
+            t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+            trackTex(t);
+            assign(t);
+            mat.needsUpdate = true;
+          },
+          undefined,
+          () => {
+            /* keep procedural fallback */
+          },
+        );
+      };
+      if (spec.map) load(spec.map, true, (t) => { mat.map = t; });
+      if (spec.normalMap) {
+        load(spec.normalMap, false, (t) => {
+          mat.normalMap = t;
+          mat.normalScale.set(1, 1);
+        });
+      }
+      if (spec.roughnessMap) {
+        load(spec.roughnessMap, false, (t) => {
+          mat.roughnessMap = t;
+          mat.roughness = 1;
+        });
+      }
     };
 
-    const loaderTex = new THREE.TextureLoader();
-    applyRoomMap("/experience/room/concrete_floor.jpg", floorMat, 4);
-    applyRoomMap("/experience/room/plaster_wall.jpg", wallMat, 2);
-    /* desk wood stays procedural oak — wood_floor map is too floor-grain for butcher block */
+    applyPBR(floorMat, {
+      map: "/experience/room/concrete_floor.jpg",
+      normalMap: "/experience/room/concrete_floor_nor.jpg",
+      roughnessMap: "/experience/room/concrete_floor_rough.jpg",
+      repeat: 4,
+    });
+    applyPBR(wallMat, {
+      map: "/experience/room/plaster_wall.jpg",
+      normalMap: "/experience/room/plaster_wall_nor.jpg",
+      roughnessMap: "/experience/room/plaster_wall_rough.jpg",
+      repeat: 2,
+    });
+    applyPBR(woodMat, {
+      map: "/experience/room/wood_table_diff.jpg",
+      normalMap: "/experience/room/wood_table_nor.jpg",
+      roughnessMap: "/experience/room/wood_table_rough.jpg",
+      repeat: 1,
+    });
+    applyPBR(metalMat, {
+      map: "/experience/room/metal_plate_diff.jpg",
+      normalMap: "/experience/room/metal_plate_nor.jpg",
+      roughnessMap: "/experience/room/metal_plate_rough.jpg",
+      repeat: 2,
+    });
+    applyPBR(cabinetMat, {
+      map: "/experience/room/metal_plate_diff.jpg",
+      normalMap: "/experience/room/metal_plate_nor.jpg",
+      roughnessMap: "/experience/room/metal_plate_rough.jpg",
+      repeat: 2,
+    });
 
     /* Screen / lumen shaders - maps filled when TextureLoader resolves */
     const deskScreenMat = trackMat(createScreenMaterial(null, new THREE.Color(0x6aa8ff)));
@@ -916,31 +963,72 @@ export function RoomExplore({
         },
         undefined,
         () => {
-          /* procedural silhouette stays */
+          /* procedural silhouette stays only if no GLB */
         },
       );
     };
 
-    /* -- Desk (film-matched: light oak, dual monitors, speakers) ------- */
+    const fitGltfToFloor = (
+      root: THREE.Object3D,
+      opts: { width?: number; height?: number; depth?: number; maxDim?: number },
+    ) => {
+      root.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(root);
+      const size = box.getSize(new THREE.Vector3());
+      let s = 1;
+      if (opts.maxDim) {
+        const longest = Math.max(size.x, size.y, size.z) || 1;
+        s = opts.maxDim / longest;
+      } else {
+        const sx = opts.width && size.x > 0.01 ? opts.width / size.x : 1;
+        const sy = opts.height && size.y > 0.01 ? opts.height / size.y : 1;
+        const sz = opts.depth && size.z > 0.01 ? opts.depth / size.z : 1;
+        s = Math.min(sx, sy, sz);
+      }
+      root.scale.multiplyScalar(s);
+      root.updateMatrixWorld(true);
+      const box2 = new THREE.Box3().setFromObject(root);
+      const c = box2.getCenter(new THREE.Vector3());
+      root.position.x -= c.x;
+      root.position.z -= c.z;
+      root.position.y -= box2.min.y;
+    };
+
+    /* -- Desk (photoreal GLB first; film-matched dual monitors on top) -- */
     const desk = new THREE.Group();
     desk.position.set(0, 0, -2.75);
 
+    const deskBody = new THREE.Group();
+    deskBody.name = "deskBody";
     const deskTop = new THREE.Mesh(new THREE.BoxGeometry(2.55, 0.07, 1.05), woodMat);
     deskTop.position.y = 0.74;
     deskTop.castShadow = true;
     deskTop.receiveShadow = true;
-    desk.add(deskTop);
+    deskBody.add(deskTop);
 
-    /* Black T-legs */
+    /* Black T-legs — hidden once the scanned desk GLB lands */
     for (const x of [-1.05, 1.05]) {
       const leg = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.72, 0.08), blackMetal);
       leg.position.set(x, 0.36, 0);
       leg.castShadow = true;
-      desk.add(leg);
+      deskBody.add(leg);
       const foot = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.04, 0.1), blackMetal);
       foot.position.set(x, 0.02, 0);
-      desk.add(foot);
+      deskBody.add(foot);
     }
+    desk.add(deskBody);
+
+    let deskGltfOn = false;
+    const mountDeskGltf = (root: THREE.Group) => {
+      if (deskGltfOn) return;
+      deskGltfOn = true;
+      deskBody.visible = false;
+      fitGltfToFloor(root, { width: 2.55, depth: 1.12, height: 0.76 });
+      root.position.z += 0.02;
+      desk.add(root);
+    };
+    tryGltf("/experience/room/office_desk.glb", mountDeskGltf);
+    tryGltf("/experience/room/desk/wooden_table_02_2k.gltf", mountDeskGltf);
 
     /* Ultrawide + portrait - film dual-monitor */
     const monitorBezel = trackMat(
@@ -1008,14 +1096,15 @@ export function RoomExplore({
     mouse.position.set(0.32, 0.8, 0.14);
     desk.add(mouse);
 
-    /* Tiny plants */
+    /* Tiny plants — Poly Haven succulent GLB, procedural pots as fallback */
+    const plantFallback = new THREE.Group();
     for (const px of [-0.85, -0.68]) {
       const pot = new THREE.Mesh(
         new THREE.CylinderGeometry(0.04, 0.035, 0.06, 10),
         trackMat(makeMat(0x6a7078, { roughness: 0.7 })),
       );
       pot.position.set(px, 0.81, -0.15);
-      desk.add(pot);
+      plantFallback.add(pot);
       const leaf = new THREE.Mesh(
         new THREE.SphereGeometry(0.05, 8, 8),
         trackMat(
@@ -1028,7 +1117,16 @@ export function RoomExplore({
       );
       leaf.position.set(px, 0.88, -0.15);
       leaf.scale.set(1, 0.7, 1);
-      desk.add(leaf);
+      plantFallback.add(leaf);
+    }
+    desk.add(plantFallback);
+    for (const px of [-0.92, -0.7]) {
+      tryGltf("/experience/room/potted_plant_04/potted_plant_04_1k.gltf", (root) => {
+        plantFallback.visible = false;
+        fitGltfToFloor(root, { maxDim: 0.16 });
+        root.position.set(px, 0.78, -0.18);
+        desk.add(root);
+      });
     }
 
     /* Chair - mesh-ish Aeron silhouette */
@@ -1093,17 +1191,14 @@ export function RoomExplore({
     mkSpeaker(-1.45);
     mkSpeaker(1.45);
 
-    /* CC0 SheenChair GLB — Meshy film-still crops were melted; keep procedural desk */
+    /* Khronos SheenChair — real GLB, hide the box chair when it lands */
     tryGltf("/experience/room/office_chair.glb", (root) => {
       chair.visible = false;
-      root.position.set(0, 0, 0.85);
-      root.scale.setScalar(1.15);
+      fitGltfToFloor(root, { maxDim: 1.15 });
+      root.position.set(0, 0, 0.92);
       root.rotation.y = Math.PI;
       desk.add(root);
     });
-    /* desk_cluster.glb / printer_bay.glb / lumen_stack.glb kept under
-       public/experience/room for a later clean-ref Meshy or Blender pass —
-       do NOT auto-swap (film-plate crops → non-manifold blobs). */
 
     scene.add(desk);
     interactives.set("desk", desk);
@@ -1114,10 +1209,12 @@ export function RoomExplore({
       position: new THREE.Vector3(0, 1.2, -2.05),
     });
 
-    /* -- 3D Printer bay (left) - cabinet + wood top + enclosed printer - */
+    /* -- 3D Printer bay (left) — Poly Haven drawer cabinet GLB + printer -- */
     const printer = new THREE.Group();
     printer.position.set(-3.35, 0, -1.15);
 
+    const printerFurniture = new THREE.Group();
+    printerFurniture.name = "printerFurniture";
     const cabinet = new THREE.Mesh(
       new THREE.BoxGeometry(1.15, 0.72, 0.7),
       cabinetMat,
@@ -1125,7 +1222,7 @@ export function RoomExplore({
     cabinet.position.y = 0.36;
     cabinet.castShadow = true;
     cabinet.receiveShadow = true;
-    printer.add(cabinet);
+    printerFurniture.add(cabinet);
     /* Drawer lines */
     for (const dy of [0.18, 0.36, 0.54]) {
       const line = new THREE.Mesh(
@@ -1133,14 +1230,21 @@ export function RoomExplore({
         blackMetal,
       );
       line.position.set(0, dy, 0.355);
-      printer.add(line);
+      printerFurniture.add(line);
     }
 
     const bench = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.05, 0.75), woodMat);
     bench.position.y = 0.75;
     bench.castShadow = true;
     bench.receiveShadow = true;
-    printer.add(bench);
+    printerFurniture.add(bench);
+    printer.add(printerFurniture);
+
+    tryGltf("/experience/room/cabinet/drawer_cabinet_2k.gltf", (root) => {
+      printerFurniture.visible = false;
+      fitGltfToFloor(root, { width: 1.2, depth: 0.7, height: 0.82 });
+      printer.add(root);
+    });
 
     /* Enclosed printer body */
     const frame = new THREE.Mesh(

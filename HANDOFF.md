@@ -8,6 +8,31 @@
 **Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-06 - Room Explore Pass-3 (photoreal GLBs, not CSS boxes)
+
+**Branch:** `feat/intro-room-explore` (PR #48). Do not merge — Kariim rescore.
+
+Critique stayed ~4/10: hero props still read as toy / CSS boxes. Pass-3 replaces
+the desk, printer bay, chair, and succulents with downloaded photoreal meshes
+and full PBR maps. No more Meshy film-crop GLBs.
+
+**What shipped**
+- Desk: Open Robotics Fuel office desk GLB (CC-BY) with Poly Haven
+  `wooden_table_02` as fallback. Procedural T-leg box hides when the GLB lands.
+- Printer bay: Poly Haven `drawer_cabinet` GLB under the printer.
+- Chair: real Khronos SheenChair binary (was a 132-byte LFS pointer before).
+- Plants: Poly Haven `potted_plant_04`.
+- PBR maps: wood_table_001, metal_plate, concrete + plaster normals/roughness.
+- HDRI `studio_small_09` stored as a real file, not an LFS pointer, so preview
+  actually gets image-based lighting. ACES + soft PCF shadows unchanged.
+- Intro beat rates unchanged (A 1.0 / B 1.45). Printer + Lumen APIs unchanged.
+
+**Honest leftover.** A CC0 photoreal enclosed 3D-printer chassis and dual
+ultrawide/portrait monitor GLBs are not on Poly Haven / Khronos. Sketchfab and
+BlenderKit have them but their download APIs need a login. Screens stay
+emissive shader planes on the desk; Lumen stays white calibration cubes (that
+is the film product). Kariim bake still the Site-of-the-Year finish.
+
 ## 2026-09-06 - Room Explore synced with main (PR #48 merge prep)
 
 **Branch:** `feat/intro-room-explore` (PR #48).
