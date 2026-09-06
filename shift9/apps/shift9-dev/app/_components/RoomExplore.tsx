@@ -1468,22 +1468,10 @@ export function RoomExplore({
     printerHalo.position.y = 0.02;
     printer.add(printerHalo);
 
-    tryGltf(
-      "/experience/room/printer.glb",
-      (root) => {
-        fitGltf(root, new THREE.Vector3(0.85, 0.9, 0.7), "bottom");
-        root.position.set(0, 0.78, 0);
-        root.rotation.y = Math.PI * 0.08;
-        frame.visible = false;
-        glass.visible = false;
-        bed.visible = false;
-        gantry.visible = false;
-        printer.add(root);
-      },
-      () => {
-        tryGltf("/experience/room/enclosed_printer.glb", mountEnclosedPrinter);
-      },
-    );
+    /* Isolated Bambu mesh on the cabinet — Meshy printer.glb was built from a
+       still that already includes the cabinet, so stacking it here reads as a
+       black cube on a box. Keep printer.glb on disk for later remount. */
+    tryGltf("/experience/room/enclosed_printer.glb", mountEnclosedPrinter);
 
 
     scene.add(printer);
