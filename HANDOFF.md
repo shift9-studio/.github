@@ -23,10 +23,13 @@ table/workbench to the **left** of the main desk.
   Albedo: the locked film still, planar-projected (the plate is not redrawn).
   Left workbench extended +1.72 m (wood + cabinet + pegboard).
   Draco+WebP, 338 KB, regular git blob.
-- RoomExplore mounts `room.glb` as `heroRoom` and **hides** BoxGeometry desk /
-  chair / speakers / printer cabinet / pegboard / isolated Meshy-Hunyuan
-  furniture once it lands. The still is lifted as emissive albedo so ACES
-  does not crush the plate.
+- RoomExplore mounts `room.glb` under one `RoomRoot` (meters; cm→0.01 and
+  Z-up → −π/2 if the generator ships that). Bbox is logged, then the root
+  is frozen. BoxGeometry desk / chair / speakers / printer cabinet hide
+  once it lands. Hits go through invisible `deskHit` / `printerHit` boxes —
+  the reconstructed mush is not raycast. If the left bench is short vs the
+  film, only that side is stretched in X. The still is lifted as emissive
+  albedo so ACES does not crush the plate.
 - Printer souvenir (nozzle + mark), Lumen two-cube stack (right of desk), and
   Games wall TV stay as interaction proxies at the film spots.
 

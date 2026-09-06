@@ -1028,22 +1028,39 @@ export function RoomExplore({
       root.position.y -= box2.min.y;
     };
 
-    /* -- Whole-room hero from 04-desk-still (Hunyuan shape + still albedo) -- */
+    /* -- Whole-room hero from 04-desk-still (character-still persistence) -- */
+    const roomRoot = new THREE.Group();
+    roomRoot.name = "RoomRoot";
+    scene.add(roomRoot);
     let roomHeroOn = false;
     const hideForRoomHero: THREE.Object3D[] = [];
     const hideIfRoom = (obj: THREE.Object3D) => {
       hideForRoomHero.push(obj);
       if (roomHeroOn) obj.visible = false;
     };
+    const hitMat = trackMat(new THREE.MeshBasicMaterial({ visible: false }));
+    const makeHitProxy = (
+      name: string,
+      w: number,
+      h: number,
+      d: number,
+      y: number,
+    ) => {
+      const hit = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), hitMat);
+      hit.name = name;
+      hit.position.y = y;
+      return hit;
+    };
     const mountRoomHero = (root: THREE.Group) => {
       if (roomHeroOn) return;
       roomHeroOn = true;
       root.name = "heroRoom";
-      /* The still is the locked plate — lift it as emissive albedo so ACES
-         does not crush the film into a dark blob. */
+      /* Locked plate = albedo. Lift it so ACES does not crush the film. */
       root.traverse((obj) => {
         const mesh = obj as THREE.Mesh;
         if (!mesh.isMesh) return;
+        /* Never raycast the reconstructed mush — proxies own hits. */
+        mesh.raycast = () => {};
         const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
         for (const m of mats) {
           const sm = m as THREE.MeshStandardMaterial;
@@ -1060,10 +1077,82 @@ export function RoomExplore({
           sm.needsUpdate = true;
         }
       });
-      /* Pre-scaled in ROOM-PASS5: reconstructed bay + longer left workbench.
-         Sit on the back wall, facing the stand-up spawn. */
-      root.position.set(0.15, 0, BACK_Z + 0.02);
-      scene.add(root);
+
+      /* Three.js is meters. Image-to-3D often ships cm or Z-up. */
+      root.updateMatrixWorld(true);
+      let box = new THREE.Box3().setFromObject(root);
+      let size = box.getSize(new THREE.Vector3());
+      let rotated = false;
+      if (size.z > size.y * 1.35) {
+        root.rotation.x = -Math.PI / 2;
+        root.updateMatrixWorld(true);
+        box.setFromObject(root);
+        size = box.getSize(new THREE.Vector3());
+        rotated = true;
+      }
+      let scaleApplied = 1;
+      const longest = Math.max(size.x, size.y, size.z);
+      if (longest > 20) {
+        scaleApplied = 0.01;
+        root.scale.multiplyScalar(0.01);
+        root.updateMatrixWorld(true);
+        box.setFromObject(root);
+        size = box.getSize(new THREE.Vector3());
+      }
+
+      /* Sit on the floor; park the back of the mesh on the room wall.
+         Do not uniform-scale the whole room to “fit.” */
+      root.position.y -= box.min.y;
+      root.updateMatrixWorld(true);
+      box.setFromObject(root);
+      root.position.z += BACK_Z + 0.04 - box.min.z;
+
+      /* Film: left workbench is longer than the reconstructed bay.
+         Stretch only vertices left of the main desk — never the whole room. */
+      const DESK_SPLIT = -1.15;
+      const FILM_LEFT = -4.85;
+      root.updateMatrixWorld(true);
+      box.setFromObject(root);
+      if (box.min.x > FILM_LEFT + 0.08) {
+        const run = box.min.x - DESK_SPLIT;
+        const stretch = run < -0.15 ? (FILM_LEFT - DESK_SPLIT) / run : 1.28;
+        root.updateMatrixWorld(true);
+        root.traverse((obj) => {
+          const mesh = obj as THREE.Mesh;
+          if (!mesh.isMesh || !mesh.geometry) return;
+          const pos = mesh.geometry.attributes.position;
+          if (!pos) return;
+          const v = new THREE.Vector3();
+          for (let i = 0; i < pos.count; i++) {
+            v.fromBufferAttribute(pos, i);
+            mesh.localToWorld(v);
+            if (v.x >= DESK_SPLIT) continue;
+            const worldX = DESK_SPLIT + (v.x - DESK_SPLIT) * stretch;
+            v.x = worldX;
+            mesh.worldToLocal(v);
+            pos.setXYZ(i, v.x, v.y, v.z);
+          }
+          pos.needsUpdate = true;
+          mesh.geometry.computeVertexNormals();
+          mesh.geometry.computeBoundingBox();
+        });
+      }
+
+      roomRoot.add(root);
+      roomRoot.updateMatrixWorld(true);
+      roomRoot.matrixAutoUpdate = false;
+      root.matrixAutoUpdate = false;
+
+      const frozen = new THREE.Box3().setFromObject(roomRoot);
+      const frozenSize = frozen.getSize(new THREE.Vector3());
+      console.info("[RoomRoot]", {
+        min: frozen.min.toArray(),
+        max: frozen.max.toArray(),
+        size: frozenSize.toArray(),
+        scaleApplied,
+        rotated,
+      });
+
       for (const o of hideForRoomHero) o.visible = false;
     };
     tryGltf("/experience/room/room.glb", mountRoomHero);
@@ -1356,7 +1445,12 @@ export function RoomExplore({
        (orange lounge silhouette) and reads as the wrong film object. */
 
 
-    hideIfRoom(desk);
+    const deskVisuals = new THREE.Group();
+    deskVisuals.name = "deskVisuals";
+    for (const child of [...desk.children]) deskVisuals.add(child);
+    desk.add(deskVisuals);
+    hideIfRoom(deskVisuals);
+    desk.add(makeHitProxy("deskHit", 2.6, 1.35, 1.15, 0.85));
     scene.add(desk);
     interactives.set("desk", desk);
     hotspots.push({
@@ -1558,7 +1652,7 @@ export function RoomExplore({
        black cube on a box. Keep printer.glb on disk for later remount. */
     tryGltf("/experience/room/enclosed_printer.glb", mountEnclosedPrinter);
 
-
+    printer.add(makeHitProxy("printerHit", 1.05, 1.55, 0.88, 1.05));
     scene.add(printer);
     interactives.set("printer", printer);
     hotspots.push({

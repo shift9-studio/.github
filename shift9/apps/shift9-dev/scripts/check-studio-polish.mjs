@@ -96,8 +96,13 @@ assert.match(room, /onSitDown/, "Room explore must offer a way back to the deskt
 assert.match(room, /ACESFilmicToneMapping/, "Room explore must keep ACES tone mapping");
 assert.match(room, /studio_small_09_1k\.hdr/, "Room explore must load the Poly Haven studio HDRI");
 assert.match(room, /\/experience\/room\/room\.glb/, "Room explore must mount the whole-room GLB from the film still");
+assert.match(room, /RoomRoot/, "The film-still room mesh must live under one RoomRoot");
 assert.match(room, /heroRoom/, "The film-still room mesh must be the named hero");
 assert.match(room, /hideIfRoom/, "BoxGeometry furniture must hide when the room hero lands");
+assert.match(room, /deskHit/, "Desk interaction must use an invisible hit proxy");
+assert.match(room, /printerHit/, "Printer interaction must use an invisible hit proxy");
+assert.match(room, /mesh\.raycast = \(\) => \{\}/, "The reconstructed room mesh must not own raycasts");
+assert.match(room, /FILM_LEFT/, "Left workbench stretch is X-only against the film, not a uniform room scale");
 assert.match(room, /office_desk\.glb|wooden_table_02/, "Room explore must keep a desk GLB fallback path");
 assert.match(room, /office_chair\.glb/, "Room explore must keep the chair GLB path documented");
 assert.match(room, /RIGHT_X - 0\.045/, "Games wall TV must sit flush on the right wall");

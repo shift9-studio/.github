@@ -12,5 +12,13 @@
   "bytes": 337556,
   "compress": "gltf-transform optimize, Draco + WebP",
   "scaled_extents_m": [5.345, 3.2, 2.714],
-  "bbox_with_bench_x": [-4.313, 2.673]
+  "bbox_with_bench_x": [-4.313, 2.673],
+  "mount": {
+    "root": "RoomRoot",
+    "units": "meters (scale 0.01 if bbox longest > 20)",
+    "z_up": "rotation.x = -PI/2 if height is on Z",
+    "left_table": "X-only stretch left of desk split to FILM_LEFT -4.85",
+    "hits": "invisible deskHit / printerHit — hero mesh raycast disabled",
+    "freeze": "matrixAutoUpdate false after bbox matches still"
+  }
 }
