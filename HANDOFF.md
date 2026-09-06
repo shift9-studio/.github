@@ -8,6 +8,20 @@
 **Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-06 - Meta listing pages (privacy + data deletion)
+
+**Branch:** `cursor/meta-privacy-pages-517a`.
+
+Static public pages for the Feelspoon Growth Kit Meta app listing, served from
+`shift9/apps/shift9-dev/public/` so Vercel (root `shift9/apps/shift9-dev`)
+publishes them at:
+
+- https://www.shift9.dev/privacy.html
+- https://www.shift9.dev/data-deletion.html
+
+Contact `shift9dev@gmail.com`. Effective Sep 6, 2026. No selling of Meta data.
+Deletion by email, completed within 30 days. Also listed in `app/sitemap.ts`.
+
 ## 2026-09-06 - Flow State demo capsule type polish
 
 **Branch:** `fix/flow-state-type-polish`.
