@@ -17,8 +17,8 @@
     "root": "RoomRoot",
     "units": "meters (scale 0.01 if bbox longest > 20)",
     "z_up": "rotation.x = -PI/2 if height is on Z",
-    "left_table": "X-only stretch left of desk split to FILM_LEFT -4.85",
-    "hits": "invisible deskHit / printerHit — hero mesh raycast disabled",
-    "freeze": "matrixAutoUpdate false after bbox matches still"
+    "left_table": "leftTable group, scale.x only around DESK_SPLIT to FILM_LEFT -4.85 — never uniform-scale RoomRoot",
+    "hits": "invisible deskHit / printerHit / lumenHit / stub hits — reconstructed meshes raycast disabled",
+    "freeze": "matrixAutoUpdate false on the whole RoomRoot tree once bbox matches the still"
   }
 }

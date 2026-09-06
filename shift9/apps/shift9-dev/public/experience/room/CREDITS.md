@@ -38,6 +38,11 @@ thin relief). Not mounted — Hunyuan gave real volume.
   silhouette); Open Robotics office desk
 
 ## Interaction proxies (kept, aligned to the film)
+Clicks use invisible box proxies (`deskHit`, `printerHit`, `lumenHit`, stub
+hits). The reconstructed room mesh does not receive raycasts.
 - Printer souvenir nozzle + mark at the left workbench
 - Lumen two-cube stack immediately **right** of the desk
 - Games flush wall TV on the far right wall
+
+Mount extras: left workbench is a `leftTable` group stretched in **X only**
+if it is short vs the film; `RoomRoot` freezes after the bbox matches the still.

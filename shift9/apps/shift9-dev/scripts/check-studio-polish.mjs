@@ -101,8 +101,13 @@ assert.match(room, /heroRoom/, "The film-still room mesh must be the named hero"
 assert.match(room, /hideIfRoom/, "BoxGeometry furniture must hide when the room hero lands");
 assert.match(room, /deskHit/, "Desk interaction must use an invisible hit proxy");
 assert.match(room, /printerHit/, "Printer interaction must use an invisible hit proxy");
+assert.match(room, /lumenHit/, "Lumen interaction must use an invisible hit proxy");
+assert.match(room, /hitProxy/, "Clicks must hit invisible box proxies, not reconstructed meshes");
 assert.match(room, /mesh\.raycast = \(\) => \{\}/, "The reconstructed room mesh must not own raycasts");
+assert.match(room, /leftTable/, "The left workbench is its own group, stretched in X only");
 assert.match(room, /FILM_LEFT/, "Left workbench stretch is X-only against the film, not a uniform room scale");
+assert.match(room, /matrixAutoUpdate = false/, "RoomRoot freezes after the film bbox match");
+assert.doesNotMatch(room, /roomRoot\.scale\.setScalar/, "Never uniform-scale the whole RoomRoot");
 assert.match(room, /office_desk\.glb|wooden_table_02/, "Room explore must keep a desk GLB fallback path");
 assert.match(room, /office_chair\.glb/, "Room explore must keep the chair GLB path documented");
 assert.match(room, /RIGHT_X - 0\.045/, "Games wall TV must sit flush on the right wall");

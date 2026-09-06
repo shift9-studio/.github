@@ -4,8 +4,10 @@
    ROOM EXPLORE - live WebGL walkaround of the Shift-9 studio room.
    Hero is ONE room GLB generated from the locked opening plate
    (04-desk-still) — same persistence as locking a character from a still.
-   BoxGeometry furniture hides when that mesh lands. Printer / Lumen / Games
-   stay as interaction proxies aligned to the film. Left workbench is longer.
+   BoxGeometry furniture hides when that mesh lands. Clicks hit invisible box
+   proxies — never the reconstructed mush. If the left workbench is short vs
+   the film, that group stretches in X only (never a uniform room scale).
+   RoomRoot freezes once its bbox matches the still.
    ------------------------------------------------------------------------ */
 
 import {
@@ -940,6 +942,8 @@ export function RoomExplore({
         if (!mesh.isMesh) return;
         mesh.castShadow = true;
         mesh.receiveShadow = true;
+        /* Reconstructed mush is display-only. Invisible box proxies own hits. */
+        mesh.raycast = () => {};
         const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
         for (const m of mats) {
           const sm = m as THREE.MeshStandardMaterial;
@@ -1049,17 +1053,27 @@ export function RoomExplore({
       const hit = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), hitMat);
       hit.name = name;
       hit.position.y = y;
+      hit.userData.hitProxy = true;
       return hit;
     };
-    const mountRoomHero = (root: THREE.Group) => {
-      if (roomHeroOn) return;
-      roomHeroOn = true;
-      root.name = "heroRoom";
-      /* Locked plate = albedo. Lift it so ACES does not crush the film. */
+    const collectHitProxies = () => {
+      const proxies: THREE.Object3D[] = [];
+      for (const root of interactives.values()) {
+        root.traverse((obj) => {
+          if (obj.userData.hitProxy) proxies.push(obj);
+        });
+      }
+      return proxies;
+    };
+    /* Film still extents. Stretch the left workbench in X only if short.
+       Never uniform-scale RoomRoot to “fit” the shell. */
+    const DESK_SPLIT = -1.15;
+    const FILM_LEFT = -4.85;
+
+    const liftFilmAlbedo = (root: THREE.Object3D) => {
       root.traverse((obj) => {
         const mesh = obj as THREE.Mesh;
         if (!mesh.isMesh) return;
-        /* Never raycast the reconstructed mush — proxies own hits. */
         mesh.raycast = () => {};
         const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
         for (const m of mats) {
@@ -1077,6 +1091,147 @@ export function RoomExplore({
           sm.needsUpdate = true;
         }
       });
+    };
+
+    const extractLeftTableGroup = (hero: THREE.Object3D, leftTable: THREE.Group) => {
+      const meshes: THREE.Mesh[] = [];
+      hero.traverse((obj) => {
+        const mesh = obj as THREE.Mesh;
+        if (mesh.isMesh && mesh.geometry?.attributes.position) meshes.push(mesh);
+      });
+      const tmp = new THREE.Vector3();
+      const worldX = (mesh: THREE.Mesh, i: number) => {
+        const attr = mesh.geometry.attributes.position;
+        if (!attr) return 0;
+        tmp.fromBufferAttribute(attr, i);
+        mesh.localToWorld(tmp);
+        return tmp.x;
+      };
+      const takeSide = (geo: THREE.BufferGeometry, side: ("L" | "R")[], want: "L" | "R") => {
+        const pos = geo.attributes.position;
+        if (!pos) return new THREE.BufferGeometry();
+        const index = geo.index;
+        const idx = (t: number, k: number) => (index ? index.getX(t * 3 + k) : t * 3 + k);
+        const p: number[] = [];
+        const n: number[] = [];
+        const u: number[] = [];
+        const nr = geo.attributes.normal;
+        const uv = geo.attributes.uv;
+        for (let t = 0; t < side.length; t++) {
+          if (side[t] !== want) continue;
+          for (let k = 0; k < 3; k++) {
+            const i = idx(t, k);
+            p.push(pos.getX(i), pos.getY(i), pos.getZ(i));
+            if (nr) n.push(nr.getX(i), nr.getY(i), nr.getZ(i));
+            if (uv) u.push(uv.getX(i), uv.getY(i));
+          }
+        }
+        const g = new THREE.BufferGeometry();
+        g.setAttribute("position", new THREE.Float32BufferAttribute(p, 3));
+        if (nr) g.setAttribute("normal", new THREE.Float32BufferAttribute(n, 3));
+        else g.computeVertexNormals();
+        if (uv) g.setAttribute("uv", new THREE.Float32BufferAttribute(u, 2));
+        g.computeBoundingBox();
+        g.computeBoundingSphere();
+        return g;
+      };
+
+      for (const mesh of meshes) {
+        const geo = mesh.geometry;
+        const pos = geo.attributes.position;
+        if (!pos) continue;
+        const index = geo.index;
+        const triCount = index ? index.count / 3 : pos.count / 3;
+        const idx = (t: number, k: number) => (index ? index.getX(t * 3 + k) : t * 3 + k);
+        const side: ("L" | "R")[] = [];
+        let leftCount = 0;
+        let rightCount = 0;
+        for (let t = 0; t < triCount; t++) {
+          const mx =
+            (worldX(mesh, idx(t, 0)) + worldX(mesh, idx(t, 1)) + worldX(mesh, idx(t, 2))) / 3;
+          if (mx < DESK_SPLIT) {
+            side.push("L");
+            leftCount += 1;
+          } else {
+            side.push("R");
+            rightCount += 1;
+          }
+        }
+        /* Whole mesh on one side — leave it on the hero. Scaling that as a
+           group would X-scale the whole room. */
+        if (leftCount === 0 || rightCount === 0) continue;
+        const leftMesh = mesh.clone();
+        leftMesh.geometry = takeSide(geo, side, "L");
+        leftMesh.name = mesh.name ? `${mesh.name}_leftTable` : "leftTableMesh";
+        leftMesh.raycast = () => {};
+        mesh.geometry = takeSide(geo, side, "R");
+        geo.dispose();
+        mesh.parent?.add(leftMesh);
+        leftTable.attach(leftMesh);
+      }
+    };
+
+    const stretchLeftTableX = (leftTable: THREE.Group) => {
+      leftTable.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(leftTable);
+      if (box.isEmpty() || box.min.x <= FILM_LEFT + 0.08) return 1;
+      const run = box.min.x - DESK_SPLIT;
+      if (run >= -0.05) return 1;
+      const sx = (FILM_LEFT - DESK_SPLIT) / run;
+      const parent = leftTable.parent;
+      const pivot = new THREE.Vector3(DESK_SPLIT, 0, 0);
+      if (parent) parent.worldToLocal(pivot);
+      leftTable.position.x = pivot.x + (leftTable.position.x - pivot.x) * sx;
+      leftTable.scale.x *= sx;
+      leftTable.updateMatrixWorld(true);
+      return sx;
+    };
+
+    const stretchLeftVerticesX = (hero: THREE.Object3D) => {
+      hero.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(hero);
+      if (box.min.x <= FILM_LEFT + 0.08) return 1;
+      const run = box.min.x - DESK_SPLIT;
+      if (run >= -0.05) return 1;
+      const stretch = (FILM_LEFT - DESK_SPLIT) / run;
+      const v = new THREE.Vector3();
+      hero.traverse((obj) => {
+        const mesh = obj as THREE.Mesh;
+        if (!mesh.isMesh || !mesh.geometry?.attributes.position) return;
+        const pos = mesh.geometry.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          v.fromBufferAttribute(pos, i);
+          mesh.localToWorld(v);
+          if (v.x >= DESK_SPLIT) continue;
+          v.x = DESK_SPLIT + (v.x - DESK_SPLIT) * stretch;
+          mesh.worldToLocal(v);
+          pos.setXYZ(i, v.x, v.y, v.z);
+        }
+        pos.needsUpdate = true;
+        mesh.geometry.computeVertexNormals();
+        mesh.geometry.computeBoundingBox();
+      });
+      return stretch;
+    };
+
+    const roomBboxMatchesStill = (box: THREE.Box3) =>
+      box.min.x <= FILM_LEFT + 0.15 &&
+      Math.abs(box.min.y) <= 0.12 &&
+      box.min.z <= BACK_Z + 0.25;
+
+    const freezeRoomRoot = () => {
+      roomRoot.updateMatrixWorld(true);
+      roomRoot.traverse((obj) => {
+        obj.updateMatrix();
+        obj.matrixAutoUpdate = false;
+      });
+    };
+
+    const mountRoomHero = (root: THREE.Group) => {
+      if (roomHeroOn) return;
+      roomHeroOn = true;
+      root.name = "heroRoom";
+      liftFilmAlbedo(root);
 
       /* Three.js is meters. Image-to-3D often ships cm or Z-up. */
       root.updateMatrixWorld(true);
@@ -1107,50 +1262,32 @@ export function RoomExplore({
       box.setFromObject(root);
       root.position.z += BACK_Z + 0.04 - box.min.z;
 
-      /* Film: left workbench is longer than the reconstructed bay.
-         Stretch only vertices left of the main desk — never the whole room. */
-      const DESK_SPLIT = -1.15;
-      const FILM_LEFT = -4.85;
-      root.updateMatrixWorld(true);
-      box.setFromObject(root);
-      if (box.min.x > FILM_LEFT + 0.08) {
-        const run = box.min.x - DESK_SPLIT;
-        const stretch = run < -0.15 ? (FILM_LEFT - DESK_SPLIT) / run : 1.28;
-        root.updateMatrixWorld(true);
-        root.traverse((obj) => {
-          const mesh = obj as THREE.Mesh;
-          if (!mesh.isMesh || !mesh.geometry) return;
-          const pos = mesh.geometry.attributes.position;
-          if (!pos) return;
-          const v = new THREE.Vector3();
-          for (let i = 0; i < pos.count; i++) {
-            v.fromBufferAttribute(pos, i);
-            mesh.localToWorld(v);
-            if (v.x >= DESK_SPLIT) continue;
-            const worldX = DESK_SPLIT + (v.x - DESK_SPLIT) * stretch;
-            v.x = worldX;
-            mesh.worldToLocal(v);
-            pos.setXYZ(i, v.x, v.y, v.z);
-          }
-          pos.needsUpdate = true;
-          mesh.geometry.computeVertexNormals();
-          mesh.geometry.computeBoundingBox();
-        });
+      roomRoot.add(root);
+      const leftTable = new THREE.Group();
+      leftTable.name = "leftTable";
+      roomRoot.add(leftTable);
+      extractLeftTableGroup(root, leftTable);
+      let leftStretch = 1;
+      if (leftTable.children.length > 0) {
+        leftStretch = stretchLeftTableX(leftTable);
+      } else {
+        leftStretch = stretchLeftVerticesX(root);
       }
 
-      roomRoot.add(root);
       roomRoot.updateMatrixWorld(true);
-      roomRoot.matrixAutoUpdate = false;
-      root.matrixAutoUpdate = false;
-
       const frozen = new THREE.Box3().setFromObject(roomRoot);
+      const matched = roomBboxMatchesStill(frozen);
+      if (matched) freezeRoomRoot();
       const frozenSize = frozen.getSize(new THREE.Vector3());
       console.info("[RoomRoot]", {
         min: frozen.min.toArray(),
         max: frozen.max.toArray(),
         size: frozenSize.toArray(),
         scaleApplied,
+        leftStretch,
         rotated,
+        matched,
+        frozen: matched,
       });
 
       for (const o of hideForRoomHero) o.visible = false;
@@ -1357,10 +1494,12 @@ export function RoomExplore({
     desk.add(plantFallback);
     for (const px of [-0.92, -0.7]) {
       tryGltf("/experience/room/potted_plant_04/potted_plant_04_1k.gltf", (root) => {
+        if (roomHeroOn) return;
         plantFallback.visible = false;
         fitGltfToFloor(root, { maxDim: 0.16 });
         root.position.set(px, 0.78, -0.18);
         desk.add(root);
+        hideIfRoom(root);
       });
     }
 
@@ -1697,6 +1836,7 @@ export function RoomExplore({
       calDots.push(dot);
     }
 
+    lumen.add(makeHitProxy("lumenHit", 0.72, 1.2, 0.72, 0.58));
     scene.add(lumen);
     interactives.set("lumen", lumen);
     hotspots.push({
@@ -1719,6 +1859,22 @@ export function RoomExplore({
       const g = new THREE.Group();
       g.position.set(...pos);
       build(g);
+      g.updateMatrixWorld(true);
+      const stubBox = new THREE.Box3().setFromObject(g);
+      if (!stubBox.isEmpty()) {
+        const sz = stubBox.getSize(new THREE.Vector3());
+        const ctr = stubBox.getCenter(new THREE.Vector3());
+        g.worldToLocal(ctr);
+        const hit = makeHitProxy(
+          `${id}Hit`,
+          Math.max(sz.x, 0.4),
+          Math.max(sz.y, 0.4),
+          Math.max(sz.z, 0.4),
+          0,
+        );
+        hit.position.copy(ctr);
+        g.add(hit);
+      }
       if (showHalo) {
         const halo = new THREE.Mesh(
           new THREE.RingGeometry(0.45, 0.58, 28),
@@ -2107,8 +2263,7 @@ export function RoomExplore({
       const near = nearestHotspot();
       if (!near) {
         raycaster.setFromCamera(ndc, camera);
-        const objs = [...interactives.values()];
-        const hits = raycaster.intersectObjects(objs, true);
+        const hits = raycaster.intersectObjects(collectHitProxies(), false);
         if (!hits.length) {
           showToast("Move closer to a glowing ring, then click or press E");
           return;
