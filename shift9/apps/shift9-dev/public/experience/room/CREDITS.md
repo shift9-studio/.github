@@ -1,6 +1,9 @@
-# Room Explore asset credits (Pass-4)
+# Room Explore asset credits (Pass-4b)
 
 Hero furniture mixes Meshy clean-still meshes with Hunyuan isolated-product meshes and Poly Haven / Khronos CC0.
+
+`desk.glb` / `monitors.glb` / `printer.glb` are stored as **regular git blobs**
+(not LFS pointers) so Vercel/preview receives the real Draco GLBs.
 
 ## Environment
 - HDRI: Poly Haven `studio_small_09` (CC0) — `studio_small_09_1k.hdr` (real file, not LFS pointer)

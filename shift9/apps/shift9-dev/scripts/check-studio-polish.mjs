@@ -96,7 +96,9 @@ assert.match(room, /onSitDown/, "Room explore must offer a way back to the deskt
 assert.match(room, /ACESFilmicToneMapping/, "Room explore must keep ACES tone mapping");
 assert.match(room, /studio_small_09_1k\.hdr/, "Room explore must load the Poly Haven studio HDRI");
 assert.match(room, /office_desk\.glb|wooden_table_02/, "Room explore must mount a real desk GLB");
-assert.match(room, /office_chair\.glb/, "Room explore must mount the Khronos chair GLB");
+assert.match(room, /office_chair\.glb/, "Room explore must keep the chair GLB path documented");
+assert.match(room, /RIGHT_X - 0\.045/, "Games wall TV must sit flush on the right wall");
+assert.doesNotMatch(room, /lumenHalo/, "Lumen must not wear a CSS floor-halo ring");
 assert.match(room, /drawer_cabinet/, "Room explore must mount the Poly Haven printer-bay cabinet");
 assert.match(room, /wood_table_diff\.jpg/, "Room explore must use Poly Haven wood PBR, not a gray box");
 assert.match(room, /enclosed_printer\.glb/, "Room explore must mount a reconstructed enclosed printer GLB");

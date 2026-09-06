@@ -8,6 +8,24 @@
 **Last updated:** 2026-09-06
 **Repo:** `shift9-studio/.github` - org-owned, NOT in the `Kariimc` user namespace.
 
+## 2026-09-06 - Room Explore Pass-4b (Kariim walk-through layout, take 2)
+
+**Branch:** `feat/intro-room-explore` (PR #48). Do not merge — Kariim rescore.
+
+Second pass after walking the Pass-4 room. Arcade stays gone. Remaining faults:
+
+- Games was a desktop-monitor GLB (stand = “pole in the room”). It is now a
+  **flush 65" wall TV** on the right wall (`RIGHT_X - 0.045`), no floor halo.
+- Lumen two-cube stack was a 1.5m CSS tower with an orange ring. Now
+  **chair-scale** pale-grey 3×3 film cubes directly left of the desk, no halo.
+- Entrance props (instrument / arm / Omni) face **into the room** toward the
+  desk / film camera, not the door or the back wall.
+- Meshy `desk.glb` / `monitors.glb` / `printer.glb` were 132-byte LFS pointers
+  on preview. They are now **real git blobs** so Vercel actually ships them.
+  Hunyuan enclosed printer + flat monitor remain as fallbacks.
+
+Intro beat rates unchanged (A 1.0 / B 1.45). Printer + Lumen interaction APIs stay.
+
 ## 2026-09-06 - Room Explore Pass-4 (Kariim walk-through layout)
 
 **Branch:** `feat/intro-room-explore` (PR #48). Do not merge — Kariim rescore.

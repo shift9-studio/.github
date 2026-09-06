@@ -207,14 +207,15 @@ function makeMetalMap(): THREE.CanvasTexture {
 }
 
 function makeCalibGridMap(): THREE.CanvasTexture {
+  /* Film Lumen cubes: pale grey foam, faint 3×3 white grid — not a neon HUD */
   return canvasTex(
     256,
     (ctx, size) => {
-      ctx.fillStyle = "#f4f4f0";
+      ctx.fillStyle = "#d4d2cc";
       ctx.fillRect(0, 0, size, size);
-      ctx.strokeStyle = "#1a1a1a";
-      ctx.lineWidth = 2;
-      const cells = 10;
+      ctx.strokeStyle = "rgba(248,248,244,0.62)";
+      ctx.lineWidth = 3;
+      const cells = 3;
       const step = size / cells;
       for (let i = 0; i <= cells; i++) {
         ctx.beginPath();
@@ -328,21 +329,16 @@ void main() {
   vec3 albedo = texture2D(uAlbedo, vUv * 2.0).rgb * uIdleTint;
   vec3 color = albedo;
 
-  if (uHasProject > 0.5) {
+  if (uHasProject > 0.5 && uMapped > 0.5) {
     vec2 puv = fract(vWorldPos.xz * 0.35 + vec2(0.0, uTime * 0.02));
     vec3 proj = texture2D(uProject, puv).rgb;
-    float strength = mix(0.12, 0.85, uMapped);
-    color = blendLighten(color, proj, strength);
+    color = blendLighten(color, proj, 0.85);
   }
 
   if (uMapped > 0.5) {
     float hue = fract(uTime * 0.12 + vWorldPos.x * 0.08 + vWorldPos.y * 0.1);
     vec3 trip = 0.5 + 0.5 * cos(6.2831 * (hue + vec3(0.0, 0.33, 0.67)));
     color = blendLighten(color, trip, 0.55 + 0.2 * sin(uTime * 3.0 + vWorldPos.y * 4.0));
-  } else {
-    /* calibration grid flicker while idle / calibrating */
-    float grid = step(0.92, max(fract(vUv.x * 10.0), fract(vUv.y * 10.0)));
-    color = mix(color, vec3(0.2, 1.0, 0.35), grid * 0.15 * (0.5 + 0.5 * sin(uTime * 6.0)));
   }
 
   gl_FragColor = vec4(color, 1.0);
@@ -889,12 +885,12 @@ export function RoomExplore({
       "/experience/opening/01-exterior-approach-poster.jpg",
     ];
     const posterLayouts: [number, number, number, number][] = [
-      /* w, h, y, z  (x fixed on right wall) */
-      [0.95, 0.62, 2.15, -2.0],
-      [0.62, 0.82, 2.0, -0.85],
-      [0.82, 0.54, 2.35, 0.35],
-      [0.58, 0.58, 1.55, -1.4],
-      [0.72, 0.48, 1.45, 0.05],
+      /* w, h, y, z  — high on the right wall so the Games TV owns eye height */
+      [0.95, 0.62, 2.55, -2.15],
+      [0.62, 0.82, 2.48, -1.15],
+      [0.82, 0.54, 2.62, 1.45],
+      [0.58, 0.58, 2.42, -2.85],
+      [0.72, 0.48, 2.52, 2.05],
     ];
     posterLayouts.forEach(([w, h, y, z], i) => {
       const frame = new THREE.Mesh(
@@ -984,6 +980,7 @@ export function RoomExplore({
     const tryGltf = (
       url: string,
       onOk: (root: THREE.Group) => void,
+      onFail?: () => void,
     ) => {
       gltfLoader.load(
         url,
@@ -993,7 +990,7 @@ export function RoomExplore({
         },
         undefined,
         () => {
-          /* procedural silhouette stays only if no GLB */
+          onFail?.();
         },
       );
     };
@@ -1068,9 +1065,11 @@ export function RoomExplore({
       desk.add(root);
     };
     /* Meshy clean-still desk first; CC0 desks only if Meshy fails to land */
-    tryGltf("/experience/room/desk.glb", mountDeskGltf);
-    tryGltf("/experience/room/office_desk.glb", mountDeskGltf);
-    tryGltf("/experience/room/desk/wooden_table_02_2k.gltf", mountDeskGltf);
+    tryGltf("/experience/room/desk.glb", mountDeskGltf, () => {
+      tryGltf("/experience/room/office_desk.glb", mountDeskGltf, () => {
+        tryGltf("/experience/room/desk/wooden_table_02_2k.gltf", mountDeskGltf);
+      });
+    });
 
     /* Ultrawide + portrait — photoreal monitor GLB, emissive film screens */
     const monitorBezel = trackMat(
@@ -1121,27 +1120,29 @@ export function RoomExplore({
       root.position.set(opts.x, opts.y, opts.z);
       desk.add(root);
     };
-    tryGltf("/experience/room/flat_monitor.glb", (root) => {
-      ultraBezel.visible = false;
-      mountDeskMonitor(root, {
-        x: -0.15,
-        y: 0.78,
-        z: -0.22,
-        width: 1.28,
-        height: 0.72,
+    const mountHunyuanDeskMonitors = () => {
+      tryGltf("/experience/room/flat_monitor.glb", (root) => {
+        ultraBezel.visible = false;
+        mountDeskMonitor(root, {
+          x: -0.15,
+          y: 0.78,
+          z: -0.22,
+          width: 1.28,
+          height: 0.72,
+        });
       });
-    });
-    tryGltf("/experience/room/flat_monitor.glb", (root) => {
-      portBezel.visible = false;
-      mountDeskMonitor(root, {
-        x: 0.85,
-        y: 0.78,
-        z: -0.22,
-        portrait: true,
-        width: 0.42,
-        height: 0.78,
+      tryGltf("/experience/room/flat_monitor.glb", (root) => {
+        portBezel.visible = false;
+        mountDeskMonitor(root, {
+          x: 0.85,
+          y: 0.78,
+          z: -0.22,
+          portrait: true,
+          width: 0.42,
+          height: 0.78,
+        });
       });
-    });
+    };
 
     /* Light bar on ultrawide */
     const lightBar = new THREE.Mesh(
@@ -1272,24 +1273,22 @@ export function RoomExplore({
     mkSpeaker(-1.45);
     mkSpeaker(1.45);
 
-    tryGltf("/experience/room/monitors.glb", (root) => {
-      fitGltf(root, new THREE.Vector3(1.7, 0.95, 0.55), "bottom");
-      root.position.set(0.05, 0.78, -0.22);
-      ultraBezel.visible = false;
-      portBezel.visible = false;
-      lightBar.visible = false;
-      ultraScreen.position.set(-0.15, 1.28, -0.18);
-      portScreen.position.set(0.85, 1.32, -0.18);
-      desk.add(root);
-    });
-    /* Khronos SheenChair — real GLB, hide the box chair when it lands */
-    tryGltf("/experience/room/office_chair.glb", (root) => {
-      chair.visible = false;
-      fitGltfToFloor(root, { maxDim: 1.15 });
-      root.position.set(0, 0, 0.92);
-      root.rotation.y = Math.PI;
-      desk.add(root);
-    });
+    tryGltf(
+      "/experience/room/monitors.glb",
+      (root) => {
+        fitGltf(root, new THREE.Vector3(1.7, 0.95, 0.55), "bottom");
+        root.position.set(0.05, 0.78, -0.22);
+        ultraBezel.visible = false;
+        portBezel.visible = false;
+        lightBar.visible = false;
+        ultraScreen.position.set(-0.15, 1.28, -0.18);
+        portScreen.position.set(0.85, 1.32, -0.18);
+        desk.add(root);
+      },
+      mountHunyuanDeskMonitors,
+    );
+    /* Keep the dark Aeron-ish chair. office_chair.glb is Khronos SheenChair
+       (orange lounge silhouette) and reads as the wrong film object. */
 
 
     scene.add(desk);
@@ -1360,7 +1359,7 @@ export function RoomExplore({
     frame.castShadow = true;
     frame.name = "printerBoxFrame";
     printer.add(frame);
-    tryGltf("/experience/room/enclosed_printer.glb", (root) => {
+    const mountEnclosedPrinter = (root: THREE.Group) => {
       frame.visible = false;
       glass.visible = false;
       bed.visible = false;
@@ -1368,9 +1367,9 @@ export function RoomExplore({
       paintGltf(root, printerShell);
       fitGltfToFloor(root, { width: 0.78, depth: 0.68, height: 0.82 });
       root.position.y += 0.78;
-      root.rotation.y = Math.PI * 0.15;
+      root.rotation.y = Math.PI * 0.08;
       printer.add(root);
-    });
+    };
 
     /* Glass door suggestion */
     const glass = new THREE.Mesh(
@@ -1469,15 +1468,22 @@ export function RoomExplore({
     printerHalo.position.y = 0.02;
     printer.add(printerHalo);
 
-    tryGltf("/experience/room/printer.glb", (root) => {
-      fitGltf(root, new THREE.Vector3(0.85, 0.9, 0.7), "bottom");
-      root.position.set(0, 0.78, 0);
-      frame.visible = false;
-      glass.visible = false;
-      bed.visible = false;
-      gantry.visible = false;
-      printer.add(root);
-    });
+    tryGltf(
+      "/experience/room/printer.glb",
+      (root) => {
+        fitGltf(root, new THREE.Vector3(0.85, 0.9, 0.7), "bottom");
+        root.position.set(0, 0.78, 0);
+        root.rotation.y = Math.PI * 0.08;
+        frame.visible = false;
+        glass.visible = false;
+        bed.visible = false;
+        gantry.visible = false;
+        printer.add(root);
+      },
+      () => {
+        tryGltf("/experience/room/enclosed_printer.glb", mountEnclosedPrinter);
+      },
+    );
 
 
     scene.add(printer);
@@ -1491,16 +1497,15 @@ export function RoomExplore({
 
     /* -- Lumen: two film grid cubes DIRECTLY left of the main desk ------ */
     const lumen = new THREE.Group();
-    lumen.position.set(-1.48, 0, -2.52);
+    lumen.position.set(-1.58, 0, -2.48);
 
     const boxes = new THREE.Group();
     boxes.name = "lumenBoxes";
     const stack: THREE.Mesh[] = [];
-    /* Film silhouette: two large calibration cubes, not a junk pile */
+    /* Film: two modest stacked cubes (chair-scale), not a 1.5m CSS tower */
     const layout: [number, number, number, number, number, number][] = [
-      [0.78, 0.78, 0.78, 0.0, 0.39, 0.0],
-      [0.64, 0.64, 0.64, 0.06, 1.1, 0.04],
-
+      [0.44, 0.44, 0.44, 0.0, 0.22, 0.0],
+      [0.36, 0.36, 0.36, 0.02, 0.62, 0.02],
     ];
     for (const [w, h, d, x, y, z] of layout) {
       const lm = trackMat(createLumenMaterial(gridMap, lumenProjectTex));
@@ -1517,7 +1522,7 @@ export function RoomExplore({
     const calDots: THREE.Mesh[] = [];
     for (let i = 0; i < 4; i++) {
       const dot = new THREE.Mesh(
-        new THREE.SphereGeometry(0.04, 10, 10),
+        new THREE.SphereGeometry(0.03, 10, 10),
         trackMat(new THREE.MeshBasicMaterial({ color: 0x39ff14 })),
       );
       dot.visible = false;
@@ -1525,28 +1530,13 @@ export function RoomExplore({
       calDots.push(dot);
     }
 
-    const lumenHalo = new THREE.Mesh(
-      new THREE.RingGeometry(0.55, 0.68, 32),
-      trackMat(
-        new THREE.MeshBasicMaterial({
-          color: 0xff9f43,
-          transparent: true,
-          opacity: 0.35,
-          side: THREE.DoubleSide,
-        }),
-      ),
-    );
-    lumenHalo.rotation.x = -Math.PI / 2;
-    lumenHalo.position.y = 0.02;
-    lumen.add(lumenHalo);
-
     scene.add(lumen);
     interactives.set("lumen", lumen);
     hotspots.push({
       id: "lumen",
       label: "Lumen",
       prompt: "Aim / calibrate the projection",
-      position: new THREE.Vector3(-1.48, 1.05, -2.52),
+      position: new THREE.Vector3(-1.58, 0.72, -2.48),
     });
 
     /* -- Stub props - richer silhouettes, film/docs-faithful ----------- */
@@ -1557,25 +1547,28 @@ export function RoomExplore({
       pos: [number, number, number],
       build: (g: THREE.Group) => void,
       haloColor: number,
+      showHalo = true,
     ) => {
       const g = new THREE.Group();
       g.position.set(...pos);
       build(g);
-      const halo = new THREE.Mesh(
-        new THREE.RingGeometry(0.45, 0.58, 28),
-        trackMat(
-          new THREE.MeshBasicMaterial({
-            color: haloColor,
-            transparent: true,
-            opacity: 0.28,
-            side: THREE.DoubleSide,
-          }),
-        ),
-      );
-      halo.rotation.x = -Math.PI / 2;
-      halo.position.y = 0.02;
-      halo.name = "halo";
-      g.add(halo);
+      if (showHalo) {
+        const halo = new THREE.Mesh(
+          new THREE.RingGeometry(0.45, 0.58, 28),
+          trackMat(
+            new THREE.MeshBasicMaterial({
+              color: haloColor,
+              transparent: true,
+              opacity: 0.28,
+              side: THREE.DoubleSide,
+            }),
+          ),
+        );
+        halo.rotation.x = -Math.PI / 2;
+        halo.position.y = 0.02;
+        halo.name = "halo";
+        g.add(halo);
+      }
       scene.add(g);
       interactives.set(id, g);
       hotspots.push({
@@ -1591,8 +1584,9 @@ export function RoomExplore({
       "instrument",
       "INSTRUMENT",
       "Coming soon - a short pulse",
-      [-1.85, 0, 2.25],
+      [-2.15, 0, 1.85],
       (g) => {
+        /* Face the desk / film camera (into the room, not the entrance) */
         g.rotation.y = Math.PI;
 
         const body = new THREE.Mesh(
@@ -1635,47 +1629,71 @@ export function RoomExplore({
       0x4dabf7,
     );
 
-    /* Games: wall-mounted monitor on the RIGHT wall — not an arcade cabinet */
+    /* Games: wall-mounted monitor on the RIGHT wall — not an arcade cabinet.
+       Desktop-monitor GLB includes a stand and reads as a pole-box in the room.
+       Flush PBR panel + Hunyuan screen mesh scaled as a thin TV. */
     mkStub(
       "games",
       "Games",
       "Coming soon - a playable wall screen",
-      [RIGHT_X - 0.22, 0, -0.15],
+      [RIGHT_X - 0.045, 0, 0.2],
       (g) => {
         g.rotation.y = -Math.PI / 2;
-        const bezel = new THREE.Mesh(
-          new THREE.BoxGeometry(1.05, 0.62, 0.05),
-          monitorBezel,
+        const plate = new THREE.Mesh(
+          new THREE.BoxGeometry(1.52, 0.92, 0.03),
+          trackMat(
+            makeMat(0x0a0c10, { roughness: 0.55, metalness: 0.35 }),
+          ),
         );
-        bezel.position.set(0, 1.55, 0);
+        plate.position.set(0, 1.52, -0.02);
+        g.add(plate);
+        const bezel = new THREE.Mesh(
+          new THREE.BoxGeometry(1.42, 0.8, 0.045),
+          trackMat(
+            new THREE.MeshPhysicalMaterial({
+              color: 0x101216,
+              metalness: 0.55,
+              roughness: 0.28,
+              clearcoat: 0.35,
+              clearcoatRoughness: 0.25,
+              envMapIntensity: 1.15,
+            }),
+          ),
+        );
+        bezel.position.set(0, 1.52, 0);
         bezel.castShadow = true;
         bezel.name = "gamesBezel";
         g.add(bezel);
         const screen = new THREE.Mesh(
-          new THREE.PlaneGeometry(0.96, 0.52),
+          new THREE.PlaneGeometry(1.3, 0.7),
           gamesScreenMat,
         );
-        screen.position.set(0, 1.55, 0.028);
+        screen.position.set(0, 1.52, 0.026);
         screen.name = "gamesScreen";
         g.add(screen);
-        tryGltf("/experience/room/flat_monitor.glb", (root) => {
-          bezel.visible = false;
-          paintGltf(root, monitorPlastic);
-          fitGltfToFloor(root, { width: 1.08, height: 0.7, depth: 0.22 });
-          root.position.set(0, 1.18, 0);
-          g.add(root);
-        });
-
+        for (const y of [1.28, 1.76]) {
+          const arm = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.018, 0.018, 0.08, 10),
+            blackMetal,
+          );
+          arm.rotation.x = Math.PI / 2;
+          arm.position.set(0, y, -0.05);
+          g.add(arm);
+        }
+        /* Do not mount flat_monitor.glb here — it is a desktop monitor with a
+           stand and reads as a pole-box in the room. Desk dual screens use it. */
       },
       0xff7043,
+      false,
     );
 
     mkStub(
       "omni",
       "Omni-3D",
       "Coming soon - hologram glitch",
-      [3.15, 0, -2.35],
+      [2.85, 0, -2.55],
       (g) => {
+        /* Face the desk / spawn, not the back wall */
         g.rotation.y = Math.PI;
 
         const ped = new THREE.Mesh(
@@ -1725,8 +1743,9 @@ export function RoomExplore({
       "arm",
       "Automation Arm",
       "Coming soon - one precise nod",
-      [3.45, 0, 1.55],
+      [4.05, 0, 1.65],
       (g) => {
+        /* Face into the room from the right / entrance side */
         g.rotation.y = -Math.PI / 2;
 
         const base = new THREE.Mesh(
@@ -1871,10 +1890,10 @@ export function RoomExplore({
         return;
       }
       const corners = [
-        new THREE.Vector3(-0.38, 0.06, 0.38),
-        new THREE.Vector3(0.38, 0.06, 0.38),
-        new THREE.Vector3(0.36, 1.4, 0.34),
-        new THREE.Vector3(-0.3, 1.4, -0.28),
+        new THREE.Vector3(-0.22, 0.04, 0.22),
+        new THREE.Vector3(0.22, 0.04, 0.22),
+        new THREE.Vector3(0.2, 0.8, 0.2),
+        new THREE.Vector3(-0.16, 0.8, -0.16),
       ];
       if (lumenStep < 4) {
         const dot = calDots[lumenStep];
@@ -2083,7 +2102,6 @@ export function RoomExplore({
       }
 
       printerHalo.rotation.z = t * 0.6;
-      lumenHalo.rotation.z = -t * 0.45;
       const omni = interactives.get("omni")?.getObjectByName("omniHolo");
       if (omni) {
         omni.rotation.y = t * (0.4 + omniSpin * 1.8);
