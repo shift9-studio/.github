@@ -1660,3 +1660,5 @@ Invitation thumbnail fix: Media reused the mark-settles banner for invitation-fi
 Wet-paint interaction fix: /soon sign, stickers and nine now use native buttons with bounded CSS splat reactions. Phone sign remains available below artwork; reduced motion has static replies. Preview /soon locally. Merge approval pending.
 
 Candy refinement: rounded glossy blobs cycle mint/lilac/pink, six finite droplets per activation, paper rocket on SHIP IT, rewind on Ctrl Z and jelly nine. Reduced-motion keeps replies static. Build and independent review passed; no merge authorization for PR57 yet.
+
+Wet-paint refinement: generated transparent acrylic atlas, three distinct silhouettes, unique sticker replies and fixed text centers. Finite impact deformation and two delayed drips; reduced motion static. Build and review passed.

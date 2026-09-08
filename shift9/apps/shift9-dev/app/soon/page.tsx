@@ -23,6 +23,18 @@ const STICKERS: { t: string; x: string; y: string; r: string; k: string }[] = [
   { t: "ONE MORE COMMIT", x: "22%", y: "31%", r: "-5deg", k: "tex" },
 ];
 
+const REPLIES: Record<string, string> = {
+  "WORKS ON MY MACHINE": "MACHINE SOLD SEPARATELY.",
+  "// TODO": "TEACH THE PAINT TO DRY.",
+  "$ rm -rf ./regrets": "REGRETS: PERMISSION DENIED.",
+  "SHIP IT": "EXPRESS DELIVERY. PROBABLY.",
+  "404: SLEEP NOT FOUND": "POWERED BY QUESTIONABLE COFFEE.",
+  "semicolon;": "TINY MARK. MASSIVE DRAMA.",
+  "BUILD PASSING": "NOBODY BREATHE.",
+  "COMPILES ON THE THIRD TRY": "THIRD TIME IS A FEATURE.",
+  "Ctrl + Z": "UNSPILLING THE BEANS.",
+  "ONE MORE COMMIT": "FAMOUS LAST WORDS.",
+};
 const RIBBON_A = "COMING SOON ✦ NOT FINISHED ✦ COME BACK ✦ SHIFT-9 ✦ ";
 const RIBBON_B = "BUILDING ✦ IN PROGRESS ✦ WORK IN MOTION ✦ SHIFT-9 ✦ ";
 
@@ -77,7 +89,7 @@ export default async function SoonPage({
                 key={st.t}
                 label={`Touch sticker: ${st.t}`}
                 trick={st.t === "SHIP IT" ? "rocket" : st.t === "Ctrl + Z" ? "rewind" : "splat"}
-                reply={st.t === "Ctrl + Z" ? "UNSPILLING THE BEANS." : st.t === "SHIP IT" ? "SHIP HAPPENS." : "IT WAS LIKE THAT BEFORE."}
+                reply={REPLIES[st.t] ?? "FRESHLY SQUEEZED CODE."}
                 className={`${s.sticker} ${s[st.k] ?? ""}`}
                 style={{ left: st.x, top: st.y, ["--r" as string]: st.r }}
               >

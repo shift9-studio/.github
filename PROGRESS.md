@@ -515,3 +515,5 @@ Cause: touch invitation was decorative markup with no handlers and pointer-event
 Final build exited 0; 16/16 static pages and existing contract suites passed.
 
 Candy refinement verified: full build exited 0 (16/16 pages), source review PASS, browser confirmed rocket and six droplets plus keyboard nine reaction. Each activation replaces the prior effect, no timers or listeners. PR57 remains preview-only until approved.
+
+User approved realistic atlas appearance and requested wet deformation/drips. Added finite2.4s squash/settle and2 short3.2s drips, text unaffected. Browser verified reply bounds and actual impact/drip animation names; screenshot inspected. Full build exit0,16/16pages; reviewPASS. Generated atlas source retained under .codex/generated_images; public copy is experience/paint-splats.png. PR57 remains unmerged.
