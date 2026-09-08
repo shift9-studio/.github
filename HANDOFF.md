@@ -1666,3 +1666,5 @@ Wet-paint refinement: generated transparent acrylic atlas, three distinct silhou
 Final interaction pass: automatic six-form nine (no splat), delayed replies, SHIP HAPPENS plane restored, distinct twists/hops/stretch, rainbow smearing with inverse SVG coordinates, complete Wipe paint incl sign, mobile paint controls. Final two-worker build pass; normal11worker build hit machine OOM. Config restored. PR57 pending approval.
 
 Smear refinement: actual atlas pigment sampling replaces unrelated rainbow gradient. Drag picks up and mixes other pools/trails, preserves origin, tapers and textures the film. Plane flight raises above semicolon only while launching with cleanup. Build/review/browser checks passed.
+
+Reply readability: separate non-interactive reply layer prevents paint occlusion; ResizeObserver tracks layout. Rewind reply fades with paint. TypeScript/studio-polish and actual browser overlap checks passed.

@@ -8,6 +8,7 @@ type Dab = { x: number; y: number; color: Color; width: number };
 const PIGMENTS: Color[] = [[90, 223, 205], [184, 119, 226], [255, 100, 169]];
 const colorText = (color: Color) => `rgb(${color.map(Math.round).join(" ")})`;
 const mix = (a: Color, b: Color, amount: number): Color => a.map((v, i) => v * (1 - amount) + b[i]! * amount) as Color;
+export const PaintReplyLayer = createContext<HTMLDivElement | null>(null);
 const WipeContext = createContext<() => void>(() => {});
 export function PaintResetProvider({ children }: { children: ReactNode }) {
   const [revision, setRevision] = useState(0);
@@ -17,6 +18,7 @@ export function PaintResetProvider({ children }: { children: ReactNode }) {
   return <WipeContext.Provider value={() => setRevision(n => (n + 1) % 1000)}><Fragment key={revision}>{children}</Fragment></WipeContext.Provider>;
 }
 export default function PaintSurface({ children, className }: { children: ReactNode; className?: string }) {
+  const [replyLayer, setReplyLayer] = useState<HTMLDivElement | null>(null);
   const [strokes, setStrokes] = useState<Dab[][]>([]);
   const wipe = useContext(WipeContext);
   const svg = useRef<SVGSVGElement>(null);
@@ -103,7 +105,8 @@ export default function PaintSurface({ children, className }: { children: ReactN
       setStrokes(previous => firstMove ? [...previous.slice(-7), drag.points] : [...previous.slice(0, -1), drag.points]);
     }}
     onPointerUp={() => { active.current = null; }} onPointerCancel={() => { active.current = null; }}>
-    {children}
+    <PaintReplyLayer.Provider value={replyLayer}>{children}</PaintReplyLayer.Provider>
+    <div ref={setReplyLayer} className={s.replyLayer} />
     <svg ref={svg} className={s.rainbowGoop} viewBox="0 0 1000 700" preserveAspectRatio="none" aria-hidden="true">
       <defs><filter id={`${gradientId}-wet`} x="-10%" y="-10%" width="120%" height="120%" colorInterpolationFilters="sRGB">
         <feTurbulence type="fractalNoise" baseFrequency=".12" numOctaves="2" seed="9" result="grain"/>
