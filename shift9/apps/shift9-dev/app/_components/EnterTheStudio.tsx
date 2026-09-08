@@ -1384,7 +1384,10 @@ export function EnterTheStudio() {
             );
           }}
         >
-          &#9993;
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-hidden="true" focusable="false">
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="m3 6 9 7 9-7" />
+          </svg>
         </a>
         {/* Live region: the confirmation is the whole point of the click for
             anyone whose machine ignored the mailto, so it has to be announced
@@ -1406,7 +1409,12 @@ export function EnterTheStudio() {
             <img src={SHIFT9_LOGO} alt="" />
           </a>
           <div className={`${s.tb} ${s.tipHost}`} data-tip="shift9.dev">&#127760;</div>
-          <div className={`${s.tb} ${s.tipHost}`} data-tip="Email the studio">&#9993;</div>
+          <div className={`${s.tb} ${s.tipHost}`} data-tip="Email the studio">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" aria-hidden="true" focusable="false">
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="m3 6 9 7 9-7" />
+            </svg>
+          </div>
           <Clock className={s.clock} />
         </div>
       </div>
@@ -1443,6 +1451,7 @@ export function EnterTheStudio() {
             </div>
             <div
               className={s.wbody}
+              data-devlog={openWin === "devlog" ? true : undefined}
               data-lenis-prevent={openWin === "devlog" ? true : undefined}
               tabIndex={openWin === "devlog" ? 0 : undefined}
             >

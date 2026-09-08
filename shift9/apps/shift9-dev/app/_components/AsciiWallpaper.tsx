@@ -41,6 +41,8 @@ const BAND_WIDTH = 0.16; // width of the travelling pulse, in field widths
    with touch devices at 30 rather than 20. */
 const FRAME_MS_FINE = 1000 / 60;
 const FRAME_MS_COARSE = 1000 / 30;
+const RIPPLE_MS = 600;
+const MAX_RIPPLES = 1;
 
 type Cell = { char: number; tone: number };
 
@@ -107,6 +109,9 @@ export function AsciiWallpaper({
     let cellH = 0;
     let dpr = 1;
     let prev: Cell[] = [];
+    const ripples: { x: number; y: number; at: number }[] = [];
+    let lastRipple = -Infinity;
+    let hadRipples = false;
 
     const buildAtlas = () => {
       const aw = Math.ceil(cellW * dpr);
@@ -123,10 +128,12 @@ export function AsciiWallpaper({
          into a solid mass instead of reading as text. */
       const fontPx = Math.max(4, Math.min(cellH * dpr * 0.98, (cellW * dpr) / 0.6));
       actx.font = `${fontPx}px ui-monospace, "SF Mono", Menlo, "Courier New", monospace`;
+      const stretchY = Math.max(1, cellH / (cellW * 2));
       for (let t = 0; t < src.palette.length; t++) {
+        actx.setTransform(1, 0, 0, stretchY, 0, t * ah);
         actx.fillStyle = src.palette[t] ?? "#000000";
         for (let c = 0; c < ASCII_RAMP.length; c++) {
-          actx.fillText(ASCII_RAMP[c] ?? " ", c * aw + aw / 2, t * ah + ah / 2);
+          actx.fillText(ASCII_RAMP[c] ?? " ", c * aw + aw / 2, ah / (2 * stretchY));
         }
       }
       return a;
@@ -136,13 +143,6 @@ export function AsciiWallpaper({
       const rect = canvas.getBoundingClientRect();
       if (rect.width < 1 || rect.height < 1) return;
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      /* The grid used to be stretched to the container on both axes
-         independently. The artwork is 170x57 — nearly 3:1 — and the desktop
-         it sits behind is closer to 1.6:1, so every glyph was being pulled to
-         roughly twice its height and the wordmark read as a crop of itself
-         rather than as the banner. One cell size for both axes fixes the
-         proportions; the field is then centred in whatever space is left, so
-         the whole banner is on screen with its own aspect intact. */
       /* Lay the banner out inside the unobstructed part of the desktop when
          one is given, then paint it at that place on the full-bleed canvas.
          Fitting to the viewport instead put roughly a fifth of the artwork
@@ -155,24 +155,13 @@ export function AsciiWallpaper({
       const fitX = box ? box.left - rect.left : 0;
       const fitY = box ? box.top - rect.top : 0;
 
-      /* Cells are not square, and forcing them to be is what kept the field
-         to a band across the middle. A terminal cell is taller than it is
-         wide — a monospace advance is about 0.6em — so character art is read
-         at roughly 1:2, and the artwork was sampled for that. Square cells
-         squashed 170x57 down to its raw 3:1 and left the rest of the desktop
-         empty above and below.
-
-         Width fills the box. Height then takes as much of the box as it can
-         up to twice the cell width, which is the terminal's own proportion:
-         past that the rows drift apart and the wordmark stops holding
-         together. The glyph itself is still sized off the cell WIDTH in
-         buildAtlas, so widening the row pitch adds air between rows and never
-         smears neighbouring characters into each other. */
-      const MAX_CELL_ASPECT = 2;
+      /* Fill the visible icon field on both axes, including tall cover screens.
+         The atlas stretches glyphs with their cells instead of leaving a short
+         band centered low in the phone viewport. ResizeObserver refits on unfold. */
       cellW = fitW / cols;
-      cellH = Math.min(fitH / rows, cellW * MAX_CELL_ASPECT);
-      offX = fitX + (fitW - cellW * cols) / 2;
-      offY = fitY + (fitH - cellH * rows) / 2;
+      cellH = fitH / rows;
+      offX = fitX;
+      offY = fitY;
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
       atlas = buildAtlas();
@@ -188,8 +177,14 @@ export function AsciiWallpaper({
       const ah = Math.ceil(cellH * dpr);
       const sweep = (t % SWEEP_PERIOD_MS) / SWEEP_PERIOD_MS;
       const breath = Math.sin((t / BREATH_PERIOD_MS) * TAU) * 0.5 + 0.5;
-      const full = prev.length === 0;
-      if (full) prev = new Array<Cell>(cols * rows);
+      while (ripples.length && t - ripples[0]!.at >= RIPPLE_MS) ripples.shift();
+      const full = prev.length === 0 || ripples.length > 0 || hadRipples;
+      hadRipples = ripples.length > 0;
+      if (full) {
+        prev = new Array<Cell>(cols * rows);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      const scale = Math.max(1, Math.min(cols * cellW, rows * cellH));
 
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
@@ -206,8 +201,22 @@ export function AsciiWallpaper({
           /* The wave travels THROUGH the artwork, never over it: a cell the
              banner left black stays black, so the wordmark keeps its shape and
              the negative space never fills in. */
+          let warpX = 0;
+          let warpY = 0;
+          for (const wave of ripples) {
+            const age = Math.max(0, (t - wave.at) / RIPPLE_MS);
+            const vx = x * cellW - wave.x;
+            const vy = y * cellH - wave.y;
+            const pixels = Math.hypot(vx, vy);
+            const distance = pixels / scale;
+            // A local two-pixel nudge, not an expanding wave. It settles after
+            // the pointer stops and never changes the silhouette's content.
+            const displacement = Math.exp(-Math.pow(distance / 0.2, 2)) * (1 - age) * 2;
+            warpX += displacement * vx / Math.max(1, pixels);
+            warpY += displacement * vy / Math.max(1, pixels);
+          }
           const shimmer = breath * 0.35;
-          const lift = base === 0 ? 0 : pulse * 2.2 + shimmer;
+          const lift = base === 0 ? 0 : pulse * 2.6 + shimmer;
           const char = Math.min(maxChar, Math.round(base + lift));
 
           /* Ink weight tracks glyph density, not the source pixel's own colour.
@@ -217,16 +226,17 @@ export function AsciiWallpaper({
              similar weight. baseTone only nudges the hue within that band. */
           const density = char / maxChar;
           const hue = ((baseTone[i] ?? 0) / maxTone - 0.5) * 1.5;
-          const weight = ink ? 1 - density : density;
+          const litDensity = Math.min(1, density + pulse * 0.08);
+          const weight = ink ? 1 - litDensity : litDensity;
           const tone = Math.max(0, Math.min(maxTone, Math.round((weight + hue * 0.06) * maxTone)));
 
           const was = prev[i];
           if (!full && was && was.char === char && was.tone === tone) continue;
           prev[i] = { char, tone };
 
-          const dx = Math.round((offX + x * cellW) * dpr);
-          const dy = Math.round((offY + y * cellH) * dpr);
-          ctx.clearRect(dx, dy, aw, ah);
+          const dx = Math.round((offX + x * cellW + warpX) * dpr);
+          const dy = Math.round((offY + y * cellH + warpY) * dpr);
+          if (!full) ctx.clearRect(dx, dy, aw, ah);
           if (char === 0) continue; // space — leave it cleared
           ctx.drawImage(atlas, char * aw, tone * ah, aw, ah, dx, dy, aw, ah);
         }
@@ -253,9 +263,24 @@ export function AsciiWallpaper({
 
     const start = () => {
       cancelAnimationFrame(raf);
+      ripples.length = 0;
       resize();
       if (reduced.matches) paintStatic();
-      else raf = requestAnimationFrame(loop);
+      else if (!document.hidden) raf = requestAnimationFrame(loop);
+    };
+
+    const onPointer = (event: PointerEvent) => {
+      if (reduced.matches || document.hidden) return;
+      if (event.target instanceof Element && event.target.closest("a, button, input, [role='dialog']")) return;
+      const now = performance.now();
+      if (now - lastRipple < 100) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left - offX;
+      const y = event.clientY - rect.top - offY;
+      if (x < 0 || y < 0 || x > cols * cellW || y > rows * cellH) return;
+      if (ripples.length === MAX_RIPPLES) ripples.shift();
+      ripples.push({ x, y, at: now });
+      lastRipple = now;
     };
 
     start();
@@ -267,11 +292,17 @@ export function AsciiWallpaper({
        too, or the banner keeps the previous layout's proportions. */
     if (fitTo?.current) ro.observe(fitTo.current);
     reduced.addEventListener("change", start);
+    document.addEventListener("visibilitychange", start);
+    window.addEventListener("pointerdown", onPointer, { passive: true });
+    window.addEventListener("pointermove", onPointer, { passive: true });
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
       reduced.removeEventListener("change", start);
+      document.removeEventListener("visibilitychange", start);
+      window.removeEventListener("pointerdown", onPointer);
+      window.removeEventListener("pointermove", onPointer);
     };
   }, [ink, fitTo]);
 

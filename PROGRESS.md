@@ -1,4 +1,24 @@
-# PROGRESS — `claude/flow-state-confirmation-email`
+# PROGRESS — `codex/dev-log-week-sep8`
+
+## September 8, 2026 — dev-log editorial update
+
+Sixteen source-backed entries added; three existing September entries strengthened.
+58 total entries, sorted newest first by the existing data module. Reviewed current
+source and retained September 5–8 results for Control Plane, Vespermesh, Feelspoon,
+Growth Kit, Lumen, video production and studio dependencies; Flow State's September
+3 records substantiate the expanded platform/focus entries. New Play listing story
+is grounded in Feelspoon commit `a8082c6` and its transactional API tool.
+Historical backfill: Flow State commits `237d518` (recovery) and `3ce2439`
+(reviewed learning), Vespers `6a92b84` packaged benchmark, retired integration tests
+at `8043952`, and KinQuest's saved September 5 ChatGPT research checkpoint (not a
+deployment). Family details excluded. Antigravity's original KAGE/HUD walkthroughs
+were compared with existing entries; no duplicate stories needed.
+
+The isolated preview started from production main `7c1cd5b`; the dirty Room Explore
+checkout is untouched. No merge or production deployment performed. UI fixes and
+the requested subtle ASCII interaction are being verified in this branch separately.
+
+# Historical progress — `claude/flow-state-confirmation-email`
 
 > Current branch state. Older branch records remain below as historical context.
 
@@ -457,3 +477,25 @@ and the composition starts to thin.
 - Skew / proximity / 3D effects stay behind `(pointer: fine)` or a min-width gate.
 - `ascii-art-data.ts` is generated. Change `scripts/build-ascii-art.py` and rerun.
 - Never push to `main`; never self-merge. PR #35 is Kariim's call.
+
+## September 8 — display fixes and verification
+
+Journal cards now share theme tokens in both modes. Mobile dates sit above the
+entry body. Mail controls use SVG envelopes. ASCII fills the available phone and
+unfolded viewport; hover/touch produces a local shift of at most two pixels,
+with a gentle ambient sweep. Reduced motion stays static; hidden pages pause.
+
+Verification: final pnpm build exited 0 (16/16 static pages), including Flow State,
+Instrument, Studio polish and the new executable ASCII checks. The ASCII checks
+exercise phone/unfold geometry, hover, expiry, hidden-page pause and cleanup.
+Browser: all 58 entries unique/newest-first, consistent dark/light cards, no
+horizontal overflow at 360 and 860 pixels, SVG mail icon, no console errors.
+Independent source review passed. Physical Galaxy Fold hardware was not tested.
+
+Gotchas: journal inherited portfolio stripe colors; scope token overrides to the
+journal. Capped cell height left tall canvas space unused; fit rows to its height.
+Font-dependent envelope glyphs were unreliable; inline SVG avoids font fallback.
+
+Setup: pnpm install --offline --frozen-lockfile from shift9; pnpm build from
+shift9/apps/shift9-dev. Preview: http://127.0.0.1:3128/, open the Dev Log book.
+Next action: review the draft PR, obtain merge approval, then verify production.

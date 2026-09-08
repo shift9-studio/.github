@@ -1,3 +1,22 @@
+# Dev Log update — September 8, 2026
+
+Branch `codex/dev-log-week-sep8`, based on current production main `7c1cd5b`.
+Sixteen new public entries bring the log to 58; three existing entries now carry
+implementation and verification details. Evidence was checked against September
+1–8 git history, current project source, project progress and retained test output.
+Coverage: LLM cache provenance, provider identity, Claude/Codex operating context,
+knowledge indexing, local HTTP security, dependency repair, image approvals and
+Play listing transactions. Local builds and prototype work remain labeled as such.
+Historical backfill includes Flow State recovery/learning, Vespers' dated packaged
+benchmark, KinQuest's saved research prototype and retired integration-test work.
+Antigravity's KAGE and HUD milestones were checked against original walkthroughs;
+they are already represented, so no duplicate entries or release claims were added.
+No raw transcripts, credentials or private source records were copied into the log.
+
+Editorial source remains `shift9/apps/shift9-dev/app/_components/dev-log-data.ts`.
+Keep its title/date/paragraph/tags shape and newest-first sort. Preview uses the
+existing desktop's Dev Log book. Publication requires Kariim's merge approval.
+
 # Dev Log publication — September 6, 2026
 
 Approved by Kariim for publication: green book desktop icon and native Dev Log reader with 42 public editorial entries. Based on production main 04f0587; unfinished Stand up / Room Explore work is expressly excluded.
@@ -1633,3 +1652,5 @@ Branch: `fix/seo-a11y-polish`. Additive fixes for the live site, no redesign.
 8. Modal project title links: studio blue + underline + clearer `:focus-visible` for WCAG AA.
 
 **Verified:** `check-studio-polish`, `check-flow-state`, `check-instrument` all pass on the laptop checkout.
+
+September 8 display update: consistent journal themes, responsive entry layout, SVG mail icons and full-height ASCII with a small local character shift. Final build exited 0; browser checks at 360/860 pixels and independent source review passed. See current PROGRESS.md verification and setup notes. Merge remains pending Kariim's approval.

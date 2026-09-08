@@ -1105,7 +1105,7 @@
   flex: 1;
   padding: 36px 60px;
   display: grid;
-  grid-template-columns: repeat(3, 180px);
+  grid-template-columns: repeat(3, minmax(0, 180px));
   gap: 40px 60px;
   align-content: start;
   justify-content: center;
@@ -1113,7 +1113,7 @@
   transition: gap 0.3s ease, padding 0.3s ease;
 }
 .dicon {
-  width: 160px;
+  width: min(160px, 100%);
   text-align: center;
   cursor: pointer;
   border-radius: 10px;
@@ -1616,6 +1616,25 @@
 .item:nth-child(even) h3 a {
   color: var(--blue);
 }
+/* The journal follows the desktop theme; portfolio stripes remain separate. */
+.wbody[data-devlog] {
+  --w-light-row: var(--w-panel);
+  --w-light-row-text: var(--w-txt);
+  --w-light-row-dim: var(--w-dim);
+  --w-light-row-line: var(--w-line);
+}
+.wbody[data-devlog] .item {
+  color: var(--w-txt);
+}
+.wbody[data-devlog] .tag {
+  color: var(--w-txt);
+  font-size: 11px;
+  background: var(--w-quiet);
+}
+.wbody[data-devlog] .status {
+  color: var(--w-dim);
+  background: var(--w-quiet);
+}
 .item:last-child {
   border-bottom: none;
 }
@@ -1765,6 +1784,26 @@
 
 /* ---------- Mobile: degrade the desktop metaphor gracefully (HANDOFF §8.4) ---------- */
 @media (max-width: 768px) {
+  .wbody[data-devlog] .item {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 16px;
+  }
+  .wbody[data-devlog] .no {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .wbody[data-devlog] .status {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+  }
+  .wbody[data-devlog] .info {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+  }
   .navlinks span,
   .winbtns {
     display: none;
