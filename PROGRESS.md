@@ -1,4 +1,19 @@
-# PROGRESS — `claude/flow-state-confirmation-email`
+# PROGRESS — `codex/dev-log-week-sep8`
+
+## September 8, 2026 — dev-log editorial update
+
+Eleven source-backed entries added; three existing September entries strengthened.
+53 total entries, sorted newest first by the existing data module. Reviewed current
+source and retained September 5–8 results for Control Plane, Vespermesh, Feelspoon,
+Growth Kit, Lumen, video production and studio dependencies; Flow State's September
+3 records substantiate the expanded platform/focus entries. New Play listing story
+is grounded in Feelspoon commit `a8082c6` and its transactional API tool.
+
+The isolated preview started from production main `7c1cd5b`; the dirty Room Explore
+checkout is untouched. No merge or production deployment performed. UI fixes and
+the requested subtle ASCII interaction are being verified in this branch separately.
+
+# Historical progress — `claude/flow-state-confirmation-email`
 
 > Current branch state. Older branch records remain below as historical context.
 

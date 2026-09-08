@@ -1,6 +1,83 @@
 // Public editorial entries, newest first. Keep private source records out of this file.
 export const DEV_LOG = [
   {
+    n: "Shipping store-listing changes as a verified transaction",
+    s: "06 SEP 2026",
+    sc: "rnd" as const,
+    d: "Built Feelspoon's Google Play listing update around the Developer API's edit transaction. The tool validates copy limits, replaces screenshots slot by slot, reads the listing back and commits only when the returned state matches; a failed verification discards the edit. A companion compositor produces captioned phone, seven-inch and ten-inch tablet frames from app captures, with device-specific crops. The September 6 listing update was pushed through this path, replacing an unreliable browser-edit workflow with repeatable validation.",
+    tags: ["Feelspoon", "Release engineering"],
+  },
+  {
+    n: "Making agent context an executable contract",
+    s: "08 SEP 2026",
+    sc: "dev" as const,
+    d: "Hardened Vespermesh's Claude Code and Codex review adapters so they receive the current operating rules and inventory, with source receipts, separately from untrusted repository content. Missing, oversized or changed context blocks dispatch; changes during a review prevent its result from being accepted. The local suite passed 59 tests, and the compiled Control Plane integration passed six checks. Removing the operating text made both adapter tests fail. These are isolated execution proofs; live-provider review remains a separate check.",
+    tags: ["Vespermesh", "LLM hardening"],
+  },
+  {
+    n: "Testing the boundaries of a local publishing tool",
+    s: "08 SEP 2026",
+    sc: "dev" as const,
+    d: "Hardened the Feelspoon Growth Kit's local HTTP boundary with Host and Origin validation, loopback-only listening, restricted editable fields and escaped HTML attributes and image values. Two regression suites included 32 isolated HTTP requests and failures against the old implementation. After activation, real requests returned 200 for the local page and 403 for invalid Host or Origin values. The four content stores remained byte-identical, and publishing still requires owner approval.",
+    tags: ["Feelspoon Growth Kit", "Security"],
+  },
+  {
+    n: "Hardening projection control at the network boundary",
+    s: "08 SEP 2026",
+    sc: "rnd" as const,
+    d: "Repaired Lumen's HTTP sibling-directory traversal, malformed Range handling and null WebSocket-message crash, alongside an Electron runtime update. Regression coverage exercises real network requests and archive-extraction escape attempts. Both existing renderer pages then loaded in an isolated Electron smoke test that exercised pairing, blackout and the homography controls used for corner-pin projection, with no renderer errors. This verifies the local software paths; projector, media and hotplug testing remain open.",
+    tags: ["Lumen", "Security"],
+  },
+  {
+    n: "Patching the mobile bundler without changing the app framework",
+    s: "08 SEP 2026",
+    sc: "rnd" as const,
+    d: "Updated Feelspoon's compatible Metro dependency family to remove a vulnerable image decoder without changing Expo, React Native or the app's declared dependencies. The installed-project audit moved from five high-severity findings to zero high; 19 moderate findings remain. A new pretest runs Metro's real PNG dimension, metadata and asset-hash pipeline, rejects malformed input and fails against the old decoder. All 15 Jest tests and TypeScript passed locally. A native build and release are separate milestones.",
+    tags: ["Feelspoon", "Dependency security"],
+  },
+  {
+    n: "Binding image approval to the assets actually reviewed",
+    s: "08 SEP 2026",
+    sc: "dev" as const,
+    d: "The video pipeline now derives picture-approval status from a complete, matching approval record rather than the existence of a PNG. Generation requests the target aspect ratio without stretching returned pixels, preserves replaced identity seeds, and resumes only failed shots. Complete image sets can reach owner review with visible quality warnings; incomplete sets still stop, and exact hash-bound owner approval gates the build. The standard suite passed 981 tests, with two skipped and one deselected. The current episode's clips and final render are still pending.",
+    tags: ["Bring Up Desk", "Production integrity"],
+  },
+  {
+    n: "Giving image generation a second provider path",
+    s: "07 SEP 2026",
+    sc: "dev" as const,
+    d: "Extended the still-image tool to fall back from Google's exhausted quota to Hugging Face Inference Providers, using provider-specific model mappings and response handling. A real fallback produced a 1152 × 768 PNG in 4.4 seconds, followed by a successful two-image Growth Kit batch. The path uses inference-provider allocation rather than the separate GPU allocation reserved for video. This adds a measured recovery route while keeping resource accounting explicit.",
+    tags: ["Agent Media Tools", "Provider resilience"],
+  },
+  {
+    n: "Proving a fresh LLM response is actually fresh",
+    s: "06 SEP 2026",
+    sc: "dev" as const,
+    d: "Traced repeated LLM answers to the internal bridge cache: the caller requested fresh inference, but its flag never reached the bridge and cached replies were labeled fresh. The fix propagates freshness across the HTTP boundary, reports cache age and distinguishes idempotent replay from a cache miss. Fresh callers now require positive provider-attempt evidence and reject stale rescue, replay or missing evidence. A deliberately misleading fake bridge exercises 19 checks, including stripped headers; ten failed before the fix. Live repeat-request probes then confirmed the repaired path.",
+    tags: ["Shift9 Control Plane", "LLM hardening"],
+  },
+  {
+    n: "Verifying dependency repairs through native image processing",
+    s: "06 SEP 2026",
+    sc: "dev" as const,
+    d: "Prepared a targeted security update for both studio web apps, covering Next.js, PostCSS and Sharp's native image stack. A build gate resolves the installed packages, enforces patched version floors and invokes Next's actual PNG, JPEG, WebP and AVIF optimizer paths. The original PostCSS installation failed the gate; the patched tree passed all four conversions, both production builds and a zero-finding dependency audit. This is verified local build work, pending deployment; Windows native-library checks do not establish cross-platform behavior.",
+    tags: ["Studio", "Dependency security"],
+  },
+  {
+    n: "Separating model identity from provider availability",
+    s: "05 SEP 2026",
+    sc: "dev" as const,
+    d: "Refactored the shared model layer beneath 27 existing callers to support multiple provider routes without rewriting their call sites. Live catalogues supply model availability and capability data; substitutions return resolvedFrom instead of silently changing identity. The independent-review lineage guard now rejects unknown model families and cross-family fallbacks. A catalogue check was driven red with a retired model ID, then restored green. Chat models and embedding endpoints are checked separately so an unavailable catalogue is not mistaken for a missing model.",
+    tags: ["Shift9 Control Plane", "LLM infrastructure"],
+  },
+  {
+    n: "Turning session history into a checked knowledge index",
+    s: "05 SEP 2026",
+    sc: "dev" as const,
+    d: "Built a repeatable triage pass over 537 captured sessions to recover decisions, corrections and failure patterns instead of indexing entire conversations as guidance. The pass identified 133 sessions carrying signal and recovered 126 earlier user statements; a second run recovered nothing again. A generated, tagged contents page connects notes to their source locations, while drift checks rebuild and compare it. Duplicate detection also checks bodies and repository ownership, avoiding false matches between similarly titled lessons or cross-repository paths.",
+    tags: ["Knowledge System", "Agent memory"],
+  },
+  {
     n: "Bringing the room closer to the film",
     s: "06 SEP 2026",
     sc: "dev" as const,
@@ -35,7 +112,7 @@ export const DEV_LOG = [
     "n": "More reliable development checks",
     "s": "06 SEP 2026",
     "sc": "dev" as const,
-    "d": "Maintenance work corrected the declared Node runtime requirement, installation dependencies, and the handling of failed self-tests. The aim is a development environment whose setup instructions and reported results agree with what actually runs.",
+    "d": "Repaired the Control Plane's runtime declaration, reproducible installation path and self-test failure reporting. The LLM fallback tests also gained explicit bridge isolation and an empty credential-store fixture after routing changes had sent supposed test calls to real providers. The isolated fallback suite passed 26 checks. By the September 8 follow-up, the full local run passed 1,007 server checks and 21 required repair suites with no skips, while keeping installed-hook and live-provider verification distinct from offline test results.",
     "tags": [
       "Shift9 Control Plane",
       "Tooling"
@@ -65,7 +142,7 @@ export const DEV_LOG = [
     "n": "Taking Flow State toward Linux",
     "s": "03 SEP 2026",
     "sc": "rnd" as const,
-    "d": "Introduced a shared interface for platform-specific behavior and began an X11 implementation for Linux. Separating operating-system integration from dictation logic lets the application grow beyond Windows without duplicating its core. This records development progress, not a Linux release.",
+    "d": "Moved 28 operating-system call sites out of Flow State's dictation and Hub modules into a shared platform interface, then began the Linux X11 implementation. Windows APIs, hotkeys and registry access now sit behind that boundary instead of being interleaved with speech and interface logic. The recorded Windows suite passed 226 tests, including 25 platform-layer checks. Linux support remains in progress; the abstraction and Windows regression results are not a Linux release claim.",
     "tags": [
       "Flow State",
       "In progress"
@@ -75,7 +152,7 @@ export const DEV_LOG = [
     "n": "Dictation without stealing the keyboard",
     "s": "03 SEP 2026",
     "sc": "rnd" as const,
-    "d": "Added checks that the floating dictation pill does not take keyboard focus away from the application being used. The same work made the test suite less intrusive by avoiding control of the user's screen. For a dictation tool, staying out of the typing workflow is part of the feature.",
+    "d": "Added a native focus regression for Flow State's floating dictation pill: read the WS_EX_NOACTIVATE window style back from the live window, then type real keys into another window while the pill is visible. This checks the behavior a screenshot cannot establish: dictation controls must not intercept the user's typing. Related test isolation keeps routine suite execution from taking over the working screen. The result is a concrete Windows integration check around the application's least intrusive interface.",
     "tags": [
       "Flow State",
       "Development"

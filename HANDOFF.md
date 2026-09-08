@@ -1,3 +1,18 @@
+# Dev Log update — September 8, 2026
+
+Branch `codex/dev-log-week-sep8`, based on current production main `7c1cd5b`.
+Eleven new public entries bring the log to 53; three existing entries now carry
+implementation and verification details. Evidence was checked against September
+1–8 git history, current project source, project progress and retained test output.
+Coverage: LLM cache provenance, provider identity, Claude/Codex operating context,
+knowledge indexing, local HTTP security, dependency repair, image approvals and
+Play listing transactions. Local builds and prototype work remain labeled as such.
+No raw transcripts, credentials or private source records were copied into the log.
+
+Editorial source remains `shift9/apps/shift9-dev/app/_components/dev-log-data.ts`.
+Keep its title/date/paragraph/tags shape and newest-first sort. Preview uses the
+existing desktop's Dev Log book. Publication requires Kariim's merge approval.
+
 # Dev Log publication — September 6, 2026
 
 Approved by Kariim for publication: green book desktop icon and native Dev Log reader with 42 public editorial entries. Based on production main 04f0587; unfinished Stand up / Room Explore work is expressly excluded.
