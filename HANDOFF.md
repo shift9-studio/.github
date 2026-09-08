@@ -1658,3 +1658,5 @@ September 8 display update: consistent journal themes, responsive entry layout, 
 Invitation thumbnail fix: Media reused the mark-settles banner for invitation-field.mp4. Its plate now uses invitation-field-poster.jpg, extracted from the video at t=0 with ffmpeg -ss 0 -frames:v 1 -q:v 2. Preview in the Media window; merge approval pending.
 
 Wet-paint interaction fix: /soon sign, stickers and nine now use native buttons with bounded CSS splat reactions. Phone sign remains available below artwork; reduced motion has static replies. Preview /soon locally. Merge approval pending.
+
+Candy refinement: rounded glossy blobs cycle mint/lilac/pink, six finite droplets per activation, paper rocket on SHIP IT, rewind on Ctrl Z and jelly nine. Reduced-motion keeps replies static. Build and independent review passed; no merge authorization for PR57 yet.

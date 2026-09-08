@@ -68,7 +68,7 @@ export default async function SoonPage({
         <div className={s.laptop}>
           <div className={s.lid}>
             <div className={s.lidTex} aria-hidden="true" />
-            <TouchPaint className={s.badge} label="Poke the nine" reply="9 LIVES. STILL BUILDING.">
+            <TouchPaint className={s.badge} trick="jelly" label="Poke the nine" reply="9 LIVES. STILL BUILDING.">
               <span className={s.badgeMark}>9</span>
             </TouchPaint>
 
@@ -76,7 +76,8 @@ export default async function SoonPage({
               <TouchPaint
                 key={st.t}
                 label={`Touch sticker: ${st.t}`}
-                reply={st.t === "Ctrl + Z" ? "NO TAKEBACKS." : st.t === "SHIP IT" ? "SHIP HAPPENS." : "IT WAS LIKE THAT BEFORE."}
+                trick={st.t === "SHIP IT" ? "rocket" : st.t === "Ctrl + Z" ? "rewind" : "splat"}
+                reply={st.t === "Ctrl + Z" ? "UNSPILLING THE BEANS." : st.t === "SHIP IT" ? "SHIP HAPPENS." : "IT WAS LIKE THAT BEFORE."}
                 className={`${s.sticker} ${s[st.k] ?? ""}`}
                 style={{ left: st.x, top: st.y, ["--r" as string]: st.r }}
               >

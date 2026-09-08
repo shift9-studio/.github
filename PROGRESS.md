@@ -513,3 +513,5 @@ Publication: Kariim approved PR #56 merge; merged as c3ada57689adf83aee47957a862
 ## Wet paint interactions
 Cause: touch invitation was decorative markup with no handlers and pointer-events disabled. Added a small client button with one replaceable reaction per control, keyboard activation, CSS-only finite animation and static reduced-motion response. Mobile sign restored in normal flow. Browser verified click and Enter replies and sign at 390px. Reviewer focus finding corrected by outlining the nine itself inside the clipped lid. Setup: existing pnpm dev; visit /soon. No dependencies added.
 Final build exited 0; 16/16 static pages and existing contract suites passed.
+
+Candy refinement verified: full build exited 0 (16/16 pages), source review PASS, browser confirmed rocket and six droplets plus keyboard nine reaction. Each activation replaces the prior effect, no timers or listeners. PR57 remains preview-only until approved.
