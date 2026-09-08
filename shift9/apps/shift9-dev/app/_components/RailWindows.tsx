@@ -116,7 +116,7 @@ const FILM = [
     id: "invitation",
     title: "The invitation",
     note: "The closing field, shot for the end of the site.",
-    plate: "/experience/shift-9_new-banner.jpg",
+    plate: "/experience/outro/invitation-field-poster.jpg",
     clip: "/experience/outro/invitation-field.mp4",
   },
 ];
