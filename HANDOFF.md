@@ -1,12 +1,16 @@
 # Dev Log update — September 8, 2026
 
 Branch `codex/dev-log-week-sep8`, based on current production main `7c1cd5b`.
-Eleven new public entries bring the log to 53; three existing entries now carry
+Sixteen new public entries bring the log to 58; three existing entries now carry
 implementation and verification details. Evidence was checked against September
 1–8 git history, current project source, project progress and retained test output.
 Coverage: LLM cache provenance, provider identity, Claude/Codex operating context,
 knowledge indexing, local HTTP security, dependency repair, image approvals and
 Play listing transactions. Local builds and prototype work remain labeled as such.
+Historical backfill includes Flow State recovery/learning, Vespers' dated packaged
+benchmark, KinQuest's saved research prototype and retired integration-test work.
+Antigravity's KAGE and HUD milestones were checked against original walkthroughs;
+they are already represented, so no duplicate entries or release claims were added.
 No raw transcripts, credentials or private source records were copied into the log.
 
 Editorial source remains `shift9/apps/shift9-dev/app/_components/dev-log-data.ts`.

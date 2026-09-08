@@ -1,6 +1,41 @@
 // Public editorial entries, newest first. Keep private source records out of this file.
 export const DEV_LOG = [
   {
+    n: "Testing external data before it reaches the application",
+    s: "06 JUL 2026",
+    sc: "dev" as const,
+    d: "Added network-free provider-data regressions to an earlier media-tooling project. Fixtures cover paginated Spotify metadata, missing and null records, Unicode fields and error propagation, alongside SoundCloud record hydration, order preservation and playlist deduplication. The tests exercise normalization at the integration boundary without depending on live accounts or provider availability. This is historical work in a retired project, retained here as an engineering milestone rather than an active product claim.",
+    tags: ["Integration Tooling", "Historical milestone"],
+  },
+  {
+    n: "Building family relationships from cited records",
+    s: "05 SEP 2026",
+    sc: "rnd" as const,
+    d: "Extended the KinQuest genealogy prototype toward automatic record-page reading and recursive discovery through explicit relationship statements in obituaries. The research model distinguishes candidate matches from supported relationships, retains source evidence and supports person-centered trees. A saved development checkpoint reconstructed a small cited relationship graph and added sibling-record expansion. The complete name-to-extended-tree workflow remains unfinished and these changes were not deployed. The engineering focus is evidence-preserving discovery without presenting a name match as a proven family connection.",
+    tags: ["KinQuest", "Research prototype"],
+  },
+  {
+    n: "Measuring a horde simulation on integrated graphics",
+    s: "03 AUG 2026",
+    sc: "rnd" as const,
+    d: "Built Vespers' horde combat around batched MultiMesh rendering and packed enemy data rather than one scene node per enemy. The August 3 packaged Windows benchmark recorded 905 peak enemies and 430 simultaneous effects over a 14-second run, averaging 251.3 FPS on Intel Iris Xe at a 1280 × 720 window with the game's lower internal rendering resolution. The report identifies the executable so packaged and editor results cannot be conflated. This is a dated, controlled benchmark of the prototype, not a guarantee for every scene or device.",
+    tags: ["Vespers", "Performance engineering"],
+  },
+  {
+    n: "Learning speech corrections only after review",
+    s: "14 JUL 2026",
+    sc: "rnd" as const,
+    d: "Added a local accuracy-learning pipeline to Flow State. Token-level diffs extract short replacements only inside the trusted dictated range; ordinary insertions and deletions are excluded so general editing is not mislearned as a speech correction. Candidates enter a pending, approved or rejected review state, and only approved mappings affect later text. An atomic local store and feature, runtime and Hub regression tests cover the path. Personalization stays explicit and reviewable instead of silently rewriting the user's vocabulary.",
+    tags: ["Flow State", "Speech tooling"],
+  },
+  {
+    n: "Recovering dictation after an interrupted session",
+    s: "12 JUL 2026",
+    sc: "rnd" as const,
+    d: "Introduced an append-only JSONL recovery journal for Flow State's partial transcripts. Each event is flushed and fsynced before returning, while validated session IDs and path containment keep recovery operations inside the owned directory. Interrupted sessions can be reconstructed from surviving events, including when a malformed line is present; completed sessions remove their own journal. Regression tests cover reconstruction and refusal to delete outside the recovery area. The journal provides a durable checkpoint before the final transcript reaches normal history.",
+    tags: ["Flow State", "Recovery engineering"],
+  },
+  {
     n: "Shipping store-listing changes as a verified transaction",
     s: "06 SEP 2026",
     sc: "rnd" as const,

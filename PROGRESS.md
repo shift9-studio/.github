@@ -2,12 +2,17 @@
 
 ## September 8, 2026 — dev-log editorial update
 
-Eleven source-backed entries added; three existing September entries strengthened.
-53 total entries, sorted newest first by the existing data module. Reviewed current
+Sixteen source-backed entries added; three existing September entries strengthened.
+58 total entries, sorted newest first by the existing data module. Reviewed current
 source and retained September 5–8 results for Control Plane, Vespermesh, Feelspoon,
 Growth Kit, Lumen, video production and studio dependencies; Flow State's September
 3 records substantiate the expanded platform/focus entries. New Play listing story
 is grounded in Feelspoon commit `a8082c6` and its transactional API tool.
+Historical backfill: Flow State commits `237d518` (recovery) and `3ce2439`
+(reviewed learning), Vespers `6a92b84` packaged benchmark, retired integration tests
+at `8043952`, and KinQuest's saved September 5 ChatGPT research checkpoint (not a
+deployment). Family details excluded. Antigravity's original KAGE/HUD walkthroughs
+were compared with existing entries; no duplicate stories needed.
 
 The isolated preview started from production main `7c1cd5b`; the dirty Room Explore
 checkout is untouched. No merge or production deployment performed. UI fixes and
