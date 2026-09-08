@@ -1,5 +1,6 @@
 import s from "./soon.module.css";
 import TouchPaint from "./TouchPaint";
+import PaintSurface, { PaintResetProvider } from "./PaintSurface";
 
 /* Coming-soon artwork with tap and keyboard reactions. Motion is optional. */
 
@@ -27,7 +28,7 @@ const REPLIES: Record<string, string> = {
   "WORKS ON MY MACHINE": "MACHINE SOLD SEPARATELY.",
   "// TODO": "TEACH THE PAINT TO DRY.",
   "$ rm -rf ./regrets": "REGRETS: PERMISSION DENIED.",
-  "SHIP IT": "EXPRESS DELIVERY. PROBABLY.",
+  "SHIP IT": "SHIP HAPPENS.",
   "404: SLEEP NOT FOUND": "POWERED BY QUESTIONABLE COFFEE.",
   "semicolon;": "TINY MARK. MASSIVE DRAMA.",
   "BUILD PASSING": "NOBODY BREATHE.",
@@ -72,13 +73,13 @@ export default async function SoonPage({
   const back = /^\d{2}$/.test(from ?? "") ? `/studio#set-${from}` : "/studio";
 
   return (
-    <main className={s.root}>
+    <PaintResetProvider><main className={s.root}>
       <div className={s.ground} aria-hidden="true" />
       <div className={s.slab} aria-hidden="true" />
 
       <div className={s.stage}>
         <div className={s.laptop}>
-          <div className={s.lid}>
+          <PaintSurface className={s.lid}>
             <div className={s.lidTex} aria-hidden="true" />
             <TouchPaint className={s.badge} trick="jelly" label="Poke the nine" reply="9 LIVES. STILL BUILDING.">
               <span className={s.badgeMark}>9</span>
@@ -88,7 +89,7 @@ export default async function SoonPage({
               <TouchPaint
                 key={st.t}
                 label={`Touch sticker: ${st.t}`}
-                trick={st.t === "SHIP IT" ? "rocket" : st.t === "Ctrl + Z" ? "rewind" : "splat"}
+                trick={st.t === "SHIP IT" ? "rocket" : st.t === "Ctrl + Z" ? "rewind" : st.t === "// TODO" || st.t === "semicolon;" ? "twist" : st.t === "BUILD PASSING" || st.t === "ONE MORE COMMIT" ? "hop" : "stretch"}
                 reply={REPLIES[st.t] ?? "FRESHLY SQUEEZED CODE."}
                 className={`${s.sticker} ${s[st.k] ?? ""}`}
                 style={{ left: st.x, top: st.y, ["--r" as string]: st.r }}
@@ -96,7 +97,7 @@ export default async function SoonPage({
                 {st.t}
               </TouchPaint>
             ))}
-          </div>
+          </PaintSurface>
         </div>
 
         <h1 className={s.headline}>
@@ -131,6 +132,6 @@ export default async function SoonPage({
 
       <Ribbon className={s.ribbonA ?? ""} text={RIBBON_A} />
       <Ribbon className={s.ribbonB ?? ""} text={RIBBON_B} />
-    </main>
+    </main></PaintResetProvider>
   );
 }

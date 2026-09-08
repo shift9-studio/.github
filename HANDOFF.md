@@ -1662,3 +1662,5 @@ Wet-paint interaction fix: /soon sign, stickers and nine now use native buttons 
 Candy refinement: rounded glossy blobs cycle mint/lilac/pink, six finite droplets per activation, paper rocket on SHIP IT, rewind on Ctrl Z and jelly nine. Reduced-motion keeps replies static. Build and independent review passed; no merge authorization for PR57 yet.
 
 Wet-paint refinement: generated transparent acrylic atlas, three distinct silhouettes, unique sticker replies and fixed text centers. Finite impact deformation and two delayed drips; reduced motion static. Build and review passed.
+
+Final interaction pass: automatic six-form nine (no splat), delayed replies, SHIP HAPPENS plane restored, distinct twists/hops/stretch, rainbow smearing with inverse SVG coordinates, complete Wipe paint incl sign, mobile paint controls. Final two-worker build pass; normal11worker build hit machine OOM. Config restored. PR57 pending approval.

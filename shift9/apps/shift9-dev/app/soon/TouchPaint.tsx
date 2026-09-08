@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import s from "./soon.module.css";
 
 export default function TouchPaint({ children, className, style, reply, label, trick = "splat" }: {
@@ -9,15 +9,35 @@ export default function TouchPaint({ children, className, style, reply, label, t
   style?: CSSProperties;
   reply: string;
   label: string;
-  trick?: "splat" | "rocket" | "rewind" | "jelly";
+  trick?: "splat" | "rocket" | "rewind" | "jelly" | "twist" | "hop" | "stretch";
 }) {
   const [touches, setTouches] = useState(0);
+  const [phase, setPhase] = useState(0);
+  useEffect(() => {
+    if (trick !== "jelly") return;
+    const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const sync = () => {
+      clearInterval(timer);
+      if (!motion.matches && !document.hidden) timer = setInterval(() => setPhase(n => (n + 1) % 6), 3800);
+    };
+    sync();
+    motion.addEventListener("change", sync);
+    document.addEventListener("visibilitychange", sync);
+    return () => { clearInterval(timer); motion.removeEventListener("change", sync); document.removeEventListener("visibilitychange", sync); };
+  }, [trick]);
   const seed = Array.from(label).reduce((sum, c) => sum + c.charCodeAt(0), 0);
+  const nineStyle = trick === "jelly" ? {
+    "--nine-hue": `${(touches * 137 + 45) % 360}deg`,
+    "--nine-skew": `${(touches * 7) % 25 - 12}deg`,
+    "--nine-wide": 0.9 + ((touches * 3) % 5) * 0.065,
+  } as CSSProperties : undefined;
   return (
     <button type="button" className={`${className ?? ""} ${s.touchPaint}`}
-      style={style} aria-label={label} onClick={() => setTouches(n => n % 999 + 1)}>
-      <span key={`art-${touches}`} className={touches && trick === "jelly" ? s.jelly : undefined}>{children}</span>
-      {touches > 0 && <span key={touches} className={s.paintShow} data-trick={trick} data-flavor={(touches + seed) % 3}>
+      data-nine-look={trick === "jelly" ? phase : undefined}
+      style={{ ...style, ...nineStyle }} aria-label={label} onClick={() => setTouches(n => n % 999 + 1)}>
+      <span key={`art-${touches}-${phase}`} className={trick === "jelly" ? s.nineActor : undefined}>{children}</span>
+      {touches > 0 && trick !== "jelly" && <span key={touches} className={s.paintShow} data-trick={trick} data-flavor={(touches + seed) % 3}>
         <span className={s.paintReply} role="status">{reply}</span>
         <span className={s.wetDrips} aria-hidden="true"><i /><i /></span>
         {Array.from({ length: 6 }, (_, i) => <i key={i} className={s.droplet} aria-hidden="true" style={{ "--i": i } as CSSProperties} />)}

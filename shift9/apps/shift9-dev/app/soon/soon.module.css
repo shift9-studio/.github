@@ -136,13 +136,15 @@
 
 .badgeMark {
   font-family: var(--s9-font-display, inherit);
-  font-size: clamp(5rem, 17vw, 12rem);
+  font-size: clamp(7rem, 23vw, 15rem);
   font-weight: 900;
   line-height: 0.8;
-  color: var(--paper);
-  transform: skewX(-6deg);
+  color: #fff9df;
+  display: block;
+  transform: skewX(var(--nine-skew, -6deg)) scaleX(var(--nine-wide, 1));
+  -webkit-text-stroke: 2px #17121b;
   /* A hard offset shadow instead of a glow: ink on paper, no softness. */
-  text-shadow: 8px 8px 0 var(--ink), 12px 12px 0 var(--paper);
+  text-shadow: 6px 6px 0 #17121b, 11px 11px 0 hsl(var(--nine-hue) 95% 65%), 15px 15px 0 #17121b;
 }
 
 /* ── Stickers, die-cut ─────────────────────────────────────────────────── */
@@ -175,7 +177,17 @@
   clip-path: none;
 }
 .touchPaint:has(.paintReply) { clip-path: none; z-index: 4; }
-.badge.touchPaint:has(.paintReply) { z-index: 0; }
+.badge.touchPaint, .badge.touchPaint:has(.paintReply) { z-index: 5; pointer-events: none; }
+.nineActor { position: relative; z-index: 2; pointer-events: auto; animation: nineMorph 2600ms ease-in-out both; }
+.badge .paintShow { top: 76%; z-index: 1; }
+@keyframes nineMorph {
+  0% { transform: scale(.9) rotate(-8deg); }
+  18% { transform: scale(1.2,.7) rotate(10deg); }
+  36% { transform: scale(.8,1.15) rotate(-12deg); }
+  56% { transform: skewX(12deg) rotate(6deg); }
+  76% { transform: scale(1.05,.95) rotate(-3deg); }
+  100% { transform: none; }
+}
 
 .badge:focus-visible .badgeMark {
   outline: 4px dashed var(--tape);
@@ -198,6 +210,7 @@
   text-shadow: 0 1px 1px rgb(255 255 255 / .6);
   white-space: normal;
   overflow-wrap: anywhere;
+  animation: revealReply 220ms 700ms ease-out both;
   pointer-events: none;
 }@keyframes paintPop {
   0% { transform: scale(.2) rotate(-25deg); }
@@ -212,6 +225,11 @@
   width: 220px; height: 220px;
   margin: -110px 0 0 -110px;
   pointer-events: none;
+
+}
+@keyframes revealReply {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 .paintShow::before {
   content: "";
@@ -226,6 +244,28 @@
   25% { transform: scale(.96,1.04); }
   55% { transform: scale(1.02,.98); }
   100% { transform: scale(1,1.025); }
+}
+.paintShow[data-trick="twist"]::before { animation-name: paintTwist; }
+.paintShow[data-trick="hop"]::before { animation-name: paintHop; }
+.paintShow[data-trick="stretch"]::before { animation-name: paintStretch; }
+@keyframes paintTwist {
+  0% { transform: scale(.1) rotate(-100deg); }
+  18% { transform: scale(1.1) rotate(30deg); }
+  35% { transform: scale(.95) rotate(-15deg); }
+  65%, 100% { transform: none; }
+}
+@keyframes paintHop {
+  0% { transform: scale(.1); }
+  18% { transform: translateY(-22px) scale(.85,1.15); }
+  32% { transform: scale(1.15,.85); }
+  46% { transform: translateY(-8px); }
+  65%, 100% { transform: none; }
+}
+@keyframes paintStretch {
+  0% { transform: scale(.1); }
+  18% { transform: scale(1.25,.65) skewX(12deg); }
+  35% { transform: scale(.85,1.1) skewX(-8deg); }
+  65%, 100% { transform: none; }
 }
 .wetDrips { position: absolute; inset: 0; pointer-events: none; }
 .wetDrips i {
@@ -277,7 +317,7 @@
   85% { transform: scale(.95,1.05); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .paintShow::before, .jelly, .paintShow[data-trick="rewind"] { animation: none; }
+  .paintReply, .paintShow[data-trick]::before, .nineActor, .jelly, .paintShow[data-trick="rewind"] { animation: none; }
   .droplet, .paperRocket, .wetDrips { display: none; animation: none; }
 }
 
@@ -662,4 +702,28 @@
     animation: none;
   }
   .hooks { display: none; }
+}
+/* Dragged paint stays inside the clipped artwork. */
+.paintShow::before { filter: saturate(2.4); }
+.paintSurface { touch-action: none; }
+.rainbowGoop { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 6; pointer-events: none; overflow: hidden; }
+.rainbowGoop polyline { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.paintSurface[data-smeared] .badge { z-index: 7; }
+.paintSurface[data-smeared] .badgeMark { color: rgb(220 220 220 / .55); -webkit-text-stroke: 1px rgb(255 255 255 / .65); text-shadow: -2px -3px 1px rgb(255 255 255 / .8), 3px 4px 2px rgb(0 0 0 / .8); mix-blend-mode: luminosity; }
+.wipePaint { position: absolute; right: 5%; bottom: 3%; z-index: 8; padding: 8px 12px; border: 2px solid white; background: black; color: white; cursor: pointer; }
+.badge[data-nine-look="1"] .badgeMark { font-family: Georgia, serif; font-style: italic; transform: rotate(-12deg) scale(.85,1.1); }
+.badge[data-nine-look="2"] .badgeMark { font-family: Impact, sans-serif; transform: skewX(18deg) scale(1.3,.8); color: #ffda25; }
+.badge[data-nine-look="3"] .badgeMark { font-family: monospace; color: transparent; -webkit-text-stroke: 4px #88ffff; transform: rotate(10deg); text-shadow: 8px 8px 0 #d230fb; }
+.badge[data-nine-look="4"] .badgeMark { font-family: Georgia, serif; font-weight: 400; transform: scale(1.25,.85); color: #ff98ca; text-shadow: 3px 3px 0 black, 8px 8px 0 #fff, 14px 14px 0 #31f4b4; }
+.badge[data-nine-look="5"] .badgeMark { font-family: monospace; transform: skewY(-12deg) scale(.9,1.12); color: #c4ff34; text-shadow: 5px 0 #ff228b, -5px 0 #2bf5ff, 8px 10px #111; }
+.paintSurface[data-smeared] .badge .badgeMark { color: rgb(220 220 220 / .55); -webkit-text-stroke: 1px rgb(255 255 255 / .65); text-shadow: -2px -3px 1px rgb(255 255 255 / .8), 3px 4px 2px rgb(0 0 0 / .8); }
+/* The visible wet area can be grabbed, not just the tiny original label. */
+.paintShow { pointer-events: auto; cursor: grab; touch-action: none; }
+.paintSurface[data-smeared] .badge { mix-blend-mode: hard-light; }
+.paintSurface[data-smeared] .badge .badgeMark { color: rgb(128 128 128 / .3); }
+.sticker:not(:has(.paintReply)) { z-index: 5; }
+@media (max-width: 34rem) {
+  .sticker[aria-label="Touch sticker: SHIP IT"],
+  .sticker[aria-label="Touch sticker: Ctrl + Z"] { display: block; font-size: 8px; min-height: 32px; }
+  .sticker[aria-label="Touch sticker: Ctrl + Z"] { left: 72% !important; }
 }
