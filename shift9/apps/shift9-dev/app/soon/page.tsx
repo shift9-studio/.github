@@ -1,24 +1,7 @@
 import s from "./soon.module.css";
+import TouchPaint from "./TouchPaint";
 
-/* ────────────────────────────────────────────────────────────────────────
-   COMING SOON — the landing place for work that has no page yet.
-
-   Persona 5's menu language in one bit: pure black and white, every panel a
-   skewed cut-out rather than a box, type large enough to run past the measure,
-   and two ribbons crossing the composition on opposing diagonals.
-
-   The mid-tones are genuine ordered dithering — 1-bit PNGs generated from an
-   8x8 Bayer threshold matrix, 77 to 269 bytes each. The whole page carries no
-   photography, no GIFs and no JavaScript.
-
-   Accessibility:
-   - The ribbons are the only motion and they stop under
-     prefers-reduced-motion. Nothing blinks; the design is carried by contrast
-     and geometry rather than movement.
-   - Ribbons and stickers are decorative and hidden from assistive tech; they
-     repeat what the heading and the line already say.
-   - Two values at full contrast, so nothing depends on colour.
-   ──────────────────────────────────────────────────────────────────────── */
+/* Coming-soon artwork with tap and keyboard reactions. Motion is optional. */
 
 export const metadata = {
   title: "Shift-9 — Coming soon",
@@ -85,19 +68,20 @@ export default async function SoonPage({
         <div className={s.laptop}>
           <div className={s.lid}>
             <div className={s.lidTex} aria-hidden="true" />
-            <div className={s.badge} aria-hidden="true">
+            <TouchPaint className={s.badge} label="Poke the nine" reply="9 LIVES. STILL BUILDING.">
               <span className={s.badgeMark}>9</span>
-            </div>
+            </TouchPaint>
 
             {STICKERS.map((st) => (
-              <span
+              <TouchPaint
                 key={st.t}
-                aria-hidden="true"
+                label={`Touch sticker: ${st.t}`}
+                reply={st.t === "Ctrl + Z" ? "NO TAKEBACKS." : st.t === "SHIP IT" ? "SHIP HAPPENS." : "IT WAS LIKE THAT BEFORE."}
                 className={`${s.sticker} ${s[st.k] ?? ""}`}
                 style={{ left: st.x, top: st.y, ["--r" as string]: st.r }}
               >
                 {st.t}
-              </span>
+              </TouchPaint>
             ))}
           </div>
         </div>
@@ -121,18 +105,15 @@ export default async function SoonPage({
         </div>
       </div>
 
-      {/* Hung off the top run of tape on two wire hooks, and swinging. Purely
-          decorative: the heading and the line already say everything this
-          says, and a joke announced to a screen reader is just noise. */}
-      <div className={s.sign} aria-hidden="true">
-        <div className={s.hooks}>
+      <div className={s.sign}>
+        <div className={s.hooks} aria-hidden="true">
           <i />
           <i />
         </div>
-        <div className={s.signPlate}>
+        <TouchPaint className={s.signPlate} label="Touch the wet paint" reply="TOLD YOU. STILL WET.">
           <b>Wet paint</b>
           <em>touch it anyway</em>
-        </div>
+        </TouchPaint>
       </div>
 
       <Ribbon className={s.ribbonA ?? ""} text={RIBBON_A} />

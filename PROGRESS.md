@@ -507,3 +507,9 @@ Kariim approved merge. PR #55 merged as a82a59943c555dc351b810861b6010b06ee1f151
 Symptom: invitation tile showed the wordmark instead of the video field. Cause: reused banner plate. Fix: first-frame JPEG from its own invitation-field.mp4, one asset reference changed. Reproduce extraction with ffmpeg -ss 0 -i invitation-field.mp4 -frames:v 1 -q:v 2 invitation-field-poster.jpg. Review in Media at http://127.0.0.1:3128/.
 
 Verification: pnpm build from the app directory exited 0, all three contract suites plus ASCII checks passed, 16/16 pages generated. Browser confirmed the new image loaded and the invitation video played (readyState 4, currentTime 4.85s) with the matching poster. Independent review PASS. Run pnpm from app/workspace directory so Corepack resolves the pinned 10.33.0 version.
+
+Publication: Kariim approved PR #56 merge; merged as c3ada57689adf83aee47957a862a579ea5b18e97. Vercel production status success. Live Media window verified invitation-field-poster.jpg loaded and displayed in The Invitation tile.
+
+## Wet paint interactions
+Cause: touch invitation was decorative markup with no handlers and pointer-events disabled. Added a small client button with one replaceable reaction per control, keyboard activation, CSS-only finite animation and static reduced-motion response. Mobile sign restored in normal flow. Browser verified click and Enter replies and sign at 390px. Reviewer focus finding corrected by outlining the nine itself inside the clipped lid. Setup: existing pnpm dev; visit /soon. No dependencies added.
+Final build exited 0; 16/16 static pages and existing contract suites passed.
