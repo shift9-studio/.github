@@ -499,3 +499,11 @@ Font-dependent envelope glyphs were unreliable; inline SVG avoids font fallback.
 Setup: pnpm install --offline --frozen-lockfile from shift9; pnpm build from
 shift9/apps/shift9-dev. Preview: http://127.0.0.1:3128/, open the Dev Log book.
 Next action: review the draft PR, obtain merge approval, then verify production.
+
+## September 8 publication follow-through
+Kariim approved merge. PR #55 merged as a82a59943c555dc351b810861b6010b06ee1f151; production Vercel status success. Live www.shift9.dev browser verified 58 entries, first title Making agent context an executable contract, and SVG mail icon. LinkedIn announcement staged in Kariim Chiles personal composer in Chrome for his review and Post click; not published by agent.
+
+## Invitation thumbnail correction
+Symptom: invitation tile showed the wordmark instead of the video field. Cause: reused banner plate. Fix: first-frame JPEG from its own invitation-field.mp4, one asset reference changed. Reproduce extraction with ffmpeg -ss 0 -i invitation-field.mp4 -frames:v 1 -q:v 2 invitation-field-poster.jpg. Review in Media at http://127.0.0.1:3128/.
+
+Verification: pnpm build from the app directory exited 0, all three contract suites plus ASCII checks passed, 16/16 pages generated. Browser confirmed the new image loaded and the invitation video played (readyState 4, currentTime 4.85s) with the matching poster. Independent review PASS. Run pnpm from app/workspace directory so Corepack resolves the pinned 10.33.0 version.
