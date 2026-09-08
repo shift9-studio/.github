@@ -1664,3 +1664,5 @@ Candy refinement: rounded glossy blobs cycle mint/lilac/pink, six finite droplet
 Wet-paint refinement: generated transparent acrylic atlas, three distinct silhouettes, unique sticker replies and fixed text centers. Finite impact deformation and two delayed drips; reduced motion static. Build and review passed.
 
 Final interaction pass: automatic six-form nine (no splat), delayed replies, SHIP HAPPENS plane restored, distinct twists/hops/stretch, rainbow smearing with inverse SVG coordinates, complete Wipe paint incl sign, mobile paint controls. Final two-worker build pass; normal11worker build hit machine OOM. Config restored. PR57 pending approval.
+
+Smear refinement: actual atlas pigment sampling replaces unrelated rainbow gradient. Drag picks up and mixes other pools/trails, preserves origin, tapers and textures the film. Plane flight raises above semicolon only while launching with cleanup. Build/review/browser checks passed.
