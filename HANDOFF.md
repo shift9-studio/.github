@@ -1652,3 +1652,5 @@ Branch: `fix/seo-a11y-polish`. Additive fixes for the live site, no redesign.
 8. Modal project title links: studio blue + underline + clearer `:focus-visible` for WCAG AA.
 
 **Verified:** `check-studio-polish`, `check-flow-state`, `check-instrument` all pass on the laptop checkout.
+
+September 8 display update: consistent journal themes, responsive entry layout, SVG mail icons and full-height ASCII with a small local character shift. Final build exited 0; browser checks at 360/860 pixels and independent source review passed. See current PROGRESS.md verification and setup notes. Merge remains pending Kariim's approval.

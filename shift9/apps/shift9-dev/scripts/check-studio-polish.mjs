@@ -77,6 +77,9 @@ assert.doesNotMatch(entranceStyles, /gateApertureOpen|curtainLeft|curtainRight|g
 assert.match(entranceStyles, /--w-light-row-text/, "Light folder rows must define readable title text");
 assert.match(entranceStyles, /\.item:nth-child\(even\)[\s\S]*color:\s*var\(--w-light-row-text\)/, "Light folder rows must apply their dark text token");
 assert.match(entranceStyles, /\.item:nth-child\(even\) h3[\s\S]{0,120}color:\s*var\(--w-light-row-text\)/, "Light folder titles must explicitly keep readable dark text");
+assert.match(entrance, /data-devlog=\{openWin === "devlog" \? true : undefined\}/, "Journal theme overrides must stay scoped to the dev log");
+assert.match(entranceStyles, /\.wbody\[data-devlog\]\s*\{[^}]*--w-light-row:\s*var\(--w-panel\)/, "Journal rows must follow the current desktop panel");
+assert.doesNotMatch(entrance, /&#9993;|✉/, "Desktop mail icons must not depend on a platform font glyph");
 
 for (const [name, page] of [
   ["start", start],
@@ -88,3 +91,4 @@ for (const [name, page] of [
 assert.match(pearl, /\.s9-pearl-dark\.s9-pearl-ghost/, "The ghost-pearl material must stay shared");
 
 console.log("Studio loops, invitation, entrance, and ghost controls: pass");
+await import("./check-ascii-wallpaper.mjs");

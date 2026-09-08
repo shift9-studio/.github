@@ -477,3 +477,25 @@ and the composition starts to thin.
 - Skew / proximity / 3D effects stay behind `(pointer: fine)` or a min-width gate.
 - `ascii-art-data.ts` is generated. Change `scripts/build-ascii-art.py` and rerun.
 - Never push to `main`; never self-merge. PR #35 is Kariim's call.
+
+## September 8 — display fixes and verification
+
+Journal cards now share theme tokens in both modes. Mobile dates sit above the
+entry body. Mail controls use SVG envelopes. ASCII fills the available phone and
+unfolded viewport; hover/touch produces a local shift of at most two pixels,
+with a gentle ambient sweep. Reduced motion stays static; hidden pages pause.
+
+Verification: final pnpm build exited 0 (16/16 static pages), including Flow State,
+Instrument, Studio polish and the new executable ASCII checks. The ASCII checks
+exercise phone/unfold geometry, hover, expiry, hidden-page pause and cleanup.
+Browser: all 58 entries unique/newest-first, consistent dark/light cards, no
+horizontal overflow at 360 and 860 pixels, SVG mail icon, no console errors.
+Independent source review passed. Physical Galaxy Fold hardware was not tested.
+
+Gotchas: journal inherited portfolio stripe colors; scope token overrides to the
+journal. Capped cell height left tall canvas space unused; fit rows to its height.
+Font-dependent envelope glyphs were unreliable; inline SVG avoids font fallback.
+
+Setup: pnpm install --offline --frozen-lockfile from shift9; pnpm build from
+shift9/apps/shift9-dev. Preview: http://127.0.0.1:3128/, open the Dev Log book.
+Next action: review the draft PR, obtain merge approval, then verify production.
