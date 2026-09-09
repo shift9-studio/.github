@@ -1,3 +1,20 @@
+## September 8, 2026 — isolated dependency security release
+
+Branch `audit/studio-dependencies-sep8` starts from current main `c3ada57`.
+Both apps now require Next 16.2.11; scoped PostCSS/Sharp overrides and the
+native image regression run before their existing build checks. The saved
+audit delta was applied without the separate Room Explore/Three dependencies,
+media deletions or other working-tree changes. Both manifest/importer pairs
+match the resulting lockfile.
+
+Current verification: patched dependency floors and Next's real PNG, JPEG,
+WebP and AVIF optimizer passed; independent review approved this scoped draft.
+Full app builds previously passed on the audited source, but were not rerun
+in this sparse release checkout, which omits large public media. This is not
+deployment or browser clearance. Install from the workspace lockfile and run
+both existing app builds before release; the embedded regression checks the
+actual installed runtime. No deployment or merge occurred.
+
 # Dev Log update — September 8, 2026
 
 Branch `codex/dev-log-week-sep8`, based on current production main `7c1cd5b`.

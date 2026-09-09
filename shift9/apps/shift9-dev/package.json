@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm test:flow-state && pnpm test:instrument && pnpm test:studio-polish && next build",
+    "build": "node ../../scripts/check-dependency-security.mjs && pnpm test:flow-state && pnpm test:instrument && pnpm test:studio-polish && next build",
     "start": "next start",
     "lint": "next lint",
     "test:flow-state": "node scripts/check-flow-state.mjs",
@@ -19,7 +19,7 @@
     "@shift9/ui": "workspace:*",
     "framer-motion": "^11.11.0",
     "lenis": "^1.3.25",
-    "next": "^16.0.0",
+    "next": "^16.2.11",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "simplex-noise": "^4.0.3"
