@@ -1656,3 +1656,15 @@ Branch: `fix/seo-a11y-polish`. Additive fixes for the live site, no redesign.
 September 8 display update: consistent journal themes, responsive entry layout, SVG mail icons and full-height ASCII with a small local character shift. Final build exited 0; browser checks at 360/860 pixels and independent source review passed. See current PROGRESS.md verification and setup notes. Merge remains pending Kariim's approval.
 
 Invitation thumbnail fix: Media reused the mark-settles banner for invitation-field.mp4. Its plate now uses invitation-field-poster.jpg, extracted from the video at t=0 with ffmpeg -ss 0 -frames:v 1 -q:v 2. Preview in the Media window; merge approval pending.
+
+Wet-paint interaction fix: /soon sign, stickers and nine now use native buttons with bounded CSS splat reactions. Phone sign remains available below artwork; reduced motion has static replies. Preview /soon locally. Merge approval pending.
+
+Candy refinement: rounded glossy blobs cycle mint/lilac/pink, six finite droplets per activation, paper rocket on SHIP IT, rewind on Ctrl Z and jelly nine. Reduced-motion keeps replies static. Build and independent review passed; no merge authorization for PR57 yet.
+
+Wet-paint refinement: generated transparent acrylic atlas, three distinct silhouettes, unique sticker replies and fixed text centers. Finite impact deformation and two delayed drips; reduced motion static. Build and review passed.
+
+Final interaction pass: automatic six-form nine (no splat), delayed replies, SHIP HAPPENS plane restored, distinct twists/hops/stretch, rainbow smearing with inverse SVG coordinates, complete Wipe paint incl sign, mobile paint controls. Final two-worker build pass; normal11worker build hit machine OOM. Config restored. PR57 pending approval.
+
+Smear refinement: actual atlas pigment sampling replaces unrelated rainbow gradient. Drag picks up and mixes other pools/trails, preserves origin, tapers and textures the film. Plane flight raises above semicolon only while launching with cleanup. Build/review/browser checks passed.
+
+Reply readability: separate non-interactive reply layer prevents paint occlusion; ResizeObserver tracks layout. Rewind reply fades with paint. TypeScript/studio-polish and actual browser overlap checks passed.

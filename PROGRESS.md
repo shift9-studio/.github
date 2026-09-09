@@ -507,3 +507,19 @@ Kariim approved merge. PR #55 merged as a82a59943c555dc351b810861b6010b06ee1f151
 Symptom: invitation tile showed the wordmark instead of the video field. Cause: reused banner plate. Fix: first-frame JPEG from its own invitation-field.mp4, one asset reference changed. Reproduce extraction with ffmpeg -ss 0 -i invitation-field.mp4 -frames:v 1 -q:v 2 invitation-field-poster.jpg. Review in Media at http://127.0.0.1:3128/.
 
 Verification: pnpm build from the app directory exited 0, all three contract suites plus ASCII checks passed, 16/16 pages generated. Browser confirmed the new image loaded and the invitation video played (readyState 4, currentTime 4.85s) with the matching poster. Independent review PASS. Run pnpm from app/workspace directory so Corepack resolves the pinned 10.33.0 version.
+
+Publication: Kariim approved PR #56 merge; merged as c3ada57689adf83aee47957a862a579ea5b18e97. Vercel production status success. Live Media window verified invitation-field-poster.jpg loaded and displayed in The Invitation tile.
+
+## Wet paint interactions
+Cause: touch invitation was decorative markup with no handlers and pointer-events disabled. Added a small client button with one replaceable reaction per control, keyboard activation, CSS-only finite animation and static reduced-motion response. Mobile sign restored in normal flow. Browser verified click and Enter replies and sign at 390px. Reviewer focus finding corrected by outlining the nine itself inside the clipped lid. Setup: existing pnpm dev; visit /soon. No dependencies added.
+Final build exited 0; 16/16 static pages and existing contract suites passed.
+
+Candy refinement verified: full build exited 0 (16/16 pages), source review PASS, browser confirmed rocket and six droplets plus keyboard nine reaction. Each activation replaces the prior effect, no timers or listeners. PR57 remains preview-only until approved.
+
+User approved realistic atlas appearance and requested wet deformation/drips. Added finite2.4s squash/settle and2 short3.2s drips, text unaffected. Browser verified reply bounds and actual impact/drip animation names; screenshot inspected. Full build exit0,16/16pages; reviewPASS. Generated atlas source retained under .codex/generated_images; public copy is experience/paint-splats.png. PR57 remains unmerged.
+
+Final click-through: all10stickers activated, replies fit, no nine splat, fresh load0splats, text delay0.7s, autonomous phase changed without clicks. Drag created rainbow stroke over embossed9. Fixed wipe missing external sign via shared reset; wipe now0splats0strokes and preserves keyboardfocus.390pxphone smear andwipe passed, nohorizontaloverflow. No consoleerrors. ReviewerPASS after inverseSVGcoordinate fix. Build exit0 all16pages with temporarycpus2; committed config unchanged. Normal11workers exhausted local memory. New PaintSurface limits8strokes60points. Remaining: approve PR57 merge and verifylive.
+
+Disjointed smear fix: sample opaque atlas centers with the same saturation as sprites. Carry pigment along drag, blend gradually with contacted wet pools/prior trails, vary width and apply subtle shared edge/texture filter. Browser verified pink-to-mint gradient (255,133,185 through112,216,208), single-color pink drag stayed pink, paths rendered and zero consoleerrors. Plane-over-semicolon screenshot verified z9vs4, final cleanup effect handles reducedmotion changes/cancellation. Source reviewPASS; build0/16pages with temporary2workers restored. Wipe tested. PR57 unmerged.
+
+Reply readability: portaled replies above pigment while retaining their sticker positions, delayed reveal, rewind fade and reset. Desktop drag across SHIP/semicolon stayed readable; no console errors. TypeScript and studio-polish checks pass. Local preview only; PR57 not merged.
