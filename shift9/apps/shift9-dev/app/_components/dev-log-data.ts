@@ -1,6 +1,27 @@
 // Public editorial entries, newest first. Keep private source records out of this file.
 export const DEV_LOG = [
   {
+    n: "Rejecting incomplete evidence before candidate promotion",
+    s: "11 SEP 2026",
+    sc: "dev" as const,
+    d: "Repaired the isolated candidate-evaluation workflow so it invokes the real golden-set CLI and validates case identities, counts, aggregate arithmetic and retrieval measurement coverage. Candidate prompt pins apply only to copied configurations; relative schema, prompt and route paths retain their original base. Shadow replay requires fresh provider calls, and promotion rejects incomplete replay or retrieval evidence instead of accepting a favorable partial score. The full local run passed 1,007 server checks and all 24 required repair suites without skips. The final conformance run still failed six Docker-dependent checks because the engine was unavailable; live retrieval verification and release remain separate, unfinished steps.",
+    tags: ["Shift9 Control Plane", "Evaluation integrity"],
+  },
+  {
+    n: "Grounding direct answers and proving fresh evaluation",
+    s: "11 SEP 2026",
+    sc: "dev" as const,
+    d: "Added a grounding prompt for direct rag-answer requests and required fresh inference during evaluation. Results retain answer-provider identity, while judging requires a known, separate provider; missing or malformed judgments remain failures rather than disappearing from the score. A live direct-answer run passed all 60 cases with every response recorded as a cache miss and no answer/judge provider conflicts. This verifies the direct-answer path in the repair environment. The separate 50-case retrieval run remains unverified because embedding and reranking requests exhausted their provider allocation; the direct score is not a full-system pass.",
+    tags: ["Shift9 Control Plane", "LLM evaluation"],
+  },
+  {
+    n: "Protecting the review contract the live tools actually read",
+    s: "10 SEP 2026",
+    sc: "dev" as const,
+    d: "Installed the approved agent-review contract with a protected hash receipt, then verified that normal-user write, rename, replacement and deletion attempts were denied. After the approved service restart, the live API returned the exact contract hash and the command interface displayed its source location. The separately reviewed visual-completion guard passed all 36 installed tests, alongside 20 installer checks; independent activation review confirmed the live change. The work connects written operating rules to the protected source consumed at runtime, with retained rollback evidence and explicit limits on what the permission probes establish.",
+    tags: ["Shift9 Control Plane", "Runtime verification"],
+  },
+  {
     n: "Freezing a golden dataset before comparing models",
     s: "01 SEP 2026",
     sc: "dev" as const,
