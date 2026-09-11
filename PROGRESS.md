@@ -1,3 +1,44 @@
+## September 11, 2026 — month of evaluation and orchestration backfill
+
+Added ten dated editorial milestones to the dev-log data, bringing 58 entries to 68.
+Follow-up wording review: the promotion entry now explicitly records the later
+finding that incomplete retrieval/replay evidence could reach promotion. It does
+not present implemented comparison checks as a fully enforced release boundary.
+Existing entries were read and retained; this fills missing golden-dataset, judging,
+trace, RAG, quality-gate and controlled-improvement work without repeating the
+September 5 model-routing and September 6 fresh-response entries.
+
+Source evidence checked in the Control Plane's Git history and maintained files:
+- September 1 seed dataset and traces: `8196d92`, 50 tracked seed case files,
+  `factory/golden/cases.js`, `factory/trace/store.js`, and evidence/3 conformance.
+- September 1 hybrid index and retrieval set: `7ff0e2d`, `a241d16`,
+  `factory/rag/search.js`, config, and the 50 ragr cases.
+- September 2 citation numbering and separate judge schema: `aac2a9b`, `08315a3`,
+  answer.js and immutable judge-rubric/rag-verdict v1 prompt files.
+- September 2 historical evaluation: `b1270d5`, evidence/9/g7-eval.txt, all 50
+  measured for recall 1.0000, precision .9880, faithfulness .9800, relevancy 1.0000;
+  the same file records the distinct direct-answer result 29/60. Public copy
+  explicitly distinguishes those paths and does not claim current full-system
+  clearance. The evaluation-integrity repair is separate ongoing work.
+- September 1 twelve gates: `4edf6ad`, `bcf776e`, `56548f9`, evidence/8/conformance.txt
+  (E1-E12 PASS) and commands.txt proving inherited Git-environment regression checks.
+- September 2 candidate, promotion/rollback and add-only growth: `3049804`,
+  `b4080ec`, `8a44b92`; factory/improve/{shadow,promote,rollback,grow}.js. Entries
+  describe implementation and offline acceptance scope, not a live quality claim.
+- August 28 orchestration repair: `dcff5c8`, docs/2026-08-28-orchestration-pass.md,
+  recorded routing 10/10 after old 7/10 failure and real gateway recovery invocation.
+  Historical model IDs and personal/local details were excluded from public copy.
+
+Validation: imported the actual TypeScript module with Node; 68 unique titles,
+valid dates/fields, newest-first sort, and public-copy marker check passed.
+TypeScript, Flow State, Instrument, studio-polish and ASCII checks passed;
+git diff --check passed. Actual local browser opened the 68-entry reader and
+the new judge/citation entries were inspected for readable text and spacing.
+Independent source and browser audit found no blocking editorial defect.
+No full build or deployment is claimed: local preview uses existing dependencies
+and the installed Next runtime (16.2.9) differs from the declared 16.2.11.
+Release verification must use the lockfile installation. Merge approval is pending.
+
 ## September 8, 2026 — isolated dependency security release
 
 Branch `audit/studio-dependencies-sep8` starts from current main `c3ada57`.

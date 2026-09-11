@@ -1,3 +1,18 @@
+## September 11, 2026 — dev-log evaluation backfill
+
+Branch docs/devlog-evals-month adds ten source-backed, dated entries (68 total)
+covering golden datasets, LLM judges, traces, hybrid retrieval, citations,
+evaluation measurements, quality gates and orchestration. Historical scores
+and incomplete promotion evidence are labeled explicitly. Public source data
+contains no private logs or local paths; internal source mapping is in PROGRESS.md.
+
+TypeScript, Flow State, Instrument, Studio polish and ASCII checks passed.
+The actual local desktop Dev Log opened and rendered all 68 entries, with the
+new judge entry inspected in the existing dark reader. The preview at
+http://127.0.0.1:3128/ was stopped with owner approval after disk space fell.
+Automatic policy rejected the approved .next/dev cache deletion; cache remains.
+This is editorial-only work; no release or full-system
+clearance is claimed. Independent review and merge approval remain separate.
 ## September 8, 2026 — isolated dependency security release
 
 Branch `audit/studio-dependencies-sep8` starts from current main `c3ada57`.
