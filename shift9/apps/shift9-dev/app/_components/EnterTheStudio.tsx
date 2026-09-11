@@ -415,7 +415,7 @@ const FOLDER_OF: Record<string, Exclude<FolderKey, "devlog">> = Object.fromEntri
 
 const MOTION_KEY = "s9-desk-motion";
 
-export function EnterTheStudio() {
+export function EnterTheStudio({ initialDevLog = false }: { initialDevLog?: boolean }) {
   const reducedMotion = useReducedMotionSafe();
 
   /* ── The sidebar ───────────────────────────────────────────────────────
@@ -489,9 +489,9 @@ export function EnterTheStudio() {
      watching the film, and at the desk. Holding this as one flag per concern
      is what made the old code need an "autoplay was blocked" fallback state
      that looked like a fourth. */
-  const [mode, setMode] = useState<"gate" | "film" | "desk">("gate");
+  const [mode, setMode] = useState<"gate" | "film" | "desk">(initialDevLog ? "desk" : "gate");
   const [compact, setCompact] = useState(false);
-  const [openWin, setOpenWin] = useState<OpenWin>(null);
+  const [openWin, setOpenWin] = useState<OpenWin>(initialDevLog ? "devlog" : null);
   /* True from the moment Enter is pressed until the film can actually play.
      The opening is 24MB; on anything but a fast line there is a real wait
      there, and it used to be a dead screen. */
@@ -628,13 +628,13 @@ export function EnterTheStudio() {
      for the gate and the film; once the desk is up, the tab should name the
      place the visitor is actually in — without rewriting the route. */
   useEffect(() => {
-    if (mode !== "desk") return;
+    if (mode !== "desk" || initialDevLog) return;
     const previous = document.title;
     document.title = "Shift-9 — Studio Desktop";
     return () => {
       document.title = previous;
     };
-  }, [mode]);
+  }, [mode, initialDevLog]);
 
   /* Playback now always follows a click, so the browser has no reason to
      refuse it and there is no autoplay-blocked state to design for. The one
@@ -670,12 +670,12 @@ export function EnterTheStudio() {
      during server rendering, and this component is server-rendered. */
   useIsomorphicLayoutEffect(() => {
     if (
-      reducedMotion || introAlreadySeen()
+      initialDevLog || reducedMotion || introAlreadySeen()
     ) {
       setMode("desk");
       enterDesk();
     }
-  }, [enterDesk, reducedMotion]);
+  }, [enterDesk, initialDevLog, reducedMotion]);
 
   useEffect(() => {
     if (mode !== "film" || reducedMotion) return;
@@ -1057,7 +1057,7 @@ export function EnterTheStudio() {
 
       {/* STAGE 1 — the film. Decorative overlay; the desktop below is the real
           content, so this is hidden from assistive tech. */}
-      <div className={s.stageVideo} ref={stageRef} aria-hidden="true">
+      <div className={s.stageVideo} ref={stageRef} aria-hidden="true" style={mode === "desk" ? { display: "none" } : undefined}>
         {mode === "film" ? (
           <>
             <video

@@ -1,3 +1,32 @@
+## September 11, 2026 — dedicated dev-log share card
+
+User requested a clickable LinkedIn image, approved the text "My building
+journey" / "Explore the dev log · Shift9.dev", and a dedicated share link.
+The /dev-log route has its own Open Graph/Twitter image and opens the existing
+68-entry desktop reader immediately. Homepage metadata and normal intro stay
+unchanged. The warm workshop artwork is public/dev-log-journey.png; no teal or
+violet background. LinkedIn publication remains the owner's final action.
+
+Verified: TypeScript and Studio polish/ASCII checks pass. Actual browser opens
+the log directly, preserves its route title, and closes/reopens the reader.
+LinkedInBot HTTP response includes the correct public image metadata.
+Independent review caught the intro poster covering SSR until hydration; the
+stage is now hidden in server markup whenever the desktop is active. HTTP proof
+confirmed display:none before hydration and the preserved dev-log title.
+Preview: http://127.0.0.1:3128/dev-log. Release and LinkedIn preview refresh pending.
+
+## September 11, 2026 — dev-log update released
+
+Kariim explicitly authorized the merge in this session. PR59 merged as
+2f545d9d4fe490282d8be13ddf3fadfd543f0e1e at 18:16 UTC after the exact reviewed
+head f05853c passed Vercel. Production deployment also reports success.
+A fresh browser navigation to https://www.shift9.dev/ shows Dev Log 68 entries;
+the new LLM-as-judge entry was opened and visually inspected in the live reader.
+The ten-entry editorial release is live. This does not clear the separate
+Control Plane evaluation repairs or their remaining runtime checks.
+The LinkedIn journey draft is in the signed-in personal composer, unpublished.
+Its copy is saved beside this preview folder as linkedin-journey.txt.
+
 ## September 11, 2026 — month of evaluation and orchestration backfill
 
 Added ten dated editorial milestones to the dev-log data, bringing 58 entries to 68.
