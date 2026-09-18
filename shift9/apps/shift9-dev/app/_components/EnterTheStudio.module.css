@@ -1867,6 +1867,42 @@
   display: block;
   opacity: 0.62;
 }
+.wallLayer[data-wallpaper="quiet"] .wallCanvas {
+  opacity: 0.2;
+}
+.wallImage {
+  position: absolute;
+  inset: -6%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transform: translate3d(var(--wall-x, 0px), var(--wall-y, 0px), 0) scale(1.08);
+  opacity: 0;
+  filter: saturate(0.78) contrast(1.08);
+  transition: opacity var(--s9-dur-slow, 520ms) var(--s9-ease-out, ease);
+  will-change: transform;
+}
+.wallLayer[data-wallpaper="ribbons"] .wallImage {
+  background-image: url("/experience/outro/invitation-field-poster.jpg");
+  opacity: 0.4;
+}
+.wallLayer[data-wallpaper="console"] .wallImage {
+  background-image: url("/experience/set-pieces/09-instrument.png");
+  background-position: center 48%;
+  opacity: 0.32;
+}
+.wallLayer[data-wallpaper="plain"] .wallVeil {
+  background: var(--w-bg);
+}
+
+@media (max-width: 900px) {
+  .wallLayer[data-wallpaper="ribbons"] .wallImage {
+    opacity: 0.28;
+  }
+  .wallLayer[data-wallpaper="console"] .wallImage {
+    opacity: 0.24;
+  }
+}
 .wallVeil {
   position: absolute;
   inset: 0;
