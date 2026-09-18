@@ -86,7 +86,7 @@ before anyone has asked for it is not a first paint.
 | Take | Job | Model | Spend | Outcome |
 |---|---|---|---|---|
 | v1 | `9a205805-fa17-440a-86b8-d5b3e6b43b14` | nano_banana_pro 4k | 4 | **Superseded, never used.** The film's opening shot recomposed as a title plate — character smaller, frame opened into night sky for type. Kariim's call, and the right one: a recomposed frame of the film is still the film. |
-| v2 | `88579825-1819-49f2-a067-dd60d91871d0` | nano_banana_pro 4k | 4 | **Shipped.** Macro of black crocheted fabric parted along one seam, cyan light through the gap, violet rim, loose fibres in the beam. Right two thirds near-pure black. |
+| v2 | `88579825-1819-49f2-a067-dd60d91871d0` | nano_banana_pro 4k | 4 | **Shipped.** Macro of black crocheted fabric parted along one seam, cool light through the gap, contrasting rim, loose fibres in the beam. Right two thirds near-pure black. |
 
 The concept is a **threshold, not a place**: the material this whole world is
 made from, opened just enough to see light behind it. It is also the reason
@@ -111,7 +111,6 @@ poster instead of a room.
 
 | Plate | Job | Model | Spend | Note |
 |---|---|---|---|---|
-| Invitation field | `ee22d192-4637-423d-801a-ac8fc24ba562` | kling3_0 pro, 5s, 1080p | 12.5 | `outro/invitation-field.mp4`. Text-to-video, no start frame. Strands and dust held to the edges so the centre stays clear for the headline. Plays once and holds — a page you sit on to read one sentence should not have perpetual motion behind it. No poster frame was returned, so the gradient beneath covers the load and the plate fades in over it. |
 
 ### The banner
 

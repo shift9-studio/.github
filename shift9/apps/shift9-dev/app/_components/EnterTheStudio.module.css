@@ -1594,6 +1594,8 @@
   color: #c33;
 }
 .wbody {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
 }
 .item {
@@ -1882,13 +1884,9 @@
   transition: opacity var(--s9-dur-slow, 520ms) var(--s9-ease-out, ease);
   will-change: transform;
 }
-.wallLayer[data-wallpaper="ribbons"] .wallImage {
-  background-image: url("/experience/outro/invitation-field-poster.jpg");
-  opacity: 0.4;
-}
 .wallLayer[data-wallpaper="console"] .wallImage {
-  background-image: url("/experience/set-pieces/09-instrument.png");
-  background-position: center 48%;
+  background-image: url("/experience/studio-prism-wallpaper.png");
+  background-position: center 50%;
   opacity: 0.32;
 }
 .wallLayer[data-wallpaper="plain"] .wallVeil {
@@ -1896,9 +1894,6 @@
 }
 
 @media (max-width: 900px) {
-  .wallLayer[data-wallpaper="ribbons"] .wallImage {
-    opacity: 0.28;
-  }
   .wallLayer[data-wallpaper="console"] .wallImage {
     opacity: 0.24;
   }

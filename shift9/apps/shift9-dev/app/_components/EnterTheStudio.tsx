@@ -157,7 +157,7 @@ type Status = "live" | "ship" | "dev" | "rnd";
    "not yet" costs a click; a thin page dressed as a real one costs trust.
 
    Kept optional so a future item can be added unlinked. */
-type Item = { n: string; s: string; sc: Status; d: string; tags: string[]; h?: string };
+type Item = { n: string; s: string; sc: Status; d: string; tags?: string[]; h?: string };
 type Folder = { t: string; n: string; items: Item[] };
 
 /* Canonical content — copied verbatim from the frozen prototype / HANDOFF §6.
@@ -535,7 +535,6 @@ export function EnterTheStudio() {
       if (
         stored === "signal" ||
         stored === "quiet" ||
-        stored === "ribbons" ||
         stored === "console" ||
         stored === "plain"
       ) {
@@ -1560,13 +1559,15 @@ export function EnterTheStudio() {
                         )}
                       </h3>
                       <p>{it.d}</p>
-                      <div className={s.tags}>
-                        {it.tags.map((t) => (
-                          <span key={t} className={s.tag}>
-                            {t}
-                          </span>
-                        ))}
-                      </div>
+                      {openWin !== "devlog" && it.tags?.length ? (
+                        <div className={s.tags}>
+                          {it.tags.map((t) => (
+                            <span key={t} className={s.tag}>
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                     <span className={`${s.status} ${s[it.sc]}`}>{it.s}</span>
                   </div>

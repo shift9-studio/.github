@@ -9,10 +9,9 @@
   --s9-void-2:      #0b1120;   /* deeper well                         */
   --s9-surface:     #131c31;   /* raised panel                        */
   /* ── The accents, after the neon came out ───────────────────────────────
-     These were #22d3ee cyan and #8b5cf6 violet. Together, on a dark ground,
-     with glows on them, they are the single most recognisable colour scheme
-     on the web right now — and being instantly recognisable as "a dark site
-     an AI helped build" is the exact opposite of what a studio site is for.
+     The studio uses neutral accents here. The old glowing palette made the
+     site read like a generic dark AI template, which is the opposite of what
+     a studio site is for.
 
      They are neutrals now. Not greyed-out versions of the old accents:
      genuinely zero-chroma, so the only colour anywhere on the site is the
@@ -160,10 +159,8 @@
     );
 
   /* derived hairlines & glows (oklab mixes keep hue honest) */
-  /* Hairlines. These used to be cyan and violet mixes, which on navy read as
-     structure and on black read as a glowing wire around every box — one of
-     the loudest tells in the old look. Plain white at low alpha: a hairline
-     should describe an edge, not light one. */
+  /* Hairlines stay neutral and low-alpha: an edge should describe a box, not
+     turn it into a glowing wire. */
   --s9-line:        rgb(255 255 255 / 0.10);
   --s9-line-2:      rgb(255 255 255 / 0.07);
   --s9-signal-soft: rgb(255 255 255 / 0.16);

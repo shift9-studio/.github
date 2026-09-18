@@ -34,7 +34,7 @@ shift9/
 
 ## Design tokens (single source of truth)
 
-`@shift9/theme` → `Void #0f172a` · `Signal #22d3ee` · `Pulse #8b5cf6`, fluid `clamp()`
+`@shift9/theme` → void `#0f172a` · neutral signal `#e8edf5` · quiet pulse `#6f7b8f`, fluid `clamp()`
 type, `transition-premium` (300ms), spring tokens, high-contrast `:focus-visible`,
 and a global `prefers-reduced-motion` contract. Edit a token once → every surface updates.
 

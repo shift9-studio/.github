@@ -439,19 +439,6 @@
       "approved": true
     },
     {
-      "id": "invitation-field",
-      "path": "outro/invitation-field.mp4",
-      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260726_011905_ee22d192-4637-423d-801a-ac8fc24ba562.mp4",
-      "job": "ee22d192-4637-423d-801a-ac8fc24ba562",
-      "model": "kling3_0",
-      "mode": "pro",
-      "duration": 5,
-      "size": "1920x1080",
-      "credits": 12.5,
-      "note": "The ambient field behind the /start invitation. Text-to-video, no start frame - the banner artwork carries the wordmark and the invitation page must not repeat it. Strands and dust held to the edges so the centre stays clear for the headline. Plays once and holds; the gradient underneath is the fallback.",
-      "approved": true
-    },
-    {
       "id": "entry-seam-source",
       "path": "opening/00-entry-seam-source.png",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3F1n9RqGZCJVrB84dvcvAMuNMRC/hf_20260726_012905_88579825-1819-49f2-a067-dd60d91871d0.png",

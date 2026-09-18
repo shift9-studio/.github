@@ -40,7 +40,7 @@ export type RailKey =
   | "goals"
   | "reports";
 
-export type WallpaperMode = "signal" | "quiet" | "ribbons" | "console" | "plain";
+export type WallpaperMode = "signal" | "quiet" | "console" | "plain";
 
 export const RAIL_KEYS: RailKey[] = [
   "home",
@@ -113,13 +113,6 @@ const FILM = [
     note: "The wordmark resolving out of the field.",
     plate: "/experience/shift-9_new-banner.jpg",
     clip: "/experience/outro/banner-settle.mp4",
-  },
-  {
-    id: "invitation",
-    title: "The invitation",
-    note: "The closing field, shot for the end of the site.",
-    plate: "/experience/outro/invitation-field-poster.jpg",
-    clip: "/experience/outro/invitation-field.mp4",
   },
 ];
 
@@ -793,7 +786,6 @@ function Settings({
         options={[
           { value: "signal", label: "Signal" },
           { value: "quiet", label: "Quiet" },
-          { value: "ribbons", label: "Ribbons" },
           { value: "console", label: "Console" },
           { value: "plain", label: "Plain" },
         ]}
