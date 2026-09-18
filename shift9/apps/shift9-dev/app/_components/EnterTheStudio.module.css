@@ -1884,7 +1884,7 @@
   transition: opacity var(--s9-dur-slow, 520ms) var(--s9-ease-out, ease);
   will-change: transform;
 }
-.wallLayer[data-wallpaper="console"] .wallImage {
+.wallLayer[data-wallpaper="prism"] .wallImage {
   background-image: url("/experience/studio-prism-wallpaper.png");
   background-position: center 50%;
   opacity: 0.32;
@@ -1894,7 +1894,7 @@
 }
 
 @media (max-width: 900px) {
-  .wallLayer[data-wallpaper="console"] .wallImage {
+  .wallLayer[data-wallpaper="prism"] .wallImage {
     opacity: 0.24;
   }
 }
