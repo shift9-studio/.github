@@ -1,3 +1,32 @@
+## September 19, 2026 — entrance, return navigation, settings repair
+
+Branch `codex/entrance-desktop-repair` starts at production `42d1e7e`.
+The entrance incorrectly initialized in film mode and stopped consulting the
+existing session arrival marker. Restore gate initialization and the layout-time
+arrival check. Keep the original yarn photograph stationary, with a cyan seam
+light independent of the monochrome theme. Remove Settings A/B/C/D markers and
+its internal implementation note; retain the actual controls and labels.
+
+Fresh Next 16.2.11 production build, TypeScript, Flow State, Instrument, studio
+polish and ASCII contracts pass. Browser exercised fresh gate, skip, full two-beat
+film, Studio exit link, browser Back, and all Settings controls. Return visits
+contain no video elements. Regression guards reject the old production source.
+
+Gotcha: the first pulse was too faint in independent video review. Increased
+only the seam light's range; rebuilt production output for the final video check.
+The browser viewport override produced a tiled screenshot artifact; the ordinary
+desktop viewport capture correctly shows a single Settings window. Do not use the
+bad capture as layout evidence.
+
+Existing limits: `next lint` is invalid under Next 16; unchanged CSS has six
+Impeccable warnings. Storage-denied visitors retain the existing first-visit
+fallback. No global theme, media, Dev Log, or other branch work was changed.
+
+Run locally: `pnpm install --frozen-lockfile`, `pnpm --filter shift9-dev build`,
+then `pnpm --filter shift9-dev start --hostname 127.0.0.1 --port 3146` from `shift9`.
+Open a new tab for the entrance; after arriving, Studio's back arrow returns to
+the desktop. Independent final video review passed. Draft PR #66 is open; owner merge approval is pending and production is unchanged.
+
 ## September 11, 2026 — September 10–11 follow-up entries
 
 Branch docs/devlog-sep10-11 starts from released main 2f545d9 (PR59).
