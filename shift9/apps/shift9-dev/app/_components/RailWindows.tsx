@@ -781,7 +781,7 @@ function Settings({
       <Choice
         index="D"
         label="Background"
-        hint="Choose how much of the animated ASCII field sits behind the desktop."
+        hint="Choose the studio background that sits behind the desktop."
         value={wallpaper}
         options={[
           { value: "signal", label: "Signal" },
