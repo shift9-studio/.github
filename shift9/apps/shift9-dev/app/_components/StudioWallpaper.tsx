@@ -5,7 +5,7 @@ import { AsciiWallpaper } from "./AsciiWallpaper";
 import type { WallpaperMode } from "./RailWindows";
 import s from "./EnterTheStudio.module.css";
 
-const IMAGE_MODES = new Set<WallpaperMode>(["ribbons", "console"]);
+const IMAGE_MODES = new Set<WallpaperMode>(["prism"]);
 
 export function StudioWallpaper({
   mode,

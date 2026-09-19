@@ -40,7 +40,7 @@ export type RailKey =
   | "goals"
   | "reports";
 
-export type WallpaperMode = "signal" | "quiet" | "ribbons" | "console" | "plain";
+export type WallpaperMode = "signal" | "quiet" | "prism" | "plain";
 
 export const RAIL_KEYS: RailKey[] = [
   "home",
@@ -793,8 +793,7 @@ function Settings({
         options={[
           { value: "signal", label: "Signal" },
           { value: "quiet", label: "Quiet" },
-          { value: "ribbons", label: "Ribbons" },
-          { value: "console", label: "Console" },
+          { value: "prism", label: "Prism" },
           { value: "plain", label: "Plain" },
         ]}
         onChange={onSetWallpaper}

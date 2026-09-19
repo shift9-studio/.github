@@ -1105,7 +1105,7 @@
   flex: 1;
   padding: 36px 60px;
   display: grid;
-  grid-template-columns: repeat(3, 180px);
+  grid-template-columns: repeat(3, minmax(0, 180px));
   gap: 40px 60px;
   align-content: start;
   justify-content: center;
@@ -1113,7 +1113,7 @@
   transition: gap 0.3s ease, padding 0.3s ease;
 }
 .dicon {
-  width: 160px;
+  width: min(160px, 100%);
   text-align: center;
   cursor: pointer;
   border-radius: 10px;
@@ -1594,6 +1594,8 @@
   color: #c33;
 }
 .wbody {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
 }
 .item {
@@ -1615,6 +1617,25 @@
 }
 .item:nth-child(even) h3 a {
   color: var(--blue);
+}
+/* The journal follows the desktop theme; portfolio stripes remain separate. */
+.wbody[data-devlog] {
+  --w-light-row: var(--w-panel);
+  --w-light-row-text: var(--w-txt);
+  --w-light-row-dim: var(--w-dim);
+  --w-light-row-line: var(--w-line);
+}
+.wbody[data-devlog] .item {
+  color: var(--w-txt);
+}
+.wbody[data-devlog] .tag {
+  color: var(--w-txt);
+  font-size: 11px;
+  background: var(--w-quiet);
+}
+.wbody[data-devlog] .status {
+  color: var(--w-dim);
+  background: var(--w-quiet);
 }
 .item:last-child {
   border-bottom: none;
@@ -1765,6 +1786,26 @@
 
 /* ---------- Mobile: degrade the desktop metaphor gracefully (HANDOFF §8.4) ---------- */
 @media (max-width: 768px) {
+  .wbody[data-devlog] .item {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 8px 12px;
+    padding: 16px;
+  }
+  .wbody[data-devlog] .no {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .wbody[data-devlog] .status {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: start;
+  }
+  .wbody[data-devlog] .info {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+  }
   .navlinks span,
   .winbtns {
     display: none;
@@ -1843,13 +1884,9 @@
   transition: opacity var(--s9-dur-slow, 520ms) var(--s9-ease-out, ease);
   will-change: transform;
 }
-.wallLayer[data-wallpaper="ribbons"] .wallImage {
-  background-image: url("/experience/outro/invitation-field-poster.jpg");
-  opacity: 0.4;
-}
-.wallLayer[data-wallpaper="console"] .wallImage {
-  background-image: url("/experience/set-pieces/09-instrument.png");
-  background-position: center 48%;
+.wallLayer[data-wallpaper="prism"] .wallImage {
+  background-image: url("/experience/studio-prism-wallpaper.png");
+  background-position: center 50%;
   opacity: 0.32;
 }
 .wallLayer[data-wallpaper="plain"] .wallVeil {
@@ -1857,10 +1894,7 @@
 }
 
 @media (max-width: 900px) {
-  .wallLayer[data-wallpaper="ribbons"] .wallImage {
-    opacity: 0.28;
-  }
-  .wallLayer[data-wallpaper="console"] .wallImage {
+  .wallLayer[data-wallpaper="prism"] .wallImage {
     opacity: 0.24;
   }
 }
@@ -2803,4 +2837,26 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* The green book Kariim selected for Dev Log. The desktop owns its label and window. */
+.devlogBook {
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 78px;
+  margin: 0 auto 12px;
+  border-left: 8px solid #064d3a;
+  border-radius: 2px 6px 6px 2px;
+  background: #0a6e52;
+  color: #fff;
+  box-shadow: inset 0 -6px #d8d6cc;
+  font: 28px var(--mono);
+}
+.grid.compact .devlogBook {
+  width: 38px;
+  height: 48px;
+  border-left-width: 5px;
+  box-shadow: inset 0 -4px #d8d6cc;
+  font-size: 18px;
 }

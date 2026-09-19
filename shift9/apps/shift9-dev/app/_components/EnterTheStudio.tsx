@@ -529,8 +529,7 @@ export function EnterTheStudio() {
       if (
         stored === "signal" ||
         stored === "quiet" ||
-        stored === "ribbons" ||
-        stored === "console" ||
+        stored === "prism" ||
         stored === "plain"
       ) {
         setWallpaper(stored);
