@@ -82,7 +82,7 @@ export interface DitherPalette {
   pulse: string;
 }
 
-/** The default cool palette — keeps `shift9.dev` cyan/violet with no props. */
+/** The default studio palette — a quiet monochrome field unless a surface opts in. */
 const DEFAULT_PALETTE: DitherPalette = {
   base: "#0f172a",
   signal: "#e8edf5",

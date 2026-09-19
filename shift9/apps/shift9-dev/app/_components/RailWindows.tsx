@@ -40,6 +40,8 @@ export type RailKey =
   | "goals"
   | "reports";
 
+export type WallpaperMode = "signal" | "quiet" | "prism" | "plain";
+
 export const RAIL_KEYS: RailKey[] = [
   "home",
   "portfolio",
@@ -112,13 +114,6 @@ const FILM = [
     plate: "/experience/shift-9_new-banner.jpg",
     clip: "/experience/outro/banner-settle.mp4",
   },
-  {
-    id: "invitation",
-    title: "The invitation",
-    note: "The closing field, shot for the end of the site.",
-    plate: "/experience/outro/invitation-field-poster.jpg",
-    clip: "/experience/outro/invitation-field.mp4",
-  },
 ];
 
 const BANNER = "/experience/shift-9_new-banner.jpg";
@@ -138,6 +133,8 @@ export type RailWindowProps = {
   onSetCompact: (v: boolean) => void;
   calm: boolean;
   onSetCalm: (v: boolean) => void;
+  wallpaper: WallpaperMode;
+  onSetWallpaper: (v: WallpaperMode) => void;
   /* Lets Home send the visitor to another rail section without closing. */
   onGo: (key: RailKey) => void;
   reducedMotion: boolean;
@@ -693,6 +690,45 @@ function Switch({
   );
 }
 
+function Choice({
+  index,
+  label,
+  hint,
+  value,
+  options,
+  onChange,
+}: {
+  index: string;
+  label: string;
+  hint: string;
+  value: WallpaperMode;
+  options: readonly { value: WallpaperMode; label: string }[];
+  onChange: (value: WallpaperMode) => void;
+}) {
+  return (
+    <div className={`${s.panelRow} ${s.choiceRow}`}>
+      <span className={s.panelNo}>{index}</span>
+      <div className={s.panelText}>
+        <h3>{label}</h3>
+        <p>{hint}</p>
+      </div>
+      <div className={s.choices} role="group" aria-label={label}>
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            className={`${s.choice} ${value === option.value ? s.choiceOn : ""}`}
+            aria-pressed={value === option.value}
+            onClick={() => onChange(option.value)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Settings({
   dark,
   onToggleTheme,
@@ -700,9 +736,18 @@ function Settings({
   onSetCompact,
   calm,
   onSetCalm,
+  wallpaper,
+  onSetWallpaper,
 }: Pick<
   RailWindowProps,
-  "dark" | "onToggleTheme" | "compact" | "onSetCompact" | "calm" | "onSetCalm"
+  | "dark"
+  | "onToggleTheme"
+  | "compact"
+  | "onSetCompact"
+  | "calm"
+  | "onSetCalm"
+  | "wallpaper"
+  | "onSetWallpaper"
 >) {
   return (
     <div className={s.panel}>
@@ -733,8 +778,21 @@ function Settings({
         on={calm}
         onChange={onSetCalm}
       />
+      <Choice
+        index="D"
+        label="Background"
+        hint="Choose the studio background that sits behind the desktop."
+        value={wallpaper}
+        options={[
+          { value: "signal", label: "Signal" },
+          { value: "quiet", label: "Quiet" },
+          { value: "prism", label: "Prism" },
+          { value: "plain", label: "Plain" },
+        ]}
+        onChange={onSetWallpaper}
+      />
       <p className={s.panelFoot}>
-        All three are remembered on this device. If your system already asks for
+        All four are remembered on this device. If your system already asks for
         reduced motion, the site obeys that on its own, whatever is set here.
       </p>
     </div>
@@ -878,6 +936,8 @@ export function RailWindowBody(props: RailWindowProps) {
           onSetCompact={props.onSetCompact}
           calm={props.calm}
           onSetCalm={props.onSetCalm}
+          wallpaper={props.wallpaper}
+          onSetWallpaper={props.onSetWallpaper}
         />
       );
     case "goals":

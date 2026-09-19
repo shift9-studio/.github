@@ -35,7 +35,7 @@ import {
 } from "react";
 import { useReducedMotionSafe } from "@shift9/motion";
 import { FadeToBlack } from "./FadeToBlack";
-import { AsciiWallpaper } from "./AsciiWallpaper";
+import { StudioWallpaper } from "./StudioWallpaper";
 import s from "./EnterTheStudio.module.css";
 import { Shift9Mark } from "./Shift9Mark";
 import { SHIFT9_LOGO } from "./logo-data";
@@ -46,6 +46,7 @@ import {
   RAIL_META,
   RailWindowBody,
   type RailKey,
+  type WallpaperMode,
 } from "./RailWindows";
 /* CSS-module class access is typed `string | undefined` under
    noUncheckedIndexedAccess; classList APIs need a plain string. */
@@ -156,7 +157,7 @@ type Status = "live" | "ship" | "dev" | "rnd";
    "not yet" costs a click; a thin page dressed as a real one costs trust.
 
    Kept optional so a future item can be added unlinked. */
-type Item = { n: string; s: string; sc: Status; d: string; tags: string[]; h?: string };
+type Item = { n: string; s: string; sc: Status; d: string; tags?: string[]; h?: string };
 type Folder = { t: string; n: string; items: Item[] };
 
 /* Canonical content — copied verbatim from the frozen prototype / HANDOFF §6.
@@ -350,6 +351,7 @@ const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const THEME_KEY = "s9-desk-theme";
+const WALLPAPER_KEY = "s9-desk-wallpaper";
 
 /* The opening film is an arrival, and you only arrive once. Every route that
    comes back here — the studio's door, the banner, the invitation — lands on
@@ -489,7 +491,7 @@ export function EnterTheStudio() {
      watching the film, and at the desk. Holding this as one flag per concern
      is what made the old code need an "autoplay was blocked" fallback state
      that looked like a fourth. */
-  const [mode, setMode] = useState<"gate" | "film" | "desk">("gate");
+  const [mode, setMode] = useState<"gate" | "film" | "desk">("film");
   const [compact, setCompact] = useState(false);
   const [openWin, setOpenWin] = useState<OpenWin>(null);
   /* True from the moment Enter is pressed until the film can actually play.
@@ -507,6 +509,7 @@ export function EnterTheStudio() {
      stored choice (or the OS preference) is applied on mount. The desktop is
      still behind the intro film at that point, so the switch is never seen. */
   const [dark, setDark] = useState(false);
+  const [wallpaper, setWallpaper] = useState<WallpaperMode>("quiet");
 
   useEffect(() => {
     let stored: string | null = null;
@@ -524,6 +527,31 @@ export function EnterTheStudio() {
     const follow = (e: MediaQueryListEvent) => setDark(e.matches);
     os.addEventListener("change", follow);
     return () => os.removeEventListener("change", follow);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(WALLPAPER_KEY);
+      if (
+        stored === "signal" ||
+        stored === "quiet" ||
+        stored === "prism" ||
+        stored === "plain"
+      ) {
+        setWallpaper(stored);
+      }
+    } catch {
+      /* storage blocked — the quieter default still applies */
+    }
+  }, []);
+
+  const setWallpaperMode = useCallback((value: WallpaperMode) => {
+    setWallpaper(value);
+    try {
+      window.localStorage.setItem(WALLPAPER_KEY, value);
+    } catch {
+      /* storage blocked — the choice just does not persist */
+    }
   }, []);
 
   /* Travel to the studio. Opening any shift9.dev link flies the desktop's own
@@ -669,9 +697,7 @@ export function EnterTheStudio() {
      The isomorphic guard is required: React warns when useLayoutEffect runs
      during server rendering, and this component is server-rendered. */
   useIsomorphicLayoutEffect(() => {
-    if (
-      reducedMotion || introAlreadySeen()
-    ) {
+    if (reducedMotion) {
       setMode("desk");
       enterDesk();
     }
@@ -1114,10 +1140,12 @@ export function EnterTheStudio() {
             veil. Both at once would be the artwork twice — one copy falling
             and an identical one sitting perfectly still behind it. The veil
             stays either way, so the tint over the field never blinks. */}
-        <div className={s.wallLayer} aria-hidden="true">
-          <AsciiWallpaper className={s.wallCanvas} ink={!dark} fitTo={gridRef} />
-          <div className={s.wallVeil} />
-        </div>
+        <StudioWallpaper
+          mode={wallpaper}
+          dark={dark}
+          fitTo={gridRef}
+          reducedMotion={reducedMotion || calm}
+        />
 
         <div className={s.titlerow}>
           {/* Just the wordmark. The icon used to sit here too, which with a
@@ -1468,6 +1496,8 @@ export function EnterTheStudio() {
                   onSetCompact={setCompact}
                   calm={calm}
                   onSetCalm={setCalm}
+                  wallpaper={wallpaper}
+                  onSetWallpaper={setWallpaperMode}
                   onGo={(k) => {
                     const i = SIDEBAR.findIndex((it) => it.key === k);
                     if (i >= 0) setSideIndex(i);
@@ -1527,13 +1557,15 @@ export function EnterTheStudio() {
                         )}
                       </h3>
                       <p>{it.d}</p>
-                      <div className={s.tags}>
-                        {it.tags.map((t) => (
-                          <span key={t} className={s.tag}>
-                            {t}
-                          </span>
-                        ))}
-                      </div>
+                      {openWin !== "devlog" && it.tags?.length ? (
+                        <div className={s.tags}>
+                          {it.tags.map((t) => (
+                            <span key={t} className={s.tag}>
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                     <span className={`${s.status} ${s[it.sc]}`}>{it.s}</span>
                   </div>

@@ -58,7 +58,7 @@ const palette: { group: string; note: string; tokens: Swatch[] }[] = [
   {
     group: "Accent",
     note:
-      "These were cyan and violet. Together on a dark ground they are the most recognisable colour scheme on the web right now, and reading as \u201ca dark site an AI helped build\u201d is the opposite of what a studio site is for. They are zero-chroma neutrals now: signal is the marker and the emphasis, brighter than the label it sits on; pulse is the secondary, for work that is unresolved, and it is dimmer than the prose on purpose.",
+      "The old glowing accents made the site read like a generic dark AI build. They are zero-chroma neutrals now: signal is the marker and the emphasis, brighter than the label it sits on; pulse is the secondary, for work that is unresolved, and it is dimmer than the prose on purpose.",
     tokens: [
       { name: "--s9-signal", value: "#e8edf5", role: "Emphasis, markers" },
       { name: "--s9-pulse", value: "#6f7b8f", role: "Secondary, unresolved" },
