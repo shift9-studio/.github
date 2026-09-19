@@ -1,3 +1,6 @@
+## September 19, 2026 - preserve completed Dev Log during release follow-up
+
+The production merge landed the entrance and wallpaper fixes, but its single merge conflict was resolved against the older 71-entry baseline. The approved branch already carried the completed 74-entry, tag-free Dev Log. This follow-up restores that exact data file without changing the reader or any other feature. Verify the live reader shows 74 entries and no `.tag` elements after deployment.
 ## September 11, 2026 — September 10–11 follow-up entries
 
 Branch docs/devlog-sep10-11 starts from released main 2f545d9 (PR59).
