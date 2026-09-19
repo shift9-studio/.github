@@ -37,7 +37,7 @@ export const instrumentProjects = [
     surfaceNote: "Measured, structural, and monochrome.",
     href: "/studio",
     action: "Enter the studio →",
-    image: "/experience/opening/00-entry-seam.jpg",
+    image: "/experience/studio-entry-curtain.png",
   },
   {
     name: "Flow State",

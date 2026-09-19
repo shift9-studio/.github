@@ -69,11 +69,11 @@ assert.match(mark, /shift9-mark-grey/, "The Shift-9 mark must expose its grey ha
 assert.match(entranceStyles, /shift9-mark-light[\s\S]*translateY\(-1\.5px\)/, "The light half must lift on approach");
 assert.match(entranceStyles, /shift9-mark-grey[\s\S]*translateY\(1\.5px\)/, "The grey half must settle on approach");
 assert.match(entranceStyles, /\.titlerow,[\s\S]{0,80}\.taskbar\s*\{[\s\S]{0,120}z-index:\s*1;[\s\S]{0,60}\.titlerow\s*\{\s*z-index:\s*2;/, "The title-row tooltips must paint above the controls below them");
-assert.match(entrance, /mode === "gate"[\s\S]{0,180}<img className=\{s\.gatePlate\}/, "The entrance must render the original static yarn plate");
-assert.match(entrance, /setLoading\(true\);[\s\S]{0,80}setMode\("film"\)/, "Enter must hand directly from the static plate to the film");
-assert.doesNotMatch(entrance, /curtainDone|curtainOpening|YarnCurtain/, "The rejected curtain animation state must stay removed");
-assert.match(entranceStyles, /stageVideo[\s\S]{0,520}01-exterior-approach-poster\.jpg/, "The film stage must preload a frame behind the immediate curtain");
-assert.doesNotMatch(entranceStyles, /gateApertureOpen|curtainLeft|curtainRight|gatePlateAdvance/, "The yarn asset must stay static");
+assert.match(entrance, /mode === "gate" \|\| mode === "opening"[\s\S]{0,220}<img className=\{s\.gatePlate\}/, "The entrance must keep the still visible through the opening handoff");
+assert.match(entrance, /setLoading\(true\);[\s\S]{0,80}setMode\("opening"\)/, "Enter must start the curtain handoff");
+assert.match(entrance, /gateCurtainLeft[\s\S]*gateCurtainRight/, "The entrance must render two curtain panels");
+assert.match(entranceStyles, /stageVideo[\s\S]{0,520}studio-entry-curtain\.png/, "The transition stage must stay on the current entrance asset");
+assert.match(entranceStyles, /curtainPullLeft[\s\S]*curtainPullRight/, "The curtain panels must pull away in opposite directions");
 assert.match(entranceStyles, /--w-light-row-text/, "Light folder rows must define readable title text");
 assert.match(entranceStyles, /\.item:nth-child\(even\)[\s\S]*color:\s*var\(--w-light-row-text\)/, "Light folder rows must apply their dark text token");
 assert.match(entranceStyles, /\.item:nth-child\(even\) h3[\s\S]{0,120}color:\s*var\(--w-light-row-text\)/, "Light folder titles must explicitly keep readable dark text");

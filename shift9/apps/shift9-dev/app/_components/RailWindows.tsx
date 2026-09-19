@@ -104,7 +104,7 @@ const FILM = [
     id: "desk",
     title: "The desk",
     note: "The second beat. The hand lands on the mouse and the screen wakes.",
-    plate: "/experience/opening/00-entry-seam.jpg",
+    plate: "/experience/studio-entry-curtain.png",
     clip: "/experience/opening/04-desk-mouse-screen-v5.mp4",
   },
   {
