@@ -1,3 +1,24 @@
+## September 11, 2026 — September 10–11 follow-up entries
+
+Branch docs/devlog-sep10-11 starts from released main 2f545d9 (PR59).
+Three editorial entries bring the public data from 68 to 71: protected runtime
+review authority (September 10), fresh grounded direct-answer evaluation, and
+rejection of incomplete candidate evidence (September 11). Sources: current
+shift9-control-plane/PROGRESS.md activation record and shift9-eval-repair/PROGRESS.md,
+factory/evidence/eval-direct.jsonl, eval-direct.txt and
+factory/evidence/eval-repair-conformance-final.txt. No full-system pass is claimed.
+
+Verified: TypeScript passed; studio-polish and ASCII checks passed; diff whitespace
+check passed. Actual browser opened the 71-entry reader and showed the dated new
+copy in the existing layout. Local preview runs at http://127.0.0.1:3128/.
+Installed Next is 16.2.9 versus declared 16.2.11, so no fresh production-build claim.
+Publication and outside review remain pending. Earlier PR59 is merged and its
+68-entry production reader was verified; older pending-merge notes below are history.
+
+Separate LinkedIn work: the unpublished composer has the labelled journey image
+and revised caption. PR60 feat/devlog-share-card remains held, not merged; its
+handoff-only changes are preserved in stash "handoff: held LinkedIn share draft".
+Do not revive that share-page experiment when completing this editorial follow-up.
 ## September 11, 2026 — month of evaluation and orchestration backfill
 
 Added ten dated editorial milestones to the dev-log data, bringing 58 entries to 68.
