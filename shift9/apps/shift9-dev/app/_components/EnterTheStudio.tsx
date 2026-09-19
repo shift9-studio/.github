@@ -6,8 +6,9 @@
    desktop that mirrors the video's final frame. Ported from the approved v3
    prototype; the behaviour contract (HANDOFF §18) is reproduced exactly:
 
-   - A still entrance with a click-to-start curtain handoff; SKIP remains
-     available at the bottom-right.
+   - Muted autoplay intro; on autoplay-block, the Fraunces "Enter the Studio"
+     lockup (gold ring + pulse, bottom-left) is the click-to-start fallback;
+     SKIP pill bottom-right.
    - On `ended` (or prefers-reduced-motion) → screen-wake (#wake + #glow) →
      desktop `.boot`.
    - Folder order: shift9.dev · Apps · Games · Tools · About. shift9.dev is the
@@ -73,16 +74,16 @@ const STUDIO_EMAIL = "shift9dev@gmail.com";
    also a change of resolution. */
 const OPENING_POSTER = "/experience/opening/01-exterior-approach-poster.jpg";
 
-/* THE FRONT DOOR. Not a frame of a film — a threshold: black woven
+/* THE FRONT DOOR. Not a frame of the film — a threshold: black crocheted
    fabric, the material this whole world is made from, parted along one seam
-   with light coming through it. You press Enter and the curtain pulls back
-   into the desktop. Because it is a still, nothing about the entrance depends on
+   with light coming through it. You press Enter and the film takes you
+   through. Because it is a still, nothing about the entrance depends on
    autoplay surviving a mobile browser's power-saving rules. */
-const ENTRY_PLATE = "/experience/studio-entry-curtain.png";
+const ENTRY_PLATE = "/experience/opening/00-entry-seam.jpg";
 
-/* Stated in the accessible name so pressing it is an informed choice rather
-   than a trapdoor. The handoff is one measured second. */
-const INTRO_RUNTIME = "1 sec";
+/* Stated on the button so pressing it is an informed choice rather than a
+   trapdoor. Two beats, ten seconds each. */
+const INTRO_RUNTIME = "20 sec";
 /* Held as a constant so the button's accessible name and the glyphs drawn on
    screen can never drift apart. */
 const ENTER_LABEL = "Enter the studio";
@@ -490,7 +491,7 @@ export function EnterTheStudio() {
      watching the film, and at the desk. Holding this as one flag per concern
      is what made the old code need an "autoplay was blocked" fallback state
      that looked like a fourth. */
-  const [mode, setMode] = useState<"gate" | "opening" | "film" | "desk">("gate");
+  const [mode, setMode] = useState<"gate" | "film" | "desk">("gate");
   const [compact, setCompact] = useState(false);
   const [openWin, setOpenWin] = useState<OpenWin>(null);
   /* True from the moment Enter is pressed until the film can actually play.
@@ -650,15 +651,6 @@ export function EnterTheStudio() {
       desk.style.opacity = "1";
     }
   }, []);
-
-  /* The entrance still is the handoff now. The retired film path showed an
-     unrelated house scene after the click, so the curtain opens directly to
-     the real desktop instead of taking a scenic detour. */
-  useEffect(() => {
-    if (mode !== "opening") return;
-    const timer = window.setTimeout(enterDesk, 1240);
-    return () => window.clearTimeout(timer);
-  }, [enterDesk, mode]);
 
   /* Tab title follows the room. The route metadata stays "Enter the Studio"
      for the gate and the film; once the desk is up, the tab should name the
@@ -983,14 +975,10 @@ export function EnterTheStudio() {
       {/* STAGE 0 — the front door. A still and two controls. Nothing is
           fetched, decoded or played until the visitor asks for it, which is
           also why this is real content rather than an overlay on a video. */}
-      {mode === "gate" || mode === "opening" ? (
-        <div className={`${s.gate} ${mode === "opening" ? s.gateOpening : ""}`}>
+      {mode === "gate" ? (
+        <div className={s.gate}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={s.gatePlate} src={ENTRY_PLATE} alt="" />
-          <div className={s.gateCurtain} aria-hidden="true">
-            <span className={s.gateCurtainLeft} />
-            <span className={s.gateCurtainRight} />
-          </div>
           <div className={s.gateVeil} aria-hidden="true" />
           <div className={s.gateGlow} aria-hidden="true" />
 
@@ -1022,7 +1010,7 @@ export function EnterTheStudio() {
                 aria-label={`${ENTER_LABEL} — ${INTRO_RUNTIME}`}
                 onClick={() => {
                   setLoading(true);
-                  setMode("opening");
+                  setMode("film");
                 }}
               >
                 <span className={s.enterFrame} aria-hidden="true">
@@ -1047,9 +1035,7 @@ export function EnterTheStudio() {
                     into pieces; the button carries the real name for anything
                     that is not looking at it. */}
                 <span className={s.enterLabel} aria-hidden="true">
-                  {(mode === "opening" ? "Opening the studio" : ENTER_LABEL)
-                    .split("")
-                    .map((ch, i) => (
+                  {ENTER_LABEL.split("").map((ch, i) => (
                     <span
                       key={`${ch}-${i}`}
                       className={s.enterChar}
@@ -1057,7 +1043,7 @@ export function EnterTheStudio() {
                     >
                       {ch === " " ? " " : ch}
                     </span>
-                    ))}
+                  ))}
                 </span>
                 {/* The mark becomes the loading state once Enter is pressed;
                     the runtime remains in the accessible name without adding
