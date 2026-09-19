@@ -91,7 +91,7 @@ seam light cyan independently of the shared theme, and removes the Settings
 A/B/C/D markers and internal note. Existing controls and the 74-entry Dev Log stay.
 Fresh production build and contract checks pass; actual browser paths cover skip,
 full film, Studio return, browser Back and Settings switches. Final independent
-motion review and owner merge approval remain pending. See PROGRESS.md for exact
+motion review passed; owner merge approval remains pending (draft PR #66). See PROGRESS.md for exact
 local setup, verification limits, and the pulse/screenshot gotchas. No publication
 or merge has occurred.
 
@@ -1736,3 +1736,4 @@ Final interaction pass: automatic six-form nine (no splat), delayed replies, SHI
 Smear refinement: actual atlas pigment sampling replaces unrelated rainbow gradient. Drag picks up and mixes other pools/trails, preserves origin, tapers and textures the film. Plane flight raises above semicolon only while launching with cleanup. Build/review/browser checks passed.
 
 Reply readability: separate non-interactive reply layer prevents paint occlusion; ResizeObserver tracks layout. Rewind reply fades with paint. TypeScript/studio-polish and actual browser overlap checks passed.
+
