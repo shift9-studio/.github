@@ -83,6 +83,18 @@ Checks: TypeScript, Flow State, Instrument and Studio polish passed. Local brows
 
 # HANDOFF - shift9-studio/.github
 
+## September 19, 2026 — bounded entrance and Settings repair
+
+`codex/entrance-desktop-repair` restores the yarn gate before click-to-play,
+restores the existing session check so Studio returns to the desktop, makes the
+seam light cyan independently of the shared theme, and removes the Settings
+A/B/C/D markers and internal note. Existing controls and the 74-entry Dev Log stay.
+Fresh production build and contract checks pass; actual browser paths cover skip,
+full film, Studio return, browser Back and Settings switches. Final independent
+motion review and owner merge approval remain pending. See PROGRESS.md for exact
+local setup, verification limits, and the pulse/screenshot gotchas. No publication
+or merge has occurred.
+
 > Continuity doc. Any agent must be able to resume cold from this file with zero briefing.
 > Update it in the same commit as any code change.
 > `CLAUDE.md` = how to work here. `docs/BLUEPRINT.md` = locked creative direction. This file = where we are.

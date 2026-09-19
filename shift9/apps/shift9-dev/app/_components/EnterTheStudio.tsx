@@ -491,7 +491,7 @@ export function EnterTheStudio() {
      watching the film, and at the desk. Holding this as one flag per concern
      is what made the old code need an "autoplay was blocked" fallback state
      that looked like a fourth. */
-  const [mode, setMode] = useState<"gate" | "film" | "desk">("film");
+  const [mode, setMode] = useState<"gate" | "film" | "desk">("gate");
   const [compact, setCompact] = useState(false);
   const [openWin, setOpenWin] = useState<OpenWin>(null);
   /* True from the moment Enter is pressed until the film can actually play.
@@ -697,8 +697,7 @@ export function EnterTheStudio() {
      The isomorphic guard is required: React warns when useLayoutEffect runs
      during server rendering, and this component is server-rendered. */
   useIsomorphicLayoutEffect(() => {
-    if (reducedMotion) {
-      setMode("desk");
+    if (reducedMotion || introAlreadySeen()) {
       enterDesk();
     }
   }, [enterDesk, reducedMotion]);
@@ -1069,10 +1068,7 @@ export function EnterTheStudio() {
               <button
                 type="button"
                 className={s.skipGate}
-                onClick={() => {
-                  setMode("desk");
-                  enterDesk();
-                }}
+                onClick={enterDesk}
               >
                 Skip the intro <span aria-hidden="true">&#8594;</span>
               </button>
@@ -1572,7 +1568,7 @@ export function EnterTheStudio() {
                 ))
               )}
             </div>
-            <div className={s.note}>{winNote}</div>
+            {winNote ? <div className={s.note}>{winNote}</div> : null}
           </div>
         )}
       </div>

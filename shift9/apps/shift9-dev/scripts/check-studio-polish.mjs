@@ -13,6 +13,7 @@ const [
   start,
   flow,
   instrument,
+  rail,
 ] = await Promise.all([
   read("../app/_components/StudioDolly.tsx"),
   read("../app/_components/StudioDolly.module.css"),
@@ -23,6 +24,7 @@ const [
   read("../app/start/page.tsx"),
   read("../app/flow-state/page.tsx"),
   read("../app/instrument/page.tsx"),
+  read("../app/_components/RailWindows.tsx"),
 ]);
 
 assert.match(dolly, /function SeamlessLoopVideo/, "Studio clips must use the seamless player");
@@ -70,6 +72,11 @@ assert.match(entranceStyles, /shift9-mark-light[\s\S]*translateY\(-1\.5px\)/, "T
 assert.match(entranceStyles, /shift9-mark-grey[\s\S]*translateY\(1\.5px\)/, "The grey half must settle on approach");
 assert.match(entranceStyles, /\.titlerow,[\s\S]{0,80}\.taskbar\s*\{[\s\S]{0,120}z-index:\s*1;[\s\S]{0,60}\.titlerow\s*\{\s*z-index:\s*2;/, "The title-row tooltips must paint above the controls below them");
 assert.match(entrance, /mode === "gate"[\s\S]{0,180}<img className=\{s\.gatePlate\}/, "The entrance must render the original static yarn plate");
+assert.match(entrance, /useState<"gate" \| "film" \| "desk">\("gate"\)/, "A new visit must start at the yarn entrance, not autoplay the film");
+assert.match(entrance, /if \(reducedMotion \|\| introAlreadySeen\(\)\)\s*\{\s*enterDesk\(\)/, "Returning visitors must reach the desktop without replaying the film");
+assert.match(entrance, /const enterDesk[\s\S]{0,80}markIntroSeen\(\)/, "Every desktop arrival must be remembered");
+assert.match(entranceStyles, /--entry-seam-light:\s*#20c0e0/, "The entrance seam must keep its cyan light independently of the monochrome theme");
+assert.doesNotMatch(rail, /index="[ABCD]"|s\.panelNo|these switches are real/, "Settings must not expose chat markers or internal implementation notes");
 assert.match(entrance, /setLoading\(true\);[\s\S]{0,80}setMode\("film"\)/, "Enter must hand directly from the static plate to the film");
 assert.doesNotMatch(entrance, /curtainDone|curtainOpening|YarnCurtain/, "The rejected curtain animation state must stay removed");
 assert.match(entranceStyles, /stageVideo[\s\S]{0,520}01-exterior-approach-poster\.jpg/, "The film stage must preload a frame behind the immediate curtain");

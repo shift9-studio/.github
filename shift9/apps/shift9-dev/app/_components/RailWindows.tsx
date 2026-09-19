@@ -78,7 +78,7 @@ export const RAIL_META: Record<RailKey, { title: string; note: string }> = {
   },
   settings: {
     title: "Settings",
-    note: "these switches are real — they change the desktop behind this window",
+    note: "",
   },
   goals: {
     title: "Goals",
@@ -650,7 +650,6 @@ function Contacts({
 /* ── SETTINGS — the instrument panel ───────────────────────────────────── */
 
 function Switch({
-  index,
   label,
   hint,
   offLabel,
@@ -658,7 +657,6 @@ function Switch({
   on,
   onChange,
 }: {
-  index: string;
   label: string;
   hint: string;
   offLabel: string;
@@ -668,7 +666,6 @@ function Switch({
 }) {
   return (
     <div className={s.panelRow}>
-      <span className={s.panelNo}>{index}</span>
       <div className={s.panelText}>
         <h3>{label}</h3>
         <p>{hint}</p>
@@ -691,14 +688,12 @@ function Switch({
 }
 
 function Choice({
-  index,
   label,
   hint,
   value,
   options,
   onChange,
 }: {
-  index: string;
   label: string;
   hint: string;
   value: WallpaperMode;
@@ -707,7 +702,6 @@ function Choice({
 }) {
   return (
     <div className={`${s.panelRow} ${s.choiceRow}`}>
-      <span className={s.panelNo}>{index}</span>
       <div className={s.panelText}>
         <h3>{label}</h3>
         <p>{hint}</p>
@@ -752,7 +746,6 @@ function Settings({
   return (
     <div className={s.panel}>
       <Switch
-        index="A"
         label="Appearance"
         hint="The desktop, its wallpaper and every window follow this."
         offLabel="Light"
@@ -761,7 +754,6 @@ function Settings({
         onChange={() => onToggleTheme()}
       />
       <Switch
-        index="B"
         label="Desktop icons"
         hint="Big tiles carrying their descriptions, or a tight grid of icons."
         offLabel="Grid"
@@ -770,7 +762,6 @@ function Settings({
         onChange={onSetCompact}
       />
       <Switch
-        index="C"
         label="Motion"
         hint="Calm stops every animation on the site and keeps all the colour and contrast."
         offLabel="Full"
@@ -779,7 +770,6 @@ function Settings({
         onChange={onSetCalm}
       />
       <Choice
-        index="D"
         label="Background"
         hint="Choose the studio background that sits behind the desktop."
         value={wallpaper}

@@ -876,22 +876,11 @@
 }
 .panelRow {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
   padding: 20px 26px;
   border-bottom: 1px solid var(--w-line);
-}
-.panelNo {
-  font-family: var(--s9-font-mono, ui-monospace, monospace);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--w-dim);
-  border: 1px solid var(--w-line);
-  border-radius: 6px;
-  height: 26px;
-  display: grid;
-  place-items: center;
 }
 .panelText h3 {
   font-size: 15px;
@@ -1200,7 +1189,7 @@
     grid-row: auto;
   }
   .panelRow {
-    grid-template-columns: 34px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     row-gap: 12px;
   }
   .switch {
