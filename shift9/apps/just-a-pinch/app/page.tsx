@@ -88,7 +88,6 @@ export default async function Home() {
     {/* Warm, food-forward signatures — distinct from the studio's cyber
         console: a pinch of real spice on the two ways in, and an editorial cookbook grain. */}
     <GrainField />
-    <PinchOfSpice />
     <main className="relative">
 
       {/* ─────────────────────────── HERO ─────────────────────────── */}
@@ -103,6 +102,8 @@ export default async function Home() {
           />
           <DitherField palette={warm} className="absolute inset-0 h-full w-full opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-void/60 via-void/40 to-void" />
+          {/* Seasoning dropped onto the table in the photo, seen from above. */}
+          <PinchOfSpice />
         </div>
 
         <div className="mx-auto grid w-full max-w-[84rem] items-center gap-16 lg:grid-cols-[minmax(0,1fr)_auto]">

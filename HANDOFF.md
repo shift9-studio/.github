@@ -1,8 +1,12 @@
 ## September 21, 2026 - Feelspoon pinch of spice (GPU) and footer tidy
 
 The Feelspoon cursor trail (shared SpiceMote, glowing dots following the mouse) is replaced on the
-Feelspoon site only by app/_components/PinchOfSpice.tsx: Three.js WebGL2, one Points draw call with a
-matte flake shader. Fires when the pointer enters a link inside [data-pinch-zone] (the Play badge and
+Feelspoon site only by app/_components/PinchOfSpice.tsx: Three.js WebGL2. Revised the same day at Kariim's word
+("it should be dropped from a top down perspective ... like look straight down"): the canvas now lives in
+the hero background, behind the copy; flakes start near a straight-down camera above the pinch (big, soft),
+shrink toward the table in the photo with shadows closing in, land, skid, rest ~2.5 s, fade. Nothing lands
+on text. Earlier version (flakes resting on headline letters) was rejected: it read as dirt.
+Original notes: Fires when the pointer enters a link inside [data-pinch-zone] (the Play badge and
 Open it in your browser) and once over the headline 1.9 s after load. Flakes land on the cap line of
 each headline letter (measured from the font) and on the visible top of the two buttons, rest ~1 s,
 fade. Reduced motion or no WebGL2: nothing drawn. Measured in the browser while a pinch fell: 60 fps,
