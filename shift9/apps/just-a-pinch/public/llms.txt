@@ -1,0 +1,43 @@
+# Feelspoon
+
+> A recipe organizer for Android. Save a recipe from a link, a photo of a
+> recipe card, pasted text or your own notes; cook it hands-free, step by step;
+> scale it to your servings.
+
+Made by Shift-9 (https://shift9.dev). Developer of record: Kariim Chiles.
+Live on Google Play since 2026. There is no iPhone version.
+
+## What it does
+
+- Save from a link, a photo, a screenshot, pasted text, or a description
+- Strips the blog filler: keeps title, ingredients, steps, times and photo
+- Cook mode: one step at a time in large text, read aloud, screen kept awake,
+  timers built into the steps that need them
+- Scale to your servings, in US cups or metric
+- Weekly meal plan, turned into a shopping list sorted by aisle
+- Tags, search, bookmarks, and offline use
+
+## What it costs
+
+- Free: unlimited saved recipes, cook mode, scaling, meal plan and shopping
+  list. No card, no trial period.
+- Premium: unlimited AI recipe captures. $4.99 per month or $39.99 per year
+  ($3.33 a month billed yearly). Purchased through Google Play.
+
+## Pages
+
+- Home: https://feelspoon.app/
+- Pricing: https://feelspoon.app/pricing
+- Feelspoon vs Paprika: https://feelspoon.app/vs/paprika
+- Feelspoon vs Samsung Food: https://feelspoon.app/vs/samsung-food
+- Privacy: https://feelspoon.app/privacy
+- Google Play: https://play.google.com/store/apps/details?id=com.justapinch.app
+
+## Honest limits
+
+- Android only. No iOS build exists yet.
+- Launched 2026, so there is no long review history to read.
+- It is a recipe organizer, not a social network, a grocery service, or an
+  appliance companion.
+
+Last updated: 19 September 2026

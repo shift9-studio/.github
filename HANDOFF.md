@@ -1,3 +1,17 @@
+## September 21, 2026 - Feelspoon door, Play badge and heycatch audit fixes
+
+Branch feelspoon/door-and-audit, from main 5be413f, touches only shift9/apps/just-a-pinch.
+feelspoon.app/app and /app/* now REDIRECT (not rewrite) to https://kariimc.github.io/Feelspoon/app/,
+because the Expo export loads its own files from absolute /Feelspoon/app/ paths.
+The homepage screenshots moved from public/app to public/screens: redirects run before static
+files on Vercel, so anything left under /app would be sent to GitHub Pages and 404.
+Hero: official Google Play badge (served by Google, trademark line in footer) beside an
+"Open it in your browser" button to the web app. Hero photo self-hosted at public/hero/dinner.webp
+(134 KB, was a 2 MB PNG on the Higgsfield CDN). Plus the heycatch audit work: header, FAQ,
+founder note, /pricing, /privacy, /vs pages, sitemap, robots, JSON-LD, OG image, llms.txt, F icon.
+Verified locally: typecheck and production build pass; hero checked at 1440x900 and phone width.
+The "//" marker is switched off on every Feelspoon label (marker={false}); the shared MonoLabel default is unchanged for shift9.dev.
+Open: Play rating and testimonials hidden until real; no smart-swaps feature exists, so none is claimed.
 ## September 19, 2026 - preserve completed Dev Log during release follow-up
 
 The production merge landed the entrance and wallpaper fixes, but its single merge conflict was resolved against the older 71-entry baseline. The approved branch already carried the completed 74-entry, tag-free Dev Log. This follow-up restores that exact data file without changing the reader or any other feature. Verify the live reader shows 74 entries and no `.tag` elements after deployment.

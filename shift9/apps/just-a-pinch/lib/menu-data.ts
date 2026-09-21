@@ -21,7 +21,7 @@ export const board: Project[] = [
     year: "25 min",
     tags: ["tinned tomato", "olive", "caper"],
     accent: "pulse",
-    status: "5 swaps",
+    status: "store-cupboard",
   },
   {
     title: "Smoky Chickpea Stew",

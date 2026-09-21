@@ -1,4 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../../packages ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ../../turbo.json"
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- . ../../packages ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ../../turbo.json",
+  "redirects": [
+    {
+      "source": "/app",
+      "destination": "https://kariimc.github.io/Feelspoon/app/",
+      "permanent": false
+    },
+    {
+      "source": "/app/:path*",
+      "destination": "https://kariimc.github.io/Feelspoon/app/:path*",
+      "permanent": false
+    }
+  ]
 }
