@@ -3,7 +3,6 @@ import {
   GrainField,
   MagneticButton,
   MonoLabel,
-  SpiceMote,
   WorkWall,
   type DitherPalette,
 } from "@shift9/ui";
@@ -14,6 +13,7 @@ import { SeasonHeadline } from "./_components/SeasonHeadline";
 import { ParallaxImage } from "./_components/ParallaxImage";
 import { WaitlistForm } from "./_components/WaitlistForm";
 import { Phone, PhoneShowcase } from "./_components/PhoneShowcase";
+import { PinchOfSpice } from "./_components/PinchOfSpice";
 import { PlayProof } from "./_components/PlayProof";
 import { Differentiator } from "./_components/Differentiator";
 import { Faq } from "./_components/Faq";
@@ -86,9 +86,8 @@ export default async function Home() {
   return (
     <>
     {/* Warm, food-forward signatures — distinct from the studio's cyber
-        console: a "pinch of spice" cursor and an editorial cookbook grain. */}
+        console: a pinch of real spice on the two ways in, and an editorial cookbook grain. */}
     <GrainField />
-    <SpiceMote />
     <main className="relative">
 
       {/* ─────────────────────────── HERO ─────────────────────────── */}
@@ -103,6 +102,8 @@ export default async function Home() {
           />
           <DitherField palette={warm} className="absolute inset-0 h-full w-full opacity-30" />
           <div className="absolute inset-0 bg-gradient-to-b from-void/60 via-void/40 to-void" />
+          {/* Seasoning dropped onto the table in the photo, seen from above. */}
+          <PinchOfSpice />
         </div>
 
         <div className="mx-auto grid w-full max-w-[84rem] items-center gap-16 lg:grid-cols-[minmax(0,1fr)_auto]">
@@ -140,7 +141,7 @@ export default async function Home() {
           {/* Two ways in, side by side and the same height: the official
               Google Play badge (Google's own artwork, unaltered, served from
               Google) and the browser version for everyone not on Android. */}
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div data-pinch-zone className="mt-8 flex flex-wrap items-center gap-4">
             <a
               href={PLAY_URL}
               target="_blank"
@@ -160,6 +161,7 @@ export default async function Home() {
             <MagneticButton href={WEB_APP_URL}>Open it in your browser</MagneticButton>
             <a
               href="#how"
+              data-no-pinch
               className="font-mono text-mono uppercase tracking-[0.18em] text-muted underline underline-offset-4 transition-premium hover:text-ink"
             >
               See how it works ↓
@@ -361,7 +363,8 @@ export default async function Home() {
       <footer className="border-t border-line px-6 py-10 sm:px-10">
         <div className="mx-auto flex max-w-[84rem] flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <MonoLabel marker={false}>
-            © 2026 FEELSPOON — a Shift-9 product
+            © 2026 FEELSPOON — a{" "}
+            <span className="whitespace-nowrap">Shift-9 product</span>
           </MonoLabel>
 
           {/* Internal links — the site had none, so nothing led anywhere a
@@ -394,9 +397,6 @@ export default async function Home() {
             </ul>
           </nav>
         </div>
-        <p className="mx-auto mt-6 max-w-[84rem] text-xs text-muted">
-          Google Play and the Google Play logo are trademarks of Google LLC.
-        </p>
       </footer>
     </main>
     </>
