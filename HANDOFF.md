@@ -1,4 +1,13 @@
-## September 21, 2026 - Feelspoon footer tidy
+## September 21, 2026 - Feelspoon pinch of spice (GPU) and footer tidy
+
+The Feelspoon cursor trail (shared SpiceMote, glowing dots following the mouse) is replaced on the
+Feelspoon site only by app/_components/PinchOfSpice.tsx: Three.js WebGL2, one Points draw call with a
+matte flake shader. Fires when the pointer enters a link inside [data-pinch-zone] (the Play badge and
+Open it in your browser) and once over the headline 1.9 s after load. Flakes land on the cap line of
+each headline letter (measured from the font) and on the visible top of the two buttons, rest ~1 s,
+fade. Reduced motion or no WebGL2: nothing drawn. Measured in the browser while a pinch fell: 60 fps,
+avg frame 16.7 ms, worst 17.3 ms, first paint 216 ms (no CPU throttle: the budget meter needs
+playwright, which is not installed). SpiceMote itself is untouched for any other site.
 
 Removed the Google Play trademark line from the footer at Kariim's request, and kept "Shift-9 product"
 on one line. Note: the just-a-pinch Vercel project no longer deploys on push to main (last git-triggered

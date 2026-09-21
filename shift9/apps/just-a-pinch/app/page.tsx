@@ -3,7 +3,6 @@ import {
   GrainField,
   MagneticButton,
   MonoLabel,
-  SpiceMote,
   WorkWall,
   type DitherPalette,
 } from "@shift9/ui";
@@ -14,6 +13,7 @@ import { SeasonHeadline } from "./_components/SeasonHeadline";
 import { ParallaxImage } from "./_components/ParallaxImage";
 import { WaitlistForm } from "./_components/WaitlistForm";
 import { Phone, PhoneShowcase } from "./_components/PhoneShowcase";
+import { PinchOfSpice } from "./_components/PinchOfSpice";
 import { PlayProof } from "./_components/PlayProof";
 import { Differentiator } from "./_components/Differentiator";
 import { Faq } from "./_components/Faq";
@@ -86,9 +86,9 @@ export default async function Home() {
   return (
     <>
     {/* Warm, food-forward signatures — distinct from the studio's cyber
-        console: a "pinch of spice" cursor and an editorial cookbook grain. */}
+        console: a pinch of real spice on the two ways in, and an editorial cookbook grain. */}
     <GrainField />
-    <SpiceMote />
+    <PinchOfSpice />
     <main className="relative">
 
       {/* ─────────────────────────── HERO ─────────────────────────── */}
@@ -140,7 +140,7 @@ export default async function Home() {
           {/* Two ways in, side by side and the same height: the official
               Google Play badge (Google's own artwork, unaltered, served from
               Google) and the browser version for everyone not on Android. */}
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          <div data-pinch-zone className="mt-8 flex flex-wrap items-center gap-4">
             <a
               href={PLAY_URL}
               target="_blank"
@@ -160,6 +160,7 @@ export default async function Home() {
             <MagneticButton href={WEB_APP_URL}>Open it in your browser</MagneticButton>
             <a
               href="#how"
+              data-no-pinch
               className="font-mono text-mono uppercase tracking-[0.18em] text-muted underline underline-offset-4 transition-premium hover:text-ink"
             >
               See how it works ↓
