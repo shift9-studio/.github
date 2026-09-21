@@ -1,3 +1,8 @@
+## September 21, 2026 - Feelspoon footer tidy
+
+Removed the Google Play trademark line from the footer at Kariim's request, and kept "Shift-9 product"
+on one line. Note: the just-a-pinch Vercel project no longer deploys on push to main (last git-triggered
+build September 6); production is being deployed by hand from the merge commit until the Git link is reconnected.
 ## September 21, 2026 - Feelspoon door, Play badge and heycatch audit fixes
 
 Branch feelspoon/door-and-audit, from main 5be413f, touches only shift9/apps/just-a-pinch.

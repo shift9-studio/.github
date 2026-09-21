@@ -361,7 +361,8 @@ export default async function Home() {
       <footer className="border-t border-line px-6 py-10 sm:px-10">
         <div className="mx-auto flex max-w-[84rem] flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <MonoLabel marker={false}>
-            © 2026 FEELSPOON — a Shift-9 product
+            © 2026 FEELSPOON — a{" "}
+            <span className="whitespace-nowrap">Shift-9 product</span>
           </MonoLabel>
 
           {/* Internal links — the site had none, so nothing led anywhere a
@@ -394,9 +395,6 @@ export default async function Home() {
             </ul>
           </nav>
         </div>
-        <p className="mx-auto mt-6 max-w-[84rem] text-xs text-muted">
-          Google Play and the Google Play logo are trademarks of Google LLC.
-        </p>
       </footer>
     </main>
     </>
