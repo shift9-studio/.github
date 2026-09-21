@@ -19,7 +19,7 @@ export function Faq() {
     >
       <div className="mx-auto grid max-w-[84rem] gap-10 lg:grid-cols-[1fr_2fr]">
         <div>
-          <MonoLabel decode className="mb-4">
+          <MonoLabel marker={false} decode className="mb-4">
             BEFORE YOU DOWNLOAD
           </MonoLabel>
           <h2

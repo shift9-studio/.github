@@ -79,7 +79,7 @@ export default function PricingPage() {
   return (
     <main className="relative px-6 pb-28 pt-20 sm:px-10">
       <div className="mx-auto max-w-[84rem]">
-        <MonoLabel decode className="mb-6">
+        <MonoLabel marker={false} decode className="mb-6">
           WHAT IT COSTS
         </MonoLabel>
 
@@ -201,7 +201,7 @@ export default function PricingPage() {
 
         {/* ── The category, side by side ────────────────────────────── */}
         <section className="mt-24">
-          <MonoLabel decode className="mb-8">
+          <MonoLabel marker={false} decode className="mb-8">
             WHAT THE OTHERS CHARGE
           </MonoLabel>
 

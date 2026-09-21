@@ -113,7 +113,7 @@ export default async function Home() {
           {/* alignItems inline: on a phone this wraps to two lines, and the
               shared label centres its "//" marker, which would leave the
               marker floating beside the middle of the block. */}
-          <MonoLabel
+          <MonoLabel marker={false}
             decode
             className="mb-8"
             style={{ alignItems: "flex-start" }}
@@ -216,7 +216,7 @@ export default async function Home() {
       {/* ────────────────────────── MANIFESTO ─────────────────────── */}
       <section className="border-y border-line px-6 py-24 sm:px-10">
         <div className="mx-auto grid max-w-[84rem] gap-10 lg:grid-cols-[1fr_2fr]">
-          <MonoLabel decode className="lg:pt-3">THE STORY</MonoLabel>
+          <MonoLabel marker={false} decode className="lg:pt-3">THE STORY</MonoLabel>
           <Reveal>
             <p
               className="font-display text-h2 leading-[1.05] text-ink"
@@ -233,7 +233,7 @@ export default async function Home() {
       {/* ───────────────────────── HOW IT WORKS ───────────────────── */}
       <section id="how" className="scroll-mt-20 px-6 py-24 sm:px-10">
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel decode className="mb-14">FROM SAVED TO SERVED</MonoLabel>
+          <MonoLabel marker={false} decode className="mb-14">FROM SAVED TO SERVED</MonoLabel>
           <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-3">
             {steps.map((s) => (
               <RevealItem key={s.id} variant="scan" className="bg-void">
@@ -265,7 +265,7 @@ export default async function Home() {
         <div className="mx-auto max-w-[84rem]">
           <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
             <div>
-              <MonoLabel decode className="mb-4">FEATURED RECIPES</MonoLabel>
+              <MonoLabel marker={false} decode className="mb-4">FEATURED RECIPES</MonoLabel>
               <SeasonHeadline
                 as="h2"
                 className="text-h2 text-ink"
@@ -286,7 +286,7 @@ export default async function Home() {
         className="scroll-mt-20 border-t border-line px-6 py-24 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel decode className="mb-14">WHAT MAKES IT WORK</MonoLabel>
+          <MonoLabel marker={false} decode className="mb-14">WHAT MAKES IT WORK</MonoLabel>
           <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
             {features.map((f) => (
               <RevealItem key={f.k} variant="scan" className="bg-void">
@@ -323,7 +323,7 @@ export default async function Home() {
         className="scroll-mt-20 overflow-hidden px-6 py-28 sm:px-10"
       >
         <div className="mx-auto max-w-[84rem]">
-          <MonoLabel decode className="mb-8">PULL UP A CHAIR</MonoLabel>
+          <MonoLabel marker={false} decode className="mb-8">PULL UP A CHAIR</MonoLabel>
           <SeasonHeadline
             as="h2"
             className="text-display uppercase text-ink"

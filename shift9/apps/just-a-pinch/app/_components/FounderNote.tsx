@@ -17,7 +17,7 @@ export function FounderNote() {
       className="scroll-mt-20 border-t border-line px-6 py-24 sm:px-10"
     >
       <div className="mx-auto max-w-[84rem]">
-        <MonoLabel decode className="mb-10">
+        <MonoLabel marker={false} decode className="mb-10">
           WHO MADE IT
         </MonoLabel>
 

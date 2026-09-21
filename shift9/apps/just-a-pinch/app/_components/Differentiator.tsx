@@ -40,7 +40,7 @@ export function Differentiator() {
     >
       <div className="mx-auto grid max-w-[84rem] items-center gap-14 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
-          <MonoLabel decode className="mb-6">
+          <MonoLabel marker={false} decode className="mb-6">
             THE ANNOYING PART, SOLVED
           </MonoLabel>
 

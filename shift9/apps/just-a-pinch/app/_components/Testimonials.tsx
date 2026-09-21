@@ -20,7 +20,7 @@ export function Testimonials() {
       className="scroll-mt-20 border-t border-line px-6 py-24 sm:px-10"
     >
       <div className="mx-auto max-w-[84rem]">
-        <MonoLabel decode className="mb-14">
+        <MonoLabel marker={false} decode className="mb-14">
           FROM PEOPLE COOKING WITH IT
         </MonoLabel>
         <RevealGroup className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">

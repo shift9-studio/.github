@@ -34,7 +34,7 @@ export function VsPage({ c }: { c: VsContent }) {
   return (
     <main className="relative px-6 pb-28 pt-20 sm:px-10">
       <div className="mx-auto max-w-[84rem]">
-        <MonoLabel decode className="mb-6">
+        <MonoLabel marker={false} decode className="mb-6">
           {c.eyebrow}
         </MonoLabel>
 

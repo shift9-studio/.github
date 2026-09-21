@@ -10,6 +10,7 @@ Hero: official Google Play badge (served by Google, trademark line in footer) be
 (134 KB, was a 2 MB PNG on the Higgsfield CDN). Plus the heycatch audit work: header, FAQ,
 founder note, /pricing, /privacy, /vs pages, sitemap, robots, JSON-LD, OG image, llms.txt, F icon.
 Verified locally: typecheck and production build pass; hero checked at 1440x900 and phone width.
+The "//" marker is switched off on every Feelspoon label (marker={false}); the shared MonoLabel default is unchanged for shift9.dev.
 Open: Play rating and testimonials hidden until real; no smart-swaps feature exists, so none is claimed.
 ## September 19, 2026 - preserve completed Dev Log during release follow-up
 
