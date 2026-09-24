@@ -1768,3 +1768,7 @@ Final interaction pass: automatic six-form nine (no splat), delayed replies, SHI
 Smear refinement: actual atlas pigment sampling replaces unrelated rainbow gradient. Drag picks up and mixes other pools/trails, preserves origin, tapers and textures the film. Plane flight raises above semicolon only while launching with cleanup. Build/review/browser checks passed.
 
 Reply readability: separate non-interactive reply layer prevents paint occlusion; ResizeObserver tracks layout. Rewind reply fades with paint. TypeScript/studio-polish and actual browser overlap checks passed.
+
+## 2026-09-24 icon script
+
+The icon script now draws the Feelspoon F, matching the live icons. Before this it still drew the old Just a Pinch P, so a rerun would have brought the P back.
