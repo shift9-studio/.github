@@ -24,13 +24,18 @@ numeral and start being two crescents. Gap 9 / shift 7 is the most the
 letter takes while staying a 9 — checked by rendering 16, 32 and 180 side
 by side rather than by reasoning about it.
 
-── Just a Pinch ──────────────────────────────────────────────────────────
-A P, not an illustration. A pinch of grains was drawn first and read as a
+── Feelspoon ─────────────────────────────────────────────────────────────
+An F, not an illustration. A pinch of grains was drawn first and read as a
 question mark at 16px; at that size a letterform is the only thing that
 survives. The outline is Gloock (SIL Open Font License 1.1) — a high-
-contrast antiqua in the same genre as Fraunces, which is Pinch's display
-face — baked in below as a path so neither this script nor the repo needs
-the font file. It carries none of the studio's chrome, which is the point.
+contrast antiqua in the same genre as Fraunces, which is Feelspoon's
+display face — baked in below as a path so neither this script nor the repo
+needs the font file. It carries none of the studio's chrome, which is the
+point.
+
+The letter was a P while the product was called Just a Pinch. The product
+is Feelspoon; the folder is still `just-a-pinch`, and the tab should follow
+the product, not the folder. Changed 19 Sep 2026.
 
 ── Colour ────────────────────────────────────────────────────────────────
 These are image files, not components, so token *values* are baked rather
@@ -99,18 +104,16 @@ TAIL = [
     (_tail_x(H), H),
 ]
 
-# ── Gloock "P", extracted with fontTools and frozen here ─────────────────
-# Font units, y-up, 1000 upem, advance 608, bbox 0 0 591 750. Two contours:
-# the outer shape and the bowl's counter.
+# ── Gloock "F", extracted with fontTools and frozen here ─────────────────
+# Font units, y-up, 1000 upem, bbox 0 0 569 750. One contour — an F has no
+# counter to cut, so pinch_tile's first-contour rule fills the whole letter.
 P_PATH = (
-    "M0 0V10Q36 10 58.0 32.0Q80 54 80 90V660Q80 696 58.0 718.0Q36 740 0 740"
-    "V750H334Q411 749 468.5 723.5Q526 698 558.5 653.0Q591 608 591 547"
-    "Q591 486 558.5 440.5Q526 395 466.5 369.5Q407 344 326 344H234V90"
-    "Q234 54 256.0 32.0Q278 10 314 10H316V0ZM234 357H293Q336 357 367.5 381.5"
-    "Q399 406 416.5 449.0Q434 492 434 547Q434 602 416.5 645.0Q399 688 367.0 712.5"
-    "Q335 737 292 737H234Z"
+    "M0 0L2 10L5 10Q41 10 63 32Q85 54 85 90L85 660Q85 696 63 718Q41 740 5 740"
+    "L4 750L539 750L569 548L560 548Q530 737 322 737L239 737L239 436L317 436"
+    "Q367 436 397 467.5Q427 499 427 549L437 549L437 299L427 299Q427 353 394 388"
+    "Q361 423 307 423L239 423L239 82Q239 49 262 29.5Q285 10 319 10L320 0Z"
 )
-P_W, P_H = 591.0, 750.0
+P_W, P_H = 569.0, 750.0
 P_FILL = 0.62  # the P spans this much of the tile's height
 
 _TOK = re.compile(r"([MLHVQZ])|(-?\d+(?:\.\d+)?)")
