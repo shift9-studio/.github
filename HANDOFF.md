@@ -1,3 +1,15 @@
+## September 25, 2026 - Feelspoon site: AI captures are "up to 40 a day", not "unlimited"
+
+Kariim's order: the store page and feelspoon.app must not say Premium AI captures are unlimited.
+The server (just-a-pinch repo, recipe-api edge function) caps every account, Premium included, at
+40 AI captures a day and 6 a minute. Eight lines on the Feelspoon site said "unlimited AI captures";
+all now say "up to 40 a day": home hero price line, Differentiator card, pricing page (title,
+description, open-graph text, Premium list item, intro paragraph), both comparison pages, the FAQ
+answer, the Premium blurb in lib/site.ts, and public/llms.txt. "Unlimited saved recipes" is true and
+was left alone. If the server limit ever changes, change these lines with it.
+Proof: `pnpm --filter just-a-pinch build` passes; the built home and pricing pages contain the new
+wording and no "unlimited AI" text.
+
 ## September 21, 2026 - Feelspoon pinch of spice (GPU) and footer tidy
 
 The Feelspoon cursor trail (shared SpiceMote, glowing dots following the mouse) is replaced on the
