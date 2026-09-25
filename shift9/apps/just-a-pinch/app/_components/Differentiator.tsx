@@ -28,7 +28,7 @@ const WAYS = [
   },
   {
     from: "A description",
-    got: "Say what you're craving and it writes the recipe. Unlimited on Premium.",
+    got: "Say what you're craving and it writes the recipe. Up to 40 a day on Premium.",
   },
 ];
 

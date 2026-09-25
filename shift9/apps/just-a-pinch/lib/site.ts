@@ -26,7 +26,7 @@ export const PRICING = {
   freeBlurb:
     "Save unlimited recipes, cook, plan and shop. No card, no trial clock.",
   premiumLabel: "Premium",
-  premiumBlurb: "Everything in Free, plus unlimited AI recipe captures.",
+  premiumBlurb: "Everything in Free, plus AI recipe captures, up to 40 a day.",
   monthly: 4.99,
   annual: 39.99,
   /** $39.99 / 12 — the honest per-month figure when billed yearly. */

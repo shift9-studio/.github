@@ -31,7 +31,7 @@ const content: VsContent = {
   rows: [
     {
       label: "Price",
-      mine: "Free to save, cook, plan and shop. Premium $4.99/mo or $39.99/yr for unlimited AI captures only.",
+      mine: "Free to save, cook, plan and shop. Premium $4.99/mo or $39.99/yr for AI captures only, up to 40 a day.",
       theirs: "Free, with no paywall on the core features.",
     },
     {

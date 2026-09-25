@@ -37,7 +37,7 @@ const content: VsContent = {
     },
     {
       label: "Price",
-      mine: "Free to save, cook, plan and shop. Premium $4.99/mo or $39.99/yr for unlimited AI captures.",
+      mine: "Free to save, cook, plan and shop. Premium $4.99/mo or $39.99/yr for AI captures, up to 40 a day.",
       theirs: "$4.99 one time, and each platform version is sold separately.",
     },
     {

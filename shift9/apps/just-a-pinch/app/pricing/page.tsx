@@ -5,14 +5,14 @@ import { Reveal } from "../_components/Reveal";
 import { PLAY_URL, PRICING, SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Feelspoon pricing — free to cook, $4.99/mo for unlimited AI captures",
+  title: "Feelspoon pricing — free to cook, $4.99/mo for AI captures",
   description:
-    "Feelspoon is free: save unlimited recipes, cook hands-free, plan the week and shop. Premium adds unlimited AI recipe captures for $4.99 a month or $39.99 a year.",
+    "Feelspoon is free: save unlimited recipes, cook hands-free, plan the week and shop. Premium adds AI recipe captures, up to 40 a day, for $4.99 a month or $39.99 a year.",
   alternates: { canonical: "/pricing" },
   openGraph: {
     title: "Feelspoon pricing",
     description:
-      "Free to save, cook, plan and shop. Premium adds unlimited AI recipe captures — $4.99 a month or $39.99 a year.",
+      "Free to save, cook, plan and shop. Premium adds AI recipe captures, up to 40 a day — $4.99 a month or $39.99 a year.",
     url: `${SITE_URL}/pricing`,
   },
 };
@@ -31,7 +31,7 @@ const INCLUDED_FREE = [
 
 const INCLUDED_PREMIUM = [
   "Everything in Free",
-  "Unlimited AI recipe captures — describe a dish or scan anything, as often as you like",
+  "AI recipe captures, up to 40 a day — describe a dish or scan anything",
 ];
 
 /* The category, in numbers, so nobody has to open five tabs to compare.
@@ -96,8 +96,8 @@ export default function PricingPage() {
         <p className="mt-7 max-w-2xl text-body leading-relaxed text-muted">
           Every recipe feature is in the free app — saving, cook mode, scaling,
           the weekly plan and the shopping list. There is no trial
-          clock and no card to enter. The one paid thing is unlimited AI
-          captures.
+          clock and no card to enter. The one paid thing is AI captures, up to 40
+          a day.
         </p>
 
         {/* ── The two tiers ─────────────────────────────────────────── */}

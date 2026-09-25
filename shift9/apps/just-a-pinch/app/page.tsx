@@ -173,7 +173,7 @@ export default async function Home() {
               Play listing. */}
           <p className="mt-6 max-w-xl text-body leading-relaxed text-muted">
             <span className="text-ink">Free to download, free to cook with.</span>{" "}
-            No card, no trial clock. Premium adds unlimited AI captures for $
+            No card, no trial clock. Premium adds AI captures, up to 40 a day, for $
             {PRICING.monthly.toFixed(2)} a month or ${PRICING.annual.toFixed(2)}{" "}
             a year —{" "}
             <Link

@@ -38,8 +38,8 @@ export const FAQ: FaqItem[] = [
       `${PRICING.freeLabel} to download and free to use. Save unlimited recipes, ` +
       "cook, plan the week and build shopping lists without paying anything or " +
       `entering a card. Premium is $${PRICING.monthly.toFixed(2)} a month or ` +
-      `$${PRICING.annual.toFixed(2)} a year and only adds one thing: unlimited ` +
-      "AI recipe captures.",
+      `$${PRICING.annual.toFixed(2)} a year and only adds one thing: AI recipe ` +
+      "captures, up to 40 a day.",
   },
   {
     q: "Does it strip the blog filler?",
