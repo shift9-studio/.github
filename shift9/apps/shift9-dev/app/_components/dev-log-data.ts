@@ -1,6 +1,42 @@
 // Public editorial entries, newest first. Keep private source records out of this file.
 export const DEV_LOG = [
   {
+    n: "Forty a day, not unlimited",
+    s: "25 SEP 2026",
+    sc: "rnd" as const,
+    d: "I corrected the Feelspoon paywall and the Google Play listing so AI captures are up to 40 a day, not unlimited. The cap covers every account, Premium included, and the listing states three free AI captures. Premium now lists only what Premium adds, and the lowest rank is named Pinch of Salt. The site says the same daily limit wherever it used to say unlimited. Unlimited saved recipes was already true, so that line stayed. Unlimited was a generous reading of forty.",
+  },
+  {
+    n: "The Desk shows work in motion",
+    s: "25 SEP 2026",
+    sc: "dev" as const,
+    d: "I gave the Control Plane Desk a live progress bar for every approved task, and a press that brings that progress into view. A retired model steps down, an expired ranking is renewed instead of blocking the build, and a failed run can be pressed again. If a build never starts, the Desk says no code was built. A stand-up room keeps the daily digest, board seats carry six approved briefs, and test clips from local video models are described by a model that can see. The full self-test is green again.",
+  },
+  {
+    n: "The community update is 1.0.2",
+    s: "23 SEP 2026",
+    sc: "rnd" as const,
+    d: "I prepared Feelspoon 1.0.2, build 10, as the community update for Google Play. Boards can wear achievement stickers, a cook page can record I cooked this, and there is a weekly challenge with notes and photos. The activity inbox lives in the app, not as a push notification, and you can block someone. The Play notes also mention a recipe crash fix. There are no install or community-size results to claim yet.",
+  },
+  {
+    n: "A pinch of spice on the way in",
+    s: "21 SEP 2026",
+    sc: "rnd" as const,
+    d: "I gave the Feelspoon site a real way in: an official Google Play badge, a button that opens the app in the browser, and a door at feelspoon.app/app. The same audit covered the FAQ, pricing, privacy and comparison pages. The glitter cursor is gone. A pinch of spice now falls onto the table in the hero photo and never onto the text, and it held 60 frames a second in the browser. Play ratings and testimonials stay hidden until they are real.",
+  },
+  {
+    n: "Swaps, a voice and the spoon",
+    s: "21 SEP 2026",
+    sc: "rnd" as const,
+    d: "I finished Feelspoon 1.0.1 with swaps I checked in the real app, and with voice commands. In cooking mode the microphone ignores the app's own voice, and it no longer covers the button under it. The spoon is on the launch screen and in the opening. Tablet and laptop browsers get layouts that fill the screen, and the phone layout is unchanged. There are no install numbers to claim yet.",
+  },
+  {
+    n: "The yarn gate is the front door again",
+    s: "18 SEP 2026",
+    sc: "dev" as const,
+    d: "I put the Studio entrance back in the right order: the yarn gate, then the film, then the desktop. A return visit, including the way back from the Studio, skips the film and lands on the desktop. I took the lettered labels off Settings and left the real controls, and the desktop can wear a custom wallpaper. This is live on the studio site.",
+  },
+  {
     n: "The video is out. The pipeline has notes.",
     s: "17 SEP 2026",
     sc: "dev" as const,

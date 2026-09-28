@@ -1,3 +1,69 @@
+## September 28, 2026 — Dev Log entries for September 18–25
+
+Branch `cursor/devlog-sep18-25-ee05`. Six public entries, 74 to 80. Newest-first
+in `shift9/apps/shift9-dev/app/_components/dev-log-data.ts`. The reader counter
+is `DEV_LOG.length`, so it moves with the array. No tags, no links, no hashes
+in the public copy. Publication still requires Kariim's merge. Not merged.
+
+Source commits are Kariimc's, checked against the messages and, where the
+studio repo is public, the diffs. Vague claims were left out of the paragraphs.
+
+- "Forty a day, not unlimited" · 25 SEP 2026 · rnd
+  Feelspoon `b063875` (paywall: up to 40 a day, not unlimited), `ea889dc`
+  (paywall sells only what Premium adds; the mic-overlap fix in that commit is
+  not in the public sentence), `4a8bfd7` (Play: 40-a-day fair use and three
+  free AI captures), `bd4d60f` (lowest rank is Pinch of Salt). Studio `df57d69`
+  and merge `9509bc3`: the Feelspoon site says the same daily limit. Unlimited
+  saved recipes was left as written. The server's separate 6-a-minute cap is
+  in the September 25 handoff and is not claimed on the public pages.
+- "The Desk shows work in motion" · 25 SEP 2026 · dev
+  Control Plane `be9438d` (live progress bar per approved task), `ceca3e1`
+  (a press brings the progress box into view), `54eb0a7` (retired model steps
+  down; a failed run can be pressed again), `24f9814` (expired ranking renewed
+  by the press; a build that never started says no code was built), `bbbe342`
+  (Stand-up room daily digest), `ad391da` (24 SEP board seats, daily stand-up,
+  roles), `d567b03` (six approved briefs), `6099f9c` (test clips described by
+  a model with sight), `ee5f2b3` (full self-test green again). Named video
+  models, internal seat names and receipt-state counts stay out of the public
+  sentence. Also reviewed and not written up: `5e536a6` (clip slowed 10x),
+  `6d13c7d` (connection drops), `4d5eae5` (stand-up injected into chats),
+  `f9e1b83` (key handoff), `36f2f0b`, `d669851`, `d8202ac`, `54ad092`,
+  `2d6aeac`, and the save-branch merges `20c367b` and `17feb14`.
+- "The community update is 1.0.2" · 23 SEP 2026 · rnd
+  Feelspoon `77728a9` (22 SEP achievement stickers), `3bf3448` (stickers on
+  boards, cook pages, weekly challenge, I cooked this, notes and photos,
+  activity inbox, blocking), `108f1ee` (1.0.2 build 10 for the community
+  update on Google Play). Wording checked against `2db243c` (inbox is in the
+  app, not a push) and `aa91df7` (Play notes mention the recipe crash fix).
+  This records the version prepared for Play, not an install count.
+- "A pinch of spice on the way in" · 21 SEP 2026 · rnd
+  Studio `d3cb056` and merge `9599d25` (feelspoon.app/app, official Play badge,
+  FAQ, pricing, privacy, comparison pages, structured data, llms.txt).
+  `994fa44` and `2ea5b04` (pinch of spice, straight down onto the table, never
+  on text); the September 21 handoff records 60 fps while a pinch fell.
+  `8a13281` and merge `789dd91` tidy the footer. `4069d15` drops the slash
+  marker from labels and is not in the public sentence. Ratings and
+  testimonials stay hidden until real.
+- "Swaps, a voice and the spoon" · 21 SEP 2026 · rnd
+  Feelspoon `071ccaf`, `b53289c` (swaps checked in the real app), `629f62e`,
+  `853aace` (1.0.1: swaps, voice commands, the spoon, the opening), `703ae9a`,
+  `8f2c9bb`, `05843ac` (the mic ignores the app's own voice), `18c9844`,
+  `3fb4fb1`, `4eaa56b`, merge `e994d9e` (tablet and laptop layouts; phone
+  layout unchanged). `99350e7` also names a large-screen rotation, an R8 note
+  and a fraction bug; those three were too vague to claim. Not written up:
+  `807fb4e` (splash ignore rule), `1390410` (dependency merge already covered
+  on September 8), `c5c00c1` (a plan, not a ship), `55ee688` (community still
+  in flight that day).
+- "The yarn gate is the front door again" · 18 SEP 2026 · dev
+  Studio `5be413f` (yarn entrance, desktop return, Settings markers removed),
+  `56d3830`, `24c79cf` (Prism replaces the Console wallpaper choice),
+  `aa4fd67` and `242eb13` (bespoke wallpaper). The curtain handoff `1dc0eeb`
+  was reverted the same day by `22bd657` and is not claimed. The Dev Log
+  preservation commits that day are the previous 74-entry set, not a new story.
+
+Skipped on purpose: brain session-ingest and daily takeaways from September 18
+through 24, and the September 24 icon-script commit `af534f3`.
+
 ## September 19, 2026 — entrance, return navigation, settings repair
 
 Branch `codex/entrance-desktop-repair` starts at production `42d1e7e`.

@@ -1,3 +1,11 @@
+## September 28, 2026 — Dev Log, September 18–25
+
+Branch `cursor/devlog-sep18-25-ee05` adds six public entries to
+`shift9/apps/shift9-dev/app/_components/dev-log-data.ts` (80 total). The desktop
+counter reads `DEV_LOG.length`. Fields stay `n`, `s`, `sc`, `d`. Source commits
+are in PROGRESS.md, not in the data file. Publication requires Kariim's merge
+approval. Do not merge this branch for him.
+
 ## September 25, 2026 - Feelspoon site: AI captures are "up to 40 a day", not "unlimited"
 
 Kariim's order: the store page and feelspoon.app must not say Premium AI captures are unlimited.
