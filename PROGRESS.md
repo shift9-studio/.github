@@ -23,7 +23,10 @@ overflow. A second independent review found the IN DEV badge at 4.13:1 contrast.
 Its foreground is now `#8f6100`, measured at 4.77:1 in the browser, and the
 focused guard calculates and enforces the 4.5:1 minimum. The guard was proved
 red at 4.13:1 before the fix and the full production build then passed again.
-Final independent review is pending.
+Independent Chief of Staff review passed commit `cf2b7f0` with no blocking
+findings. Draft PR #73 is open. Its Vercel `shift9-dev` deployment completed;
+the preview alias is protected by Vercel sign-in and returns the expected SSO
+redirect when requested without an authenticated browser.
 
 Dev Log PR #72 was merged separately at `4b8a994`, and this branch is rebased on
 top of it. Production and the combined local preview both serve 94 entries, with
