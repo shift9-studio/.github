@@ -28,6 +28,20 @@ findings. Draft PR #73 is open. Its Vercel `shift9-dev` deployment completed;
 the preview alias is protected by Vercel sign-in and returns the expected SSO
 redirect when requested without an authenticated browser.
 
+Contacts now keeps the email as the main action and adds the studio's verified
+Instagram, Facebook, LinkedIn, TikTok and GitHub profiles. Each link has the
+platform's official mark served locally, an accessible name and safe new-tab
+behavior. The focused guard was proved red before the links existed, then
+passed. Impeccable's detector returned no findings and the full production
+build passed with all 16 pages. Browser proof loaded all five marks at their
+real dimensions with zero page overflow. The same build measured all four Apps
+rows as one dark color and one light color, with no alternating row left.
+Independent review caught a 2.76:1 keyboard-focus outline on the black Contacts
+panel. A regression guard was proved red, the panel now owns a contrast-safe
+focus color, and browser proof measured the focused link as `rgb(95, 214, 164)`.
+The same independent reviewer rechecked the correction and returned PASS with
+no blocking findings; measured focus contrast is 11.17:1.
+
 Dev Log PR #72 was merged separately at `4b8a994`, and this branch is rebased on
 top of it. Production and the combined local preview both serve 94 entries, with
 “Jev can't write, so I gave him a voice” first. No merge or production release

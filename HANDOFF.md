@@ -17,6 +17,20 @@ The guard was proved red before the fix and the full build passed after it.
 Independent Chief of Staff review passed commit `cf2b7f0` with no blocking
 findings.
 
+Contacts now includes verified Shift-9 Studios Instagram, Facebook, LinkedIn,
+TikTok and GitHub links under the email. The five official platform marks are
+served locally from `shift9/apps/shift9-dev/public/social/`; source pages are
+recorded beside them. The focused guard was red before implementation and green
+after it. The Impeccable detector returned no findings; the full production
+build generated all 16 pages. Browser proof loaded all five marks, found zero
+horizontal overflow, and re-measured the Apps window as four identical dark
+rows and four identical light rows.
+Independent review caught a 2.76:1 keyboard-focus outline on the black Contacts
+panel. A regression guard was proved red, the panel now owns a contrast-safe
+focus color, and browser proof measured the focused link as `rgb(95, 214, 164)`.
+The same independent reviewer rechecked the correction and returned PASS with
+no blocking findings; measured focus contrast is 11.17:1.
+
 Dev Log PR #72 is already merged to main at `4b8a994` and live with 94 entries;
 this branch now preserves it. Draft PR #73 is open and its `shift9-dev` Vercel
 deployment completed. The preview alias is protected by Vercel sign-in; an

@@ -26,6 +26,7 @@
 
    Nothing here invents a target, a date, a metric or a claim. */
 
+import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SET_PIECES, type SetPiece } from "./studio-dolly-data";
 import s from "./RailWindows.module.css";
@@ -117,6 +118,39 @@ const FILM = [
 ];
 
 const BANNER = "/experience/shift-9_new-banner.jpg";
+
+const SOCIALS = [
+  {
+    name: "Instagram",
+    handle: "@shift9_studios",
+    href: "https://www.instagram.com/shift9_studios/",
+    icon: "/social/instagram.svg",
+  },
+  {
+    name: "Facebook",
+    handle: "Shift9-Studios",
+    href: "https://www.facebook.com/profile.php?id=61591094140424",
+    icon: "/social/facebook.svg",
+  },
+  {
+    name: "LinkedIn",
+    handle: "Shift-9 Studios",
+    href: "https://www.linkedin.com/company/shift9-studios/",
+    icon: "/social/linkedin.svg",
+  },
+  {
+    name: "TikTok",
+    handle: "@shift9studio",
+    href: "https://www.tiktok.com/@shift9studio",
+    icon: "/social/tiktok.svg",
+  },
+  {
+    name: "GitHub",
+    handle: "shift9-studio",
+    href: "https://github.com/shift9-studio",
+    icon: "/social/github.svg",
+  },
+] as const;
 
 export type RailWindowProps = {
   section: RailKey;
@@ -640,6 +674,31 @@ function Contacts({
           Read the written site &#8599;
         </a>
       </div>
+      <nav className={s.socials} aria-label="Shift-9 Studios social profiles">
+        {SOCIALS.map((social) => (
+          <a
+            key={social.name}
+            className={s.socialLink}
+            href={social.href}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Visit Shift-9 Studios on ${social.name} (opens in a new tab)`}
+          >
+            <Image
+              className={s.socialLogo}
+              src={social.icon}
+              alt=""
+              width={30}
+              height={30}
+              unoptimized
+            />
+            <span>
+              <strong>{social.name}</strong>
+              <small>{social.handle}</small>
+            </span>
+          </a>
+        ))}
+      </nav>
       <p className={s.posterWhat}>
         Full app builds &#183; web design &#183; React interfaces &#183; automation
       </p>

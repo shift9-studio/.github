@@ -14,6 +14,7 @@ const [
   flow,
   instrument,
   rail,
+  railStyles,
 ] = await Promise.all([
   read("../app/_components/StudioDolly.tsx"),
   read("../app/_components/StudioDolly.module.css"),
@@ -25,6 +26,7 @@ const [
   read("../app/flow-state/page.tsx"),
   read("../app/instrument/page.tsx"),
   read("../app/_components/RailWindows.tsx"),
+  read("../app/_components/RailWindows.module.css"),
 ]);
 
 assert.match(dolly, /function SeamlessLoopVideo/, "Studio clips must use the seamless player");
@@ -107,6 +109,32 @@ assert.match(entrance, /n:\s*"Bring Up Desk"/, "The current private-draft media 
 assert.match(entrance, /private-draft upload/, "Bring Up Desk copy must state the human-gated private-draft boundary");
 assert.match(entrance, /name:\s*"Tools",\s*count:\s*"6 items"/s, "The Tools folder count must match its six entries");
 assert.doesNotMatch(entrance, /&#9993;|✉/, "Desktop mail icons must not depend on a platform font glyph");
+for (const [platform, href, icon] of [
+  ["Instagram", "https://www.instagram.com/shift9_studios/", "/social/instagram.svg"],
+  ["Facebook", "https://www.facebook.com/profile.php?id=61591094140424", "/social/facebook.svg"],
+  ["LinkedIn", "https://www.linkedin.com/company/shift9-studios/", "/social/linkedin.svg"],
+  ["TikTok", "https://www.tiktok.com/@shift9studio", "/social/tiktok.svg"],
+  ["GitHub", "https://github.com/shift9-studio", "/social/github.svg"],
+]) {
+  assert.match(rail, new RegExp(href.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), `${platform} must link to the official Shift-9 account`);
+  assert.match(rail, new RegExp(icon.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), `${platform} must use its locally served official mark`);
+}
+assert.match(rail, /className=\{s\.socialLink\}[\s\S]{0,180}target="_blank"[\s\S]{0,120}rel="noreferrer"/, "Social accounts must open safely in a new tab");
+assert.doesNotMatch(rail, /src=\{?['"]https?:\/\//, "Contact logos must not depend on third-party runtime hosts");
+const posterFocus = railStyles.match(/\.poster\s*\{[^}]*--poster-focus:\s*(#[0-9a-f]{6})/i);
+assert.ok(posterFocus, "The black Contacts poster must define its own focus color");
+assert.match(
+  railStyles,
+  /\.socialLink:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--poster-focus\)/s,
+  "Social links must use the contrast-safe Contacts focus color",
+);
+const posterFocusLuminance = [luminance(posterFocus[1]), luminance("#05070c")];
+const posterFocusContrast =
+  (Math.max(...posterFocusLuminance) + 0.05) / (Math.min(...posterFocusLuminance) + 0.05);
+assert.ok(
+  posterFocusContrast >= 3,
+  `Contacts focus outline must reach 3:1; measured ${posterFocusContrast.toFixed(2)}:1`,
+);
 
 for (const [name, page] of [
   ["start", start],
