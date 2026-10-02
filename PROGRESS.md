@@ -1,3 +1,52 @@
+## October 2, 2026 — portfolio theme repair and recruiter-facing stack
+
+Branch `fix/portfolio-theme-sync` repairs the Portfolio folder windows so every
+row follows the active Shift-9 theme instead of alternating dark and light.
+The desktop now exposes a Core stack launcher and a dedicated evidence panel for
+TypeScript, React / React Native, Next.js, Node.js, Python, Supabase and Godot.
+Every mark is a locally served official brand asset with its source recorded in
+`shift9/apps/shift9-dev/public/stack/SOURCES.md`. Tools now includes Bring Up
+Desk, and Automation Systems describes the current local control plane rather
+than the retired Relay wording.
+
+Proof before integration: the focused guard was driven red for the missing stack
+launcher and mixed folder rows, then passed. `pnpm --filter shift9-dev build`
+passed from the `shift9` workspace and generated all 16 pages. Browser checks
+showed uniform dark rows, uniform light rows, seven loaded stack logos, no
+horizontal overflow and correct light/dark Next.js marks. The first independent
+review caught low-contrast tags; tags now use the active theme tokens and the
+guard rejects the old white-chip styling. After rebasing onto current main, the
+full production build passed again and generated all 16 pages. The combined
+browser preview measured six uniform dark rows at `rgb(27, 31, 40)`, six uniform
+light rows at `rgb(247, 246, 241)`, seven loaded stack logos and no stack-panel
+overflow. A second independent review found the IN DEV badge at 4.13:1 contrast.
+Its foreground is now `#8f6100`, measured at 4.77:1 in the browser, and the
+focused guard calculates and enforces the 4.5:1 minimum. The guard was proved
+red at 4.13:1 before the fix and the full production build then passed again.
+Independent Chief of Staff review passed commit `cf2b7f0` with no blocking
+findings. Draft PR #73 is open. Its Vercel `shift9-dev` deployment completed;
+the preview alias is protected by Vercel sign-in and returns the expected SSO
+redirect when requested without an authenticated browser.
+
+Contacts now keeps the email as the main action and adds the studio's verified
+Instagram, Facebook, LinkedIn, TikTok and GitHub profiles. Each link has the
+platform's official mark served locally, an accessible name and safe new-tab
+behavior. The focused guard was proved red before the links existed, then
+passed. Impeccable's detector returned no findings and the full production
+build passed with all 16 pages. Browser proof loaded all five marks at their
+real dimensions with zero page overflow. The same build measured all four Apps
+rows as one dark color and one light color, with no alternating row left.
+Independent review caught a 2.76:1 keyboard-focus outline on the black Contacts
+panel. A regression guard was proved red, the panel now owns a contrast-safe
+focus color, and browser proof measured the focused link as `rgb(95, 214, 164)`.
+The same independent reviewer rechecked the correction and returned PASS with
+no blocking findings; measured focus contrast is 11.17:1.
+
+Dev Log PR #72 was merged separately at `4b8a994`, and this branch is rebased on
+top of it. Production and the combined local preview both serve 94 entries, with
+“Jev can't write, so I gave him a voice” first. No merge or production release
+of this branch has been performed; owner approval is still required.
+
 ## September 19, 2026 — entrance, return navigation, settings repair
 
 Branch `codex/entrance-desktop-repair` starts at production `42d1e7e`.

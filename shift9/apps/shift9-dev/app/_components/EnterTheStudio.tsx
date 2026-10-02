@@ -160,8 +160,65 @@ type Status = "live" | "ship" | "dev" | "rnd";
 type Item = { n: string; s: string; sc: Status; d: string; tags?: string[]; h?: string };
 type Folder = { t: string; n: string; items: Item[] };
 
-/* Canonical content — copied verbatim from the frozen prototype / HANDOFF §6.
-   Do not rewrite, reorder, or upgrade a status (contract §18 guardrail). */
+type StackTech = {
+  n: string;
+  icon: string;
+  darkIcon?: string;
+  lane: string;
+  proof: string;
+};
+
+/* The recruiter scan: a short, evidenced stack rather than a logo wall. Every
+   mark is the official vendor asset, served locally from /public/stack; the
+   project line says where the technology is actually used. */
+const STACK: readonly StackTech[] = [
+  {
+    n: "TypeScript",
+    icon: "/stack/typescript.svg",
+    lane: "Web + tooling",
+    proof: "Shift9, Feelspoon, Titanium Forge",
+  },
+  {
+    n: "React / React Native",
+    icon: "/stack/react.svg",
+    lane: "Product interfaces",
+    proof: "Shift9, Feelspoon, Titanium Forge",
+  },
+  {
+    n: "Next.js",
+    icon: "/stack/nextjs-dark.svg",
+    darkIcon: "/stack/nextjs-light.svg",
+    lane: "Web applications",
+    proof: "Shift9 and product sites",
+  },
+  {
+    n: "Node.js",
+    icon: "/stack/nodejs.svg",
+    lane: "Systems + automation",
+    proof: "Control plane and build tooling",
+  },
+  {
+    n: "Python",
+    icon: "/stack/python.svg",
+    lane: "Desktop + pipelines",
+    proof: "Flow State and Bring Up Desk",
+  },
+  {
+    n: "Supabase",
+    icon: "/stack/supabase.svg",
+    lane: "Data + backend",
+    proof: "Feelspoon Recipe Engine",
+  },
+  {
+    n: "Godot Engine",
+    icon: "/stack/godot.svg",
+    lane: "Real-time 3D",
+    proof: "Voxel Arcade Basketball",
+  },
+];
+
+/* Public portfolio content. Keep unfinished work labeled plainly and never
+   upgrade a status beyond the evidence available for that project. */
 const DATA: Record<"apps" | "games" | "tools" | "devlog", Folder> = {
   devlog: {
     t: "Dev Log",
@@ -260,8 +317,8 @@ const DATA: Record<"apps" | "games" | "tools" | "devlog", Folder> = {
         n: "Automation Systems",
         s: "LIVE",
         sc: "live",
-        d: "The infrastructure behind the studio: Relay (cross-machine state handoff), a 400+ skill control plane governing AI-assisted builds, and claude-eyes (a screen-capture toolkit that gives coding agents vision). How one person ships like a team.",
-        tags: ["Automation", "AI Agents", "Git", "Windows"],
+        d: "The local control plane behind the studio: specialist-agent routing, decision gates, code and visual proof, searchable project memory, and fail-closed review before work reaches production.",
+        tags: ["Node.js", "SQLite", "Automation", "AI Agents"],
         h: "/soon",
       },
       {
@@ -270,6 +327,14 @@ const DATA: Record<"apps" | "games" | "tools" | "devlog", Folder> = {
         sc: "dev",
         d: "A game-development toolkit in TypeScript.",
         tags: ["TypeScript", "3D", "Tooling"],
+        h: "/soon",
+      },
+      {
+        n: "Bring Up Desk",
+        s: "IN DEV",
+        sc: "dev",
+        d: "A human-gated production system for hardware and AI explainers: primary-source research, script checks, narration, licensed media, exact subtitles, thumbnails, and private-draft upload from one desk.",
+        tags: ["Python", "FFmpeg", "Automation", "Media Pipeline"],
         h: "/soon",
       },
       {
@@ -317,7 +382,7 @@ const FOLDERS: { key: FolderKey; name: string; count: string; glyph: React.React
   {
     key: "tools",
     name: "Tools",
-    count: "5 items",
+    count: "6 items",
     glyph: (
       <svg viewBox="0 0 24 24">
         <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
@@ -403,7 +468,7 @@ const SIDEBAR: { label: string; glyph: string; key: RailKey; on?: boolean }[] = 
   { label: "Reports", glyph: "▤", key: "reports" },
 ];
 
-type OpenWin = FolderKey | "about" | RailKey | null;
+type OpenWin = FolderKey | "about" | "stack" | RailKey | null;
 
 const isRailKey = (k: string): k is RailKey => (RAIL_KEYS as string[]).includes(k);
 
@@ -948,6 +1013,8 @@ export function EnterTheStudio() {
     ? RAIL_META[openWin as RailKey].title
     : openWin === "about"
       ? "About — Kariim"
+      : openWin === "stack"
+        ? "Core Stack"
       : openWin
         ? DATA[openWin as FolderKey].t
         : "";
@@ -955,6 +1022,8 @@ export function EnterTheStudio() {
     ? RAIL_META[openWin as RailKey].note
     : openWin === "about"
       ? "Available for product, interface, and studio partnerships."
+      : openWin === "stack"
+        ? "The tools behind shipped work, with the project evidence beside each one."
       : openWin
         ? DATA[openWin as FolderKey].n
         : "";
@@ -1184,15 +1253,22 @@ export function EnterTheStudio() {
         </div>
 
         <div className={s.searchrow}>
-          {/* Same: dressing, not a control. It was the most prominent thing
-              on the desktop and did nothing at all when typed into — the page
-              contains no input element. Demoted and hidden rather than wired
-              up, because a working search over five folders is a worse answer
-              than not promising one. */}
-          <div className={`${s.search} ${s.inert}`} aria-hidden>
-            <span>Search the studio&#8230;</span>
-            <span>&#128269;</span>
-          </div>
+          <button
+            type="button"
+            className={s.stackLauncher}
+            onClick={() => openWindowNow("stack")}
+            aria-label="Open the Shift9 core technology stack"
+          >
+            <span className={s.stackLauncherTitle}>Core stack</span>
+            <span className={s.stackLauncherMarks} aria-hidden="true">
+              {STACK.slice(0, 5).map((tech) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={tech.n} src={tech.darkIcon && dark ? tech.darkIcon : tech.icon} alt="" />
+              ))}
+            </span>
+            <span className={s.stackLauncherNames}>TypeScript · React · Next.js · Node.js · Python + more</span>
+            <span className={s.stackLauncherArrow} aria-hidden="true">&#8594;</span>
+          </button>
           <div className={s.viewbtn}>
             <span
               className={`${s.vseg} ${compact ? "" : s.on}`}
@@ -1466,7 +1542,7 @@ export function EnterTheStudio() {
           >
             <div className={s.wtBar}>
               <span className={s.path}>
-                Shift-9 &#8250; {isRail || openWin === "devlog" ? "Desktop" : "Portfolio"} &#8250;{" "}
+                Shift-9 &#8250; {isRail || openWin === "devlog" || openWin === "stack" ? "Desktop" : "Portfolio"} &#8250;{" "}
                 <b>{winTitle}</b>
               </span>
               <button type="button" onClick={() => setOpenWin(null)} aria-label="Close">
@@ -1528,6 +1604,29 @@ export function EnterTheStudio() {
                     <a href={STUDIO_HREF} onClick={enterStudio}>
                       shift9.dev
                     </a>
+                  </div>
+                </div>
+              ) : openWin === "stack" ? (
+                <div className={s.stackBody}>
+                  <div className={s.stackIntro}>
+                    <span className={s.stackKicker}>Full-stack product engineer</span>
+                    <h2>Web, mobile, automation, and real-time 3D.</h2>
+                    <p>Built into shipped work, not collected as keywords.</p>
+                  </div>
+                  <div className={s.stackGrid}>
+                    {STACK.map((tech) => (
+                      <article key={tech.n} className={s.stackCard}>
+                        <span className={s.stackLogo}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={tech.darkIcon && dark ? tech.darkIcon : tech.icon} alt="" />
+                        </span>
+                        <span className={s.stackCopy}>
+                          <strong>{tech.n}</strong>
+                          <span>{tech.lane}</span>
+                          <small>{tech.proof}</small>
+                        </span>
+                      </article>
+                    ))}
                   </div>
                 </div>
               ) : (

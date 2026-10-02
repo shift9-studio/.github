@@ -788,6 +788,7 @@
 /* ================= CONTACTS — the poster =================
    The address is the page. Nothing competes with it. */
 .poster {
+  --poster-focus: #5fd6a4;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -825,6 +826,50 @@
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
+}
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  width: 100%;
+  padding-top: 2px;
+}
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  color: #fff;
+  text-decoration: none;
+}
+.socialLogo {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  object-fit: contain;
+}
+.socialLink span {
+  display: grid;
+  gap: 2px;
+}
+.socialLink strong {
+  font-size: 12px;
+  line-height: 1;
+}
+.socialLink small {
+  font-family: var(--s9-font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.68);
+}
+.socialLink:hover small,
+.socialLink:focus-visible small {
+  color: #fff;
+}
+.socialLink:focus-visible {
+  outline: 2px solid var(--poster-focus);
+  outline-offset: 4px;
 }
 .posterCopy {
   height: 40px;
