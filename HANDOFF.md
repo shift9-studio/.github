@@ -1,3 +1,27 @@
+## October 2, 2026 — portfolio theme and stack branch ready for integration
+
+Worktree: `C:\Users\Kariim\Dev\shift9-studio-theme-sync`
+Branch: `fix/portfolio-theme-sync`
+
+The active change removes positional light rows from Portfolio windows, exposes
+the verified core stack from the desktop with locally hosted official logos,
+adds Bring Up Desk to Tools, refreshes Automation Systems, and adds regression
+checks for theme inheritance, theme-safe tags, local logos and honest product
+copy. The branch is rebased onto current main. The final production build passed
+and generated all 16 pages. Browser proof measured six uniform dark rows, six
+uniform light rows, seven loaded stack logos with no panel overflow, and all 94
+Dev Log entries. The initial independent review found dark-mode tag contrast at
+2.60:1; that exact problem is fixed and guarded. A second review found the IN
+DEV badge at 4.13:1; it now measures 4.77:1 and the focused guard enforces 4.5:1.
+The guard was proved red before the fix and the full build passed after it. The
+final review is still required.
+
+Dev Log PR #72 is already merged to main at `4b8a994` and live with 94 entries;
+this branch now preserves it. Get one final independent PASS, then open a draft
+PR and verify its real Vercel preview. Do not merge without Kariim's fresh
+approval. After production is proved, update the Impeccable skill as Kariim
+authorized; not before.
+
 ## September 25, 2026 - Feelspoon site: AI captures are "up to 40 a day", not "unlimited"
 
 Kariim's order: the store page and feelspoon.app must not say Premium AI captures are unlimited.

@@ -81,11 +81,31 @@ assert.match(entrance, /setLoading\(true\);[\s\S]{0,80}setMode\("film"\)/, "Ente
 assert.doesNotMatch(entrance, /curtainDone|curtainOpening|YarnCurtain/, "The rejected curtain animation state must stay removed");
 assert.match(entranceStyles, /stageVideo[\s\S]{0,520}01-exterior-approach-poster\.jpg/, "The film stage must preload a frame behind the immediate curtain");
 assert.doesNotMatch(entranceStyles, /gateApertureOpen|curtainLeft|curtainRight|gatePlateAdvance/, "The yarn asset must stay static");
-assert.match(entranceStyles, /--w-light-row-text/, "Light folder rows must define readable title text");
-assert.match(entranceStyles, /\.item:nth-child\(even\)[\s\S]*color:\s*var\(--w-light-row-text\)/, "Light folder rows must apply their dark text token");
-assert.match(entranceStyles, /\.item:nth-child\(even\) h3[\s\S]{0,120}color:\s*var\(--w-light-row-text\)/, "Light folder titles must explicitly keep readable dark text");
+assert.match(entranceStyles, /\.item\s*\{[\s\S]{0,240}background:\s*var\(--w-panel\)/, "Folder rows must use the active theme panel");
+assert.doesNotMatch(entranceStyles, /\.item:nth-child\(even\)/, "Folder rows must not override the active theme by position");
+assert.doesNotMatch(entranceStyles, /--w-light-row/, "Retired light-stripe tokens must not override the active theme");
+assert.match(entranceStyles, /\.tag\s*\{[^}]*color:\s*var\(--w-txt\)[^}]*background:\s*var\(--w-quiet\)/s, "Project tags must use readable active-theme tokens");
+const devBadge = entranceStyles.match(/\.dev\s*\{[^}]*color:\s*(#[0-9a-f]{6})[^}]*background:\s*(#[0-9a-f]{6})/i);
+assert.ok(devBadge, "The IN DEV badge must define explicit foreground and background colors");
+const luminance = (hex) => {
+  const channels = hex.slice(1).match(/../g).map((value) => parseInt(value, 16) / 255);
+  const [red, green, blue] = channels.map((value) =>
+    value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4,
+  );
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+};
+const devLuminance = [luminance(devBadge[1]), luminance(devBadge[2])];
+const devContrast = (Math.max(...devLuminance) + 0.05) / (Math.min(...devLuminance) + 0.05);
+assert.ok(devContrast >= 4.5, `IN DEV badge contrast must reach 4.5:1; measured ${devContrast.toFixed(2)}:1`);
 assert.match(entrance, /data-devlog=\{openWin === "devlog" \? true : undefined\}/, "Journal theme overrides must stay scoped to the dev log");
-assert.match(entranceStyles, /\.wbody\[data-devlog\]\s*\{[^}]*--w-light-row:\s*var\(--w-panel\)/, "Journal rows must follow the current desktop panel");
+assert.match(entranceStyles, /\.wbody\[data-devlog\] \.item\s*\{[^}]*color:\s*var\(--w-txt\)/, "Journal rows must follow the current desktop text theme");
+assert.match(entrance, /className=\{s\.stackLauncher\}/, "The core stack must be visible from the desktop instead of buried in project tags");
+assert.match(entrance, /openWindowNow\("stack"\)/, "The stack launcher must open the stack window");
+assert.match(entrance, /\/stack\/typescript\.svg/, "The stack must use locally served official technology marks");
+assert.doesNotMatch(entrance, /src=\{?['"]https?:\/\//, "Stack logos must not depend on third-party runtime hosts");
+assert.match(entrance, /n:\s*"Bring Up Desk"/, "The current private-draft media pipeline must appear in Tools");
+assert.match(entrance, /private-draft upload/, "Bring Up Desk copy must state the human-gated private-draft boundary");
+assert.match(entrance, /name:\s*"Tools",\s*count:\s*"6 items"/s, "The Tools folder count must match its six entries");
 assert.doesNotMatch(entrance, /&#9993;|✉/, "Desktop mail icons must not depend on a platform font glyph");
 
 for (const [name, page] of [

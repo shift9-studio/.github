@@ -1,3 +1,35 @@
+## October 2, 2026 — portfolio theme repair and recruiter-facing stack
+
+Branch `fix/portfolio-theme-sync` repairs the Portfolio folder windows so every
+row follows the active Shift-9 theme instead of alternating dark and light.
+The desktop now exposes a Core stack launcher and a dedicated evidence panel for
+TypeScript, React / React Native, Next.js, Node.js, Python, Supabase and Godot.
+Every mark is a locally served official brand asset with its source recorded in
+`shift9/apps/shift9-dev/public/stack/SOURCES.md`. Tools now includes Bring Up
+Desk, and Automation Systems describes the current local control plane rather
+than the retired Relay wording.
+
+Proof before integration: the focused guard was driven red for the missing stack
+launcher and mixed folder rows, then passed. `pnpm --filter shift9-dev build`
+passed from the `shift9` workspace and generated all 16 pages. Browser checks
+showed uniform dark rows, uniform light rows, seven loaded stack logos, no
+horizontal overflow and correct light/dark Next.js marks. The first independent
+review caught low-contrast tags; tags now use the active theme tokens and the
+guard rejects the old white-chip styling. After rebasing onto current main, the
+full production build passed again and generated all 16 pages. The combined
+browser preview measured six uniform dark rows at `rgb(27, 31, 40)`, six uniform
+light rows at `rgb(247, 246, 241)`, seven loaded stack logos and no stack-panel
+overflow. A second independent review found the IN DEV badge at 4.13:1 contrast.
+Its foreground is now `#8f6100`, measured at 4.77:1 in the browser, and the
+focused guard calculates and enforces the 4.5:1 minimum. The guard was proved
+red at 4.13:1 before the fix and the full production build then passed again.
+Final independent review is pending.
+
+Dev Log PR #72 was merged separately at `4b8a994`, and this branch is rebased on
+top of it. Production and the combined local preview both serve 94 entries, with
+“Jev can't write, so I gave him a voice” first. No merge or production release
+of this branch has been performed; owner approval is still required.
+
 ## September 19, 2026 — entrance, return navigation, settings repair
 
 Branch `codex/entrance-desktop-repair` starts at production `42d1e7e`.

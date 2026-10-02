@@ -16,10 +16,6 @@
   --w-bg-rgb: 236 234 223;
   --w-panel: #f7f6f1;
   --w-panel-rgb: 247 246 241;
-  --w-light-row: #fbfaf5;
-  --w-light-row-text: #1f2328;
-  --w-light-row-dim: #4a4f57;
-  --w-light-row-line: #d8d6cc;
   --w-side: #f0efe8;
   --w-line: #d8d6cc;
   /* Tooltip surface. Deliberately the inverse of the desktop it sits on —
@@ -960,6 +956,65 @@
   display: flex;
   justify-content: space-between;
 }
+.stackLauncher {
+  flex: 1;
+  min-width: 0;
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  color: var(--w-txt);
+  background: var(--w-panel);
+  border: 1px solid var(--w-line);
+  border-radius: 9px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 8px 28px rgb(var(--w-shadow) / 0.08);
+}
+.stackLauncher:hover {
+  border-color: var(--blue);
+}
+.stackLauncher:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+.stackLauncherTitle {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  color: var(--blue);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.stackLauncherMarks {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-left: 12px;
+  border-left: 1px solid var(--w-line);
+}
+.stackLauncherMarks img {
+  display: block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+.stackLauncherNames {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--w-dim);
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.stackLauncherArrow {
+  margin-left: auto;
+  color: var(--blue);
+  font-size: 16px;
+}
 .viewbtn {
   display: inline-flex;
   padding: 3px;
@@ -1607,25 +1662,8 @@
   align-items: baseline;
   background: var(--w-panel);
 }
-.item:nth-child(even) {
-  --w-dim: var(--w-light-row-dim);
-  --w-line: var(--w-light-row-line);
-  color: var(--w-light-row-text);
-  background: var(--w-light-row);
-}
-.item:nth-child(even) h3 {
-  color: var(--w-light-row-text);
-}
-.item:nth-child(even) h3 a {
-  color: var(--blue);
-}
-/* The journal follows the desktop theme; portfolio stripes remain separate. */
-.wbody[data-devlog] {
-  --w-light-row: var(--w-panel);
-  --w-light-row-text: var(--w-txt);
-  --w-light-row-dim: var(--w-dim);
-  --w-light-row-line: var(--w-line);
-}
+/* Every folder row follows the active desktop theme. The journal adds its own
+   typography below, but never replaces the selected surface palette. */
 .wbody[data-devlog] .item {
   color: var(--w-txt);
 }
@@ -1655,9 +1693,8 @@
   font-weight: 650;
   margin-bottom: 3px;
 }
-/* Linked project titles must clear WCAG AA on both dark and light rows.
-   Inherited ink + a hairline border failed that on the light stripe; studio
-   blue is the CTA token (6.05:1 on the light desktop ground) and keeps the
+/* Linked project titles must clear WCAG AA in both desktop themes. Studio blue
+   is the CTA token (6.05:1 on the light desktop ground) and keeps the
    titles reading as links rather than inert text. */
 .item h3 a {
   color: var(--blue);
@@ -1694,12 +1731,100 @@
 .tag {
   font-family: var(--mono);
   font-size: 10px;
-  color: var(--w-dim);
+  color: var(--w-txt);
   border: 1px solid var(--w-line);
-  background: #fff;
+  background: var(--w-quiet);
   padding: 2px 8px;
   border-radius: 4px;
   letter-spacing: 0.06em;
+}
+.stackBody {
+  padding: 20px 22px;
+  color: var(--w-txt);
+}
+.stackIntro {
+  padding: 2px 2px 20px;
+  border-bottom: 1px solid var(--w-line);
+}
+.stackKicker {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--blue);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.stackIntro h2 {
+  max-width: 680px;
+  font-size: clamp(20px, 3vw, 30px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+.stackIntro p {
+  margin-top: 8px;
+  color: var(--w-dim);
+  font-size: 13px;
+}
+.stackGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 18px;
+  background: var(--w-line);
+  border: 1px solid var(--w-line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.stackCard:last-child {
+  grid-column: 1 / -1;
+  justify-content: center;
+}
+.stackCard {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 96px;
+  padding: 15px;
+  background: var(--w-panel);
+}
+.stackLogo {
+  flex: 0 0 46px;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  padding: 7px;
+  border: 1px solid var(--w-line);
+  border-radius: 9px;
+  background: var(--w-quiet);
+}
+.stackLogo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.stackCopy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.stackCopy strong {
+  font-size: 14px;
+}
+.stackCopy > span {
+  color: var(--w-dim);
+  font-size: 12px;
+}
+.stackCopy small {
+  color: var(--w-txt);
+  font-family: var(--mono);
+  font-size: 9px;
+  line-height: 1.45;
+  letter-spacing: 0.035em;
 }
 .status {
   font-family: var(--mono);
@@ -1714,7 +1839,7 @@
   background: #e3f5ea;
 }
 .dev {
-  color: #9a6b00;
+  color: #8f6100;
   background: #faf0d4;
 }
 .rnd {
@@ -1787,6 +1912,23 @@
 
 /* ---------- Mobile: degrade the desktop metaphor gracefully (HANDOFF §8.4) ---------- */
 @media (max-width: 768px) {
+  .stackLauncher {
+    gap: 9px;
+  }
+  .stackLauncherMarks img:nth-child(n + 4),
+  .stackLauncherNames {
+    display: none;
+  }
+  .stackGrid {
+    grid-template-columns: 1fr;
+  }
+  .stackCard:last-child {
+    grid-column: auto;
+    justify-content: flex-start;
+  }
+  .stackCard {
+    min-height: 84px;
+  }
   .wbody[data-devlog] .item {
     display: grid;
     grid-template-columns: 24px minmax(0, 1fr);
